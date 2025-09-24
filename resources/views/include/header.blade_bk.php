@@ -10,12 +10,12 @@ use Illuminate\Support\Facades\Auth;
     <title>@yield('title', 'TNELB - Home')</title>
 
     <!-- Stylesheets -->
-    <link href="{{ asset('assets/css/bootstrap.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/responsive.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/color-2.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/main.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/page_top.css') }}" rel="stylesheet">
+  <link href="{{ secure_asset('assets/css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ secure_asset('assets/css/style.css') }}" rel="stylesheet">
+    <link href="{{ secure_asset('assets/css/responsive.css') }}" rel="stylesheet">
+    <link href="{{ secure_asset('assets/css/color-2.css') }}" rel="stylesheet">
+    <link href="{{ secure_asset('assets/css/main.css') }}" rel="stylesheet">
+    <link href="{{ secure_asset('assets/css/page_top.css') }}" rel="stylesheet">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
    
     <link href="{{ asset('assets/admin/src/plugins/src/flatpickr/flatpickr.css') }}" rel="stylesheet">

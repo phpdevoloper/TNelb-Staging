@@ -1,34 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 
-@php
+<?php
 use Illuminate\Support\Facades\Auth;
-@endphp
+?>
 
 <head>
     <meta charset="utf-8">
-    <title>@yield('title', 'TNELB - Home')</title>
+    <title><?php echo $__env->yieldContent('title', 'TNELB - Home'); ?></title>
 
     <!-- Stylesheets -->
-    <link href="{{ asset('assets/css/bootstrap.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/responsive.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/color-2.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/main.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/page_top.css') }}" rel="stylesheet">
+    <link href="<?php echo e(asset('assets/css/bootstrap.css')); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('assets/css/style.css')); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('assets/css/responsive.css')); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('assets/css/color-2.css')); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('assets/css/main.css')); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('assets/css/page_top.css')); ?>" rel="stylesheet">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
    
-    <link href="{{ asset('assets/admin/src/plugins/src/flatpickr/flatpickr.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/admin/src/plugins/css/light/flatpickr/custom-flatpickr.css') }}" rel="stylesheet">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link href="<?php echo e(asset('assets/admin/src/plugins/src/flatpickr/flatpickr.css')); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('assets/admin/src/plugins/css/light/flatpickr/custom-flatpickr.css')); ?>" rel="stylesheet">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
 
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Merriweather:ital@0;1&display=swap" rel="stylesheet">
 
-    <link rel="shortcut icon" href="{{ asset('assets/images/logo/favicon.png') }}" type="image/x-icon">
-    <link rel="icon" href="{{ asset('assets/images/logo/favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="<?php echo e(asset('assets/images/logo/favicon.png')); ?>" type="image/x-icon">
+    <link rel="icon" href="<?php echo e(asset('assets/images/logo/favicon.png')); ?>" type="image/x-icon">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -68,7 +68,7 @@ use Illuminate\Support\Facades\Auth;
     </style>
 </head>
 <script>
-    const BASE_URL = "{{ UrlHelper::baseFileUrl() }}";
+    const BASE_URL = "<?php echo e(UrlHelper::baseFileUrl()); ?>";
     
 </script>
 
@@ -328,72 +328,73 @@ use Illuminate\Support\Facades\Auth;
 
                     </div>
                 </div>
-                <!-- <pre>{{ print_r(session()->all(), true) }}</pre> -->
+                <!-- <pre><?php echo e(print_r(session()->all(), true)); ?></pre> -->
 
                 <div class="logo-fun">
                     <div class="container">
                         <div class="row">
-                            @if(Auth::check())
+                            <?php if(Auth::check()): ?>
                             <div class="col-lg-8 col-md-12">
                                 <div class="flex-shrink-0 mr-3 mr-xl-8 mr-xlwd-16 d-none d-md-block">
                                     <a href="/logout">
-                                        <img src="{{ asset('assets/images/logo/logo.png') }}" class="img-fluid" alt="tnelb" />
+                                        <img src="<?php echo e(asset('assets/images/logo/logo.png')); ?>" class="img-fluid" alt="tnelb" />
                                     </a>
                                 </div>
 
                                 <div class="flex-shrink-0 mr-3 mr-xl-8 mr-xlwd-16 d-block d-lg-none">
                                     <a href="/logout">
-                                        <img src="{{ asset('assets/images/logo/logo_mobile.png') }}" class="img-fluid" alt="tnelb" />
+                                        <img src="<?php echo e(asset('assets/images/logo/logo_mobile.png')); ?>" class="img-fluid" alt="tnelb" />
                                     </a>
                                 </div>
                             </div>
-                            @else
+                            <?php else: ?>
                             <div class="col-lg-8 col-md-12">
                                 <div class="flex-shrink-0 mr-3 mr-xl-8 mr-xlwd-16 d-none d-md-block">
                                     <a href="/">
-                                        <img src="{{ asset('assets/images/logo/logo.png') }}" class="img-fluid" alt="tnelb" />
+                                        <img src="<?php echo e(asset('assets/images/logo/logo.png')); ?>" class="img-fluid" alt="tnelb" />
                                     </a>
                                 </div>
 
                                 <div class="flex-shrink-0 mr-3 mr-xl-8 mr-xlwd-16 d-block d-lg-none">
                                     <a href="/">
-                                        <img src="{{ asset('assets/images/logo/logo_mobile.png') }}" class="img-fluid" alt="tnelb" />
+                                        <img src="<?php echo e(asset('assets/images/logo/logo_mobile.png')); ?>" class="img-fluid" alt="tnelb" />
                                     </a>
                                 </div>
                             </div>
-                            @endif
+                            <?php endif; ?>
 
                             <div class="col-lg-4 col-md-12 text-center">
                                 <ul class="top-info-box">
-                                    @if(Auth::check())
+                                    <?php if(Auth::check()): ?>
                                     <li class="header-get-a-quote">
                                         <div class="profile">
                                             <div class="user">
                                                 <a class="btn btn-success text-white text-capitalize">
-                                                    <i class="fa fa-user-circle-o"></i>&nbsp; {{ Auth::user()->name }}
+                                                    <i class="fa fa-user-circle-o"></i>&nbsp; <?php echo e(Auth::user()->name); ?>
+
                                                 </a>
                                             </div>
                                         </div>
                                         <div class="menu">
                                             <ul>
                                                 <li>
-                                                    <a href="{{ route('dashboard') }}">
+                                                    <a href="<?php echo e(route('dashboard')); ?>">
                                                         <i class="fa fa-dashboard"></i>&nbsp;Dashboard
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="{{ route('logout') }}">
+                                                    <a href="<?php echo e(route('logout')); ?>">
                                                         <i class="fa fa-sign-out"></i>&nbsp;Log Out
                                                     </a>
                                                 </li>
                                             </ul>
                                         </div>
                                     </li>
-                                    @else
+                                    <?php else: ?>
                                     <li class="header-get-a-quote">
-                                        <a class="btn btn-primary" href="{{ route('login') }}">Applicant Sign In/ Sign Up</a>
+                                        <a class="btn btn-primary" href="<?php echo e(route('login')); ?>">Applicant Sign In/ Sign Up</a>
                                     </li>
-                                    @endif
+                                    <?php endif; ?>
                                 </ul>
                             </div>
 
@@ -411,7 +412,7 @@ use Illuminate\Support\Facades\Auth;
                             <!--Nav Box-->
                             <div class="nav-outer">
                                 <!--Mobile Navigation Toggler-->
-                                <div class="mobile-nav-toggler"><img src="{{ asset('assets/images/icons/icon-bar-2.png') }}" alt=""></div>
+                                <div class="mobile-nav-toggler"><img src="<?php echo e(asset('assets/images/icons/icon-bar-2.png')); ?>" alt=""></div>
                                 <div class="search-form-two text-md-right display_desk">
                                     <form>
                                         <input type="search" placeholder="Search ...">
@@ -425,11 +426,11 @@ use Illuminate\Support\Facades\Auth;
 
 
                                             <!-- Hidden Logout Form -->
-                                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                                @csrf
+                                            <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="display: none;">
+                                                <?php echo csrf_field(); ?>
                                             </form>
-                                            @foreach($menu as $main)
-                                            @php
+                                            <?php $__currentLoopData = $menu; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $main): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <?php
                                             $page = $main->menuPage;
                                             $link = '#';
                                             $target = '';
@@ -448,17 +449,18 @@ use Illuminate\Support\Facades\Auth;
                                             }
 
                                             $childMenus = $submenu->where('parent_code', $main->id);
-                                            @endphp
+                                            ?>
 
                                             <li class="dropdown">
-                                                   <a href="{{ $page && $page->page_type == 'url' ? $link : url($link) }}" {!! $target !!}>
-														{{ $main->menu_name_en }}
+                                                   <a href="<?php echo e($page && $page->page_type == 'url' ? $link : url($link)); ?>" <?php echo $target; ?>>
+														<?php echo e($main->menu_name_en); ?>
+
 													</a>
 
-                                                @if($childMenus->isNotEmpty())
+                                                <?php if($childMenus->isNotEmpty()): ?>
                                                 <ul>
-                                                   @foreach($childMenus as $child)
-														@php
+                                                   <?php $__currentLoopData = $childMenus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+														<?php
 															$childPage   = $child->submenuPage;
 															$childLink   = '#';
 															$childTarget = '';
@@ -480,17 +482,17 @@ use Illuminate\Support\Facades\Auth;
 																	$childTarget = '';
 																}
 															}
-														@endphp
+														?>
 
 														<li>
-															<a href="{{ $childLink }}" {!! $childTarget !!}>{{ $child->menu_name_en }}</a>
+															<a href="<?php echo e($childLink); ?>" <?php echo $childTarget; ?>><?php echo e($child->menu_name_en); ?></a>
 														</li>
-													@endforeach
+													<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                                                 </ul>
-                                                @endif
+                                                <?php endif; ?>
                                             </li>
-                                            @endforeach
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
@@ -513,25 +515,25 @@ use Illuminate\Support\Facades\Auth;
 
                                             <li><a href="contact">Contact</a></li> -->
 
-                                            @if(Auth::check())
+                                            <?php if(Auth::check()): ?>
                                             <li class="dropdown">
                                                 <a href="#">Forms</a>
                                                 <ul>
-                                                    <li><a href="{{ route('apply-form-wh')}}">Form WH</a></li>
-                                                    <li><a href="{{ route('apply-form-w')}}">Form W</a></li>
-                                                    <li><a href="{{ route('apply-form-s')}}">Form S</a></li>
+                                                    <li><a href="<?php echo e(route('apply-form-wh')); ?>">Form WH</a></li>
+                                                    <li><a href="<?php echo e(route('apply-form-w')); ?>">Form W</a></li>
+                                                    <li><a href="<?php echo e(route('apply-form-s')); ?>">Form S</a></li>
                                                     <li><a href="#">Form P</a></li>
                                                     <li><a href="#">Form H TO B</a></li>
                                                     <li><a href="#">Form EB</a></li>
                                                     <li><a href="#">Form SB</a></li>
-                                                    <li><a href="{{ route('apply-form-a')}}">Form A</a></li>
+                                                    <li><a href="<?php echo e(route('apply-form-a')); ?>">Form A</a></li>
                                                     <li><a href="#">Form SA</a></li>
                                                     <li><a href="#">Fees Structure</a></li>
                                                     <li><a href="#">Renewal Particulars (English)</a></li>
                                                     <li><a href="#">Renewal Particulars (Tamil)</a></li>
                                                 </ul>
                                             </li>
-                                            @else
+                                            <?php else: ?>
                                             <li class="dropdown">
                                                 <a href="#">Forms</a>
                                                 <ul>
@@ -550,7 +552,7 @@ use Illuminate\Support\Facades\Auth;
                                                     <li><a href="login">Renewal Particulars (Tamil)</a></li>
                                                 </ul>
                                             </li>
-                                            @endif
+                                            <?php endif; ?>
 
                                         </ul>
                                     </div>
@@ -579,7 +581,7 @@ use Illuminate\Support\Facades\Auth;
                                 <div class="nav-outer">
                                     <!--Mobile Navigation Toggler-->
                                     <div class="mobile-nav-toggler">
-                                        <img src="{{ asset('assets/images/icons/icon-bar-2.png') }}" alt="">
+                                        <img src="<?php echo e(asset('assets/images/icons/icon-bar-2.png')); ?>" alt="">
                                     </div>
                                     <!-- Main Menu -->
                                     <nav class="main-menu navbar-expand-md navbar-light">
@@ -645,4 +647,4 @@ use Illuminate\Support\Facades\Auth;
                         </form>
                     </div>
                 </div>
-            </div>
+            </div><?php /**PATH D:\xampp\hddocs\TNelb-Staging\resources\views/include/header.blade.php ENDPATH**/ ?>
