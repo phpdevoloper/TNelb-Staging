@@ -134,23 +134,36 @@
                                 </div>
                             </div>
                             <!-- autocomplete="off" -->
-                            <form id="form1" autocomplete="off">
+                            <form id="registerform" autocomplete="off">
                                 @csrf
                                 <div class="row">
 
                                     <div class="col-12 col-md-6">
                                         <div class="row">
-                                            <div class="col-12 col-md-5">
+                                            <div class="col-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label class="col-12 col-md-12 " for="Name">Name <span style="color: red;">*</span></label>
+                                                    <label class="col-12 col-md-12" for="Name">First Name <span style="color: red;">*</span></label>
 
                                                 </div>
                                             </div>
+
+                                             <div class="col-12 col-md-2">
+                                                <div class="form-group">
+                                                    <select id="salutation" name ="salutation" class="form-control">
+                                                        <option value="Mr"> Mr</option>
+                                                        <option value="Ms">Ms </option>
+                                                         <option value="Mrs">Mrs </option>
+                                                    </select>
+                                                    <span id="salutationError" class="text-danger"></span>
+                                                </div>
+                                            </div>
                                             <div class="col-12 col-md-7">
-                                                <input type="text" id="Name" name="Name" class="form-control">
-                                                <span id="NameError" class="text-danger"></span>
+                                                <input type="text" id="first_name" name="first_name" class="form-control">
+                                                <span id="FirstNameError" class="text-danger"></span>
                                             </div>
                                         </div>
+
+                                        
 
                                         <div class="row pt-4">
                                             <div class="col-12 col-md-5">
@@ -206,44 +219,24 @@
 
                                             </div>
                                         </div>
-
-
-                                        <div class="row pt-4">
-                                            <div class="col-12 col-md-5">
-                                                <div class="form-group">
-                                                    <label class="col-12 col-md-12" for="aadhaar">Aadhaar Card Number <span style="color: red;">*</span> </label>
-
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-7">
-                                                <input type="text" id="aadhaar" name="aadhaar" class="form-control">
-                                                <span id="aadhaarError" class="text-danger"></span>
-
-                                            </div>
-                                        </div>
-
-                                        <div class="row pt-4">
-                                            <div class="col-12 col-md-5">
-                                                <div class="form-group">
-                                                    <label class="col-12 col-md-12" for="aadhaar">Pan Card Number <span style="color: red;">*</span> </label>
-
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-7">
-                                                <input type="text" id="pancard" name="pancard" class="form-control">
-                                                <span id="pancardError" class="text-danger"></span>
-
-                                            </div>
-                                        </div>
-
-
-
-
                                     </div>
 
                                     <div class="col-12 col-md-6">
 
-                                        <div class="row ">
+                                         <div class="row">
+                                            <div class="col-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label class="col-12 col-md-12" for="Name">Last Name <span style="color: red;">*</span></label>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-8">
+                                                <input type="text" id="lastname" name="lastname" class="form-control">
+                                                <span id="lastnameError" class="text-danger"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-2">
                                             <div class="col-12 col-md-3">
                                                 <div class="form-group">
                                                     <label class="col-12 col-md-12" for="Address">Address <span style="color: red;">*</span></label>
@@ -252,7 +245,7 @@
                                             </div>
                                             <div class="col-12 col-md-8">
 
-                                                <textarea rows='3' id="Address" name="Address" class="form-control"></textarea>
+                                                <textarea rows='3' id="Address" name="Address" class="form-control" autocomplete="on"></textarea>
                                                 <span id="AddressError" class="text-danger"></span>
 
                                             </div>
@@ -433,7 +426,6 @@
         <div class="row">
 
             <div class="form-group col-md-12">
-
                 <input type="text" name="name" value="" placeholder="Your Name">
             </div>
 
@@ -517,15 +509,12 @@
     <script>
         $("#contact-form").submit(function(e) {
 
-                // console.log('asd');
-
 
                 e.preventDefault(); // avoid to execute the actual submit of the form.
 
-                // var phone = $("#phone").val();
 
                 var phone = $('input[name="phone"]').val();
-                // return false;
+                
 
 
                 intRegex = /[0-9 -()+]+$/;
@@ -548,156 +537,177 @@
         });
 
         document.addEventListener("DOMContentLoaded", function() {
-                let phoneInput = document.getElementById("PhoneNo");
-                let phoneError = document.getElementById("PhoneNoError");
+            let phoneInput = document.getElementById("PhoneNo");
+            let phoneError = document.getElementById("PhoneNoError");
 
-                phoneInput.addEventListener("input", function() {
-                    // Remove non-digits
-                    this.value = this.value.replace(/[^0-9]/g, '');
+            phoneInput.addEventListener("input", function() {
+                // Remove non-digits
+                this.value = this.value.replace(/[^0-9]/g, '');
 
-                    // Limit to 10 digits
-                    if (this.value.length > 10) {
-                        this.value = this.value.slice(0, 10);
-                    }
+                // Limit to 10 digits
+                if (this.value.length > 10) {
+                    this.value = this.value.slice(0, 10);
+                }
 
-                    // Live validation
-                    if (this.value.length === 10) {
-                        if (!/^[6-9]\d{9}$/.test(this.value)) {
-                            phoneError.textContent = "Enter a valid 10-digit mobile number starting with 6-9.";
-                        } else {
-                            phoneError.textContent = "";
-                        }
+                // Live validation
+                if (this.value.length === 10) {
+                    if (!/^[6-9]\d{9}$/.test(this.value)) {
+                        phoneError.textContent = "Enter a valid 10-digit mobile number starting with 6-9.";
                     } else {
                         phoneError.textContent = "";
                     }
-                });
-            });
-            document.addEventListener("DOMContentLoaded", function() {
-                let aadhaarInput = document.getElementById("aadhaar");
-                let aadhaarError = document.getElementById("aadhaarError");
-
-                aadhaarInput.addEventListener("input", function() {
-                    this.value = this.value.replace(/[^0-9]/g, '');
-
-                    if (this.value.length > 12) {
-                        this.value = this.value.slice(0, 12);
-                    }
-
-                    if (this.value.length === 12) {
-                        aadhaarError.textContent = "";
-                    } else if (this.value.length > 0) {
-                        aadhaarError.textContent = "Aadhaar number must be exactly 12 digits.";
-                    } else {
-                        aadhaarError.textContent = "";
-                    }
-                });
-            });
-
-        document.addEventListener("DOMContentLoaded", function() {
-            let NameInput = document.getElementById("Name");
-
-            NameInput.addEventListener("input", function() {
-                this.value = this.value.replace(/[^A-Za-z\s]/g, ''); // Only letters and spaces
-            });
-        });
-
-        $(document).ready(function() {
-
-   
-        $("#form1").submit(function(event) {
-            event.preventDefault();
-
-            // Clear previous error messages
-            $("#PhoneNoError").text("");
-            $("#EmailError").text("");
-            $("#NameError").text("");
-            $("#GenderError").text("");
-            $("#AddressError").text("");
-            $("#StateError").text("");
-            $("#DistrictError").text("");
-            $("#PincodeError").text("");
-            $("#aadhaarError").text("");
-            $("#pancardError").text("");
-
-            let name = $("#Name").val().trim();
-            let gender = $("input[name='gender']:checked").val();
-            let phone = $("#PhoneNo").val().trim();
-            let email = $("#EmailAddress").val().trim();
-            let address = $("#Address").val().trim();
-            let state = $("#state").val();
-            let district = $("#district").val();
-            let pincode = $("#pincode").val().trim();
-
-            let aadhaar = $("#aadhaar").val().trim();
-            let pancard = $("#pancard").val().trim();
-
-
-
-
-            let formData = {
-                _token: "{{ csrf_token() }}",
-                Name: name,
-                gender: gender,
-                PhoneNo: phone,
-                EmailAddress: email,
-                Address: address,
-                state: state,
-                district: district,
-                pincode: pincode,
-                aadhaar: aadhaar,
-                pancard: pancard,
-            };
-
-            $.ajax({
-                type: "POST",
-                url: "{{ route('register.store') }}",
-                data: formData,
-                success: function(response) {
-                    if (response.success) {
-                        $("#login-id-display").text(response.login_id);
-                        $("#success-popup").fadeIn();
-                        $("#overlay").fadeIn();
-                    }
-                },
-                error: function(xhr) {
-                    if (xhr.responseJSON && xhr.responseJSON.errors) {
-                        let errors = xhr.responseJSON.errors;
-
-                        if (errors.Name) {
-                            $("#NameError").text(errors.Name[0]);
-                        }
-                        if (errors.gender) {
-                            $("#GenderError").text(errors.gender[0]);
-                        }
-                        if (errors.PhoneNo) {
-                            $("#PhoneNoError").text(errors.PhoneNo[0]);
-                        }
-                        if (errors.EmailAddress) {
-                            $("#EmailError").text(errors.EmailAddress[0]);
-                        }
-                        if (errors.Address) {
-                            $("#AddressError").text(errors.Address[0]);
-                        }
-                        if (errors.state) {
-                            $("#StateError").text(errors.state[0]);
-                        }
-                        if (errors.district) {
-                            $("#DistrictError").text(errors.district[0]);
-                        }
-                        if (errors.pincode) {
-                            $("#PincodeError").text(errors.pincode[0]);
-                        }
-
-                        if (errors.aadhaar) {
-                            $("#aadhaarError").text(errors.aadhaar[0]);
-                        }
-                        if (errors.pancard) {
-                            $("#pancardError").text(errors.pancard[0]);
-                        }
-                    }
+                } else {
+                    phoneError.textContent = "";
                 }
             });
         });
-        });
+            
 
-    </script>
+       
+
+$(document).ready(function () {
+    const form = $("#registerform");
+
+    // Clear all error messages
+    function clearErrors() {
+        $("[id$='Error']").text("");
+    }
+
+    // Show backend validation errors
+    function showErrors(errors) {
+        $.each(errors, function (field, messages) {
+            switch (field) {
+                case "salutation": $("#salutationError").text(messages[0]); break;
+                case "first_name": $("#FirstNameError").text(messages[0]); break;
+                case "last_name": $("#lastnameError").text(messages[0]); break;
+                case "gender": $("#GenderError").text(messages[0]); break;
+                case "mobile": $("#PhoneNoError").text(messages[0]); break;
+                case "EmailAddress": $("#EmailError").text(messages[0]); break;
+                case "address": $("#AddressError").text(messages[0]); break;
+                case "state": $("#StateError").text(messages[0]); break;
+                case "district": $("#DistrictError").text(messages[0]); break;
+                case "pincode": $("#PincodeError").text(messages[0]); break;
+            }
+        });
+    }
+
+    // ✅ Live validation on keyup + change
+    form.find("input, select, textarea").on("keyup change", function () {
+        let field = $(this).attr("id");
+        let value = $(this).val().trim();
+
+        console.log(value.length);
+        return false;
+        
+
+        switch (field) {
+            case "PhoneNo":
+            if (value.length == 0) {
+                $("#PhoneNoError").text(""); // don’t show error if empty (user still typing)
+            } else if (value.length < 10) {
+                $("#PhoneNoError").text("Mobile number must be 10 digits.");
+            } else if (!/^[6-9]\d{9}$/.test(value)) {
+                $("#PhoneNoError").text("Enter a valid 10-digit mobile number starting with 6–9.");
+            } else {
+                $("#PhoneNoError").text("");
+            }
+            break;
+
+            case "EmailAddress":
+                if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                    $("#EmailError").text("Enter a valid email address.");
+                } else {
+                    $("#EmailError").text("");
+                }
+                break;
+
+            case "first_name":
+                if (value && !/^[A-Za-z\s]+$/.test(value)) {
+                    $("#FirstNameError").text("Only alphabets and spaces are allowed.");
+                } else {
+                    $("#FirstNameError").text("");
+                }
+                break;
+
+            case "lastname":
+                if (value && !/^[A-Za-z\s]+$/.test(value)) {
+                    $("#lastnameError").text("Only alphabets and spaces are allowed.");
+                } else {
+                    $("#lastnameError").text("");
+                }
+                break;
+
+             case "Address":
+                if (!value) {
+                    $("#AddressError").text("Address is required.");
+                } else {
+                    $("#AddressError").text("");
+                }
+                break;
+
+             case "state":
+                if (!value) {
+                    $("#StateError").text("Please select a state.");
+                } else {
+                    $("#StateError").text("");
+                }
+                break;
+
+            case "district":
+                if (!value) {
+                    $("#DistrictError").text("Please select a district.");
+                } else {
+                    $("#DistrictError").text("");
+                }
+                break;
+
+            case "pincode":
+                if (!/^\d{6}$/.test(value)) {
+                    $("#PincodeError").text("Enter a valid 6-digit pincode.");
+                } else {
+                    $("#PincodeError").text("");
+                }
+                break;
+
+        }
+    });
+
+    // ✅ Submit handler
+    form.submit(function (event) {
+        event.preventDefault();
+        clearErrors();
+
+        let formData = {
+            _token: "{{ csrf_token() }}",
+            salutation: $("#salutation").val().trim(),
+            first_name: $("#first_name").val().trim(),
+            last_name: $("#lastname").val().trim(),
+            gender: $("input[name='gender']:checked").val(),
+            mobile: $("#PhoneNo").val().trim(),
+            EmailAddress: $("#EmailAddress").val().trim(),
+            Address: $("#Address").val().trim(),
+            state: $("#state").val(),
+            district: $("#district").val(),
+            pincode: $("#pincode").val().trim(),
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "{{ route('register.store') }}",
+            data: formData,
+            success: function (response) {
+                if (response.success) {
+                    $("#login-id-display").text(response.login_id);
+                    $("#success-popup, #overlay").fadeIn();
+                }
+            },
+            error: function (xhr) {
+                if (xhr.responseJSON?.errors) {
+                    showErrors(xhr.responseJSON.errors);
+                }
+            },
+        });
+    });
+});
+
+</script>

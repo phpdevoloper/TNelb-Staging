@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\admin\Tnelb_Newsboard;
 use Carbon\Carbon;
 use App\Models\Login_Logs;
 use App\Models\Register;
-use App\Models\Tnelb_Newsboard;
+// use App\Models\Tnelb_Newsboard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +22,7 @@ class LoginController extends BaseController
     public function check(Request $request)
     {
         $request->validate([
-            'phone' => ['required', 'regex:/^[6-9]\d{9}$/'],
+            'phone' => ['required', 'digits:10', 'regex:/^[6-9]\d{9}$/'],
             // 'captcha' => ['required'],
         ], [
             'phone.required' => 'Enter Mobile Number.',
@@ -31,7 +32,7 @@ class LoginController extends BaseController
 
 
         // Check if the phone number exists
-        $user = Register::where('mobile', $request->phone)->first();
+        $user =Register::where('mobile', $request->phone)->first();
 
         if (!$user) {
             return response()->json([
@@ -123,9 +124,10 @@ class LoginController extends BaseController
         // Retrieve user details
         $user = DB::table('tnelb_registers')->where('login_id', $loginId)->first();
 
+        // var_dump($user->first_name.$user->last_name);die;
         // Store user name in session
         if ($user) {
-            session(['name' => $user->name]);
+            session(['name' => $user->first_name.$user->last_name]);
         }
 
 

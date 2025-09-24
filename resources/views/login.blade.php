@@ -194,7 +194,8 @@
                     error: function(xhr) {
                         let response = JSON.parse(xhr.responseText);
                         if (response.message) {
-                            $("#phone").after('<span class="text-danger">' + response.message + '</span>'); // Show error below input
+                           // $("#phone").after('<span class="text-danger">' + response.message + '</span>'); // Show error below input
+                           $("#phoneError").text(response.message);
                         } else {
                             alert("An error occurred. Please try again.");
                         }

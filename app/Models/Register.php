@@ -16,7 +16,6 @@ class Register extends Model implements Authenticatable
     // protected $primaryKey = 'id'; 
 
     protected $fillable = [
-        'name', 'gender', 'mobile', 'email', 'address', 'state', 'district', 'pincode', 'login_id'
-    ];
+        'salutation','first_name','last_name','gender', 'mobile', 'email', 'address', 'state', 'district', 'pincode', 'login_id',];
 }
 

@@ -17,6 +17,7 @@ use App\Http\Controllers\PDFRenewalController;
 use App\Http\Controllers\RegisterController;
 use App\Models\Mst_documents;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Mews\Captcha\Facades\Captcha as FacadesCaptcha;
 use Mews\Captcha\Facades\Captcha;
 
@@ -227,9 +228,9 @@ Route::get('/noticeboardcontent/{news_id}', [LoginController::class, 'noticeboar
 
 // --------------------------------propertior-------------
 
-Route::delete('/proprietor/delete/{id}', [PropertiorController::class, 'deleteProprietor']);
+// Route::delete('/proprietor/delete/{id}', [PropertiorController::class, 'deleteProprietor']);
 
-Route::post('/proprietor/update/{id}', [PropertiorController::class, 'updateProprietor'])->name('admin.proprietor.update');
+// Route::post('/proprietor/update/{id}', [PropertiorController::class, 'updateProprietor'])->name('admin.proprietor.update');
 
 Route::get('/form/get-form-cost', [FormController::class, 'getFormCost'])->name('getFormCost');
 

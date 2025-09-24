@@ -7,9 +7,11 @@ use App\Models\Mst_Form_s_w;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Register;
+
 use App\Models\TnelbApplicantPhoto;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 use function PHPUnit\Framework\isNull;
 
@@ -27,7 +29,72 @@ class RegisterController extends BaseController
 
 
 
-    public function store(Request $request)
+   public function store(Request $request)
+    {
+        // var_dump($request->Address);die;
+        // Validate Input
+        $validator = Validator::make($request->all(), [
+            'salutation' => 'required|in:Mr,Mrs,Ms,Dr',
+            'first_name' => 'required|string|max:50',
+            'last_name'  => 'required|string|max:50',
+            'gender'     => 'required|string',
+            'mobile'     => [
+                'required',
+                'digits:10',
+                Rule::unique('tnelb_registers', 'mobile'),
+            ],
+            'email'      => [
+                'nullable',
+                'email',
+                Rule::unique('tnelb_registers', 'email'),
+            ],
+            'Address'    => 'required|string',
+            'state'      => 'required|string|max:255',
+            'district'   => 'required|string|max:255',
+            'pincode'    => 'required|digits:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Generate Login ID
+        $latestRecord = Register::latest('id')->first();
+        if ($latestRecord && preg_match('/tnelb_(\d+)/', $latestRecord->login_id, $matches)) {
+            $newRecord = (int) $matches[1] + 1;
+        } else {
+            $newRecord = 1120;
+        }
+        $newLoginId = 'tnelb_' . $newRecord;
+
+        // Store Data in Database
+        $register = Register::create([
+            'salutation' => $request->input('salutation'),
+            'first_name' => $request->input('first_name'),
+            'last_name'  => $request->input('last_name'),
+            'gender'     => $request->input('gender'),
+            'mobile'     => $request->input('mobile'),
+            'email'      => $request->input('email'),
+            'address'    => $request->input('Address'),
+            'state'      => $request->input('state'),
+            'district'   => $request->input('district'),
+            'pincode'    => $request->input('pincode'),
+            'login_id'   => $newLoginId,
+            'created_at' => now()
+        ]);
+
+        return response()->json([
+            'success'  => true,
+            'message'  => 'Registration successful!',
+            'login_id' => $newLoginId,
+        ], 200);
+    }
+
+
+    public function store_bkUP(Request $request)
     {
         // Validate Input
         $validator = Validator::make($request->all(), [
@@ -88,60 +155,6 @@ class RegisterController extends BaseController
         return view('user_login.index');
     }
 
-    // public function renew_form_bk($appl_id)
-    // {
-    //     if (!Auth::check()) {
-    //         return redirect()->route('logout');
-    //     }
-
-    //     if (!$appl_id) {
-    //         return redirect()->route('dashboard')->with('error', 'Application ID is required.');
-    //     }
-        
-    //     $application_details = DB::table('tnelb_application_tbl')
-    //     ->where('application_id', $appl_id)
-    //     // ->where('appl_type', 'R')
-    //     ->select('*')
-    //     ->first();
-
-        
-    //     if (!$application_details) {
-    //         return redirect()->route('dashboard')->with('error', 'Application not found.');
-    //     }
-
-    //     // $appIds = [$appl_id, $application_details->old_application];
-        
-    //     $edu_details = DB::table('tnelb_applicants_edu')
-    //     ->where('application_id', $appl_id)
-    //     ->select('*')
-    //     ->get();
-
-    //     $exp_details = DB::table('tnelb_applicants_exp')
-    //     ->where('application_id', $appl_id)
-    //     ->select('*')
-    //     ->get();
-
-        
-    //     $apps_doc = DB::table('tnelb_applicants_doc')
-    //     ->where('application_id', $appl_id)
-    //     ->select('*')
-    //     ->get();
-
-
-    //     $license_details = DB::table('tnelb_license')
-    //     ->where('application_id', $appl_id)
-    //     ->select('*')
-    //     ->first();
-
-    //     $applicant_photo = TnelbApplicantPhoto::where('application_id', $appl_id)
-    //     ->latest('id')
-    //     ->first();
-
-    //     $applicationid = $appl_id;
-
-
-    //     return view('user_login.renew-form', compact( 'applicationid','application_details','edu_details','exp_details','apps_doc','license_details','applicant_photo'));
-    // }
 
     public function renew_formcc($appl_id)
     {
