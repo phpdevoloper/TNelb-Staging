@@ -19,17 +19,6 @@
       font-weight: 700;
   }
 
-
-    /* .eight span:after,
-    .eight span:before {
-        content: " ";
-        display: block;
-         border-bottom: 2px solid #e4ff00; 
-        background-color: #f8f8f8;
-        margin-top: 13px;
-    } */
-
-
     .nav-item .nav-link i {
         margin-right: 10px;
     }
@@ -66,12 +55,24 @@
             <div class="collapse collapse-menu show" id="competencyMenu">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('apply-form-s') }}">
+                        <a class="nav-link" href="{{ route('forms.new_application',['form_id' => encrypt('S')]) }}">
                             <i class="fa fa-arrow-circle-o-right"></i> Apply for License C [Form S]
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('forms.new_application',['form_id' => encrypt('W')]) }}">
+                            <i class="fa fa-arrow-circle-o-right"></i> Apply For License B [Form W]
                         </a>
                     </li>
         
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ route('forms.new_application',['form_id' => encrypt('WH')]) }}">
+                            <i class="fa fa-arrow-circle-o-right"></i> Apply For License WH [Form WH]
+                        </a>
+                    </li>
+        
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ route('apply-form-w') }}">
                             <i class="fa fa-arrow-circle-o-right"></i> Apply For License B [Form W]
                         </a>
@@ -81,7 +82,7 @@
                         <a class="nav-link" href="{{ route('apply-form-wh') }}">
                             <i class="fa fa-arrow-circle-o-right"></i> Apply For License WH [Form WH]
                         </a>
-                    </li>
+                    </li> --}}
                 </ul>
             </div>
         </li>

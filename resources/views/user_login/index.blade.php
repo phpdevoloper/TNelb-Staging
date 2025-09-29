@@ -9,34 +9,6 @@
     <div class="layout-login">
         <div class="container-fluid">
             <div class="row">
-                <!-- Sidebar -->
-                {{-- <aside class="sidebar-login">
-                    <nav>
-                        <ul>
-                            <li><a href="#" class="active">Dashboard</a></li>
-
-                            <li class="has-submenu">
-                                <a href="#">Competency Certificates</a>
-                                <ul class="submenu">
-                                    <li><a href="{{ route('apply-form-s') }}"> <i class="fa fa-arrow-circle-o-right"></i> Apply for License C [Form S]</a></li>
-                                    <li><a href="{{ route('apply-form-w') }}"> <i class="fa fa-arrow-circle-o-right"></i> Apply For License B [Form W]</a></li>
-                                    <li><a href="{{ route('apply-form-wh') }}"> <i class="fa fa-arrow-circle-o-right"></i> Apply For License WH [Form WH]</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="has-submenu">
-                                <a href="#">Contractor License</a>
-                                <ul class="submenu">
-                                    <li><a href="{{ route('apply-form-a') }}"> <i class="fa fa-arrow-circle-o-right"></i> Apply For License EA [Form A]</a></li>
-
-                                </ul>
-                            </li>
-
-
-                        </ul>
-                    </nav>
-                </aside> --}}
-
                 @include('include.sidebar')
 
                 <main class="main-content-login">

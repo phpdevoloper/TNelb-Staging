@@ -269,10 +269,8 @@ use Illuminate\Support\Facades\Auth;
 
     <div class="page-wrapper">
         <div class="content ">
-
             <!-- Main Header -->
             <header class="main-header header-style-two ">
-
                 <!-- Header Top two -->
                 <div class="header-top-two bg-gray">
                     <div class="auto-container">
@@ -328,7 +326,6 @@ use Illuminate\Support\Facades\Auth;
 
                     </div>
                 </div>
-                <!-- <pre>{{ print_r(session()->all(), true) }}</pre> -->
 
                 <div class="logo-fun">
                     <div class="container">
@@ -363,6 +360,10 @@ use Illuminate\Support\Facades\Auth;
                             </div>
                             @endif
 
+                            @php
+                                // var_dump(Auth::user()->salutation.'.'.Auth::user()->first_name.'.'.Auth::user()->last_name);die;
+                            @endphp
+
                             <div class="col-lg-4 col-md-12 text-center">
                                 <ul class="top-info-box">
                                     @if(Auth::check())
@@ -370,7 +371,7 @@ use Illuminate\Support\Facades\Auth;
                                         <div class="profile">
                                             <div class="user">
                                                 <a class="btn btn-success text-white text-capitalize">
-                                                    <i class="fa fa-user-circle-o"></i>&nbsp; {{ Auth::user()->name }}
+                                                    <i class="fa fa-user-circle-o"></i>&nbsp; {{ Auth::user()->salutation.'.'.Auth::user()->first_name.'.'.Auth::user()->last_name }}
                                                 </a>
                                             </div>
                                         </div>

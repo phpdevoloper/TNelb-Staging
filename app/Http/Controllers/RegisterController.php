@@ -222,8 +222,15 @@ class RegisterController extends BaseController
         if (!Auth::check()) {
             return redirect()->route('logout');
         }
+        $authUser = Auth::user();
 
-        // $user_id = Auth::user()->login_id;
+        // var_dump($authUser);die;
+        $user = [
+            'user_id' => $authUser->login_id,
+            'salutation' => $authUser->salutation.' '.$authUser->salutation,
+            'applicant_name' => $authUser->first_name.' '.$authUser->last_name,
+        ];
+        
         // $check_applications = Mst_Form_s_w::where('login_id', $user_id)
         //         ->where('form_name', 'S')
         //         ->exists();
@@ -232,8 +239,10 @@ class RegisterController extends BaseController
         //     return redirect()->route('dashboard')->with('already_applied', true);
         // }
 
-        return view('user_login.apply-form-s');
+        return view('user_login.apply-form-s', compact('user'));
     }
+
+
 
     public function apply_form_w()
     {
@@ -321,8 +330,6 @@ class RegisterController extends BaseController
         return view($viewName, compact('application', 'form_name'));
     }
 
-
-  
 
 
     

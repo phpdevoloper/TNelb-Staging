@@ -55,8 +55,7 @@
     <div class="container">
         <ul id="breadcrumb">
             <li><a href="{{ route('dashboard')}}"><span class="fa fa-home"> </span> Dashboard</a></li>
-            <li><a href="#"><span class=" fa fa-info-circle"> </span> Form S</a></li>
-
+            <li><a href="#"><span class=" fa fa-info-circle"> </span> {{ $form_details['form_name'] }}</a></li>
         </ul>
     </div>
 </section>
@@ -69,7 +68,7 @@
                         <div class="apply-card-header" style="background-color: #70c6ef  !important;">
                             <div class="row">
                                 <div class="col-6 col-lg-8">
-                                    <h5 class="card-title_apply text-black text-left"> New Registration Form <span style="font-weight: 600;">[ Form S - License 'C' ] </span></h5>
+                                    <h5 class="card-title_apply text-black text-left"> New Registration Form <span style="font-weight: 600;">[ {{ $form_details['form_name'] }} - {{ $form_details['licence_name'] }} ] </span></h5>
                                 </div>
 
                                 <div class="col-6 col-lg-4 text-md-right">

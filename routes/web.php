@@ -90,15 +90,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/document/{type}/{filename}', [FormController::class, 'showEncryptedDocument'])->name('document.show');
     Route::post('/delete_education', [FormController::class, 'delete_education'])->name('delete_education');
     Route::post('/delete_experience', [FormController::class, 'delete_experience'])->name('delete_experience');
-
-// ------------------------------------form A------------
+    
+    // ------------------------------------form A------------
     Route::get('/renew_form/{application_id}', [EA_RenewalController::class, 'renew_form'])->name('renew_form');
     Route::get('/renew-form_ea/{application_id}', [EA_RenewalController::class, 'renew_form_ea'])->name('renew-form_ea');
-
+    
     // ------------draft form-----------------------------
     Route::get('/apply-form-a_draft/{application_id}', [EA_RenewalController::class, 'edit'])->name('apply-form-a_draft');
-
+    
     Route::get('/apply-form-a_renewal_draft/{application_id}', [EA_RenewalController::class, 'edit_renewaldraft'])->name('apply-form-a_renewal_draft');
+    
+    Route::get('forms/new_application/{form_id}', [FormController::class, 'new_application'])->name('forms.new_application');
 });
 
 // ------------------------ Form Submit & PDF Routes ------------------------

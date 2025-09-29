@@ -6,28 +6,89 @@ use App\Models\Mst_documents;
 use App\Models\Mst_education;
 use App\Models\Mst_experience;
 use App\Models\Mst_Form_s_w;
-use App\Models\mst_workflow;
-use App\Models\Payment;
-use App\Models\Tnelb_Renewals;
 use App\Models\TnelbApplicantPhoto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Str;
 
 class FormController extends BaseController
 {
-      public function __construct()
-{
-    parent::__construct();   
-    $this->middleware('web');
-}
+    public function __construct()
+    {
+        parent::__construct();   
+        $this->middleware('web');
+    }
+
+    // Single function for competency application form (Form S, Form W, Form WH)
+    public function new_application($form_id = null){
+
+        if (!Auth::check()) {
+            return redirect()->route('logout');
+        }
+
+        try {
+
+            $form_id = Crypt::decrypt($form_id);
+
+            $authUser = Auth::user();
+
+            $user = [
+                'user_id' => $authUser->login_id,
+                'salutation' => $authUser->salutation,
+                'applicant_name' => $authUser->first_name.' '.$authUser->last_name,
+            ];
+
+            $form_details = [
+                [
+                    'form_id' => 1,
+                    'form_name' => 'FORM S', 
+                    'licence_name' => 'Certificate C', 
+                ],
+                [
+
+                    'form_id'      => 2,
+                    'form_name'    => 'FORM W',
+                    'licence_name' => 'Certificate B',
+                ],
+                [
+                    'form_id'      => 3,
+                    'form_name'    => 'FORM WH',
+                    'licence_name' => 'Certificate H',
+                ],
+
+
+            ];
+
+            $current_form = collect($form_details)->firstWhere('form_id', $form_id);
+
+            if (!$current_form) {
+                abort(404, 'Form not found');
+            }
+
+
+
+            return view('forms.new_application', compact('user','form_details'));
+
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            abort(404, 'Invalid form link');
+        }
+
+        
+        
+        // $check_applications = Mst_Form_s_w::where('login_id', $user_id)
+        //         ->where('form_name', 'S')
+        //         ->exists();
+
+        // if ($check_applications) {
+        //     return redirect()->route('dashboard')->with('already_applied', true);
+        // }
+
+        
+    }
 
     public function store(Request $request)
     {
-
-
 
         $request->merge([
             'aadhaar' => preg_replace('/\D/', '', $request->aadhaar)

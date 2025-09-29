@@ -136,7 +136,7 @@
 
             <div class="col-lg-12 pt-2">
                 <div class="  text-center middleContent text-white"> © Content Owned and Maintained by Tamilnadu
-                    Electrical Licensing Board (TNELB), <br> Website Designed and Developed By<a rel="noopener"
+                    Electrical Licencing Board (TNELB), <br> Website Designed and Developed By<a rel="noopener"
                         href="http://www.nic.in/" target="blank" class="external_link pt-2"> National Informatics Centre
                         (NIC) </a>,
                     <a rel="noopener" href="http://meity.gov.in/" target="blank" class="external_link pt-2"> Ministry of
