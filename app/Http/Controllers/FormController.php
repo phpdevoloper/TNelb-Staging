@@ -39,28 +39,44 @@ class FormController extends BaseController
                 'applicant_name' => $authUser->first_name.' '.$authUser->last_name,
             ];
 
+
+            // var_dump($form_id);die;
+
+
+
             $form_details = [
                 [
                     'form_id' => 1,
+                    'form_code' => 'S',
                     'form_name' => 'FORM S', 
                     'licence_name' => 'Certificate C', 
                 ],
                 [
 
                     'form_id'      => 2,
+                    'form_code' => 'W',
                     'form_name'    => 'FORM W',
                     'licence_name' => 'Certificate B',
                 ],
                 [
                     'form_id'      => 3,
+                    'form_code' => 'H',
                     'form_name'    => 'FORM WH',
                     'licence_name' => 'Certificate H',
                 ],
-
-
             ];
 
-            $current_form = collect($form_details)->firstWhere('form_id', $form_id);
+
+            // $formName = match ($form_id) {
+            //     'S' => 'Supervisor',
+            //     'W' => 'FORM W',
+            //     'H' => 'FORM WH',
+            //     default => 'Unknown Form',
+            // };
+
+            $current_form = collect($form_details)->firstWhere('form_code', $form_id);
+
+            // var_dump($current_form);die;
 
             if (!$current_form) {
                 abort(404, 'Form not found');
@@ -68,7 +84,7 @@ class FormController extends BaseController
 
 
 
-            return view('forms.new_application', compact('user','form_details'));
+            return view('forms.new_application', compact('user','current_form'));
 
         } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
             abort(404, 'Invalid form link');

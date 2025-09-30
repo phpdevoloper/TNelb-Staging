@@ -4,6 +4,54 @@
     td {
         font-size: 15px;
     }
+
+
+     .custom-fieldset {
+        border: 1px solid #ccc;
+        padding: 1rem;
+        border-radius: 6px;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .custom-legend {
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 0 10px;
+    color: #333;
+    display: inline-block;
+    }
+
+    /* basic positioning */
+    .legend {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1rem 0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 20px;
+        flex-wrap: wrap;          /* wrap on smaller screens */
+    }
+    .legend li { 
+        display: flex;
+        align-items: center;        /* align box + text vertically */
+        font-size: 14px;
+    }
+    /* color box */
+    .legend span {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #ccc;
+    margin-right: 6px;          /* spacing between box and text */
+    border-radius: 2px;         /* optional, softer look */
+    }
+    /* your colors */
+    /* .legend .superawesome { background-color: #ff00ff; }
+    .legend .awesome      { background-color: #00ffff; }
+    .legend .kindaawesome { background-color: #0000ff; }
+    .legend .notawesome   { background-color: #000000; } */
+
 </style>
 <section class="dashboard-panel">
     <div class="layout-login">
@@ -18,14 +66,14 @@
 
                         <!-- Projects -->
                         <div class="projects-section-login">
-                            <h5 class="mb-2"><strong>Active / Present License Details</strong></h5>
+                            <h5 class="mb-2"><strong>Active / Present Licence Details</strong></h5>
                             <div class="project-list-login mt-2">
 
                                 <div class="project-card-login" data-status="en-cours">
                                     @if (!$present_license && !$present_license_ea)
                                         <div class="row">
                                             <div class="col-12">
-                                                <p>No Active Licenses</p>
+                                                <p>No Active Licences</p>
                                             </div>
                                         </div>
                                     @endif
@@ -136,7 +184,6 @@
 
                         <div class="mobile_formview d-block d-sm-none" >
                             <h5 class="mb-2"><strong>Status of Applications ( Competency Certificate )</strong></h5>
-
                             @foreach ($workflows_present as $index => $workflow)
                                 <div class="card mb-3 p-3 shadow-sm border rounded">
                                     <h6 class="mb-2">
@@ -262,7 +309,18 @@
                         </div>   
                         <!-- ----------------- -->
                         <div class="tasks-section-login d-none d-sm-block">
-                            <h5 class="mb-2"><strong>Status of Applications ( Competency Certificate )</strong></h5>
+                             <fieldset class="custom-fieldset">
+                                <legend class="custom-legend">
+                                    <h5 class="mb-2">
+                                        <strong>Status of Applications ( Competency Certificate )</strong>
+                                    </h5>
+                                </legend>
+                            <ul class="legend justify-content-end mb-2">
+                                <li><span class="bg-success"></span> Completed</li>
+                                <li><span class="bg-warning"></span> In Progress</li>
+                                <li><span class="bg-danger"></span> Rejected</li>
+                                <li><span class="bg-primary"></span> Draft</li>
+                            </ul>
                             <table class="table-login">
                                 <thead>
                                     <tr>
@@ -345,7 +403,6 @@
                                                             style="font-weight:500;">
                                                             <i
                                                                 class="fa fa-file-pdf-o"style="font-size:20px;color:red"></i>
-                                                            {{-- <i class="fa fa-download"style="font-size:20px;color:red"></i>  --}}
                                                         </a>
                                                     @else
                                                         <p class="text-warning">Pending</p>
@@ -354,15 +411,10 @@
 
                                                 <!-- Application Download -->
                                                 <td>
-
-                                                    {{-- @if ($workflow->appl_type == 'R')
-                                                        @if ($workflow->payment_status == 'draft')
-                                                                <p>-</p>
-                                                        @else
-                                                        <a href="{{ route('generaterenewal.tamil.pdf', [
-                                                            'login_id' => $workflow->application_id,
-                                                            'old_application' => $workflow->old_application,
-                                                        ]) }}"
+                                                    @if ($workflow->payment_status == 'draft')
+                                                        <p>-</p>
+                                                    @else
+                                                        <a href="{{ route('generate.tamil.pdf', ['login_id' => $workflow->application_id]) }}"
                                                             target="_blank"
                                                             style="border-right:1px solid #000;font-weight:500;">
                                                             <i class="fa fa-file-pdf-o"
@@ -370,36 +422,13 @@
                                                                 style="font-size: x-small;">தமிழ்</span>
                                                         </a>
 
-                                                        <a href="{{ route('generaterenewal.pdf', [
-                                                            'login_id' => $workflow->application_id,
-                                                            'old_application' => $workflow->old_application,
-                                                        ]) }}"
+                                                        <a href="{{ route('generate.pdf', ['login_id' => $workflow->application_id]) }}"
                                                             target="_blank" style="font-weight:500;">&nbsp;
                                                             <i class="fa fa-file-pdf-o"
                                                                 style="font-size:20px;color:red"></i> <span
                                                                 style="font-size: x-small;"> English</span>
                                                         </a>
-                                                        @endif
-                                                    @else --}}
-                                                        @if ($workflow->payment_status == 'draft')
-                                                            <p>-</p>
-                                                        @else
-                                                            <a href="{{ route('generate.tamil.pdf', ['login_id' => $workflow->application_id]) }}"
-                                                                target="_blank"
-                                                                style="border-right:1px solid #000;font-weight:500;">
-                                                                <i class="fa fa-file-pdf-o"
-                                                                    style="font-size:20px;color:red"></i> <span
-                                                                    style="font-size: x-small;">தமிழ்</span>
-                                                            </a>
-
-                                                            <a href="{{ route('generate.pdf', ['login_id' => $workflow->application_id]) }}"
-                                                                target="_blank" style="font-weight:500;">&nbsp;
-                                                                <i class="fa fa-file-pdf-o"
-                                                                    style="font-size:20px;color:red"></i> <span
-                                                                    style="font-size: x-small;"> English</span>
-                                                            </a>
-                                                        @endif
-                                                    {{-- @endif --}}
+                                                    @endif
                                                 </td>
 
                                                 <!-- License Number -->
@@ -448,57 +477,12 @@
                                                         <p class="text-primary">NA</p>
                                                     @endif
                                                 </td>
-
-
-
-
-                                                {{-- <td>
-                                                    @if (!empty($workflow->license_number) && $workflow->status == 'A')
-                                                        <a href="{{ route('admin.generate.pdf', ['application_id' => $workflow->application_id]) }}"
-                                                            target="_blank"> <span class="badge badge-info"
-                                                                style="font-size: 15px;">
-                                                                {{ $workflow->license_number }}
-                                                            </span>
-                                                        </a>
-                                                        @php
-                                                            $license_details = DB::table('tnelb_application_tbl')
-                                                                ->where('license_number', $workflow->license_number)
-                                                                ->select('*')
-                                                                ->first();
-
-                                                            $renewed = DB::table('tnelb_renewal_license')
-                                                                ->where('license_number', $workflow->license_number)
-                                                                ->select('*')
-                                                                ->first();
-
-                                                        @endphp
-
-                                                        <br>
-                                                        @if (isset($renewed) && !empty($renewed))
-                                                        @elseif (isset($license_details->application_id) && !empty($license_details->application_id))
-                                                            <strong>Renewal Application</strong><br> ID : <span
-                                                                class="text-success">{{ $license_details->application_id }}</span>
-                                                        @endif
-                                                        </p>
-                                                    @else
-                                                        <p class="text-primary">NA</p>
-                                                    @endif
-                                                    
-                                                    @if (empty($license_details))
-                                                        @if (isset($workflow->license_number) && \Carbon\Carbon::parse($workflow->expires_at)->lt(\Carbon\Carbon::now()))
-                                                            <a href="{{ route('renew_formcc', ['application_id' => $workflow->application_id]) }}"
-                                                                class="text-primary">
-                                                                (Apply for renewal)
-                                                            </a>
-                                                        @endif
-                                                    @endif
-                                                </td> --}}
-                                                
                                             </tr>
                                         @endforeach
                                 </tbody>
                             </table>
                         </div>
+                        </fieldset>
                         @endif
 
                         <!-- ---------------------------------------------------------- -->

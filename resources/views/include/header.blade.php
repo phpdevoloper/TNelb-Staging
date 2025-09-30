@@ -371,7 +371,7 @@ use Illuminate\Support\Facades\Auth;
                                         <div class="profile">
                                             <div class="user">
                                                 <a class="btn btn-success text-white text-capitalize">
-                                                    <i class="fa fa-user-circle-o"></i>&nbsp; {{ Auth::user()->salutation.'.'.Auth::user()->first_name.'.'.Auth::user()->last_name }}
+                                                    <i class="fa fa-user-circle-o"></i>&nbsp; {{ Auth::user()->salutation.'.'.Auth::user()->first_name.' '.Auth::user()->last_name }}
                                                 </a>
                                             </div>
                                         </div>

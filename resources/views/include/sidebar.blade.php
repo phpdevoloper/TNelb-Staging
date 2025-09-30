@@ -29,6 +29,14 @@
         margin: unset;
         
     }
+
+    div#competencyMenu .nav-link {
+        font-size: 13px;
+    }
+
+    div#contractorMenu .nav-link {
+        font-size: 13px;
+    }
 </style>
 
 
@@ -55,20 +63,20 @@
             <div class="collapse collapse-menu show" id="competencyMenu">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('forms.new_application',['form_id' => encrypt('S')]) }}">
-                            <i class="fa fa-arrow-circle-o-right"></i> Apply for License C [Form S]
+                        <a class="nav-link" href="{{ route('forms.new_application',['form_code' => encrypt('S')]) }}">
+                            <i class="fa fa-arrow-circle-o-right"></i> Apply for Certificate C [Form S]
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('forms.new_application',['form_id' => encrypt('W')]) }}">
-                            <i class="fa fa-arrow-circle-o-right"></i> Apply For License B [Form W]
+                        <a class="nav-link" href="{{ route('forms.new_application',['form_code' => encrypt('W')]) }}">
+                            <i class="fa fa-arrow-circle-o-right"></i> Apply For Certificate B [Form W]
                         </a>
                     </li>
         
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('forms.new_application',['form_id' => encrypt('WH')]) }}">
-                            <i class="fa fa-arrow-circle-o-right"></i> Apply For License WH [Form WH]
+                        <a class="nav-link" href="{{ route('forms.new_application',['form_code' => encrypt('H')]) }}">
+                            <i class="fa fa-arrow-circle-o-right"></i> Apply For Certificate WH [Form WH]
                         </a>
                     </li>
         
@@ -88,7 +96,7 @@
         </li>
         <hr>
         <div class="eight">
-            <span><i class="fa fa-file-text-o me-2"></i> Contractor Licenses</span>
+            <span><i class="fa fa-file-text-o me-2"></i> Contractor Licences</span>
         </div>
 
         <li class="nav-item">
@@ -104,7 +112,7 @@
             <div class="collapse collapse-menu show" id="contractorMenu">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('apply-form-a') }}"><i class="fa fa-arrow-circle-o-right"></i>Apply For License EA [Form A]</a>
+                        <a class="nav-link" href="{{ route('apply-form-a') }}"><i class="fa fa-arrow-circle-o-right"></i>Apply For Licence EA [Form A]</a>
                     </li>
                 </ul>
             </div>

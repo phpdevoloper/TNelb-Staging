@@ -100,7 +100,7 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('/apply-form-a_renewal_draft/{application_id}', [EA_RenewalController::class, 'edit_renewaldraft'])->name('apply-form-a_renewal_draft');
     
-    Route::get('forms/new_application/{form_id}', [FormController::class, 'new_application'])->name('forms.new_application');
+    Route::get('forms/new_application/{form_code}', [FormController::class, 'new_application'])->name('forms.new_application');
 });
 
 // ------------------------ Form Submit & PDF Routes ------------------------

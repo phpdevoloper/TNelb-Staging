@@ -55,7 +55,7 @@
     <div class="container">
         <ul id="breadcrumb">
             <li><a href="{{ route('dashboard')}}"><span class="fa fa-home"> </span> Dashboard</a></li>
-            <li><a href="#"><span class=" fa fa-info-circle"> </span> {{ $form_details['form_name'] }}</a></li>
+            <li><a href="#"><span class=" fa fa-info-circle"> </span> {{ $current_form['form_name'] }}</a></li>
         </ul>
     </div>
 </section>
@@ -68,7 +68,7 @@
                         <div class="apply-card-header" style="background-color: #70c6ef  !important;">
                             <div class="row">
                                 <div class="col-6 col-lg-8">
-                                    <h5 class="card-title_apply text-black text-left"> New Registration Form <span style="font-weight: 600;">[ {{ $form_details['form_name'] }} - {{ $form_details['licence_name'] }} ] </span></h5>
+                                    <h5 class="card-title_apply text-black text-left"> New Registration Form <span style="font-weight: 600;">[ {{ $current_form['form_name'] }} - {{ $current_form['licence_name'] }} ] </span></h5>
                                 </div>
 
                                 <div class="col-6 col-lg-4 text-md-right">
@@ -96,9 +96,9 @@
                                                         </div>
                                                         <div class="col-12 col-md-2">
                                                             <select id="salutation" name ="salutation" class="form-control">
-                                                                <option value="Mr" {{ $user['applicant_name'] == "Mr"?'selected':'' }}> Mr</option>
-                                                                <option value="Ms" {{ $user['applicant_name'] == "Ms"?'selected':'' }}>Ms </option>
-                                                                <option value="Mrs" {{ $user['applicant_name'] == "Mrs"?'selected':'' }}>Mrs </option>
+                                                                <option value="Mr" {{ $user['salutation'] == "Mr"?'selected':'' }}> Mr</option>
+                                                                <option value="Ms" {{ $user['salutation'] == "Ms"?'selected':'' }}>Ms </option>
+                                                                <option value="Mrs" {{ $user['salutation'] == "Mrs"?'selected':'' }}>Mrs </option>
                                                             </select>
                                                         </div>
 
@@ -301,61 +301,83 @@
                                         </div>
                                         <hr>
                                         <div class="row align-items-center">
-                                            <div class="col-12 col-md-12 ">
-                                                <div class="row align-items-center">
-                                                    <div class="col-12 col-md-9 ">
-                                                        <label for="Name">7. Have previously applied for Electrical Assistant Qualification Certificate and if yes then mention its number and date
-                                                        </label>
-                                                        <br>
-                                                        <label for="tamil" class="tamil">இதற்கு முன்னாள் விண்ணப்பம் செய்துள்ளீர்களா ? ஆம் என்றால் அதன் குறிப்பு எண் மற்றும் தேதியை குறிப்பிடுக
-                                                        </label>
-                                                    </div>
+                                            @if ($current_form['form_code'] == 'S')
+                                            <div class="col-12 col-md-9 ">
+                                                <label for="Name">7. Have previously applied for Electrical Assistant Qualification Certificate and if yes then mention its number and date
+                                                </label>
+                                                <br>
+                                                <label for="tamil" class="tamil">இதற்கு முன்னாள் விண்ணப்பம் செய்துள்ளீர்களா ? ஆம் என்றால் அதன் குறிப்பு எண் மற்றும் தேதியை குறிப்பிடுக
+                                                </label>
+                                            </div>
 
-                                                    <div class="col-md-3">
-                                                        <div class="form-check form-check-inline">
-                                                            <input class="form-check-input toggle-details" type="radio" name="previous_license" id="previous_license_yes" data-target="#previously_details" value="yes">
-                                                            <label class="form-check-label" for="yesOption">Yes</label>
-                                                        </div>
-                                                          
-                                                        <div class="form-check form-check-inline">
-                                                            <input class="form-check-input toggle-details" type="radio" name="previous_license" id="previous_license_no" data-target="#previously_details" value="no" checked>
-                                                            <label class="form-check-label" for="noOption">No</label>
-                                                        </div>
-                                                    </div>
+                                            <div class="col-md-3">
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input toggle-details" type="radio" name="previous_license" id="previous_license_yes" data-target="#previously_details" value="yes">
+                                                    <label class="form-check-label" for="yesOption">Yes</label>
                                                 </div>
-                                                <div class="row" id="previously_details" style="display: none;">
-                                                    <div class="col-12 col-md-2 text-md-right">
-                                                        <label> License Number <span style="color: red;">*</span></label>
+                                                    
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input toggle-details" type="radio" name="previous_license" id="previous_license_no" data-target="#previously_details" value="no" checked>
+                                                    <label class="form-check-label" for="noOption">No</label>
+                                                </div>
+                                            </div>
+                                            @elseif($current_form['form_code'] == 'W')
+                                            <div class="col-12 col-md-9 ">
+                                                <label for="Name">7. Have you applied for and obtained a Certificate of Qualification for Wireman / Wireman Helper ? If yes, please state its number and date.
+                                                </label>
+                                                <br>
+                                                <label for="tamil" class="tamil">இதற்கு முன்னாள் விண்ணப்பம் செய்து கம்பியாட்கள் தகுதி சான்றிதழ் / மின் கம்பி உதவியாளர் தகுதி சான்றிதழ் பெற்றுஉள்ளதா ஆம் என்றால் அதன் எண் மற்றும் நாளைக் குறிப்பிடுக
+                                                </label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="container">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input toggle-details" type="radio" name="wireman_license" id="wireman_license_yes" data-target="#previously_details" value="yes">
+                                                        <label class="form-check-label" for="yesOption">Yes</label>
+                                                    </div>
+                                                      
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input toggle-details" type="radio" name="wireman_license" id="wireman_license_no" data-target="#previously_details" value="no" checked>
+                                                        <label class="form-check-label" for="noOption">No</label>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            @endif
+                                        </div>
 
-                                                    </div>
-                                                    <div class="col-12 col-md-2">
-                                                        <input autocomplete="off" class="form-control text-box single-line verify-input" id="previously_number" name="previously_number" type="text" data-type="license" data-error="#licenseError" data-msg="#license_messagdfde" placeholder="License Number" value="">
-                                                        <input type="hidden" id="l_verify" name="l_verify" value="0">
-                                                        <span id="licenseError" class="text-danger"></span>
-                                                        <span id="verify_result"></span>
-                                                        <span id="license_messagdfde" class="mt-1"></span>
-                                                    </div>
-                                                    <div class="col-12 col-md-1 text-md-right">
-                                                        <label> Date <span style="color: red;">*</span></label>
+                                        
+                                        <div class="row" id="previously_details" style="display: none;">
+                                            <div class="col-12 col-md-2 text-md-right">
+                                                <label> License Number <span style="color: red;">*</span></label>
 
+                                            </div>
+                                            <div class="col-12 col-md-2">
+                                                <input autocomplete="off" class="form-control text-box single-line verify-input" id="previously_number" name="previously_number" type="text" data-type="{{ $current_form['form_code'] }}" data-error="#licenseError" data-msg="#license_messagdfde" placeholder="License Number" value="">
+                                                <input type="hidden" id="l_verify" name="l_verify" value="0">
+                                                <span id="licenseError" class="text-danger"></span>
+                                                <span id="verify_result"></span>
+                                                <span id="license_messagdfde" class="mt-1"></span>
+                                            </div>
+                                            <div class="col-12 col-md-1 text-md-right">
+                                                <label> Date <span style="color: red;">*</span></label>
+
+                                            </div>
+                                            <div class="col-12 col-md-7 d-flex">
+                                                <div class="row">
+                                                    <div class="col-12 col-md-7">
+                                                        <input autocomplete="off" class="form-control text-box single-line verify-date" id="previously_date" name="previously_date" type="date" data-error="#dateError" value="">
+                                                        <span id="dateError" class="text-danger"></span>
                                                     </div>
-                                                    <div class="col-12 col-md-7 d-flex">
-                                                        <div class="row">
-                                                            <div class="col-12 col-md-7">
-                                                                <input autocomplete="off" class="form-control text-box single-line verify-date" id="previously_date" name="previously_date" type="date" data-error="#dateError" value="">
-                                                                <span id="dateError" class="text-danger"></span>
-                                                            </div>
-                                                            <div class="col-12 col-md-1 d-flex">
-                                                                <button type="button" class="btn btn-primary verify-btn" data-type="license" data-url="{{ route('verifylicense') }}" style="margin-left: 10px;">  Verify
-                                                                </button>
-                                                            </div>
-                                                        </div>
+                                                    <div class="col-12 col-md-1">
+                                                        <button type="button" class="btn btn-primary verify-btn" data-type="{{ $current_form['form_code'] }}" data-url="{{ route('verifylicense') }}" style="margin-left: 10px;">  Verify
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        
+                                        @if ($current_form['form_code'] != 'S')
                                         <hr>
-
                                         <div class="row align-items-center">
                                             <div class="col-12 col-md-12 ">
                                                 <div class="row align-items-center">
@@ -414,11 +436,15 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        @endif
 
                                         <hr>
+                                        @php
+                                            $sno = $current_form['form_code'] == 'S'?'8':'9';
+                                        @endphp
                                         <div class="row align-items-center head_label mt-2">
                                             <div class="col-12 col-md-12">
-                                                <label>9. Upload Documents <span style="color: red;">*</span></label>
+                                                <label>{{ $sno }}. Upload Documents <span style="color: red;">*</span></label>
                                                 <br>
                                                 <label for="tamil" class="tamil">ஆவணங்களைப் பதிவேற்றவும்
                                                 </label>

@@ -3,10 +3,10 @@ $(document).ready(function () {
     // License verfication for FORM -w , FORM - WH ----------------------
 
     const regexRules = {
-        license: /^(C|LC)\d+$/,
-        certificate: /^(B|H|LWH|LB)\d+$/,
+        S: /^(C|LC)\d+$/,
+        W: /^(B|H|LWH|LB)\d+$/,
         supervisor:/^(B|C|LC|LB)\d+$/,
-        helper:/^(H|LWH)\d+$/,
+        H:/^(H|LWH)\d+$/,
     };
 
     // ✅ Toggle Yes/No for all sections
@@ -33,13 +33,15 @@ $(document).ready(function () {
         errorBox.text("");
         msgBox.text("");
 
-        if (value === "") {
-            errorBox.text("License Number is Required");
-            return;
-        }
+        // if (value === "") {
+        //     errorBox.text("Licence Number is Required");
+        //     return;
+        // }
 
-        if (!regexRules[type].test(value)) {
-            errorBox.text("Invalid License Number");
+        if (value !== "") {
+            if (!regexRules[type].test(value)) {
+                errorBox.text("Invalid Licence Number");
+            }
         }
     });
 
@@ -57,7 +59,7 @@ $(document).ready(function () {
         let input = section.find(".verify-input");
         let date = section.find(".verify-date");
 
-        if (input.length === 0 || date.length === 0) {
+        if (input.length === 0 && date.length === 0) {
             console.error("Input or date field not found!");
             return;
         }
@@ -66,6 +68,10 @@ $(document).ready(function () {
         let dateVal = date.val()?.trim() || "";
 
         let type = $(this).data("type");
+
+        // console.log(type);
+        // return false;
+
         let errorBox = $(input.data("error"));
         let dateErrorBox = $(date.data("error"));
         let msgBox = $(input.data("msg"));
@@ -77,10 +83,10 @@ $(document).ready(function () {
         let isValid = true;
 
         if (value === "") {
-            errorBox.text("License Number is required");
+            errorBox.text("Licence Number is required");
             isValid = false;
         } else if (!regexRules[type].test(value)) {
-            errorBox.text("Invalid License Number");
+            errorBox.text("Invalid Licence Number");
             isValid = false;
         }
 

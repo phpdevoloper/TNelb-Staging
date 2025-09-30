@@ -34,6 +34,8 @@ class LicenseController extends Controller
 
         $licenseNumber = $request->license_number;
 
+        
+
         // ✅ Split letters and numbers
         if (preg_match('/^([A-Za-z]+)(\d+)$/', $licenseNumber, $matches)) {
             $licensePrefix = strtoupper($matches[1]); // W, WH, S
@@ -57,6 +59,8 @@ class LicenseController extends Controller
             $column_name = 'license_number';
         }
 
+        
+
 
         // ✅ Correct column names for each table
         $query = DB::table($table)
@@ -67,6 +71,7 @@ class LicenseController extends Controller
         ->where($column_name ?? 'certno', $licenseNum) // or license_number for tnelb_license
         ->whereDate($table === 'tnelb_license' ? 'expires_at' : 'vdate', $request->date)
         ->exists();
+
 
         if ($query == true) {
             if(!empty($request->type)){
