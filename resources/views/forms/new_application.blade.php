@@ -95,7 +95,7 @@
                                                             <label for="tamil" class="tamil">விண்ணப்பதாரர் பெயர்</label>
                                                         </div>
                                                         <div class="col-12 col-md-2">
-                                                            <select id="salutation" name ="salutation" class="form-control">
+                                                            <select id="salutation" name ="salutation" class="form-control" readonly>
                                                                 <option value="Mr" {{ $user['salutation'] == "Mr"?'selected':'' }}> Mr</option>
                                                                 <option value="Ms" {{ $user['salutation'] == "Ms"?'selected':'' }}>Ms </option>
                                                                 <option value="Mrs" {{ $user['salutation'] == "Mrs"?'selected':'' }}>Mrs </option>
@@ -376,7 +376,7 @@
                                             </div>
                                         </div>
                                         
-                                        @if ($current_form['form_code'] != 'S')
+                                        @if ($current_form['form_code'] == 'S')
                                         <hr>
                                         <div class="row align-items-center">
                                             <div class="col-12 col-md-12 ">
@@ -440,7 +440,7 @@
 
                                         <hr>
                                         @php
-                                            $sno = $current_form['form_code'] == 'S'?'8':'9';
+                                            $sno = $current_form['form_code'] == 'S'?'9':'8';
                                         @endphp
                                         <div class="row align-items-center head_label mt-2">
                                             <div class="col-12 col-md-12">

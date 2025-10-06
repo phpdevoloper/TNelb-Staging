@@ -84,7 +84,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/apply-form-wh', [RegisterController::class, 'apply_form_wh'])->name('apply-form-wh');
     Route::get('/apply-form-a', [RegisterController::class, 'apply_form_a'])->name('apply-form-a');
     Route::get('/successpage', [RegisterController::class, 'successpage'])->name('successpage');
-    Route::get('/edit_application/{application_id}', [FormController::class, 'edit_application'])->name('edit_application');
+    Route::get('/editApplication/{application_id}', [FormController::class, 'editApplication'])->name('edit-application');
     Route::get('/renew_formcc/{application_id}', [RegisterController::class, 'renew_formcc'])->name('renew_formcc');
     Route::get('/renew-form_ea/{application_id}', [EA_RenewalController::class, 'renew_form_ea'])->name('renew-form_ea');
     Route::get('/document/{type}/{filename}', [FormController::class, 'showEncryptedDocument'])->name('document.show');
@@ -100,6 +100,8 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('/apply-form-a_renewal_draft/{application_id}', [EA_RenewalController::class, 'edit_renewaldraft'])->name('apply-form-a_renewal_draft');
     
+
+    //New Modified Routes added here 
     Route::get('forms/new_application/{form_code}', [FormController::class, 'new_application'])->name('forms.new_application');
 });
 

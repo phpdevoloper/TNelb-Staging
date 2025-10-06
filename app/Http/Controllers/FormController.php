@@ -2034,7 +2034,7 @@ if ($request->hasFile('pancard_doc')) {
     }
 
 
-    public function edit_application($appl_id)
+    public function editApplication($appl_id)
     {
 
 

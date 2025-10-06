@@ -10,7 +10,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'TNELB - Dashboard')</title>
-<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+{{-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> --}}
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/admin/images/logo/logo.png') }}">
 

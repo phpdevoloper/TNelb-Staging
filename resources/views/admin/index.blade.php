@@ -11,17 +11,17 @@
         <!-- <script src="https://kit.fontawesome.com/a076d05399.js"></script> -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        <link rel="icon" type="image/x-icon" href="{{secure_asset('assets/admin/images/logo/logo.png') }}" />
+        <link rel="icon" type="image/x-icon" href="{{asset('assets/admin/images/logo/logo.png') }}" />
         {{-- <link href="{{secure_asset('assets/admin/layouts/vertical-light-menu/css/light/loader.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{secure_asset('assets/admin/layouts/vertical-light-menu/css/dark/loader.css') }}" rel="stylesheet" type="text/css" />
         <script src="{{secure_asset('assets/admin/layouts/vertical-light-menu/loader.js') }}"></script> --}}
         <!-- BEGIN GLOBAL MANDATORY STYLES -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
-        <link href="{{secure_asset('assets/admin/src/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
-        <link href="{{secure_asset('assets/admin/layouts/vertical-light-menu/css/light/plugins.css') }}" rel="stylesheet" type="text/css" />
-        <link href="{{secure_asset('assets/admin/src/assets/css/light/authentication/auth-cover.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('assets/admin/src/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('assets/admin/layouts/vertical-light-menu/css/light/plugins.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('assets/admin/src/assets/css/light/authentication/auth-cover.css') }}" rel="stylesheet" type="text/css" />
         <!-- END GLOBAL MANDATORY STYLES -->
-        <link href="{{ secure_asset('assets/admin/main.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{  asset('assets/admin/main.css') }}" rel="stylesheet" type="text/css" />
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
         <style>
@@ -119,12 +119,12 @@
         </div>
 
 <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
-<script src="{{secure_asset('assets/admin/src/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-<script src="{{secure_asset('assets/admin/jquery-3.6.0.min.js') }}"></script>
-<script src="{{secure_asset('assets/admin/plugins/sha512/sha512.min.js') }}"></script>
-<script src="{{secure_asset('assets/admin/plugins/sha512/sha512.js') }}"></script>
+<script src="{{asset('assets/admin/src/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{asset('assets/admin/jquery-3.6.0.min.js') }}"></script>
+<script src="{{asset('assets/admin/plugins/sha512/sha512.min.js') }}"></script>
+<script src="{{asset('assets/admin/plugins/sha512/sha512.js') }}"></script>
 <!-- <script src="{{url('assets/admin/plugins/jquery/jquery.min.js') }}"></script> -->
-<script src="{{secure_asset('assets/admin/custom.js') }}"></script>
+<script src="{{asset('assets/admin/custom.js') }}"></script>
 <!-- END GLOBAL MANDATORY SCRIPTS -->
 
 

@@ -202,7 +202,7 @@
                                             @php
                                                 $view_page = isset($workflow->appl_type) && $workflow->appl_type == 'R'
                                                     ? 'renew_formcc'
-                                                    : 'edit_application';
+                                                    : 'edit-application';
                                             @endphp
                                             <a href="{{ route($view_page, ['application_id' => $workflow->application_id]) }}" class="btn btn-warning btn-sm">
                                                 <i class="fa fa-pencil"></i> Draft
@@ -315,12 +315,12 @@
                                         <strong>Status of Applications ( Competency Certificate )</strong>
                                     </h5>
                                 </legend>
-                            <ul class="legend justify-content-end mb-2">
-                                <li><span class="bg-success"></span> Completed</li>
-                                <li><span class="bg-warning"></span> In Progress</li>
-                                <li><span class="bg-danger"></span> Rejected</li>
-                                <li><span class="bg-primary"></span> Draft</li>
-                            </ul>
+                                <ul class="legend justify-content-end mb-2">
+                                    <li><span class="bg-success"></span> Completed</li>
+                                    <li><span class="bg-warning"></span> In Progress</li>
+                                    <li><span class="bg-danger"></span> Rejected</li>
+                                    <li><span class="bg-primary"></span> Draft</li>
+                                </ul>
                             <table class="table-login">
                                 <thead>
                                     <tr>
@@ -332,7 +332,7 @@
                                         <th>Payment Status</th>
                                         <th>Payment Receipt</th>
                                         <th>Application Download</th>
-                                        <th>License Status</th>
+                                        <th>Certificate Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -352,12 +352,12 @@
                                                                 isset($workflow->appl_type) &&
                                                                 $workflow->appl_type == 'R'
                                                                     ? 'renew_formcc'
-                                                                    : 'edit_application';
+                                                                    : 'edit-application';
 
                                                         @endphp
                                                         <a
                                                             href="{{ route($view_page, ['application_id' => $workflow->application_id]) }}">
-                                                            <button class="btn btn-warning">
+                                                            <button class="btn btn-primary">
                                                                 <i class="fa fa-pencil"></i> Draft
                                                             </button>
                                                         </a>
@@ -366,7 +366,7 @@
                                                             @if ($workflow->status == 'P')
                                                                 <span class="btn btn-sm btn-primary">Submitted</span>
                                                             @elseif($workflow->status == 'F')
-                                                                <span class="btn btn-danger">In Progress</span>
+                                                                <span class="btn btn-warning">In Progress</span>
                                                              @elseif($workflow->status == 'RJ')
                                                                 <span class="btn btn-danger">Rejected</span>
                                                             @else
@@ -623,168 +623,177 @@ exit;
                         
 
                         <div class="tasks-section-login d-none d-sm-block">
-                            <h5 class="mb-2"><strong>Status of Applications ( Contractor License )</strong></h5>
-                            <table class="table-login">
-                                <thead>
-                                    <tr>
-                                        <th>S.No</th>
-                                        <th>Form Type</th>
-                                        <th>Application ID</th>
-                                        <th>Applied On</th>
-                                        <th>Application Status</th>
-                                        <th>Payment Status</th>
-                                        <th>Payment Receipt</th>
-                                        <th>Application Download</th>
-                                        <th>License Number</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (isset($workflows_cl) && $workflows_cl->isNotEmpty())
-                                    @foreach ($workflows_cl as $index => $workflow)
-                                    <?php //var_dump($workflow);die;
-                                    ?>
-                                    <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>Form {{ strtoupper($workflow->form_name ?? 'N/A') }}</td>
-                                        <td>{{ $workflow->application_id ?? 'N/A' }}</td>
-                                        <td>{{ isset($workflow->created_at) ? \Carbon\Carbon::parse($workflow->created_at)->format('d/m/Y') : 'N/A' }}
-                                        </td>
+                            <fieldset class="custom-fieldset">
+                                <legend class="custom-legend">
+                                    <h5 class="mb-2"><strong>Status of Applications ( Contractor License )</strong></h5>
+                                </legend>
+                                <ul class="legend justify-content-end mb-2">
+                                    <li><span class="bg-success"></span> Completed</li>
+                                    <li><span class="bg-warning"></span> In Progress</li>
+                                    <li><span class="bg-danger"></span> Rejected</li>
+                                    <li><span class="bg-primary"></span> Draft</li>
+                                </ul>
+                                <table class="table-login">
+                                    <thead>
+                                        <tr>
+                                            <th>S.No</th>
+                                            <th>Form Type</th>
+                                            <th>Application ID</th>
+                                            <th>Applied On</th>
+                                            <th>Application Status</th>
+                                            <th>Payment Status</th>
+                                            <th>Payment Receipt</th>
+                                            <th>Application Download</th>
+                                            <th>License Number</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (isset($workflows_cl) && $workflows_cl->isNotEmpty())
+                                        @foreach ($workflows_cl as $index => $workflow)
+                                        <?php //var_dump($workflow);die;
+                                        ?>
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>Form {{ strtoupper($workflow->form_name ?? 'N/A') }}</td>
+                                            <td>{{ $workflow->application_id ?? 'N/A' }}</td>
+                                            <td>{{ isset($workflow->created_at) ? \Carbon\Carbon::parse($workflow->created_at)->format('d/m/Y') : 'N/A' }}
+                                            </td>
 
-                                        <!-- Application Status -->
-                                        <td>
-                                            @if ($workflow->payment_status == 'draft')
+                                            <!-- Application Status -->
+                                            <td>
+                                                @if ($workflow->payment_status == 'draft')
 
-    
-                                            @if (strtoupper(trim($workflow->appl_type)) === 'N')
-                                            <a href="{{ route('apply-form-a_draft', ['application_id' => $workflow->application_id]) }}">
-                                                <button class="btn btn-primary">
-                                                    <i class="fa fa-pencil"></i> Draft
-                                                </button>
-                                            </a>
-                                            @else
-                                            <a href="{{ route('apply-form-a_renewal_draft', ['application_id' => $workflow->application_id]) }}">
-                                                <button class="btn btn-primary">
-                                                    <i class="fa fa-pencil"></i> Draft
-                                                </button>
-                                            </a>
-                                            @endif
+        
+                                                @if (strtoupper(trim($workflow->appl_type)) === 'N')
+                                                <a href="{{ route('apply-form-a_draft', ['application_id' => $workflow->application_id]) }}">
+                                                    <button class="btn btn-primary">
+                                                        <i class="fa fa-pencil"></i> Draft
+                                                    </button>
+                                                </a>
+                                                @else
+                                                <a href="{{ route('apply-form-a_renewal_draft', ['application_id' => $workflow->application_id]) }}">
+                                                    <button class="btn btn-primary">
+                                                        <i class="fa fa-pencil"></i> Draft
+                                                    </button>
+                                                </a>
+                                                @endif
 
-                                            @else
-                                            @if ($workflow->appl_type == 'R')
-                                            @if ($workflow->application_status == 'P')
-                                            <span class="btn btn-sm btn-warning">Renewal Form
-                                                Submitted</span>
-                                            @elseif($workflow->application_status == 'F')
-                                            <span class="btn btn-danger">In Progress</span>
-                                            @else
-                                            <span class="btn btn-sm btn-success">Completed</span>
-                                            @endif
-                                            @else
-                                            @if ($workflow->application_status == 'P')
-                                            <span class="btn btn-sm btn-primary">Submitted</span>
-                                            @elseif($workflow->application_status == 'F')
-                                            <span class="btn btn-danger">In Progress</span>
-                                            @else
-                                            <span class="btn btn-sm btn-success">Completed</span>
-                                            @endif
-                                            @endif
-                                            @endif
-                                        </td>
+                                                @else
+                                                @if ($workflow->appl_type == 'R')
+                                                @if ($workflow->application_status == 'P')
+                                                <span class="btn btn-sm btn-warning">Renewal Form
+                                                    Submitted</span>
+                                                @elseif($workflow->application_status == 'F')
+                                                <span class="btn btn-danger">In Progress</span>
+                                                @else
+                                                <span class="btn btn-sm btn-success">Completed</span>
+                                                @endif
+                                                @else
+                                                @if ($workflow->application_status == 'P')
+                                                <span class="btn btn-sm btn-primary">Submitted</span>
+                                                @elseif($workflow->application_status == 'F')
+                                                <span class="btn btn-danger">In Progress</span>
+                                                @else
+                                                <span class="btn btn-sm btn-success">Completed</span>
+                                                @endif
+                                                @endif
+                                                @endif
+                                            </td>
 
-                                        <!-- Payment Status -->
-                                        <td>
-                                            @if ($workflow->payment_status == 'paid')
-                                            <p class="text-success">Success</p>
-                                            @else
-                                            <p class="text-primary">Pending</p>
-                                            @endif
-                                        </td>
+                                            <!-- Payment Status -->
+                                            <td>
+                                                @if ($workflow->payment_status == 'paid')
+                                                <p class="text-success">Success</p>
+                                                @else
+                                                <p class="text-primary">Pending</p>
+                                                @endif
+                                            </td>
 
-                                        <td>
-                                            @if ($workflow->payment_status == 'paid')
-                                            <a href="{{ route('paymentreceipt.pdf', ['loginId' => $workflow->application_id]) }}"
-                                                target="_blank" rel="noopener noreferrer"
-                                                title="Download Payment Receipt PDF"
-                                                style="font-weight:500;">
-                                                <i class="fa fa-file-pdf-o"
-                                                    style="font-size:20px;color:red"></i>
-                                            </a>
-                                            @else
-                                            <p class="text-primary">Pending</p>
-                                            @endif
-                                        </td>
+                                            <td>
+                                                @if ($workflow->payment_status == 'paid')
+                                                <a href="{{ route('paymentreceipt.pdf', ['loginId' => $workflow->application_id]) }}"
+                                                    target="_blank" rel="noopener noreferrer"
+                                                    title="Download Payment Receipt PDF"
+                                                    style="font-weight:500;">
+                                                    <i class="fa fa-file-pdf-o"
+                                                        style="font-size:20px;color:red"></i>
+                                                </a>
+                                                @else
+                                                <p class="text-primary">Pending</p>
+                                                @endif
+                                            </td>
 
-                                        <!-- Application Download -->
-                                        <td>
-                                            @if ($workflow->payment_status == 'draft')
-                                            <p>-</p>
-                                            @else
-                                            <a href="{{ route('generatea.pdf', ['login_id' => $workflow->application_id]) }}"
-                                                target="_blank" style="font-weight:500;">
-                                                <i class="fa fa-file-pdf-o"
-                                                    style="font-size:20px;color:red"></i>
-                                                <span style="font-size: x-small;">English</span>
-                                            </a>
-                                            @endif
-                                        </td>
+                                            <!-- Application Download -->
+                                            <td>
+                                                @if ($workflow->payment_status == 'draft')
+                                                <p>-</p>
+                                                @else
+                                                <a href="{{ route('generatea.pdf', ['login_id' => $workflow->application_id]) }}"
+                                                    target="_blank" style="font-weight:500;">
+                                                    <i class="fa fa-file-pdf-o"
+                                                        style="font-size:20px;color:red"></i>
+                                                    <span style="font-size: x-small;">English</span>
+                                                </a>
+                                                @endif
+                                            </td>
 
-                                        <!-- License Number -->
-                                   <td>
-                                                        @if (!empty($workflow->license_number) && $workflow->application_status == 'A')
-                                                        <a href="{{ route('admin.generateForma.pdf', ['application_id' => $workflow->application_id]) }}" target="_blank"> 
-                                                            <span class="badge badge-info" style="font-size: 15px;">{{ $workflow->license_number }}</span>
-                                                        </a>
-                                                        <br>
-
-                                                        @if (!empty($workflow->renewals))
-                                                            <span class="text-muted" style="font-size: 12px;">
-                                                                Renewed {{ count($workflow->renewals) }} times
-                                                            </span>
+                                            <!-- License Number -->
+                                    <td>
+                                                            @if (!empty($workflow->license_number) && $workflow->application_status == 'A')
+                                                            <a href="{{ route('admin.generateForma.pdf', ['application_id' => $workflow->application_id]) }}" target="_blank"> 
+                                                                <span class="badge badge-info" style="font-size: 15px;">{{ $workflow->license_number }}</span>
+                                                            </a>
                                                             <br>
-                                                        @endif
 
-                                                        @if (!empty($workflow->expires_at) && \Carbon\Carbon::parse($workflow->expires_at)->lt(\Carbon\Carbon::now()))
-                                                            @if (!empty($workflow->renewal_application_id))
-                                                                <strong>Renewal Application</strong><br>
-                                                                ID :
-                                                                <a href="{{ route('generate.pdf', ['login_id' => $workflow->renewal_application_id]) }}" 
-                                                                target="_blank" 
-                                                                class="text-success">
-                                                                {{ $workflow->renewal_application_id }}
-                                                                </a>
-                                                            @else
-                                                                <a href="{{ route('renew-form_ea', ['application_id' => $workflow->application_id]) }}"
-                                                                class="text-primary">
-                                                                (Apply for renewal)
-                                                                </a>
+                                                            @if (!empty($workflow->renewals))
+                                                                <span class="text-muted" style="font-size: 12px;">
+                                                                    Renewed {{ count($workflow->renewals) }} times
+                                                                </span>
+                                                                <br>
                                                             @endif
+
+                                                            @if (!empty($workflow->expires_at) && \Carbon\Carbon::parse($workflow->expires_at)->lt(\Carbon\Carbon::now()))
+                                                                @if (!empty($workflow->renewal_application_id))
+                                                                    <strong>Renewal Application</strong><br>
+                                                                    ID :
+                                                                    <a href="{{ route('generate.pdf', ['login_id' => $workflow->renewal_application_id]) }}" 
+                                                                    target="_blank" 
+                                                                    class="text-success">
+                                                                    {{ $workflow->renewal_application_id }}
+                                                                    </a>
+                                                                @else
+                                                                    <a href="{{ route('renew-form_ea', ['application_id' => $workflow->application_id]) }}"
+                                                                    class="text-primary">
+                                                                    (Apply for renewal)
+                                                                    </a>
+                                                                @endif
+                                                            @endif
+
+                                                        @elseif (!empty($workflow->renewal_application_id))
+                                                            <strong>Renewal Application</strong><br>
+                                                            ID :
+                                                            <a href="{{ route('generate.pdf', ['login_id' => $workflow->renewal_application_id]) }}" 
+                                                            target="_blank" 
+                                                            class="text-success">
+                                                            {{ $workflow->renewal_application_id }}
+                                                            </a>
+
+                                                        @else
+                                                            <p class="text-primary">NA</p>
                                                         @endif
+                                                    </td>
 
-                                                    @elseif (!empty($workflow->renewal_application_id))
-                                                        <strong>Renewal Application</strong><br>
-                                                        ID :
-                                                        <a href="{{ route('generate.pdf', ['login_id' => $workflow->renewal_application_id]) }}" 
-                                                        target="_blank" 
-                                                        class="text-success">
-                                                        {{ $workflow->renewal_application_id }}
-                                                        </a>
-
-                                                    @else
-                                                        <p class="text-primary">NA</p>
-                                                    @endif
-                                                </td>
-
-                                    </tr>
-                                    @endforeach
-                                    @else
-                                    <tr>
-                                        <td colspan="9" class="text-center text-danger">No records found</td>
-                                    </tr>
-                                    @endif
-                                </tbody>
-                            </table>
-
-                        </div>
+                                        </tr>
+                                        @endforeach
+                                        @else
+                                        <tr>
+                                            <td colspan="9" class="text-center text-danger">No records found</td>
+                                        </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                            </fieldset>
                         @endif
                     </section>
                 </main>
