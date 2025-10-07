@@ -94,16 +94,16 @@
                                                             <br>
                                                             <label for="tamil" class="tamil">விண்ணப்பதாரர் பெயர்</label>
                                                         </div>
-                                                        <div class="col-12 col-md-2">
-                                                            <select id="salutation" name ="salutation" class="form-control" readonly>
+                                                        {{-- <div class="col-12 col-md-2">
+                                                            <select id="salutation" name ="salutation" class="form-control" disabled>
                                                                 <option value="Mr" {{ $user['salutation'] == "Mr"?'selected':'' }}> Mr</option>
                                                                 <option value="Ms" {{ $user['salutation'] == "Ms"?'selected':'' }}>Ms </option>
                                                                 <option value="Mrs" {{ $user['salutation'] == "Mrs"?'selected':'' }}>Mrs </option>
                                                             </select>
-                                                        </div>
+                                                        </div> --}}
 
-                                                        <div class="col-12 col-md-5">
-                                                            <input autocomplete="off" class="form-control text-box single-line" id="Applicant_Name" name="applicant_name" type="text" value="{{ $user['applicant_name'] }}" readonly>
+                                                        <div class="col-12 col-md-7">
+                                                            <input autocomplete="off" class="form-control text-box single-line" id="Applicant_Name" name="applicant_name" type="text" value="{{ $user['salutation'].'. '.$user['applicant_name'] }}" readonly>
                                                         </div>
                                                     </div>
                                                 </div>

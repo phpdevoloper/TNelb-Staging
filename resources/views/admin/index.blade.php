@@ -23,7 +23,7 @@
         <!-- END GLOBAL MANDATORY STYLES -->
         <link href="{{  asset('assets/admin/main.css') }}" rel="stylesheet" type="text/css" />
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+        {{-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> --}}
         <style>
             .logo-img img{
                 width: 150px;
@@ -40,8 +40,8 @@
                         <div class="auth-overlay"></div>
                         <div class="logo-img">
                             <div class="position-relative">
-                                <img src="{{url('assets/admin/images/logo/logo.png') }}" alt="logo-img">
-                                <h2 class="mt-5 text-white font-weight-bolder px-2">TamilNadu Electrical Licencing Board</h2>
+                                <img src="{{ url('assets/admin/images/logo/logo.png') }}" alt="logo-img">
+                                <h2 class="mt-5 text-white font-weight-bolder px-2">Tamilnadu Electrical Licencing Board</h2>
                             </div>
                         </div>
                     </div>

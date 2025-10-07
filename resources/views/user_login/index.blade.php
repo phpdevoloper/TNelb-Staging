@@ -625,7 +625,7 @@ exit;
                         <div class="tasks-section-login d-none d-sm-block">
                             <fieldset class="custom-fieldset">
                                 <legend class="custom-legend">
-                                    <h5 class="mb-2"><strong>Status of Applications ( Contractor License )</strong></h5>
+                                    <h5 class="mb-2"><strong>Status of Applications ( Contractor Licence )</strong></h5>
                                 </legend>
                                 <ul class="legend justify-content-end mb-2">
                                     <li><span class="bg-success"></span> Completed</li>
@@ -644,7 +644,7 @@ exit;
                                             <th>Payment Status</th>
                                             <th>Payment Receipt</th>
                                             <th>Application Download</th>
-                                            <th>License Number</th>
+                                            <th>Licence Number</th>
                                         </tr>
                                     </thead>
                                     <tbody>
