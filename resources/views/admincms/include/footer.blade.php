@@ -73,288 +73,207 @@
 
 <script src="{{ asset('assets/portaladmin/ckeditor.js') }}"></script>
 
+<script src={{ asset("assets/admin/src/plugins/src/table/datatable/datatables.js") }}></script>
+
 <script>
-    var editor1 = new RichTextEditor("#div_editor1");
+    // var editor1 = new RichTextEditor("#div_editor1");
     //editor1.setHTMLCode("Use inline HTML or setHTMLCode to init the default content.");
 </script>
 
 
 <script>
     // var e;
-    c1 = $('#style-1').DataTable({
-        headerCallback: function(e, a, t, n, s) {
-            e.getElementsByTagName("th")[0].innerHTML = `
-                <div class="form-check form-check-primary d-block">
-                    <input class="form-check-input chk-parent" type="checkbox" id="form-check-default">
-                </div>`
-        },
-        columnDefs: [{
-            targets: 0,
-            width: "30px",
-            className: "",
-            orderable: !1,
-            render: function(e, a, t, n) {
-                return `
-                    <div class="form-check form-check-primary d-block">
-                        <input class="form-check-input child-chk" type="checkbox" id="form-check-default">
-                    </div>`
-            }
-        }],
-        "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
-            "<'table-responsive'tr>" +
-            "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
-        "oLanguage": {
-            "oPaginate": {
-                "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
-                "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
-            },
-            "sInfo": "Showing page _PAGE_ of _PAGES_",
-            "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
-            "sSearchPlaceholder": "Search...",
-            "sLengthMenu": "Results :  _MENU_",
-        },
-        "lengthMenu": [5, 10, 20, 50],
-        "pageLength": 10
-    });
+    // c1 = $('#style-1').DataTable({
+    //     headerCallback: function(e, a, t, n, s) {
+    //         e.getElementsByTagName("th")[0].innerHTML = `
+    //             <div class="form-check form-check-primary d-block">
+    //                 <input class="form-check-input chk-parent" type="checkbox" id="form-check-default">
+    //             </div>`
+    //     },
+    //     columnDefs: [{
+    //         targets: 0,
+    //         width: "30px",
+    //         className: "",
+    //         orderable: !1,
+    //         render: function(e, a, t, n) {
+    //             return `
+    //                 <div class="form-check form-check-primary d-block">
+    //                     <input class="form-check-input child-chk" type="checkbox" id="form-check-default">
+    //                 </div>`
+    //         }
+    //     }],
+    //     "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
+    //         "<'table-responsive'tr>" +
+    //         "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
+    //     "oLanguage": {
+    //         "oPaginate": {
+    //             "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+    //             "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
+    //         },
+    //         "sInfo": "Showing page _PAGE_ of _PAGES_",
+    //         "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+    //         "sSearchPlaceholder": "Search...",
+    //         "sLengthMenu": "Results :  _MENU_",
+    //     },
+    //     "lengthMenu": [5, 10, 20, 50],
+    //     "pageLength": 10
+    // });
 
-    multiCheck(c1);
+    // multiCheck(c1);
 
-    c2 = $('#style-2').DataTable({
-        headerCallback: function(e, a, t, n, s) {
-            e.getElementsByTagName("th")[0].innerHTML = `
-                <div class="form-check form-check-primary d-block new-control">
-                    <input class="form-check-input chk-parent" type="checkbox" id="form-check-default">
-                </div>`
-        },
-        columnDefs: [{
-            targets: 0,
-            width: "30px",
-            className: "",
-            orderable: !1,
-            render: function(e, a, t, n) {
-                return `
-                    <div class="form-check form-check-primary d-block new-control">
-                        <input class="form-check-input child-chk" type="checkbox" id="form-check-default">
-                    </div>`
-            }
-        }],
-        "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
-            "<'table-responsive'tr>" +
-            "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
-        "oLanguage": {
-            "oPaginate": {
-                "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
-                "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
-            },
-            "sInfo": "Showing page _PAGE_ of _PAGES_",
-            "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
-            "sSearchPlaceholder": "Search...",
-            "sLengthMenu": "Results :  _MENU_",
-        },
-        "lengthMenu": [5, 10, 20, 50],
-        "pageLength": 10
-    });
+    // c2 = $('#style-2').DataTable({
+    //     headerCallback: function(e, a, t, n, s) {
+    //         e.getElementsByTagName("th")[0].innerHTML = `
+    //             <div class="form-check form-check-primary d-block new-control">
+    //                 <input class="form-check-input chk-parent" type="checkbox" id="form-check-default">
+    //             </div>`
+    //     },
+    //     columnDefs: [{
+    //         targets: 0,
+    //         width: "30px",
+    //         className: "",
+    //         orderable: !1,
+    //         render: function(e, a, t, n) {
+    //             return `
+    //                 <div class="form-check form-check-primary d-block new-control">
+    //                     <input class="form-check-input child-chk" type="checkbox" id="form-check-default">
+    //                 </div>`
+    //         }
+    //     }],
+    //     "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
+    //         "<'table-responsive'tr>" +
+    //         "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
+    //     "oLanguage": {
+    //         "oPaginate": {
+    //             "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+    //             "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
+    //         },
+    //         "sInfo": "Showing page _PAGE_ of _PAGES_",
+    //         "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+    //         "sSearchPlaceholder": "Search...",
+    //         "sLengthMenu": "Results :  _MENU_",
+    //     },
+    //     "lengthMenu": [5, 10, 20, 50],
+    //     "pageLength": 10
+    // });
 
-    multiCheck(c2);
+    // multiCheck(c2);
 
-    c3 = $('#style-3').DataTable({
-        "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
-            "<'table-responsive'tr>" +
-            "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
-        "oLanguage": {
-            "oPaginate": {
-                "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
-                "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
-            },
-            "sInfo": "Showing page _PAGE_ of _PAGES_",
-            "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
-            "sSearchPlaceholder": "Search...",
-            "sLengthMenu": "Results :  _MENU_",
-        },
-        "stripeClasses": [],
-        "lengthMenu": [5, 10, 20, 50],
-        "pageLength": 10
-    });
+    // c3 = $('#style-3').DataTable({
+    //     "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
+    //         "<'table-responsive'tr>" +
+    //         "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
+    //     "oLanguage": {
+    //         "oPaginate": {
+    //             "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+    //             "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
+    //         },
+    //         "sInfo": "Showing page _PAGE_ of _PAGES_",
+    //         "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+    //         "sSearchPlaceholder": "Search...",
+    //         "sLengthMenu": "Results :  _MENU_",
+    //     },
+    //     "stripeClasses": [],
+    //     "lengthMenu": [5, 10, 20, 50],
+    //     "pageLength": 10
+    // });
 
-    multiCheck(c3);
+    // multiCheck(c3);
 </script>
 <script>
-    $('#zero-config').DataTable({
-        "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
-            "<'table-responsive'tr>" +
-            "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
-        "oLanguage": {
-            "oPaginate": {
-                "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
-                "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
-            },
-            "sInfo": "Showing page _PAGE_ of _PAGES_",
-            "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
-            "sSearchPlaceholder": "Search...",
-            "sLengthMenu": "Results :  _MENU_",
-        },
-        "stripeClasses": [],
-        "lengthMenu": [7, 10, 20, 50],
-        "pageLength": 10
-    });
+    // $('#zero-config').DataTable({
+    //     "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
+    //         "<'table-responsive'tr>" +
+    //         "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
+    //     "oLanguage": {
+    //         "oPaginate": {
+    //             "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+    //             "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
+    //         },
+    //         "sInfo": "Showing page _PAGE_ of _PAGES_",
+    //         "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+    //         "sSearchPlaceholder": "Search...",
+    //         "sLengthMenu": "Results :  _MENU_",
+    //     },
+    //     "stripeClasses": [],
+    //     "lengthMenu": [7, 10, 20, 50],
+    //     "pageLength": 10
+    // });
 
-    $('.zero-config').DataTable({
-        "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
-            "<'table-responsive'tr>" +
-            "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
-        "oLanguage": {
-            "oPaginate": {
-                "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
-                "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
-            },
-            "sInfo": "Showing page _PAGE_ of _PAGES_",
-            "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
-            "sSearchPlaceholder": "Search...",
-            "sLengthMenu": "Results :  _MENU_",
-        },
-        "stripeClasses": [],
-        "lengthMenu": [7, 10, 20, 50],
-        "pageLength": 10,
-        initComplete: function() {
-            const column = this.api().column(1);
-            const select = $('#customColumnFilter');
+    // $('.zero-config').DataTable({
+    //     "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
+    //         "<'table-responsive'tr>" +
+    //         "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
+    //     "oLanguage": {
+    //         "oPaginate": {
+    //             "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+    //             "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
+    //         },
+    //         "sInfo": "Showing page _PAGE_ of _PAGES_",
+    //         "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+    //         "sSearchPlaceholder": "Search...",
+    //         "sLengthMenu": "Results :  _MENU_",
+    //     },
+    //     "stripeClasses": [],
+    //     "lengthMenu": [7, 10, 20, 50],
+    //     "pageLength": 10,
+    //     initComplete: function() {
+    //         const column = this.api().column(1);
+    //         const select = $('#customColumnFilter');
 
-            column.data().unique().sort().each(function(d, j) {
-                select.append('<option value="' + d + '">' + d + '</option>');
-            });
+    //         column.data().unique().sort().each(function(d, j) {
+    //             select.append('<option value="' + d + '">' + d + '</option>');
+    //         });
 
-            select.on('change', function() {
-                const val = $.fn.dataTable.util.escapeRegex($(this).val());
-                column.search(val ? '^' + val + '$' : '', true, false).draw();
-            });
-        }
-    });
+    //         select.on('change', function() {
+    //             const val = $.fn.dataTable.util.escapeRegex($(this).val());
+    //             column.search(val ? '^' + val + '$' : '', true, false).draw();
+    //         });
+    //     }
+    // });
 
-    $(document).ready(function() {
-        $('#queryType').select2({
-            placeholder: "Select query type",
-            allowClear: true,
-            width: '100%'
-        });
-    });
+    // $(document).ready(function() {
+    //     $('#queryType').select2({
+    //         placeholder: "Select query type",
+    //         allowClear: true,
+    //         width: '100%'
+    //     });
+    // });
 </script>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const fileInput = document.querySelector('input[name="slider_image"]');
-        const errorDiv = document.getElementById('sliderImageError');
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     const fileInput = document.querySelector('input[name="slider_image"]');
+    //     const errorDiv = document.getElementById('sliderImageError');
 
-        fileInput.addEventListener('change', function() {
-            const file = this.files[0];
-            errorDiv.textContent = ''; // Clear previous errors
+    //     fileInput.addEventListener('change', function() {
+    //         const file = this.files[0];
+    //         errorDiv.textContent = ''; // Clear previous errors
 
-            if (!file) return;
+    //         if (!file) return;
 
-            // Validate file size (250KB max)
-            if (file.size > 256000) {
-                errorDiv.textContent = "File size must be less than 250KB.";
-                this.value = ''; // Reset file input
-                return;
-            }
+    //         // Validate file size (250KB max)
+    //         if (file.size > 256000) {
+    //             errorDiv.textContent = "File size must be less than 250KB.";
+    //             this.value = ''; // Reset file input
+    //             return;
+    //         }
 
-            // Validate file type (.jpg or .png)
-            const allowedTypes = ['image/png', 'image/jpg', 'image/jpeg'];
-            if (!allowedTypes.includes(file.type)) {
-                errorDiv.textContent = "Only JPG and PNG files are allowed.";
-                this.value = ''; // Reset file input
-            }
-        });
-    });
+    //         // Validate file type (.jpg or .png)
+    //         const allowedTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+    //         if (!allowedTypes.includes(file.type)) {
+    //             errorDiv.textContent = "Only JPG and PNG files are allowed.";
+    //             this.value = ''; // Reset file input
+    //         }
+    //     });
+    // });
 </script>
 
 
-<!-- 
-
-<script>
-    $(document).on('submit', '.sliderupdate-form', function(e) {
-        e.preventDefault();
-
-        let form = $(this);
-        let sliderId = form.data('id');
-        let url = form.data('url');
-        let formData = new FormData(this);
-
-        $.ajax({
-            url: `${url}/${sliderId}`,
-            type: 'POST',
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                if (response.success && response.slider) {
-                    $('#editModal' + sliderId).modal('hide');
-
-                    const slider = response.slider;
-
-                    const statusLabel = slider.slider_status == 1 ?
-                        'Published' :
-                        slider.slider_status == 0 ?
-                        'Draft' :
-                        'Disabled';
-
-                    const rowClass = slider.slider_status == 1 ? 'table-success' : '';
-
-                    const updatedRow = `
-            <tr id="slider-row-${slider.id}" class="${rowClass}">
-                <td class="text-center index">#</td>
-                
-                <td class="text-center slider-name">${slider.slider_name}</td>
-              
-                
-                <td class="text-center slider-caption">${slider.slider_caption || ''}</td>
-                  
-                <td class="text-center">
-                    <a href="/portaladmin/slider/${slider.slider_image}" class="defaultGlightbox glightbox-content">
-                        <img src="/portaladmin/slider/${slider.slider_image}" alt="${slider.slider_name}" class="img-fluid" width="200px;" />
-                    </a>
-                </td>
-                <td class="text-center index">${slider.updated_at.substring(0, 10)}</td>
-                <td class="text-center slider-caption">${statusLabel}</td>
-                <td class="text-center">
-                    <div class="action-btns">
-                        <i class="fa fa-edit text-primary me-2 cursor-pointer"
-                           data-bs-toggle="modal"
-                           data-bs-target="#editModal${slider.id}"
-                           title="Edit"></i>
-                    </div>
-                </td>
-            </tr>`;
-
-                    // Replace the row
-                    $('#slider-row-' + slider.id).replaceWith(updatedRow);
-
-                    // Re-index
-                    $('#sliderTableBody tr').each(function(index) {
-                        $(this).find('td.index:first').text(index + 1);
-                    });
-
-                    // Reinitialize Glightbox
-                    if (typeof GLightbox !== 'undefined') {
-                        GLightbox({
-                            selector: '.defaultGlightbox'
-                        });
-                    }
-                } else {
-                    alert(response.message || 'Update failed.');
-                }
-            },
-            error: function() {
-                alert('An error occurred during update.');
-            }
-        });
-    });
-</script> -->
 
 <script>
     // Delete button click (delegated)
@@ -540,7 +459,7 @@
 </script>
 
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
 <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
 <!-- 
 
@@ -807,115 +726,115 @@
 
 
 <script>
-    $(document).ready(function() {
-        $('#newsboard_en').summernote({
-            height: 200,
-            placeholder: 'Enter content here...',
-            toolbar: [
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontsize']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['insert', ['link', 'picture', 'video']],
-                ['view', ['fullscreen', 'codeview']]
-            ]
-        });
-    });
+    // $(document).ready(function() {
+    //     $('#newsboard_en').summernote({
+    //         height: 200,
+    //         placeholder: 'Enter content here...',
+    //         toolbar: [
+    //             ['style', ['bold', 'italic', 'underline', 'clear']],
+    //             ['font', ['strikethrough', 'superscript', 'subscript']],
+    //             ['fontsize', ['fontsize']],
+    //             ['color', ['color']],
+    //             ['para', ['ul', 'ol', 'paragraph']],
+    //             ['insert', ['link', 'picture', 'video']],
+    //             ['view', ['fullscreen', 'codeview']]
+    //         ]
+    //     });
+    // });
 </script>
 
 <script>
-    $(document).ready(function() {
-        $('#newsboard_ta').summernote({
-            height: 200,
-            placeholder: 'Enter content here...',
-            toolbar: [
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontsize']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['insert', ['link', 'picture', 'video']],
-                ['view', ['fullscreen', 'codeview']]
-            ]
-        });
-    });
+    // $(document).ready(function() {
+    //     $('#newsboard_ta').summernote({
+    //         height: 200,
+    //         placeholder: 'Enter content here...',
+    //         toolbar: [
+    //             ['style', ['bold', 'italic', 'underline', 'clear']],
+    //             ['font', ['strikethrough', 'superscript', 'subscript']],
+    //             ['fontsize', ['fontsize']],
+    //             ['color', ['color']],
+    //             ['para', ['ul', 'ol', 'paragraph']],
+    //             ['insert', ['link', 'picture', 'video']],
+    //             ['view', ['fullscreen', 'codeview']]
+    //         ]
+    //     });
+    // });
 </script>
 <script>
-    $(document).ready(function() {
-        // Initialize Summernote
-        $('#newsboard_en').summernote({
-            height: 200
-        });
+    // $(document).ready(function() {
+    //     // Initialize Summernote
+    //     $('#newsboard_en').summernote({
+    //         height: 200
+    //     });
 
-        // When Edit button is clicked
-        $('.edit-newsboard-btn').on('click', function() {
-            var content = $(this).data('content');
-            var id = $(this).data('id');
+    //     // When Edit button is clicked
+    //     $('.edit-newsboard-btn').on('click', function() {
+    //         var content = $(this).data('content');
+    //         var id = $(this).data('id');
 
-            $('#newsboard_en').summernote('code', content);
-            $('#newsboard_id').val(id);
-        });
-    });
+    //         $('#newsboard_en').summernote('code', content);
+    //         $('#newsboard_id').val(id);
+    //     });
+    // });
 </script>
 <script>
-    $(document).ready(function() {
-        // Initialize Summernote
-        $('#newsboard_en, #newsboard_ta').summernote({
-            height: 200
-        });
+    // $(document).ready(function() {
+    //     // Initialize Summernote
+    //     $('#newsboard_en, #newsboard_ta').summernote({
+    //         height: 200
+    //     });
 
-        // ======== English Edit Modal =========
-        $('.edit-newsboard-btn').on('click', function() {
-            var content = $(this).data('content');
-            var id = $(this).data('id');
-            var heading = $(this).data('heading');
+    //     // ======== English Edit Modal =========
+    //     $('.edit-newsboard-btn').on('click', function() {
+    //         var content = $(this).data('content');
+    //         var id = $(this).data('id');
+    //         var heading = $(this).data('heading');
 
-            $('#newsboard_en').summernote('code', content);
-            $('#newsboard_id').val(id);
-            $('#inputFormModal input[name="heading"]').val(heading);
-        });
+    //         $('#newsboard_en').summernote('code', content);
+    //         $('#newsboard_id').val(id);
+    //         $('#inputFormModal input[name="heading"]').val(heading);
+    //     });
 
     
 
-        // ======== Tamil Edit Modal =========
-        $('.edit-newsboard-tamil-btn').on('click', function() {
-            var content = $(this).data('content');
-            var id = $(this).data('id');
-            var heading = $(this).data('heading');
+    //     // ======== Tamil Edit Modal =========
+    //     $('.edit-newsboard-tamil-btn').on('click', function() {
+    //         var content = $(this).data('content');
+    //         var id = $(this).data('id');
+    //         var heading = $(this).data('heading');
 
-            $('#newsboard_ta').summernote('code', content);
-            $('#newsboard_ta_id').val(id);
-            $('#inputFormModalTamil input[name="heading"]').val(heading);
-        });
+    //         $('#newsboard_ta').summernote('code', content);
+    //         $('#newsboard_ta_id').val(id);
+    //         $('#inputFormModalTamil input[name="heading"]').val(heading);
+    //     });
 
-        $('#update_tamil').on('submit', function(e) {
-            e.preventDefault();
+    //     $('#update_tamil').on('submit', function(e) {
+    //         e.preventDefault();
 
-            var id = $('#newsboard_ta_id').val();
-            var content = $('#newsboard_ta').summernote('code');
-            var heading = $('#inputFormModalTamil input[name="heading"]').val();
+    //         var id = $('#newsboard_ta_id').val();
+    //         var content = $('#newsboard_ta').summernote('code');
+    //         var heading = $('#inputFormModalTamil input[name="heading"]').val();
 
-            $.ajax({
-                url: "{{ route('admin.newsboard.updatetamil') }}",
-                method: "POST",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    id: id,
-                    heading: heading,
-                    newsboard_ta: content
-                },
-                success: function(response) {
-                    alert('Tamil News Board updated successfully!');
-                    $('#inputFormModalTamil').modal('hide');
-                },
-                error: function(xhr) {
-                    alert('Error updating Tamil newsboard.');
-                    console.log(xhr.responseText);
-                }
-            });
-        });
-    });
+    //         $.ajax({
+    //             url: "{{ route('admin.newsboard.updatetamil') }}",
+    //             method: "POST",
+    //             data: {
+    //                 _token: "{{ csrf_token() }}",
+    //                 id: id,
+    //                 heading: heading,
+    //                 newsboard_ta: content
+    //             },
+    //             success: function(response) {
+    //                 alert('Tamil News Board updated successfully!');
+    //                 $('#inputFormModalTamil').modal('hide');
+    //             },
+    //             error: function(xhr) {
+    //                 alert('Error updating Tamil newsboard.');
+    //                 console.log(xhr.responseText);
+    //             }
+    //         });
+    //     });
+    // });
 </script>
 
 <script src="{{ asset('assets/portaladmin/scriptmenu.js') }}"></script>

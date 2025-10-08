@@ -25,7 +25,8 @@
 
 // CMS
     use App\Http\Controllers\Admin\AddFormController;
-    use App\Http\Controllers\Admin\GalleryController;
+use App\Http\Controllers\Admin\FormsManagementController;
+use App\Http\Controllers\Admin\GalleryController;
     use App\Http\Controllers\Admin\MediaController as AdminMediaController;
     use App\Http\Controllers\Admin\MenuController;
     use App\Http\Controllers\Admin\NewsController;
@@ -360,7 +361,13 @@
         Route::get('/view_application_details/{applicant_id}', [LoginController::class, 'view_application_details'])->name('view_application_details');
 
 
+
+        //Licence management controller routes
+        Route::get('/forms', [FormsManagementController::class, 'index'])->name('forms');
+
         });
+
+        
 
 
 });

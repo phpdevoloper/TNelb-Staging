@@ -98,11 +98,7 @@
     <!-- Multi select -->
     <link rel="stylesheet" href="{{ asset('assets/admin/select2/dist/css/select2.min.css') }}">
 
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/src/plugins/css/light/table/datatable/dt-global_style.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/src/plugins/css/light/table/datatable/custom_dt_custom.css') }}">
     
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/src/plugins/css/dark/table/datatable/dt-global_style.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/src/plugins/css/dark/table/datatable/custom_dt_custom.css') }}">
 
 
     <!-- FontAwesome -->

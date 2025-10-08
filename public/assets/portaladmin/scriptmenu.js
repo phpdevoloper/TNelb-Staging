@@ -18,14 +18,14 @@ $(document).ready(function () {
     // Update English
     $('#updatewhats_english').on('submit', function (e) {
         e.preventDefault();
-    
+
         const form = $(this);
         const id = form.find('input[name="id"]').val();
         const content = editors['whatsnew_en']
             ? editors['whatsnew_en'].getData()
             : form.find('textarea[name="whatsnew_en"]').val();
         const status = form.find('select[name="status"]').val();
-    
+
         $.ajax({
             url: '/admin/update-whatsnew',
             method: 'POST',
@@ -37,33 +37,33 @@ $(document).ready(function () {
             },
             success: function () {
                 const row = $(`tr[data-id="${id}"]`);
-    
+
                 // ✅ Update the content in the table
                 row.find('td.table_tdcontrol').html(content);
-    
+
                 // ✅ Update the data attributes for next edit
                 row.find('.editscrollcontent')
                     .data('whatsnew_en', content)
                     .data('status', status);
-    
+
                 // ✅ Update status badge
                 const badgeText = {
                     '1': 'Published',
                     '0': 'Draft',
                     '2': 'Disabled'
                 };
-    
+
                 const badgeClass = {
                     '1': 'badge-success',
                     '0': 'badge-dark',
                     '2': 'badge-danger'
                 };
-    
+
                 row.find('td .badge')
                     .removeClass('badge-success badge-dark badge-danger')
                     .addClass(badgeClass[status])
                     .text(badgeText[status]);
-    
+
                 // ✅ Close the modal
                 const modalEl = document.getElementById('inputFormModalEnglish');
                 bootstrap.Modal.getInstance(modalEl).hide();
@@ -73,7 +73,7 @@ $(document).ready(function () {
             }
         });
     });
-    
+
 
     // Update Tamil
     $('#updatewhats_tamil').on('submit', function (e) {
@@ -84,7 +84,7 @@ $(document).ready(function () {
         const content = form.find('textarea[name="whatsnew_ta"]').val();
 
         $.ajax({
-            url: BASE_URL +  '/admin/update-whatsnew',
+            url: BASE_URL + '/admin/update-whatsnew',
             method: 'POST',
             data: {
                 _token: $('meta[name="csrf-token"]').attr('content'),
@@ -107,8 +107,7 @@ $(document).ready(function () {
             }
         });
     });
-});
-$(document).ready(function () {
+
     // Open modal and populate form fields when clicking edit button
     $(document).on('click', '.edit-gallery-btn', function () {
         let id = $(this).data('id');
@@ -167,11 +166,8 @@ $(document).ready(function () {
             }
         });
     });
-});
 
 
-
-$(document).ready(function () {
     $('.delete-gallery').on('click', function () {
         let button = $(this); // the clicked delete button
         let id = button.data('id');
@@ -188,7 +184,7 @@ $(document).ready(function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: BASE_URL +  '/admin/gallery/delete/' + id,
+                    url: BASE_URL + '/admin/gallery/delete/' + id,
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -214,11 +210,7 @@ $(document).ready(function () {
             }
         });
     });
-});
 
-
-
-$(document).ready(function () {
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -232,17 +224,17 @@ $(document).ready(function () {
 
         $.ajax({
             type: "POST",
-            url: BASE_URL +  "/admin/staff/insert",
+            url: BASE_URL + "/admin/staff/insert",
             data: formData,
             contentType: false,
             processData: false,
             success: function (response) {
                 $('#addnewstaff')[0].reset();
                 $('.error-text').text('');
-            
+
                 // Get the number of rows already in the table
                 var rowCount = $('#staffTableBody tr').length + 1;
-            
+
                 // Append new row
                 $('#staffTableBody').append(`
                     <tr>
@@ -253,7 +245,7 @@ $(document).ready(function () {
                         <td>${response.staff.form_name}</td>
                     </tr>
                 `);
-            
+
                 // Show success alert
                 Swal.fire({
                     icon: 'success',
@@ -280,11 +272,7 @@ $(document).ready(function () {
             }
         });
     });
-});
 
-// ---Menu Page_type modal--------
-
-$(document).ready(function () {
     $('#page_type_menu').on('change', function () {
         let selected = $(this).val();
 
@@ -301,37 +289,6 @@ $(document).ready(function () {
             $('#staticFields, #pdfFields, #urlFields').hide();
         }
     });
-});
-
-
-//   ------------------------------
-
-
-
-
-
-// --------------------submenu selectbox---------------
-
-$(document).ready(function () {
-    function toggleSubMenuFields(type) {
-        if (type === 'pdf') {
-            $('.pdf-inputs').removeClass('d-none');
-            $('.static-page-inputs').addClass('d-none');
-            $('.url-inputs').addClass('d-none');
-        } else if (type === 'Static Page') {
-            $('.static-page-inputs').removeClass('d-none');
-            $('.pdf-inputs').addClass('d-none');
-            $('.url-inputs').addClass('d-none');
-        } else if (type === 'url') {
-            $('.url-inputs').removeClass('d-none');
-            $('.static-page-inputs').addClass('d-none');
-            $('.pdf-inputs').addClass('d-none');
-        } else {
-            $('.pdf-inputs').addClass('d-none');
-            $('.static-page-inputs').addClass('d-none');
-            $('.url-inputs').addClass('d-none');
-        }
-    }
 
     $('#page_type_submenu').on('change', function () {
         const selected = $(this).val();
@@ -340,30 +297,14 @@ $(document).ready(function () {
 
     // Trigger on page load (if value already selected)
     $('#page_type_submenu').trigger('change');
-});
 
 
 
-// ---------------------
-
-    // Called when modal is opened or on page_type change
-    
-    function toggleSubMenuInputs(type) {
-        if (type && type.toLowerCase() === 'pdf') {
-            $('.pdf-input').removeClass('d-none');
-            $('.rte-input').addClass('d-none');
-        } else {
-            $('.pdf-input').addClass('d-none');
-            $('.rte-input').removeClass('d-none');
-        }
-    }
-
-    // Change inputs on dropdown change
     $(document).on('change', '#page_type', function () {
         toggleSubMenuInputs($(this).val());
     });
 
-    // Edit button click - populate form
+
     $(document).on('click', '.editsubMenu', function () {
         const el = $(this);
 
@@ -376,29 +317,29 @@ $(document).ready(function () {
         $('#submenuFormedit select[name="page_type"]').val(el.data('page_type'));
         $('#menu_id').val(el.data('id'));
         const pdfEn = el.data('pdf_en');
-                const pdfTa = el.data('pdf_ta');
+        const pdfTa = el.data('pdf_ta');
 
-                // Remove 'admin/' prefix if present
-                const cleanPdfEn = pdfEn ? pdfEn.replace(/^admin\//, '') : null;
-                const cleanPdfTa = pdfTa ? pdfTa.replace(/^admin\//, '') : null;
+        // Remove 'admin/' prefix if present
+        const cleanPdfEn = pdfEn ? pdfEn.replace(/^admin\//, '') : null;
+        const cleanPdfTa = pdfTa ? pdfTa.replace(/^admin\//, '') : null;
 
-                if (cleanPdfEn) {
-                    $('#submenu_pdf_link_en')
-                        .attr('href', '/' + cleanPdfEn)
-                        .removeClass('d-none');
-                } else {
-                    $('#submenu_pdf_link_en').addClass('d-none');
-                }
+        if (cleanPdfEn) {
+            $('#submenu_pdf_link_en')
+                .attr('href', '/' + cleanPdfEn)
+                .removeClass('d-none');
+        } else {
+            $('#submenu_pdf_link_en').addClass('d-none');
+        }
 
-                if (cleanPdfTa) {
-                    $('#submenu_pdf_link_ta')
-                        .attr('href', '/' + cleanPdfTa)
-                        .removeClass('d-none');
-                } else {
-                    $('#submenu_pdf_link_ta').addClass('d-none');
-                }
+        if (cleanPdfTa) {
+            $('#submenu_pdf_link_ta')
+                .attr('href', '/' + cleanPdfTa)
+                .removeClass('d-none');
+        } else {
+            $('#submenu_pdf_link_ta').addClass('d-none');
+        }
 
-    
+
         toggleSubMenuInputs(el.data('page_type'));
         $('#inputFormModaledit').modal('show');
 
@@ -412,492 +353,347 @@ $(document).ready(function () {
         $('.rte-input').removeClass('d-none');
     });
 
-// ------------ckewditor-------------
-let editors = {}; // Store CKEditor instances
+    let editors = {};
 
-// Initialize all editors first
-document.querySelectorAll('.rich-editor').forEach(textarea => {
-    ClassicEditor
-        .create(textarea)
-        .then(editor => {
-            editors[textarea.id] = editor;
-        })
-        .catch(error => {
-            console.error(error);
-        });
-});
-
-// Fill content and set ID when modal is opened
-$(document).on('click', '.editsubMenucontent', function () {
-    const submenu_content_en = $(this).data('submenu_content_en');
-    const submenu_content_ta = $(this).data('submenu_content_ta');
-    const id = $(this).data('id');
-
-    // Set CKEditor content
-    if (editors['submenu_content_en']) {
-        editors['submenu_content_en'].setData(submenu_content_en || '');
-    }
-
-    if (editors['submenu_content_ta']) {
-        editors['submenu_content_ta'].setData(submenu_content_ta || '');
-    }
-
-    // Set hidden input field for ID
-    $('#submenu_id').val(id);
-});
-
-// ----submenucontent---------------------------
-// $('#submenucontentedit').on('submit', function(e) {
-//     e.preventDefault();
-
-//     const id = $('#submenu_id').val();
-//     const submenu_content_en = editors['submenu_content_en'].getData();
-//     const submenu_content_ta = editors['submenu_content_ta'].getData();
-
-//     $.ajax({
-//         url: '/admin/update-submenu-content',
-//         method: 'POST',
-//         data: {
-//             _token: $('meta[name="csrf-token"]').attr('content'),
-//             id: id,
-//             submenu_content_en: submenu_content_en,
-//             submenu_content_ta: submenu_content_ta,
-//         },
-//         success: function(response) {
-//             if (response.success) {
-//                 // Update content on table
-//                 $(`#content_en_${id}`).html(submenu_content_en);
-//                 $(`#content_ta_${id}`).html(submenu_content_ta);
-
-//                 // Optional: If modal is still open and you want to refresh CKEditor content
-//                 if (editors['submenu_content_en']) {
-//                     editors['submenu_content_en'].setData(submenu_content_en);
-//                 }
-//                 if (editors['submenu_content_ta']) {
-//                     editors['submenu_content_ta'].setData(submenu_content_ta);
-//                 }
-
-//                 // Hide modal
-//                 $('#editsubMenucontent').modal('hide');
-//             }
-//         },
-//         error: function(xhr) {
-//             console.log(xhr.responseText);
-//         }
-//     });
-// });
+    // Initialize all editors first
+    document.querySelectorAll('.rich-editor').forEach(textarea => {
+        ClassicEditor
+            .create(textarea)
+            .then(editor => {
+                editors[textarea.id] = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    });
 
 
-$('#submenucontentedit').on('submit', function(e) {
-    e.preventDefault();
+    $(document).on('click', '.editsubMenucontent', function () {
+        const submenu_content_en = $(this).data('submenu_content_en');
+        const submenu_content_ta = $(this).data('submenu_content_ta');
+        const id = $(this).data('id');
 
-    const id = $('#submenu_id').val();
-    const submenu_content_en = editors['submenu_content_en'].getData();
-    const submenu_content_ta = editors['submenu_content_ta'].getData();
+        // Set CKEditor content
+        if (editors['submenu_content_en']) {
+            editors['submenu_content_en'].setData(submenu_content_en || '');
+        }
 
-    $.ajax({
-        url: BASE_URL +  '/admin/update-submenu-content',
-        method: 'POST',
-        data: {
-            _token: $('meta[name="csrf-token"]').attr('content'),
-            id: id,
-            submenu_content_en: submenu_content_en,
-            submenu_content_ta: submenu_content_ta,
-        },
-        success: function(response) {
-            if (response.success) {
-                // Optionally update table view immediately
-                $(`#content_en_${id}`).html(submenu_content_en);
-                $(`#content_ta_${id}`).html(submenu_content_ta);
+        if (editors['submenu_content_ta']) {
+            editors['submenu_content_ta'].setData(submenu_content_ta || '');
+        }
 
-                // Close modal
-                $('#editsubMenucontent').modal('hide');
+        // Set hidden input field for ID
+        $('#submenu_id').val(id);
+    });
 
-                // Reload the page after a slight delay to ensure smooth UX
-                setTimeout(() => {
-                    location.reload();
-                }, 300); // 300ms delay (optional)
+    $('#submenucontentedit').on('submit', function (e) {
+        e.preventDefault();
+
+        const id = $('#submenu_id').val();
+        const submenu_content_en = editors['submenu_content_en'].getData();
+        const submenu_content_ta = editors['submenu_content_ta'].getData();
+
+        $.ajax({
+            url: BASE_URL + '/admin/update-submenu-content',
+            method: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                id: id,
+                submenu_content_en: submenu_content_en,
+                submenu_content_ta: submenu_content_ta,
+            },
+            success: function (response) {
+                if (response.success) {
+                    // Optionally update table view immediately
+                    $(`#content_en_${id}`).html(submenu_content_en);
+                    $(`#content_ta_${id}`).html(submenu_content_ta);
+
+                    // Close modal
+                    $('#editsubMenucontent').modal('hide');
+
+                    // Reload the page after a slight delay to ensure smooth UX
+                    setTimeout(() => {
+                        location.reload();
+                    }, 300); // 300ms delay (optional)
+                }
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
             }
-        },
-        error: function(xhr) {
-            console.log(xhr.responseText);
+        });
+    });
+
+    $(document).on('click', '[data-bs-target="#inputFormModaleditboard"]', function () {
+        const id = $(this).data('id');
+        const heading = $(this).data('heading');
+        const newsboard_en = $(this).data('newsboard_en');
+        const status = $(this).data('status');
+        const language = $(this).data('language');
+
+        // Set values
+        $('#board_id').val(id);
+        $('#status_select').val(status);
+        $('#language_select').val(language);
+
+        // Set heading
+        if (typeof editors !== 'undefined' && editors['heading']) {
+            editors['heading'].setData(heading || '');
+        } else {
+            $('#heading').val(heading || '');
+        }
+
+        // Set Notice Board Content using CKEditor (if exists)
+        if (typeof editors !== 'undefined' && editors['newsboard_en']) {
+            editors['newsboard_en'].setData(newsboard_en || '');
+        } else {
+            $('#newsboard_en').val($('<div/>').html(newsboard_en).text() || '');
         }
     });
-});
 
+    $(document).on('click', '.editsubMenucontent', function () {
+        const id = $(this).data('id');
+        const heading = $(this).data('heading');
+        const newsboard_en = $(this).data('newsboard_en');
+        const status = $(this).data('status');
+        const language = $(this).data('language');
 
-// ----------------NewsController----------------------
+        $('#board_id').val(id);
+        $('#status_select').val(status);
+        $('#language_select').val(language);
 
-$(document).on('click', '[data-bs-target="#inputFormModaleditboard"]', function () {
-    const id = $(this).data('id');
-    const heading = $(this).data('heading');
-    const newsboard_en = $(this).data('newsboard_en');
-    const status = $(this).data('status');
-    const language = $(this).data('language');
-
-    // Set values
-    $('#board_id').val(id);
-    $('#status_select').val(status);
-    $('#language_select').val(language);
-
-    // Set heading
-    if (typeof editors !== 'undefined' && editors['heading']) {
-        editors['heading'].setData(heading || '');
-    } else {
-        $('#heading').val(heading || '');
-    }
-
-    // Set Notice Board Content using CKEditor (if exists)
-    if (typeof editors !== 'undefined' && editors['newsboard_en']) {
-        editors['newsboard_en'].setData(newsboard_en || '');
-    } else {
-        $('#newsboard_en').val($('<div/>').html(newsboard_en).text() || '');
-    }
-});
-
-
-// ----newscontroller update ---------------------
-// Fill modal form on edit click
-$(document).on('click', '.editsubMenucontent', function () {
-    const id = $(this).data('id');
-    const heading = $(this).data('heading');
-    const newsboard_en = $(this).data('newsboard_en');
-    const status = $(this).data('status');
-    const language = $(this).data('language');
-
-    $('#board_id').val(id);
-    $('#status_select').val(status);
-    $('#language_select').val(language);
-
-    if (editors['heading']) editors['heading'].setData(heading || '');
-    if (editors['newsboard_en']) editors['newsboard_en'].setData(newsboard_en || '');
-});
-
-// // Submit edit form
-// $('#noticeboardedit').on('submit', function (e) {
-//     e.preventDefault();
-
-//     const heading = editors['heading'] ? editors['heading'].getData() : $('#heading').val();
-//     const newsboard_en = editors['newsboard_en'] ? editors['newsboard_en'].getData() : $('#newsboard_en').val();
-
-//     const formData = {
-//         id: $('#board_id').val(),
-//         status: $('#status_select').val(),
-//         language: $('#language_select').val(),
-//         heading: heading,
-//         newsboard_en: newsboard_en,
-//         updated_by: 'admin',
-//         _token: $('meta[name="csrf-token"]').attr('content')
-//     };
-
-//     $.ajax({
-//         url: '/admin/newsboard/updatenews',
-//         type: 'POST',
-//         data: formData,
-//         success: function (response) {
-//             if (response.success) {
-//                 const news = response.news;
-//                 const row = $('tr[data-id="' + news.id + '"]');
-
-//                 // Update row content
-//                 row.find('td:eq(1)').text(news.language);
-//                 row.find('td:eq(2)').text(news.updated_at.substring(0, 10));
-//                 row.find('td:eq(3)').html(news.heading);
-//                 row.find('td:eq(4)').html(news.newsboard_en);
-
-//                 let badgeClass = '', badgeText = '';
-//                 if (news.status == '1') {
-//                     badgeClass = 'badge-success'; badgeText = 'Published';
-//                 } else if (news.status == '0') {
-//                     badgeClass = 'badge-dark'; badgeText = 'Draft';
-//                 } else if (news.status == '2') {
-//                     badgeClass = 'badge-danger'; badgeText = 'Disabled';
-//                 }
-//                 row.find('td:eq(5)').html(`<span class="badge ${badgeClass}">${badgeText}</span>`);
-
-//                 // Update data on edit button
-//                 const editBtn = row.find('a[data-bs-toggle="modal"]');
-//                 editBtn.data('heading', news.heading);
-//                 editBtn.data('newsboard_en', news.newsboard_en);
-//                 editBtn.data('status', news.status);
-//                 editBtn.data('language', news.language);
-
-//                 // Close modal
-//                 $('#inputFormModaleditboard').modal('hide');
-//             }
-//         },
-//         error: function (xhr) {
-//             alert('Fill the Fields Properly!');
-//             console.log(xhr.responseText);
-//         }
-//     });
-// });
-// // --------------------------
-
-$(document).on('click', '.editscrollcontent', function () {
-    const id = $(this).data('id');
-    const whatsnew_en = $(this).data('whatsnew_en');
-    const language = $(this).data('language');
-    const status = $(this).data('status'); // ✅ FIXED
-
-    $('#whatsnew_en_id').val(id);
-    $('#status_select').val(status);      // ✅ FIXED
-    $('#language_select').val(language);
-
-    if (editors['whatsnew_en']) {
-        editors['whatsnew_en'].setData(whatsnew_en || '');
-    } else {
-        $('textarea[name="whatsnew_en"]').val(whatsnew_en || '');
-    }
-});
-
-// ------------------------------------------------
-
-
-let currentEditSliderId = null;
-
-$('.edit-open-media').on('click', function () {
-    currentEditSliderId = $(this).data('slider-id');
-    $('#editMediaLibraryModal').modal('show');
-});
-
-$('#editSelectImageBtn').on('click', function () {
-    var selectedRadio = $('input[name="editMediaSelect"]:checked');
-    if (selectedRadio.length > 0) {
-        var imageId = selectedRadio.val();
-        var imagePath = selectedRadio.closest('.card').find('img').data('path');
-
-        // Set hidden input value
-        $('#editSliderImagePath' + currentEditSliderId).val(imageId);
-
-        // Show preview
-        $('#editSliderImagePreview' + currentEditSliderId).html(
-            '<img src="' + imagePath + '" class="img-fluid" style="max-height:150px;">'
-        );
-
-        // Close media modal
-        $('#editMediaLibraryModal').modal('hide');
-    } else {
-        alert("Please select an image.");
-    }
-});
-
-
-// -----------slider----------------
-
-
-$('#insertslider').on('submit', function(e) {
-    e.preventDefault();
-
-    let form = this;
-    let formData = new FormData(form);
-
-    // Clear previous errors
-    $('#sliderNameError, #sliderImageError, #sliderCaptionError, #sliderCaptionTaError, #sliderStatusError').text('');
-
-    $.ajax({
-        url: BASE_URL + '/admin/homeslider/insertdata',
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        success: function(response) {
-    $('#insertslider')[0].reset();
-    $('#additems').modal('hide');
-    $('.modal-backdrop').remove();
-    $('body').removeClass('modal-open');
-
-    Swal.fire('Success', 'Slider added successfully!', 'success');
-
-    const slider = response.slider;
-    const media = slider.media; // ✅ fetched via relation
-
-    const statusLabel = slider.slider_status == '1' ? 'Published' : (slider.slider_status == '0' ? 'Draft' : 'Disabled');
-    const statusClass = slider.slider_status == '1' ? 'badge-success' : (slider.slider_status == '0' ? 'badge-dark' : 'badge-danger');
-
-    const captionTa = slider.slider_caption_ta || '-----';
-
-    const mediaHtml = media ? `
-        <a href="/${media.filepath_img_pdf}" class="defaultGlightbox glightbox-content">
-            <img src="/${media.filepath_img_pdf}" alt="${media.alt_text_en}" class="img-fluid" />
-            <p class="text-info mt-1">Click to View</p>
-        </a>` : '<span class="text-danger">No image found</span>';
-
-    const newRow = `
-        <tr id="slider-row-${slider.id}">
-            <td class="text-center index">#</td>
-            <td class="text-center slider-caption table_tdcontrol">${slider.slider_caption}</td>
-            <td class="text-center slider-caption table_tdcontrol">${captionTa}</td>
-            <td class="text-center">${mediaHtml}</td>
-            <td class="text-center index">${slider.updated_at?.substring(0, 10).split('-').reverse().join('-')}</td>
-            <td class="text-center">
-                <span class="badge ${statusClass}">${statusLabel}</span>
-            </td>
-            <td class="text-center">
-                <div class="action-btns">
-                    <i class="fa fa-pencil text-primary me-2 cursor-pointer"
-                        data-bs-toggle="modal"
-                        data-bs-target="#editModal${slider.id}"
-                        title="Edit"></i>
-                </div>
-            </td>
-        </tr>`;
-
-    $('#sliderTableBody').prepend(newRow);
-
-    $('#sliderTableBody tr').each(function(index) {
-        $(this).find('td.index:first').text(index + 1);
+        if (editors['heading']) editors['heading'].setData(heading || '');
+        if (editors['newsboard_en']) editors['newsboard_en'].setData(newsboard_en || '');
     });
 
-    if (typeof GLightbox !== 'undefined') {
-        GLightbox({ selector: '.defaultGlightbox' });
-    }
-},
 
-        error: function(xhr) {
-            let errors = xhr.responseJSON?.errors;
-            if (errors) {
-                if (errors.slider_image) $('#sliderImageError').text(errors.slider_image[0]);
-                if (errors.slider_caption) $('#sliderCaptionError').text(errors.slider_caption[0]);
-                if (errors.slider_caption_ta) $('#sliderCaptionTaError').text(errors.slider_caption_ta[0]);
-                if (errors.slider_status) $('#sliderStatusError').text(errors.slider_status[0]);
-            } else {
-                Swal.fire("Error", "Something went wrong", "error");
-            }
+    $(document).on('click', '.editscrollcontent', function () {
+        const id = $(this).data('id');
+        const whatsnew_en = $(this).data('whatsnew_en');
+        const language = $(this).data('language');
+        const status = $(this).data('status'); // ✅ FIXED
+
+        $('#whatsnew_en_id').val(id);
+        $('#status_select').val(status);      // ✅ FIXED
+        $('#language_select').val(language);
+
+        if (editors['whatsnew_en']) {
+            editors['whatsnew_en'].setData(whatsnew_en || '');
+        } else {
+            $('textarea[name="whatsnew_en"]').val(whatsnew_en || '');
         }
     });
-});
 
-// ---------slider update ----------------------
-$('#selectImageBtn').on('click', function () {
-    var selectedRadio = $('input[name="mediaSelect"]:checked');
+    let currentEditSliderId = null;
 
-    if (selectedRadio.length > 0) {
-        var imageId = selectedRadio.val();
-        var imagePath = selectedRadio.closest('.card').find('img').data('path');
+    $('.edit-open-media').on('click', function () {
+        currentEditSliderId = $(this).data('slider-id');
+        $('#editMediaLibraryModal').modal('show');
+    });
 
-        // Store only the ID in the hidden input
-        $('#sliderImagePath').val(imageId);
+    $('#editSelectImageBtn').on('click', function () {
+        var selectedRadio = $('input[name="editMediaSelect"]:checked');
+        if (selectedRadio.length > 0) {
+            var imageId = selectedRadio.val();
+            var imagePath = selectedRadio.closest('.card').find('img').data('path');
 
-        // Show preview using full image path
-        $('#sliderImagePreview').html('<img src="' + imagePath + '" class="img-fluid rounded" style="max-height:150px;">');
+            // Set hidden input value
+            $('#editSliderImagePath' + currentEditSliderId).val(imageId);
 
-        // Close media modal
-        $('#mediaLibraryModal').modal('hide');
+            // Show preview
+            $('#editSliderImagePreview' + currentEditSliderId).html(
+                '<img src="' + imagePath + '" class="img-fluid" style="max-height:150px;">'
+            );
 
-        // Reopen add modal after media modal is closed
-        $('#mediaLibraryModal').on('hidden.bs.modal', function () {
-            $('#additems').modal('show');
-            $(this).off('hidden.bs.modal'); // Remove listener to avoid duplicate openings
-        });
-
-    } else {
-        alert("Please select an image.");
-    }
-});
-
+            // Close media modal
+            $('#editMediaLibraryModal').modal('hide');
+        } else {
+            alert("Please select an image.");
+        }
+    });
 
 
 
+    $('#insertslider').on('submit', function (e) {
+        e.preventDefault();
 
+        let form = this;
+        let formData = new FormData(form);
 
-// --------------------media image edit------------------------
+        // Clear previous errors
+        $('#sliderNameError, #sliderImageError, #sliderCaptionError, #sliderCaptionTaError, #sliderStatusError').text('');
 
+        $.ajax({
+            url: BASE_URL + '/admin/homeslider/insertdata',
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                $('#insertslider')[0].reset();
+                $('#additems').modal('hide');
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
 
-// $(document).on('click', '.choose-media-image', function () {
-//     const imagePath = $(this).data('path');
-//     const sliderId = $('#mediaModal').data('target-id');
+                Swal.fire('Success', 'Slider added successfully!', 'success');
 
-//     $(`form[data-id="${sliderId}"] .slider_image_path`).val(imagePath);
-//     $(`#preview_${sliderId}`).attr('src', '/' + imagePath);
+                const slider = response.slider;
+                const media = slider.media; // ✅ fetched via relation
 
-//     $('#mediaModal').modal('hide');
-// });
+                const statusLabel = slider.slider_status == '1' ? 'Published' : (slider.slider_status == '0' ? 'Draft' : 'Disabled');
+                const statusClass = slider.slider_status == '1' ? 'badge-success' : (slider.slider_status == '0' ? 'badge-dark' : 'badge-danger');
 
-$(document).on('submit', '.sliderupdate-form', function (e) {
-    e.preventDefault();
+                const captionTa = slider.slider_caption_ta || '-----';
 
-    let form = $(this);
-    let sliderId = form.data('id');
-    let url = form.data('url');
-    let formData = new FormData(this);
+                const mediaHtml = media ? `
+            <a href="/${media.filepath_img_pdf}" class="defaultGlightbox glightbox-content">
+                <img src="/${media.filepath_img_pdf}" alt="${media.alt_text_en}" class="img-fluid" />
+                <p class="text-info mt-1">Click to View</p>
+            </a>` : '<span class="text-danger">No image found</span>';
 
-    $.ajax({
-        url: `${url}/${sliderId}`,
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-       success: function (response) {
-            const slider = response.slider;
-            const statusLabel = slider.slider_status == 1 ? 'Published' : slider.slider_status == 0 ? 'Draft' : 'Disabled';
-            const statusClass = slider.slider_status == 1 ? 'badge-success' : slider.slider_status == 0 ? 'badge-dark' : 'badge-danger';
-            const caption_ta = slider.slider_caption_ta ? slider.slider_caption_ta : '<p>-----</p>';
-
-            const imageUrl = slider.media ? '/' + slider.media.filepath_img_pdf : '';
-            const imageAlt = slider.media ? slider.media.alt_text_en ?? 'Slider Image' : 'Slider Image';
-
-            const updatedRow = `
-                <tr id="slider-row-${slider.id}">
-                    <td class="text-center index">#</td>
-                    <td class="text-center slider-caption table_tdcontrol">${slider.slider_caption}</td>
-                    <td class="text-center slider-caption table_tdcontrol">${caption_ta}</td>
-                    <td class="text-center">
-                        ${slider.media ? `
-                        <a href="${imageUrl}" class="defaultGlightbox glightbox-content">
-                            <img src="${imageUrl}" alt="${imageAlt}" class="img-fluid" />
-                            <p class="text-info mt-1">Click to View</p>
-                        </a>` : `<p class="text-danger">Media not found</p>`}
-                    </td>
-                    <td class="text-center index">${formatDMY(slider.updated_at)}</td>
-                    <td class="text-center slider-caption">
-                        <span class="badge ${statusClass}">${statusLabel}</span>
-                    </td>
-                    <td class="text-center">
+                const newRow = `
+            <tr id="slider-row-${slider.id}">
+                <td class="text-center index">#</td>
+                <td class="text-center slider-caption table_tdcontrol">${slider.slider_caption}</td>
+                <td class="text-center slider-caption table_tdcontrol">${captionTa}</td>
+                <td class="text-center">${mediaHtml}</td>
+                <td class="text-center index">${slider.updated_at?.substring(0, 10).split('-').reverse().join('-')}</td>
+                <td class="text-center">
+                    <span class="badge ${statusClass}">${statusLabel}</span>
+                </td>
+                <td class="text-center">
+                    <div class="action-btns">
                         <i class="fa fa-pencil text-primary me-2 cursor-pointer"
-                        data-bs-toggle="modal"
-                        data-bs-target="#editModal${slider.id}" 
-                        title="Edit"></i>
-                    </td>
-                </tr>`;
+                            data-bs-toggle="modal"
+                            data-bs-target="#editModal${slider.id}"
+                            title="Edit"></i>
+                    </div>
+                </td>
+            </tr>`;
 
-            $(`#slider-row-${slider.id}`).replaceWith(updatedRow);
+                $('#sliderTableBody').prepend(newRow);
 
-            $('#sliderTableBody tr').each(function (index) {
-                $(this).find('td.index:first').text(index + 1);
+                $('#sliderTableBody tr').each(function (index) {
+                    $(this).find('td.index:first').text(index + 1);
+                });
+
+                if (typeof GLightbox !== 'undefined') {
+                    GLightbox({ selector: '.defaultGlightbox' });
+                }
+            },
+
+            error: function (xhr) {
+                let errors = xhr.responseJSON?.errors;
+                if (errors) {
+                    if (errors.slider_image) $('#sliderImageError').text(errors.slider_image[0]);
+                    if (errors.slider_caption) $('#sliderCaptionError').text(errors.slider_caption[0]);
+                    if (errors.slider_caption_ta) $('#sliderCaptionTaError').text(errors.slider_caption_ta[0]);
+                    if (errors.slider_status) $('#sliderStatusError').text(errors.slider_status[0]);
+                } else {
+                    Swal.fire("Error", "Something went wrong", "error");
+                }
+            }
+        });
+    });
+
+    $('#selectImageBtn').on('click', function () {
+        var selectedRadio = $('input[name="mediaSelect"]:checked');
+
+        if (selectedRadio.length > 0) {
+            var imageId = selectedRadio.val();
+            var imagePath = selectedRadio.closest('.card').find('img').data('path');
+
+            // Store only the ID in the hidden input
+            $('#sliderImagePath').val(imageId);
+
+            // Show preview using full image path
+            $('#sliderImagePreview').html('<img src="' + imagePath + '" class="img-fluid rounded" style="max-height:150px;">');
+
+            // Close media modal
+            $('#mediaLibraryModal').modal('hide');
+
+            // Reopen add modal after media modal is closed
+            $('#mediaLibraryModal').on('hidden.bs.modal', function () {
+                $('#additems').modal('show');
+                $(this).off('hidden.bs.modal'); // Remove listener to avoid duplicate openings
             });
 
-            if (typeof GLightbox !== 'undefined') {
-                GLightbox({ selector: '.defaultGlightbox' });
-            }
-
-            $('#editModal' + sliderId).modal('hide');
-            Swal.fire('Updated', 'Slider updated successfully.', 'success');
-        },
-        error: function (xhr) {
-            Swal.fire('Error', 'Update failed.', 'error');
+        } else {
+            alert("Please select an image.");
         }
     });
-});
 
-function formatDMY(dateStr) {
-    const d = new Date(dateStr);
-    return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
-}
+    $(document).on('submit', '.sliderupdate-form', function (e) {
+        e.preventDefault();
 
+        let form = $(this);
+        let sliderId = form.data('id');
+        let url = form.data('url');
+        let formData = new FormData(this);
 
+        $.ajax({
+            url: `${url}/${sliderId}`,
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                const slider = response.slider;
+                const statusLabel = slider.slider_status == 1 ? 'Published' : slider.slider_status == 0 ? 'Draft' : 'Disabled';
+                const statusClass = slider.slider_status == 1 ? 'badge-success' : slider.slider_status == 0 ? 'badge-dark' : 'badge-danger';
+                const caption_ta = slider.slider_caption_ta ? slider.slider_caption_ta : '<p>-----</p>';
 
-// ----------------------------------------------------------------------------
+                const imageUrl = slider.media ? '/' + slider.media.filepath_img_pdf : '';
+                const imageAlt = slider.media ? slider.media.alt_text_en ?? 'Slider Image' : 'Slider Image';
 
-$(document).ready(function () {
+                const updatedRow = `
+                    <tr id="slider-row-${slider.id}">
+                        <td class="text-center index">#</td>
+                        <td class="text-center slider-caption table_tdcontrol">${slider.slider_caption}</td>
+                        <td class="text-center slider-caption table_tdcontrol">${caption_ta}</td>
+                        <td class="text-center">
+                            ${slider.media ? `
+                            <a href="${imageUrl}" class="defaultGlightbox glightbox-content">
+                                <img src="${imageUrl}" alt="${imageAlt}" class="img-fluid" />
+                                <p class="text-info mt-1">Click to View</p>
+                            </a>` : `<p class="text-danger">Media not found</p>`}
+                        </td>
+                        <td class="text-center index">${formatDMY(slider.updated_at)}</td>
+                        <td class="text-center slider-caption">
+                            <span class="badge ${statusClass}">${statusLabel}</span>
+                        </td>
+                        <td class="text-center">
+                            <i class="fa fa-pencil text-primary me-2 cursor-pointer"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editModal${slider.id}" 
+                            title="Edit"></i>
+                        </td>
+                    </tr>`;
 
-    // Submit Add Menu Form
+                $(`#slider-row-${slider.id}`).replaceWith(updatedRow);
+
+                $('#sliderTableBody tr').each(function (index) {
+                    $(this).find('td.index:first').text(index + 1);
+                });
+
+                if (typeof GLightbox !== 'undefined') {
+                    GLightbox({ selector: '.defaultGlightbox' });
+                }
+
+                $('#editModal' + sliderId).modal('hide');
+                Swal.fire('Updated', 'Slider updated successfully.', 'success');
+            },
+            error: function (xhr) {
+                Swal.fire('Error', 'Update failed.', 'error');
+            }
+        });
+    });
+
     $('#menuForm').on('submit', function (e) {
         e.preventDefault();
 
@@ -905,26 +701,26 @@ $(document).ready(function () {
         let submitBtn = $('#menuForm button[type="submit"]');
         submitBtn.prop('disabled', true).text('Saving...');
 
-          // Get page type to validate conditionally
-    const pageType = $('select[name="page_type"]').val();
-    const externalUrl = $('input[name="external_url"]').val();
+        // Get page type to validate conditionally
+        const pageType = $('select[name="page_type"]').val();
+        const externalUrl = $('input[name="external_url"]').val();
 
-    if (pageType === 'url') {
-        // Regex to check if URL starts with http:// or https://
-        const urlPattern = /^(http:\/\/|https:\/\/).+/i;
-        if (!urlPattern.test(externalUrl)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid URL',
-                text: 'Please enter a valid URL starting with http:// or https://'
-            });
-            submitBtn.prop('disabled', false).text('Add');
-            return;
+        if (pageType === 'url') {
+            // Regex to check if URL starts with http:// or https://
+            const urlPattern = /^(http:\/\/|https:\/\/).+/i;
+            if (!urlPattern.test(externalUrl)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid URL',
+                    text: 'Please enter a valid URL starting with http:// or https://'
+                });
+                submitBtn.prop('disabled', false).text('Add');
+                return;
+            }
         }
-    }
 
         $.ajax({
-            url: BASE_URL +  "/admin/menus/insertmenu",
+            url: BASE_URL + "/admin/menus/insertmenu",
             method: "POST",
             data: formData,
             contentType: false,
@@ -1013,58 +809,45 @@ $(document).ready(function () {
                     </tr>
                 `;
 
-                $('#sortable').prepend(newRow);
-                $('#sortable tr').each(function (index) {
-                    $(this).find('td:first').text(index + 1);
-                });
+                    $('#sortable').prepend(newRow);
+                    $('#sortable tr').each(function (index) {
+                        $(this).find('td:first').text(index + 1);
+                    });
 
-                Swal.fire('Success', response.message, 'success');
-            } else {
-                Swal.fire('Error', 'Failed to save menu', 'error');
+                    Swal.fire('Success', response.message, 'success');
+                } else {
+                    Swal.fire('Error', 'Failed to save menu', 'error');
+                    submitBtn.prop('disabled', false).text('Add');
+                }
+            },
+            error: function (xhr) {
                 submitBtn.prop('disabled', false).text('Add');
-            }
-        },
-        error: function (xhr) {
-            submitBtn.prop('disabled', false).text('Add');
 
-            const errors = xhr.responseJSON?.errors;
-            if (errors) {
-                let errorMessages = '';
-                $.each(errors, function (key, messages) {
-                    errorMessages += `${messages[0]}<br>`;
-                });
+                const errors = xhr.responseJSON?.errors;
+                if (errors) {
+                    let errorMessages = '';
+                    $.each(errors, function (key, messages) {
+                        errorMessages += `${messages[0]}<br>`;
+                    });
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Error',
-                    html: errorMessages,
-                });
-            } else {
-                Swal.fire('Error', 'An unexpected error occurred.', 'error');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        html: errorMessages,
+                    });
+                } else {
+                    Swal.fire('Error', 'An unexpected error occurred.', 'error');
+                }
             }
-        }
         });
     });
 
-    // Handle Edit Menu
- $(document).ready(function () {
-
-    function toggleFieldsEdit(pageType) {
-        $('#staticFieldsEdit, #pdfFieldsEdit, #urlFieldsEdit').hide();
-
-        if (pageType === 'Static Page') {
-            $('#staticFieldsEdit').show();
-        } else if (pageType === 'pdf') {
-            $('#pdfFieldsEdit').show();
-        } else if (pageType === 'url') {
-            $('#urlFieldsEdit').show();
-        }
-    }
 
     // Page Type dropdown change
     $('#page_type_menuedit').on('change', function () {
         toggleFieldsEdit($(this).val());
     });
+
 
     // When Edit button is clicked
     $(document).on('click', '.editMenu', function () {
@@ -1119,73 +902,43 @@ $(document).ready(function () {
         $('#inputFormModaledit').modal('show');
     });
 
-});
-
-
-    // Toggle fields based on page type
-    function toggleFieldsEdit(type) {
-        $('#staticFieldsEdit, #pdfFieldsEdit, #urlFieldsEdit').hide();
-        if (type === 'Static Page') {
-            $('#staticFieldsEdit').show();
-        } else if (type === 'pdf') {
-            $('#pdfFieldsEdit').show();
-        } else if (type === 'url') {
-            $('#urlFieldsEdit').show();
-        }
-    }
 
     // On dropdown change in edit form
     $('#page_type_menuedit').on('change', function () {
         toggleFieldsEdit($(this).val());
     });
 
-});
-
-
-// ---------------menu edit-----------------------
-$(document).ready(function () {
-    function toggleFieldsEdit(pageType) {
-        $('#staticFieldsEdit, #pdfFieldsEdit, #urlFieldsEdit').hide();
-
-        if (pageType === 'Static Page') {
-            $('#staticFieldsEdit').show();
-        } else if (pageType === 'pdf') {
-            $('#pdfFieldsEdit').show();
-        } else if (pageType === 'url') {
-            $('#urlFieldsEdit').show();
-        }
-    }
 
     // On page type dropdown change
     $('#page_type_menuedit').on('change', function () {
         toggleFieldsEdit($(this).val());
     });
 
-    // When Edit button is clicked
+
     $(document).on('click', '.editMenu', function () {
         const el = $(this);
-    
+
         $('#menuFormedit')[0].reset();
         $('#pdf_en_link, #pdf_ta_link').hide();
-    
+
         $('#menu_id').val(el.data('id'));
         $('#original_order_id').val(el.data('order_id'));
         $('#order_id_input').val(el.data('order_id'));
         $('#statusSelectEdit').val(el.data('status'));
-    
+
         const pageType = el.data('page_type');
         $('#page_type_menuedit').val(pageType).trigger('change');
-    
+
         // Set common fields
         $('input[name="menu_name_en"]').val(el.data('menu_name_en') || '');
         $('input[name="menu_name_ta"]').val(el.data('menu_name_ta') || '');
-    
+
         // Static Page
         if (pageType === 'Static Page') {
             $('input[name="page_url"]').val(el.data('page_url') || '');
             $('input[name="page_url_ta"]').val(el.data('page_url_ta') || '');
         }
-    
+
         // PDF Type
         if (pageType === 'pdf') {
             const pdfEn = el.data('pdf_en');
@@ -1193,271 +946,174 @@ $(document).ready(function () {
             if (pdfEn) $('#pdf_en_link').attr('href', pdfEn).show();
             if (pdfTa) $('#pdf_ta_link').attr('href', pdfTa).show();
         }
-    
+
         // URL Type
         if (pageType === 'url') {
             $('input[name="external_url"]').val(el.data('external_url') || '');
         }
-    
+
         $('#inputFormModaledit').modal('show');
     });
-    
-});
+
+    $(document).on('submit', '#menuFormedit', function (e) {
+        e.preventDefault();
+        // alert('111');
 
 
-// ---------------------------
+        const form = this;
+        const formData = new FormData(form);
 
-$(document).on('submit', '#menuFormedit', function(e) {
-    e.preventDefault();
-    // alert('111');
-    
+        const pageType = $(form).find('select[name="page_type"]').val();
+        const externalUrl = $(form).find('input[name="external_url"]').val();
+        const menuNameEn = $(form).find('input[name="menu_name_en"]').val().trim();
+        const menuNameTa = $(form).find('input[name="menu_name_ta"]').val().trim();
 
-    const form = this;
-    const formData = new FormData(form);
+        // ✅ Validate required fields manually before AJAX
+        if (menuNameEn === '' || menuNameTa === '') {
+            let message = '';
+            if (menuNameEn === '') message += 'Menu Name (English) is required.<br>';
+            if (menuNameTa === '') message += 'Menu Name (Tamil) is required.<br>';
 
-    const pageType = $(form).find('select[name="page_type"]').val();
-    const externalUrl = $(form).find('input[name="external_url"]').val();
-    const menuNameEn = $(form).find('input[name="menu_name_en"]').val().trim();
-    const menuNameTa = $(form).find('input[name="menu_name_ta"]').val().trim();
-
-    // ✅ Validate required fields manually before AJAX
-    if (menuNameEn === '' || menuNameTa === '') {
-        let message = '';
-        if (menuNameEn === '') message += 'Menu Name (English) is required.<br>';
-        if (menuNameTa === '') message += 'Menu Name (Tamil) is required.<br>';
-
-        Swal.fire({
-            icon: 'error',
-            title: 'Validation Error',
-            html: message,
-        });
-        return; // stop form submission
-    }
-
-    // ✅ Validate external_url if page_type is "url"
-    if (pageType === 'url') {
-        const urlPattern = /^(http:\/\/|https:\/\/)/i;
-        if (!externalUrl || !urlPattern.test(externalUrl)) {
             Swal.fire({
                 icon: 'error',
-                title: 'Invalid External URL',
-                text: 'Please enter a valid URL starting with http:// or https://'
+                title: 'Validation Error',
+                html: message,
             });
-            return;
+            return; // stop form submission
         }
-    }
 
-    $.ajax({
-        url: BASE_URL+"/admin/menus/updateitems",
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        success: function(response) {
-            if (response.conflict) {
+        // ✅ Validate external_url if page_type is "url"
+        if (pageType === 'url') {
+            const urlPattern = /^(http:\/\/|https:\/\/)/i;
+            if (!externalUrl || !urlPattern.test(externalUrl)) {
                 Swal.fire({
-                    title: 'Duplicate Order ID',
-                    text: response.message,
-                    icon: 'warning',
-                    confirmButtonText: 'OK',
+                    icon: 'error',
+                    title: 'Invalid External URL',
+                    text: 'Please enter a valid URL starting with http:// or https://'
                 });
                 return;
             }
-
-            if (response.success) {
-                handleMenuUpdate(response.menu);
-            }
-        },
-        error: function(xhr) {
-            let errors = xhr.responseJSON?.errors;
-            if (errors) {
-                let errorMessages = '';
-                $.each(errors, function (key, messages) {
-                    errorMessages += `${messages[0]}<br>`;
-                });
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Error',
-                    html: errorMessages,
-                });
-            } else {
-                Swal.fire('Error', 'An unexpected error occurred.', 'error');
-            }
         }
-    });
 
-    function handleMenuUpdate(menu) {
-            const row = $(`#sortable tr[data-id="${menu.id}"]`);
-
-            // 1. Update Menu Name, Page Type
-            row.find('td:nth-child(2)').text(menu.menu_name_en || '');
-            row.find('td:nth-child(3)').text(menu.menu_name_ta || '');
-            row.find('td:nth-child(4)').text(menu.page_type || '');
-
-            // 2. Page Type Content Column
-            let contentCol = '';
-            if (menu.page_type === 'Static Page') {
-                contentCol = menu.page_url || '—';
-            } else if (menu.page_type === 'pdf') {
-                const links = [];
-                if (menu.pdf_en) {
-                    links.push(`<a href="/${menu.pdf_en}" target="_blank" class="me-2" title="English PDF">
-                                    <i class="fa fa-file-pdf-o text-danger"></i>
-                                </a>`);
+        $.ajax({
+            url: BASE_URL + "/admin/menus/updateitems",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                if (response.conflict) {
+                    Swal.fire({
+                        title: 'Duplicate Order ID',
+                        text: response.message,
+                        icon: 'warning',
+                        confirmButtonText: 'OK',
+                    });
+                    return;
                 }
-                if (menu.pdf_ta) {
-                    links.push(`<a href="/${menu.pdf_ta}" target="_blank" title="Tamil PDF">
-                                    <i class="fa fa-file-pdf-o text-success"></i>
-                                </a>`);
+
+                if (response.success) {
+                    handleMenuUpdate(response.menu);
                 }
-                contentCol = links.join(' ');
-            } else if (menu.page_type === 'url') {
-                contentCol = `<a href="${menu.external_url}" target="_blank">External Link</a>`;
-            } else if (menu.page_type === 'submenu') {
-                contentCol = '—';
+            },
+            error: function (xhr) {
+                let errors = xhr.responseJSON?.errors;
+                if (errors) {
+                    let errorMessages = '';
+                    $.each(errors, function (key, messages) {
+                        errorMessages += `${messages[0]}<br>`;
+                    });
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        html: errorMessages,
+                    });
+                } else {
+                    Swal.fire('Error', 'An unexpected error occurred.', 'error');
+                }
             }
-            row.find('td:nth-child(5)').html(contentCol);
+        });
 
-            // 3. Order ID
-            row.find('td:nth-child(6)').text(menu.order_id || '');
-
-            // 4. Status Badge
-            const badge = row.find('td:nth-child(7) .badge');
-            badge.removeClass('badge-success badge-dark badge-danger');
-            if (menu.status == 1) {
-                badge.addClass('badge-success').text('Published');
-            } else if (menu.status == 0) {
-                badge.addClass('badge-dark').text('Draft');
-            } else if (menu.status == 2) {
-                badge.addClass('badge-danger').text('Disabled');
-            }
-
-            // 5. Update Edit Button Attributes
-            const page = menu.menu_page || {};
-
-            const editBtn = row.find('.editMenu');
-            editBtn.data('menu_name_en', menu.menu_name_en || '');
-            editBtn.data('menu_name_ta', menu.menu_name_ta || '');
-            editBtn.data('page_type', menu.page_type || '');
-            editBtn.data('order_id', menu.order_id || '');
-            editBtn.data('status', menu.status);
-
-            editBtn.data('page_url', page.page_url || '');
-            editBtn.data('page_url_ta', page.page_url_ta || '');
-            editBtn.data('external_url', page.external_url || '');
-            editBtn.data('pdf_en', page.pdf_en ? `/${page.pdf_en}` : '');
-            editBtn.data('pdf_ta', page.pdf_ta ? `/${page.pdf_ta}` : '');
-            editBtn.data('footer_quicklinks_id', page.footer_quicklinks_id || 0); // ✅ Added
-
-            // 6. Update Static Page icon (fa-file-text-o)
-            const controlsList = row.find('ul.table-controls');
-            controlsList.find('li').eq(1).remove(); // remove second icon if exists
-
-            if (menu.page_type === 'Static Page') {
-                controlsList.append(`
-                    <li>
-                        <a href="/admin/menuscontent/${menu.id}"  title="Edit">
-                            <i class="fa fa-file-text-o"></i>
-                        </a>
-                    </li>
-                `);
-            }
-
-            // 7. Close modal and reset form
-            $('#inputFormModaledit').modal('hide');
-            $('#menuFormedit')[0].reset();
-
-            // 8. Visual feedback
-            row.addClass('table-success');
-            setTimeout(() => row.removeClass('table-success'), 1500);
-        }
- 
-    
-});
-
-
-// -------------menucontentedit-----------------------
-
-// English Content Submit
-$(document).on('submit', '#menucontentedit_en', function (e) {
-    e.preventDefault();
-    let formData = new FormData(this);
-
-    $.ajax({
-        url: BASE_URL +  "/admin/menus/updatemenucontent",
-        method: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        success: function (response) {
-            Swal.fire('Success', response.message, 'success');
-        },
-        error: function () {
-            Swal.fire('Error', 'Fill the Fields Properly.', 'error');
-        }
     });
-});
 
-// Tamil Content Submit
-$(document).on('submit', '#menucontentedit_ta', function (e) {
-    e.preventDefault();
-    let formData = new FormData(this);
 
-    $.ajax({
-        url: BASE_URL +  "/admin/menus/updatemenucontent",
-        method: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        success: function (response) {
-            Swal.fire('Success', response.message, 'success');
-        },
-        error: function () {
-            Swal.fire('Error', 'Fill the Fields Properly.', 'error');
-        }
+    // English Content Submit
+    $(document).on('submit', '#menucontentedit_en', function (e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+
+        $.ajax({
+            url: BASE_URL + "/admin/menus/updatemenucontent",
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                Swal.fire('Success', response.message, 'success');
+            },
+            error: function () {
+                Swal.fire('Error', 'Fill the Fields Properly.', 'error');
+            }
+        });
     });
-});
 
+    // Tamil Content Submit
+    $(document).on('submit', '#menucontentedit_ta', function (e) {
+        e.preventDefault();
+        let formData = new FormData(this);
 
-// ----------------------------submenu--------------------------
-$(document).ready(function () {
+        $.ajax({
+            url: BASE_URL + "/admin/menus/updatemenucontent",
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                Swal.fire('Success', response.message, 'success');
+            },
+            error: function () {
+                Swal.fire('Error', 'Fill the Fields Properly.', 'error');
+            }
+        });
+    });
+
     // Submit Add Submenu Form
     $('#submenuFormadd').on('submit', function (e) {
         e.preventDefault();
 
         const form = this;
         const formData = new FormData(form);
-    
+
         const menuNameEn = form.menu_name_en.value.trim();
         const menuNameTa = form.menu_name_ta.value.trim();
-        const pageType   = form.page_type.value;
+        const pageType = form.page_type.value;
         const parentCode = form.parent_code.value;
-        const orderId    = form.order_id.value.trim();
+        const orderId = form.order_id.value.trim();
         const externalUrl = form.external_url?.value.trim();
-        const pageUrl    = form.page_url?.value.trim();
-        const pageUrlTa  = form.page_url_ta?.value.trim();
-        const pdfEn      = form.pdf_en?.files[0];
-        const pdfTa      = form.pdf_ta?.files[0];
-    
+        const pageUrl = form.page_url?.value.trim();
+        const pageUrlTa = form.page_url_ta?.value.trim();
+        const pdfEn = form.pdf_en?.files[0];
+        const pdfTa = form.pdf_ta?.files[0];
+
         let errors = [];
-    
+
         // ✅ General validation
         if (menuNameEn === '') errors.push('Sub Menu Name (English) is required.');
         if (menuNameTa === '') errors.push('Sub Menu Name (Tamil) is required.');
         if (pageType === '') errors.push('Menu Type is required.');
         if (parentCode === '') errors.push('Main Menu is required.');
         if (orderId === '' || isNaN(orderId)) errors.push('Order ID must be a number.');
-    
+
         // ✅ Page type-based validation
         if (pageType === 'Static Page') {
             if (!pageUrl) errors.push('Sub Menu Page URL (English) is required.');
@@ -1471,7 +1127,7 @@ $(document).ready(function () {
             if (!pdfEn) errors.push('English PDF is required.');
             if (!pdfTa) errors.push('Tamil PDF is required.');
         }
-    
+
         // ✅ Show errors if any
         if (errors.length > 0) {
             Swal.fire({
@@ -1481,13 +1137,13 @@ $(document).ready(function () {
             });
             return;
         }
-    
+
         // ✅ Disable submit and proceed with AJAX
         let submitBtn = $('#submenuFormadd button[type="submit"]');
         submitBtn.prop('disabled', true).text('Saving...');
 
         $.ajax({
-            url: BASE_URL +  "/admin/submenus/insertsubmenu",
+            url: BASE_URL + "/admin/submenus/insertsubmenu",
             method: "POST",
             data: formData,
             contentType: false,
@@ -1643,27 +1299,11 @@ $(document).ready(function () {
             $('.url-inputs').removeClass('d-none');
         }
     }).trigger('change');
-});
-// --------------------submenu edit--------------------
 
-$(document).ready(function () {
-    function toggleEditFields() {
-        const selected = $('#page_type_edit').val();
-
-        $('.static-page-inputs, .pdf-inputs, .url-inputs').addClass('d-none');
-
-        if (selected === 'Static Page') {
-            $('.static-page-inputs').removeClass('d-none');
-        } else if (selected === 'pdf') {
-            $('.pdf-inputs').removeClass('d-none');
-        } else if (selected === 'url') {
-            $('.url-inputs').removeClass('d-none');
-        }
-    }
 
     $('#page_type_edit').on('change', toggleEditFields).trigger('change');
 
-    // Pre-fill form when editing submenu
+
     $(document).on('click', '.editsubMenu', function () {
         $('#submenuFormedit')[0].reset();
 
@@ -1703,205 +1343,144 @@ $(document).ready(function () {
             $('#submenu_pdf_link_ta').addClass('d-none');
         }
     });
-});
 
+    // -------------update submenu---------------------------
 
-// -------------update submenu---------------------------
+    $(document).on('submit', '#submenuFormedit', function (e) {
+        e.preventDefault();
 
-$(document).on('submit', '#submenuFormedit', function(e) {
-    e.preventDefault();
+        const form = this;
+        const formData = new FormData(form);
 
-    const form = this;
-    const formData = new FormData(form);
-    
-    const menuNameEn = form.menu_name_en.value.trim();
-    const menuNameTa = form.menu_name_ta.value.trim();
-    const pageType   = form.page_type.value;
-    const parentCode = form.parent_code.value;
-    const orderId    = form.order_id.value.trim();
-    const externalUrl = form.external_url?.value.trim();
-    const pageUrl    = form.page_url?.value.trim();
-    const pageUrlTa  = form.page_url_ta?.value.trim();
-    const pdfEn      = form.pdf_en?.files[0];
-    const pdfTa      = form.pdf_ta?.files[0];
-    const status     = form.status.value;
+        const menuNameEn = form.menu_name_en.value.trim();
+        const menuNameTa = form.menu_name_ta.value.trim();
+        const pageType = form.page_type.value;
+        const parentCode = form.parent_code.value;
+        const orderId = form.order_id.value.trim();
+        const externalUrl = form.external_url?.value.trim();
+        const pageUrl = form.page_url?.value.trim();
+        const pageUrlTa = form.page_url_ta?.value.trim();
+        const pdfEn = form.pdf_en?.files[0];
+        const pdfTa = form.pdf_ta?.files[0];
+        const status = form.status.value;
 
-    let errors = [];
+        let errors = [];
 
-    // ✅ Basic validation
-    if (menuNameEn === '') errors.push('Sub Menu Name (English) is required.');
-    if (menuNameTa === '') errors.push('Sub Menu Name (Tamil) is required.');
-    if (pageType === '') errors.push('Page Type is required.');
-    if (parentCode === '') errors.push('Parent Menu is required.');
-    if (orderId === '' || isNaN(orderId)) errors.push('Order ID must be a number.');
-    if (status === '') errors.push('Status is required.');
+        // ✅ Basic validation
+        if (menuNameEn === '') errors.push('Sub Menu Name (English) is required.');
+        if (menuNameTa === '') errors.push('Sub Menu Name (Tamil) is required.');
+        if (pageType === '') errors.push('Page Type is required.');
+        if (parentCode === '') errors.push('Parent Menu is required.');
+        if (orderId === '' || isNaN(orderId)) errors.push('Order ID must be a number.');
+        if (status === '') errors.push('Status is required.');
 
-    // ✅ Page-type-based validation
-    if (pageType === 'Static Page') {
-        if (!pageUrl) errors.push('Page URL (English) is required for Static Page.');
-        if (!pageUrlTa) errors.push('Page URL (Tamil) is required for Static Page.');
-    } else if (pageType === 'url') {
-        const urlPattern = /^(http:\/\/|https:\/\/)/i;
-        if (!externalUrl || !urlPattern.test(externalUrl)) {
-            errors.push('Valid External URL (http:// or https://) is required.');
+        // ✅ Page-type-based validation
+        if (pageType === 'Static Page') {
+            if (!pageUrl) errors.push('Page URL (English) is required for Static Page.');
+            if (!pageUrlTa) errors.push('Page URL (Tamil) is required for Static Page.');
+        } else if (pageType === 'url') {
+            const urlPattern = /^(http:\/\/|https:\/\/)/i;
+            if (!externalUrl || !urlPattern.test(externalUrl)) {
+                errors.push('Valid External URL (http:// or https://) is required.');
+            }
+        } else if (pageType === 'pdf') {
+            // PDF is optional here on edit; remove these lines if you want to make it required:
+            if (!pdfEn && !$('#submenu_pdf_link_en').attr('href')) {
+                errors.push('English PDF is required.');
+            }
+            if (!pdfTa && !$('#submenu_pdf_link_ta').attr('href')) {
+                errors.push('Tamil PDF is required.');
+            }
         }
-    } else if (pageType === 'pdf') {
-        // PDF is optional here on edit; remove these lines if you want to make it required:
-        if (!pdfEn && !$('#submenu_pdf_link_en').attr('href')) {
-            errors.push('English PDF is required.');
-        }
-        if (!pdfTa && !$('#submenu_pdf_link_ta').attr('href')) {
-            errors.push('Tamil PDF is required.');
-        }
-    }
 
-    // ✅ Show errors
-    if (errors.length > 0) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Validation Error',
-            html: errors.join('<br>')
+        // ✅ Show errors
+        if (errors.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                html: errors.join('<br>')
+            });
+            return;
+        }
+
+        $.ajax({
+            url: BASE_URL + "/admin/submenus/updatesubitems",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                if (response.conflict) {
+                    Swal.fire({
+                        title: 'Duplicate Order ID',
+                        text: response.message,
+                        icon: 'warning',
+                        confirmButtonText: 'OK',
+                    });
+                    return;
+                }
+
+                if (response.success) {
+                    handleSubmenuUpdate(response.submenu); // ✅ Use 'submenu' from JSON
+                }
+            },
+            error: function (xhr) {
+                Swal.fire('Error', 'An unexpected error occurred.', 'error');
+            }
         });
-        return;
-    }
 
-    $.ajax({
-        url: BASE_URL +  "/admin/submenus/updatesubitems",
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        success: function(response) {
-            if (response.conflict) {
-                Swal.fire({
-                    title: 'Duplicate Order ID',
-                    text: response.message,
-                    icon: 'warning',
-                    confirmButtonText: 'OK',
-                });
-                return;
+    });
+
+    // English Content Submit
+    $(document).on('submit', '#submenucontentedit_en', function (e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+
+        $.ajax({
+            url: BASE_URL + "/admin/menus/updatesubmenucontent",
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                Swal.fire('Success', response.message, 'success');
+            },
+            error: function () {
+                Swal.fire('Error', 'Fill the Fields Properly.', 'error');
             }
+        });
+    });
 
-            if (response.success) {
-                handleSubmenuUpdate(response.submenu); // ✅ Use 'submenu' from JSON
+
+    // Tamil Content Submit
+    $(document).on('submit', '#submenucontentedit_ta', function (e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+
+        $.ajax({
+            url: BASE_URL + "/admin/menus/updatesubmenucontent",
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                Swal.fire('Success', response.message, 'success');
+            },
+            error: function () {
+                Swal.fire('Error', 'Fill the Fields Properly.', 'error');
             }
-        },
-        error: function(xhr) {
-            Swal.fire('Error', 'An unexpected error occurred.', 'error');
-        }
+        });
     });
 
-    function handleSubmenuUpdate(menu) {
-    const row = $(`#sortable-submenu tr[data-id="${menu.id}"]`);
-    if (row.length === 0) {
-        console.warn("Row not found for submenu ID:", menu.id);
-        return;
-    }
-
-    row.find('td:nth-child(2)').text(menu.menu_name_en || '');
-    row.find('td:nth-child(3)').text(menu.menu_name_ta || '');
-    row.find('td:nth-child(4)').text(menu.parent_menu_name || '—');
-    row.find('td:nth-child(5)').text(menu.order_id || '');
-
-    // ✅ Update status badge
-    const badge = row.find('td:nth-child(6) .badge');
-    badge.removeClass('badge-success badge-dark badge-danger');
-
-    if (menu.status == 1) {
-        badge.addClass('badge-success').text('Published');
-    } else if (menu.status == 0) {
-        badge.addClass('badge-dark').text('Draft');
-    } else if (menu.status == 2) {
-        badge.addClass('badge-danger').text('Disabled');
-    }
-
-    // ✅ Update footer quick links checkbox/text (Assuming column 8)
-    row.find('td:nth-child(8)').html(menu.footer_quicklinks_id == 1
-        ? '<i class="fa fa-check text-success"></i>'
-        : '<i class="fa fa-times text-danger"></i>');
-
-    // ✅ Update Action links (Static Page Link)
-    const actionCell = row.find('td:nth-child(7) ul');
-actionCell.find('li.static-page-link').remove();
-
-if (menu.page_type === 'Static Page') {
-    const staticLink = `
-        <li class="static-page-link">
-            <a href="/admin/submenuscontent/${menu.id}" title="Edit">
-                <i class="fa fa-file-text-o"></i>
-            </a>
-        </li>
-    `;
-    actionCell.append(staticLink);
-}
-
-    $('#inputFormModaledit').modal('hide');
-    $('#submenuFormedit')[0].reset();
-
-    row.addClass('table-success');
-    setTimeout(() => row.removeClass('table-success'), 1500);
-}
-
-    
-});
-
-
-// ----------------------------------------
-
-
-// English Content Submit
-$(document).on('submit', '#submenucontentedit_en', function (e) {
-    e.preventDefault();
-    let formData = new FormData(this);
-
-    $.ajax({
-        url: BASE_URL +  "/admin/menus/updatesubmenucontent",
-        method: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        success: function (response) {
-            Swal.fire('Success', response.message, 'success');
-        },
-        error: function () {
-            Swal.fire('Error', 'Fill the Fields Properly.', 'error');
-        }
-    });
-});
-
-// Tamil Content Submit
-$(document).on('submit', '#submenucontentedit_ta', function (e) {
-    e.preventDefault();
-    let formData = new FormData(this);
-
-    $.ajax({
-        url: BASE_URL +  "/admin/menus/updatesubmenucontent",
-        method: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        success: function (response) {
-            Swal.fire('Success', response.message, 'success');
-        },
-        error: function () {
-            Swal.fire('Error', 'Fill the Fields Properly.', 'error');
-        }
-    });
-});
-
-
-// --------------------------------------------------------------------------------------
-$(document).ready(function () {
-    // Reset the form and hide fields when modal opens
     $('#inputFormModaladd').on('show.bs.modal', function () {
         const form = $('#newsboardform')[0];
         form.reset();
@@ -1925,175 +1504,166 @@ $(document).ready(function () {
             $('#urlFields').hide();
         }
     });
-});
 
-// --satrtdate-------------------------
-// Set min date to today
-$(document).ready(function () {
+
     const today = new Date().toISOString().split('T')[0];
     $('#startdate').attr('min', today);
-});
-
-// ---------------------------newsboard insert------------------------------------
 
 
 
-$(document).on('submit', '#newsboardform', function(e) {
-    e.preventDefault();
+    $(document).on('submit', '#newsboardform', function (e) {
+        e.preventDefault();
 
-    let form = this;
-    let formData = new FormData(form);
+        let form = this;
+        let formData = new FormData(form);
 
-    // Cleanup fields based on content_type
-   
-    let errors = [];
+        // Cleanup fields based on content_type
 
-    let subjectEn = form.subject_en.value.trim();
-    let subjectTa = form.subject_ta.value.trim();
-    let startDate = form.startdate.value;
-    let endDate   = form.enddate.value;
-    let contentType = form.content_type.value;
+        let errors = [];
 
-    let pdfEn = form.pdf_en?.files[0];
-    let pdfTa = form.pdf_ta?.files[0];
-    let externalUrl = form.external_url?.value.trim();
+        let subjectEn = form.subject_en.value.trim();
+        let subjectTa = form.subject_ta.value.trim();
+        let startDate = form.startdate.value;
+        let endDate = form.enddate.value;
+        let contentType = form.content_type.value;
 
-    // ✅ Basic required fields
-    if (!subjectEn) errors.push('Subject (English) is required.');
-    if (!subjectTa) errors.push('Subject (Tamil) is required.');
-    if (!startDate) errors.push('Start Date is required.');
-    if (!endDate) errors.push('End Date is required.');
-    if (!contentType) errors.push('Content Type must be selected.');
+        let pdfEn = form.pdf_en?.files[0];
+        let pdfTa = form.pdf_ta?.files[0];
+        let externalUrl = form.external_url?.value.trim();
 
-    // ✅ Start Date <= End Date
-    if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
-        errors.push('End Date must be after or equal to Start Date.');
-    }
+        // ✅ Basic required fields
+        if (!subjectEn) errors.push('Subject (English) is required.');
+        if (!subjectTa) errors.push('Subject (Tamil) is required.');
+        if (!startDate) errors.push('Start Date is required.');
+        if (!endDate) errors.push('End Date is required.');
+        if (!contentType) errors.push('Content Type must be selected.');
 
-    // ✅ Content-type based checks
-    if (contentType === 'pdf') {
-        if (!pdfEn) errors.push('PDF (English) is required.');
-        if (!pdfTa) errors.push('PDF (Tamil) is required.');
-    }
-
-    if (contentType === 'url') {
-        const urlPattern = /^(https?:\/\/)/i;
-        if (!externalUrl || !urlPattern.test(externalUrl)) {
-            errors.push('Valid External URL (http:// or https://) is required.');
+        // ✅ Start Date <= End Date
+        if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
+            errors.push('End Date must be after or equal to Start Date.');
         }
-    }
 
-    // ✅ Show error using Swal.fire if any
-    if (errors.length > 0) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Validation Error',
-            html: errors.join('<br>'),
-        });
-        return;
-    }
+        // ✅ Content-type based checks
+        if (contentType === 'pdf') {
+            if (!pdfEn) errors.push('PDF (English) is required.');
+            if (!pdfTa) errors.push('PDF (Tamil) is required.');
+        }
 
-    // ✅ Cleanup unused fields
-    if (contentType === 'Static Page') {
-        formData.delete('pdf_en');
-        formData.delete('pdf_ta');
-        formData.delete('external_url');
-    } else if (contentType === 'pdf') {
-        formData.delete('external_url');
-    } else if (contentType === 'url') {
-        formData.delete('pdf_en');
-        formData.delete('pdf_ta');
-    }
-
-    $.ajax({
-        url: BASE_URL +  "/admin/newsboard/insert",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        success: function (response) {
-            if (response.success) {
-                Swal.fire('Success', response.message, 'success');
-
-                $('#inputFormModaladd').modal('hide');
-                $('#newsboardform')[0].reset();
-                $('#pdfFields, #urlFields').hide();
-
-                const news = response.data;
-
-                const rowCount = $('#style-3 tbody tr').length + 1;
-
-                // Format dates as dd-mm-yyyy
-                const formatDate = (dateString) => {
-                    const date = new Date(dateString);
-                    return date.toLocaleDateString('en-GB');
-                };
-
-                const formattedStartDate = formatDate(news.startdate);
-                const formattedEndDate = formatDate(news.enddate);
-
-                const statusLabel = (news.status == 1) ? 'Published' : (news.status == 0) ? 'Draft' : 'Disabled';
-                const statusClass = (news.status == 1) ? 'badge-success' : (news.status == 0) ? 'badge-dark' : 'badge-danger';
-
-                const newRow = `
-                    <tr data-id="${news.id}">
-                        <td class="checkbox-column text-center">${rowCount}</td>
-                        <td>${news.subject_en}</td>
-                        <td>${news.subject_ta}</td>
-                        <td>${formattedStartDate}</td>
-                        <td>${formattedEndDate}</td>
-                        <td class="table_tdcontrol">${news.page_type}</td>
-                        <td><span class="badge ${statusClass}">${statusLabel}</span></td>
-                        <td class="text-center">
-                            <ul class="table-controls">
-                                <li>
-                                    <a href="javascript:void(0);"
-                                       data-bs-toggle="modal"
-                                       data-bs-target="#inputFormModaleditboard"
-                                       data-id="${news.id}"
-                                       data-subject_en="${news.subject_en}"
-                                       data-subject_ta="${news.subject_ta}"
-                                       data-startdate="${news.startdate}"
-                                       data-enddate="${news.enddate}"
-                                       data-page_type="${news.page_type}"
-                                       data-pdf_en="${news.pdf_en ?? ''}"
-                                       data-pdf_ta="${news.pdf_ta ?? ''}"
-                                       data-external_url="${news.external_url ?? ''}"
-                                       class="bs-tooltip editboardMenucontent"
-                                       title="Edit">
-                                       <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
-                                    </a>
-                                </li>
-                                ${news.page_type === 'Static Page' ? `
-                                <li>
-                                    <a href="/admin/noticeboardcontent/${news.id}"  title="Edit">
-                                        <i class="fa fa-file-text-o"></i>
-                                    </a>
-                                </li>` : ''}
-                            </ul>
-                        </td>
-                    </tr>
-                `;
-
-                $('#style-3 tbody').prepend(newRow);
-            } else {
-                Swal.fire('Warning', response.message, 'warning');
+        if (contentType === 'url') {
+            const urlPattern = /^(https?:\/\/)/i;
+            if (!externalUrl || !urlPattern.test(externalUrl)) {
+                errors.push('Valid External URL (http:// or https://) is required.');
             }
-        },
-        error: function (xhr) {
-            console.log(xhr.responseText);
-            Swal.fire('Error', 'Fill the Fields Properly.', 'error');
         }
+
+        // ✅ Show error using Swal.fire if any
+        if (errors.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                html: errors.join('<br>'),
+            });
+            return;
+        }
+
+        // ✅ Cleanup unused fields
+        if (contentType === 'Static Page') {
+            formData.delete('pdf_en');
+            formData.delete('pdf_ta');
+            formData.delete('external_url');
+        } else if (contentType === 'pdf') {
+            formData.delete('external_url');
+        } else if (contentType === 'url') {
+            formData.delete('pdf_en');
+            formData.delete('pdf_ta');
+        }
+
+        $.ajax({
+            url: BASE_URL + "/admin/newsboard/insert",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire('Success', response.message, 'success');
+
+                    $('#inputFormModaladd').modal('hide');
+                    $('#newsboardform')[0].reset();
+                    $('#pdfFields, #urlFields').hide();
+
+                    const news = response.data;
+
+                    const rowCount = $('#style-3 tbody tr').length + 1;
+
+                    // Format dates as dd-mm-yyyy
+                    const formatDate = (dateString) => {
+                        const date = new Date(dateString);
+                        return date.toLocaleDateString('en-GB');
+                    };
+
+                    const formattedStartDate = formatDate(news.startdate);
+                    const formattedEndDate = formatDate(news.enddate);
+
+                    const statusLabel = (news.status == 1) ? 'Published' : (news.status == 0) ? 'Draft' : 'Disabled';
+                    const statusClass = (news.status == 1) ? 'badge-success' : (news.status == 0) ? 'badge-dark' : 'badge-danger';
+
+                    const newRow = `
+                        <tr data-id="${news.id}">
+                            <td class="checkbox-column text-center">${rowCount}</td>
+                            <td>${news.subject_en}</td>
+                            <td>${news.subject_ta}</td>
+                            <td>${formattedStartDate}</td>
+                            <td>${formattedEndDate}</td>
+                            <td class="table_tdcontrol">${news.page_type}</td>
+                            <td><span class="badge ${statusClass}">${statusLabel}</span></td>
+                            <td class="text-center">
+                                <ul class="table-controls">
+                                    <li>
+                                        <a href="javascript:void(0);"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#inputFormModaleditboard"
+                                        data-id="${news.id}"
+                                        data-subject_en="${news.subject_en}"
+                                        data-subject_ta="${news.subject_ta}"
+                                        data-startdate="${news.startdate}"
+                                        data-enddate="${news.enddate}"
+                                        data-page_type="${news.page_type}"
+                                        data-pdf_en="${news.pdf_en ?? ''}"
+                                        data-pdf_ta="${news.pdf_ta ?? ''}"
+                                        data-external_url="${news.external_url ?? ''}"
+                                        class="bs-tooltip editboardMenucontent"
+                                        title="Edit">
+                                        <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
+                                        </a>
+                                    </li>
+                                    ${news.page_type === 'Static Page' ? `
+                                    <li>
+                                        <a href="/admin/noticeboardcontent/${news.id}"  title="Edit">
+                                            <i class="fa fa-file-text-o"></i>
+                                        </a>
+                                    </li>` : ''}
+                                </ul>
+                            </td>
+                        </tr>
+                    `;
+
+                    $('#style-3 tbody').prepend(newRow);
+                } else {
+                    Swal.fire('Warning', response.message, 'warning');
+                }
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+                Swal.fire('Error', 'Fill the Fields Properly.', 'error');
+            }
+        });
     });
-});
 
 
-// ---edit pass records------------------
-$(document).ready(function () {
-    // Show modal and populate fields with existing data
     $(document).on('click', '.editboardMenucontent', function () {
         const modal = $('#inputFormModaleditboard');
 
@@ -2149,457 +1719,314 @@ $(document).ready(function () {
         $('#urlFields_noticeboard').hide();
         $('#existing_pdf_en, #existing_pdf_ta').addClass('d-none').attr('href', '#');
     });
-});
 
 
 
-
-
-// // On content_type change in edit form
-// $(document).on('change', '#contenttype_editboard', function () {
-//     const selectedType = $(this).val();
-//     toggleEditFields(selectedType);
-// });
-
-// // Utility function to show/hide based on type
-// function toggleEditFields(type) {
-//     if (type === 'pdf') {
-//         $('#pdfFields').show();
-//         $('#urlFields').hide();
-//     } else if (type === 'url') {
-//         $('#urlFields').show();
-//         $('#pdfFields').hide();
-//     } else {
-//         $('#pdfFields').hide();
-//         $('#urlFields').hide();
-//     }
-// }
-
-// --------------------------------
-
-$(document).ready(function () {
-    const today = new Date().toISOString().split('T')[0];
+    // const today = new Date().toISOString().split('T')[0];
     $('[name="startdate"]').attr('min', today);
-});
 
-$(document).on('submit', '#whatsnewform', function (e) {
-    e.preventDefault();
-  const subject_en = $('[name="subject_en"]').val().trim();
-    const subject_ta = $('[name="subject_ta"]').val().trim();
-    const startdate = $('[name="startdate"]').val().trim();
-    const enddate = $('[name="enddate"]').val().trim();
-    const content_type = $('#content_type_board').val();
-    const external_url = $('[name="external_url"]').val().trim();
-    const pdf_en = $('[name="pdf_en"]')[0].files[0];
-    const pdf_ta = $('[name="pdf_ta"]')[0].files[0];
 
-    let errorMessages = [];
+    $(document).on('submit', '#whatsnewform', function (e) {
+        e.preventDefault();
+        const subject_en = $('[name="subject_en"]').val().trim();
+        const subject_ta = $('[name="subject_ta"]').val().trim();
+        const startdate = $('[name="startdate"]').val().trim();
+        const enddate = $('[name="enddate"]').val().trim();
+        const content_type = $('#content_type_board').val();
+        const external_url = $('[name="external_url"]').val().trim();
+        const pdf_en = $('[name="pdf_en"]')[0].files[0];
+        const pdf_ta = $('[name="pdf_ta"]')[0].files[0];
 
-    // Basic required fields
-    if (!subject_en) errorMessages.push("Subject (English) is required.");
-    if (!subject_ta) errorMessages.push("Subject (Tamil) is required.");
-    if (!startdate) errorMessages.push("Start Date is required.");
-    if (!enddate) errorMessages.push("End Date is required.");
-    if (!content_type) errorMessages.push("Content Type is required.");
+        let errorMessages = [];
 
-    // Specific validation based on content type
-    if (content_type === "url") {
-        const urlPattern = /^(https?:\/\/)[^\s$.?#].[^\s]*$/gm;
-        if (!external_url || !urlPattern.test(external_url)) {
-            errorMessages.push("Please enter a valid URL starting with http:// or https://");
+        // Basic required fields
+        if (!subject_en) errorMessages.push("Subject (English) is required.");
+        if (!subject_ta) errorMessages.push("Subject (Tamil) is required.");
+        if (!startdate) errorMessages.push("Start Date is required.");
+        if (!enddate) errorMessages.push("End Date is required.");
+        if (!content_type) errorMessages.push("Content Type is required.");
+
+        // Specific validation based on content type
+        if (content_type === "url") {
+            const urlPattern = /^(https?:\/\/)[^\s$.?#].[^\s]*$/gm;
+            if (!external_url || !urlPattern.test(external_url)) {
+                errorMessages.push("Please enter a valid URL starting with http:// or https://");
+            }
         }
-    }
 
-    if (content_type === "pdf") {
-        if (!pdf_en && !pdf_ta) {
-            errorMessages.push("Please upload at least one PDF (English or Tamil).");
+        if (content_type === "pdf") {
+            if (!pdf_en && !pdf_ta) {
+                errorMessages.push("Please upload at least one PDF (English or Tamil).");
+            }
+            if (pdf_en && pdf_en.type !== 'application/pdf') {
+                errorMessages.push("English PDF must be a valid .pdf file.");
+            }
+            if (pdf_ta && pdf_ta.type !== 'application/pdf') {
+                errorMessages.push("Tamil PDF must be a valid .pdf file.");
+            }
         }
-        if (pdf_en && pdf_en.type !== 'application/pdf') {
-            errorMessages.push("English PDF must be a valid .pdf file.");
-        }
-        if (pdf_ta && pdf_ta.type !== 'application/pdf') {
-            errorMessages.push("Tamil PDF must be a valid .pdf file.");
-        }
-    }
 
-    // Show errors if any
-    if (errorMessages.length > 0) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Validation Error',
-            html: errorMessages.join('<br>')
+        // Show errors if any
+        if (errorMessages.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                html: errorMessages.join('<br>')
+            });
+            return;
+        }
+
+        // ✅ Proceed to AJAX only if no client-side error
+        let formData = new FormData(this);
+
+        // Clean up fields
+        if (content_type === 'url') {
+            formData.delete('pdf_en');
+            formData.delete('pdf_ta');
+        } else if (content_type === 'pdf') {
+            formData.delete('external_url');
+        }
+
+        $.ajax({
+            url: BASE_URL + '/admin/whatsnew/insert', // Update if different
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire('Success', response.message, 'success');
+
+                    $('#whatsnewform')[0].reset();
+                    $('#pdfFields, #urlFields').hide();
+                    $('#inputFormModaladdnews').modal('hide');
+
+                    let news = response.data;
+
+                    let statusText = news.status == 1 ? 'Published' : (news.status == 0 ? 'Draft' : 'Disabled');
+                    let badgeClass = news.status == 1 ? 'badge-success' : (news.status == 0 ? 'badge-dark' : 'badge-danger');
+
+                    let newRow = `
+                            <tr data-id="${news.id}">
+                                <td class="checkbox-column text-center">NEW</td>
+                                <td>${news.subject_en}</td>
+                                <td>${news.subject_ta}</td>
+                                <td>${news.startdate}</td>
+                                <td>${news.enddate}</td>
+                                <td class="table_tdcontrol">${news.page_type}</td>
+                                <td>
+                                    <span class="badge ${badgeClass}">
+                                        ${statusText}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <ul class="table-controls">
+                                        <li>
+                                            <a href="javascript:void(0);"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#inputFormModaleditboard"
+                                                data-id="${news.id}"
+                                                data-subject_en="${news.subject_en}"
+                                                data-subject_ta="${news.subject_ta}"
+                                                data-startdate="${news.startdate}"
+                                                data-enddate="${news.enddate}"
+                                                data-page_type="${news.page_type}"
+                                                data-pdf_en="${news.pdf_en ? '/' + news.pdf_en : ''}"
+                                                data-pdf_ta="${news.pdf_ta ? '/' + news.pdf_ta : ''}"
+                                                data-external_url="${news.external_url || ''}"
+                                                class="bs-tooltip editboardMenucontent" title="Edit">
+                                                <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
+                                            </a>
+                                        </li>
+                                        ${news.page_type === 'Static Page' ? `
+                                        <li>
+                                            <a href="/admin/noticeboardcontent/${news.id}" title="Edit">
+                                                <i class="fa fa-file-text-o"></i>
+                                            </a>
+                                        </li>` : ''}
+                                    </ul>
+                                </td>
+                            </tr>
+                        `;
+
+                    // Remove "No records found" row if exists
+                    $('tbody tr td[colspan="8"]').closest('tr').remove();
+
+                    // Append to tbody
+                    $('table tbody').prepend(newRow);
+                } else {
+                    Swal.fire('Warning', response.message, 'warning');
+                }
+            },
+
+            error: function (xhr) {
+                if (xhr.status === 422) {
+                    // Laravel validation failed
+                    let errors = xhr.responseJSON.errors;
+                    let errorList = '';
+
+                    $.each(errors, function (key, value) {
+                        errorList += `• ${value[0]}<br>`;
+                    });
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        html: errorList
+                    });
+                } else {
+                    Swal.fire('Error', 'Something went wrong. Please try again.', 'error');
+                }
+
+                console.log(xhr.responseText); // for debugging
+            }
+
         });
-        return;
-    }
+    });
 
-    // ✅ Proceed to AJAX only if no client-side error
-    let formData = new FormData(this);
 
-    // Clean up fields
-    if (content_type === 'url') {
-        formData.delete('pdf_en');
-        formData.delete('pdf_ta');
-    } else if (content_type === 'pdf') {
-        formData.delete('external_url');
-    }
+    // On content type change
+    $('#contenttype_editboard').on('change', function () {
+        let selectedType = $(this).val();
+        toggleEditBoardFields(selectedType);
+    });
 
-    $.ajax({
-        url: BASE_URL +  '/admin/whatsnew/insert', // Update if different
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function (response) {
-            if (response.success) {
-                Swal.fire('Success', response.message, 'success');
-        
-                $('#whatsnewform')[0].reset();
-                $('#pdfFields, #urlFields').hide();
-                $('#inputFormModaladdnews').modal('hide');
-        
-                let news = response.data;
-        
-                let statusText = news.status == 1 ? 'Published' : (news.status == 0 ? 'Draft' : 'Disabled');
-                let badgeClass = news.status == 1 ? 'badge-success' : (news.status == 0 ? 'badge-dark' : 'badge-danger');
-        
-                let newRow = `
-                    <tr data-id="${news.id}">
-                        <td class="checkbox-column text-center">NEW</td>
-                        <td>${news.subject_en}</td>
-                        <td>${news.subject_ta}</td>
-                        <td>${news.startdate}</td>
-                        <td>${news.enddate}</td>
-                        <td class="table_tdcontrol">${news.page_type}</td>
-                        <td>
-                            <span class="badge ${badgeClass}">
-                                ${statusText}
-                            </span>
-                        </td>
+
+
+    $('#noticeboardedit').on('submit', function (e) {
+        e.preventDefault();
+
+        let form = this;
+        let formData = new FormData(form);
+        let submitBtn = $(form).find('button[type="submit"]');
+        let valid = true;
+        let errorMessage = '';
+
+        // Basic validation
+        const subject_en = form.subject_en.value.trim();
+        const subject_ta = form.subject_ta.value.trim();
+        const startdate = form.startdate.value;
+        const enddate = form.enddate.value;
+        const pageType = form.content_type.value;
+        const url = form.external_url?.value.trim();
+
+        const pdfEn = form.pdf_en?.value.trim();   // ✅ English PDF input
+        const pdfTa = form.pdf_ta?.value.trim();   // ✅ Tamil PDF input
+
+        if (!subject_en) {
+            errorMessage = 'Please enter Subject (English).';
+            valid = false;
+        } else if (!subject_ta) {
+            errorMessage = 'Please enter Subject (Tamil).';
+            valid = false;
+        } else if (!startdate) {
+            errorMessage = 'Please select Start Date.';
+            valid = false;
+        } else if (!enddate) {
+            errorMessage = 'Please select End Date.';
+            valid = false;
+        } else if (startdate > enddate) {
+            errorMessage = 'End Date must be after or equal to Start Date.';
+            valid = false;
+        } else if (!pageType) {
+            errorMessage = 'Please select Content Type.';
+            valid = false;
+        } else if (pageType === 'url' && (!url || !isValidUrl(url))) {
+            errorMessage = 'Please enter a valid URL starting with http or https.';
+            valid = false;
+        } else if (pageType === 'pdf' && (!pdfEn || !pdfTa)) {
+            errorMessage = 'Please upload both English and Tamil PDF files.';
+            valid = false;
+        }
+
+        if (!valid) {
+            Swal.fire('Validation Error', errorMessage, 'warning');
+            return;
+        }
+
+        submitBtn.prop('disabled', true).text('Saving...');
+
+        $.ajax({
+            url: BASE_URL + "/admin/newsboard/updateboard",
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                if (response.success) {
+                    const news = response.data;
+
+                    const pageType = news.page_type;
+                    const statusBadge = news.status == 1 ? 'badge-success' :
+                        (news.status == 0 ? 'badge-dark' :
+                            (news.status == 2 ? 'badge-danger' : ''));
+
+                    const statusText = news.status == 1 ? 'Published' :
+                        (news.status == 0 ? 'Draft' :
+                            (news.status == 2 ? 'Disabled' : ''));
+
+                    let newRow = `
+                        <td class="checkbox-column text-center">#</td>
+                        <td class="table_tdcontrol">${breakTextByWords(news.subject_en)}</td>
+                        <td class="table_tdcontrol">${breakTextByWords(news.subject_ta)}</td>
+                        <td>${formatDate(news.startdate)}</td>
+                        <td>${formatDate(news.enddate)}</td>
+                        <td class="table_tdcontrol">${breakTextByWords(pageType)}</td>
+                        <td><span class="badge ${statusBadge}">${statusText}</span></td>
                         <td class="text-center">
                             <ul class="table-controls">
                                 <li>
                                     <a href="javascript:void(0);"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#inputFormModaleditboard"
-                                        data-id="${news.id}"
-                                        data-subject_en="${news.subject_en}"
-                                        data-subject_ta="${news.subject_ta}"
-                                        data-startdate="${news.startdate}"
-                                        data-enddate="${news.enddate}"
-                                        data-page_type="${news.page_type}"
-                                        data-pdf_en="${news.pdf_en ? '/' + news.pdf_en : ''}"
-                                        data-pdf_ta="${news.pdf_ta ? '/' + news.pdf_ta : ''}"
-                                        data-external_url="${news.external_url || ''}"
-                                        class="bs-tooltip editboardMenucontent" title="Edit">
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#inputFormModaleditboard"
+                                    data-id="${news.id}"
+                                    data-subject_en="${news.subject_en}"
+                                    data-subject_ta="${news.subject_ta}"
+                                    data-startdate="${news.startdate}"
+                                    data-enddate="${news.enddate}"
+                                    data-page_type="${news.page_type}"
+                                    data-pdf_en="${news.pdf_en ? '/' + news.pdf_en : ''}"
+                                    data-pdf_ta="${news.pdf_ta ? '/' + news.pdf_ta : ''}"
+                                    data-external_url="${news.external_url || ''}"
+                                    class="bs-tooltip editboardMenucontent" title="Edit">
                                         <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
                                     </a>
                                 </li>
                                 ${news.page_type === 'Static Page' ? `
-                                <li>
-                                    <a href="/admin/noticeboardcontent/${news.id}" title="Edit">
-                                        <i class="fa fa-file-text-o"></i>
-                                    </a>
-                                </li>` : ''}
+                                <li><a href="/admin/noticeboardcontent/${news.id}" title="Edit">
+                                    <i class="fa fa-file-text-o"></i></a></li>` : ''}
                             </ul>
                         </td>
-                    </tr>
-                `;
-        
-                // Remove "No records found" row if exists
-                $('tbody tr td[colspan="8"]').closest('tr').remove();
-        
-                // Append to tbody
-                $('table tbody').prepend(newRow);
-            } else {
-                Swal.fire('Warning', response.message, 'warning');
+                    `;
+
+                    // Update the row in table
+                    const row = $(`tr[data-id="${news.id}"]`);
+                    row.html(newRow);
+
+                    // Reset and close modal
+                    form.reset();
+                    let modal = bootstrap.Modal.getInstance(document.getElementById('inputFormModaleditboard'));
+                    modal.hide();
+
+                    Swal.fire('Success', response.message, 'success');
+                } else {
+                    Swal.fire('Error', 'Update failed', 'error');
+                }
+                submitBtn.prop('disabled', false).text('Update');
+            },
+            error: function () {
+                submitBtn.prop('disabled', false).text('Update');
+                Swal.fire('Error', 'Fill the Fields Properly', 'error');
             }
-        },
-        
-       error: function (xhr) {
-    if (xhr.status === 422) {
-        // Laravel validation failed
-        let errors = xhr.responseJSON.errors;
-        let errorList = '';
-
-        $.each(errors, function (key, value) {
-            errorList += `• ${value[0]}<br>`;
         });
-
-        Swal.fire({
-            icon: 'error',
-            title: 'Validation Error',
-            html: errorList
-        });
-    } else {
-        Swal.fire('Error', 'Something went wrong. Please try again.', 'error');
-    }
-
-    console.log(xhr.responseText); // for debugging
-}
-
     });
-});
 
-
-// ---------------------------------------------------------------
-
-
-
-// --------------toggle edit newsbaord---------------------
-
-
-function toggleEditBoardFields(type, data = {}) {
-    if (type === 'pdf') {
-        $('#pdfFields').show();
-        $('#urlFields').hide();
-
-        // Show existing PDF links
-        if (data.pdf_en) {
-            $('#existing_pdf_en').removeClass('d-none').attr('href', '/' + data.pdf_en);
-        } else {
-            $('#existing_pdf_en').addClass('d-none');
-        }
-
-        if (data.pdf_ta) {
-            $('#existing_pdf_ta').removeClass('d-none').attr('href', '/' + data.pdf_ta);
-        } else {
-            $('#existing_pdf_ta').addClass('d-none');
-        }
-
-    } else if (type === 'url') {
-        $('#pdfFields').hide();
-        $('#urlFields').show();
-
-        $('#external_url_input').val(data.external_url || '');
-    } else {
-        $('#pdfFields').hide();
-        $('#urlFields').hide();
-    }
-}
-
-// On content type change
-$('#contenttype_editboard').on('change', function () {
-    let selectedType = $(this).val();
-    toggleEditBoardFields(selectedType);
-});
-
-// Example: Fill form when edit button is clicked
-function populateNoticeBoardEditForm(data) {
-    $('#board_id').val(data.id);
-    $('textarea[name="subject_en"]').val(data.subject_en);
-    $('textarea[name="subject_ta"]').val(data.subject_ta);
-    $('input[name="startdate"]').val(data.startdate);
-    $('input[name="enddate"]').val(data.enddate);
-    $('#contenttype_editboard').val(data.page_type);
-
-    toggleEditBoardFields(data.page_type, data);
-}
-
-
-
-// ------------------------Newsboaed update ---------------------
-
-// ------------------------Newsboaed update ---------------------
-// ✅ URL validation helper
-function isValidUrl(string) {
-    try {
-        let url = new URL(string);
-        return url.protocol === "http:" || url.protocol === "https:";
-    } catch (_) {
-        return false;
-    }
-}
-
-$('#noticeboardedit').on('submit', function (e) {
-    e.preventDefault();
-
-    let form = this;
-    let formData = new FormData(form);
-    let submitBtn = $(form).find('button[type="submit"]');
-    let valid = true;
-    let errorMessage = '';
-
-    // Basic validation
-    const subject_en = form.subject_en.value.trim();
-    const subject_ta = form.subject_ta.value.trim();
-    const startdate = form.startdate.value;
-    const enddate = form.enddate.value;
-    const pageType = form.content_type.value;
-    const url = form.external_url?.value.trim();
-
-    const pdfEn = form.pdf_en?.value.trim();   // ✅ English PDF input
-const pdfTa = form.pdf_ta?.value.trim();   // ✅ Tamil PDF input
-
-    if (!subject_en) {
-        errorMessage = 'Please enter Subject (English).';
-        valid = false;
-    } else if (!subject_ta) {
-        errorMessage = 'Please enter Subject (Tamil).';
-        valid = false;
-    } else if (!startdate) {
-        errorMessage = 'Please select Start Date.';
-        valid = false;
-    } else if (!enddate) {
-        errorMessage = 'Please select End Date.';
-        valid = false;
-    } else if (startdate > enddate) {
-        errorMessage = 'End Date must be after or equal to Start Date.';
-        valid = false;
-    } else if (!pageType) {
-        errorMessage = 'Please select Content Type.';
-        valid = false;
-    } else if (pageType === 'url' && (!url || !isValidUrl(url))) {
-        errorMessage = 'Please enter a valid URL starting with http or https.';
-        valid = false;
-    }else if (pageType === 'pdf' && (!pdfEn || !pdfTa)) {
-    errorMessage = 'Please upload both English and Tamil PDF files.';
-    valid = false;
-}
-
-    if (!valid) {
-        Swal.fire('Validation Error', errorMessage, 'warning');
-        return;
-    }
-
-    submitBtn.prop('disabled', true).text('Saving...');
-
-    $.ajax({
-        url: BASE_URL + "/admin/newsboard/updateboard",
-        method: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function (response) {
-            if (response.success) {
-                const news = response.data;
-
-                const pageType = news.page_type;
-                const statusBadge = news.status == 1 ? 'badge-success' :
-                                    (news.status == 0 ? 'badge-dark' :
-                                    (news.status == 2 ? 'badge-danger' : ''));
-
-                const statusText = news.status == 1 ? 'Published' :
-                                   (news.status == 0 ? 'Draft' :
-                                   (news.status == 2 ? 'Disabled' : ''));
-
-                let newRow = `
-                    <td class="checkbox-column text-center">#</td>
-                    <td class="table_tdcontrol">${breakTextByWords(news.subject_en)}</td>
-                    <td class="table_tdcontrol">${breakTextByWords(news.subject_ta)}</td>
-                    <td>${formatDate(news.startdate)}</td>
-                    <td>${formatDate(news.enddate)}</td>
-                    <td class="table_tdcontrol">${breakTextByWords(pageType)}</td>
-                    <td><span class="badge ${statusBadge}">${statusText}</span></td>
-                    <td class="text-center">
-                        <ul class="table-controls">
-                            <li>
-                                <a href="javascript:void(0);"
-                                   data-bs-toggle="modal"
-                                   data-bs-target="#inputFormModaleditboard"
-                                   data-id="${news.id}"
-                                   data-subject_en="${news.subject_en}"
-                                   data-subject_ta="${news.subject_ta}"
-                                   data-startdate="${news.startdate}"
-                                   data-enddate="${news.enddate}"
-                                   data-page_type="${news.page_type}"
-                                   data-pdf_en="${news.pdf_en ? '/' + news.pdf_en : ''}"
-                                   data-pdf_ta="${news.pdf_ta ? '/' + news.pdf_ta : ''}"
-                                   data-external_url="${news.external_url || ''}"
-                                   class="bs-tooltip editboardMenucontent" title="Edit">
-                                    <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
-                                </a>
-                            </li>
-                            ${news.page_type === 'Static Page' ? `
-                            <li><a href="/admin/noticeboardcontent/${news.id}" title="Edit">
-                                <i class="fa fa-file-text-o"></i></a></li>` : ''}
-                        </ul>
-                    </td>
-                `;
-
-                // Update the row in table
-                const row = $(`tr[data-id="${news.id}"]`);
-                row.html(newRow);
-
-                // Reset and close modal
-                form.reset();
-                let modal = bootstrap.Modal.getInstance(document.getElementById('inputFormModaleditboard'));
-                modal.hide();
-
-                Swal.fire('Success', response.message, 'success');
-            } else {
-                Swal.fire('Error', 'Update failed', 'error');
-            }
-            submitBtn.prop('disabled', false).text('Update');
-        },
-        error: function () {
-            submitBtn.prop('disabled', false).text('Update');
-            Swal.fire('Error', 'Fill the Fields Properly', 'error');
-        }
-    });
-});
-
-
-function breakTextByWords(text, wordsPerLine = 6) {
-    if (!text) return '';
-    let words = text.split(/\s+/);
-    let lines = [];
-    for (let i = 0; i < words.length; i += wordsPerLine) {
-        lines.push(words.slice(i, i + wordsPerLine).join(" "));
-    }
-    return lines.join("<br>");
-}
-
-
-
-// Format date to dd-mm-yyyy
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    return ('0' + date.getDate()).slice(-2) + '-' +
-           ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
-           date.getFullYear();
-}
-
-
-
-// -----------------------------------------------
-// 🔁 Function to update row in table
-function updateRow(news) {
-    let row = $('#news_row_' + news.id);
-
-    row.find('.subject_en').text(news.subject_en);
-    row.find('.subject_ta').text(news.subject_ta);
-    row.find('.startdate').text(formatDate(news.startdate));
-    row.find('.enddate').text(formatDate(news.enddate));
-    row.find('.page_type').text(news.page_type);
-
-    // Update data attributes for edit button (optional)
-    let editBtn = row.find('.editNewsBtn');
-    editBtn.data('subject_en', news.subject_en);
-    editBtn.data('subject_ta', news.subject_ta);
-    editBtn.data('startdate', news.startdate);
-    editBtn.data('enddate', news.enddate);
-    editBtn.data('page_type', news.page_type);
-    editBtn.data('external_url', news.external_url);
-}
-
-function formatDate(dateStr) {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('en-GB'); // DD-MM-YYYY
-}
-
-
-// ----------------------------------------------------------------------
-
-
-
-$(document).ready(function () {
-    // For any modal with class `.reset-on-open`, reset the form inside it on open
     $('.reset-on-open').on('show.bs.modal', function () {
         const form = $(this).find('form')[0];
         if (form) {
@@ -2615,13 +2042,8 @@ $(document).ready(function () {
             $(form).find('#pdfFields, #urlFields').hide();
         }
     });
-});
 
-// ------------------------Board Content Edit--------------------
-// --------------------edit pass whatsnews records-------------------
 
-$(document).ready(function () {
-    // Show modal and populate fields with existing data
     $(document).on('click', '.editscrollMenucontent', function () {
         const modal = $('#inputFormModaleditboard');
 
@@ -2677,207 +2099,165 @@ $(document).ready(function () {
         $('#urlFields_noticeboard').hide();
         $('#existing_pdf_en, #existing_pdf_ta').addClass('d-none').attr('href', '#');
     });
-});
 
 
-// ----------------------------------------------------
+    $('#scrollboardedit').on('submit', function (e) {
+        // alert('scroll update');
+        e.preventDefault();
 
+        let form = this;
+        let formData = new FormData(form);
+        let contentType = $('#contenttype_editboard').val();
+        let errors = [];
 
+        const subject_en = form.subject_en.value.trim();
+        const subject_ta = form.subject_ta.value.trim();
+        const startdate = form.startdate.value;
+        const enddate = form.enddate.value;
+        const external_url = form.external_url?.value.trim() || '';
+        const pdf_en = form.pdf_en?.files[0];
+        const pdf_ta = form.pdf_ta?.files[0];
 
-// ------------------------Newsboaed update ---------------------
+        // Basic checks
+        if (!startdate) errors.push("Start Date is required.");
+        if (!enddate) errors.push("End Date is required.");
+        if (!contentType) errors.push("Content Type is required.");
 
-$('#scrollboardedit').on('submit', function (e) {
-    // alert('scroll update');
-    e.preventDefault();
-
-     let form = this;
-    let formData = new FormData(form);
-    let contentType = $('#contenttype_editboard').val();
-    let errors = [];
-
-    const subject_en = form.subject_en.value.trim();
-    const subject_ta = form.subject_ta.value.trim();
-    const startdate = form.startdate.value;
-    const enddate = form.enddate.value;
-    const external_url = form.external_url?.value.trim() || '';
-    const pdf_en = form.pdf_en?.files[0];
-    const pdf_ta = form.pdf_ta?.files[0];
-
-    // Basic checks
-    if (!startdate) errors.push("Start Date is required.");
-    if (!enddate) errors.push("End Date is required.");
-    if (!contentType) errors.push("Content Type is required.");
-
-    // URL validation
-    if (contentType === "url") {
-        const urlRegex = /^(https?:\/\/)[^\s/$.?#].[^\s]*$/i;
-        if (!external_url || !urlRegex.test(external_url)) {
-            errors.push("Please enter a valid URL starting with http:// or https://");
+        // URL validation
+        if (contentType === "url") {
+            const urlRegex = /^(https?:\/\/)[^\s/$.?#].[^\s]*$/i;
+            if (!external_url || !urlRegex.test(external_url)) {
+                errors.push("Please enter a valid URL starting with http:// or https://");
+            }
         }
-    }
 
-    // PDF validation
-    if (contentType === "pdf") {
-        if (!pdf_en && !pdf_ta) {
-            errors.push("At least one PDF (English or Tamil) is required.");
+        // PDF validation
+        if (contentType === "pdf") {
+            if (!pdf_en && !pdf_ta) {
+                errors.push("At least one PDF (English or Tamil) is required.");
+            }
+            if (pdf_en && pdf_en.type !== "application/pdf") {
+                errors.push("English PDF must be a valid PDF file.");
+            }
+            if (pdf_ta && pdf_ta.type !== "application/pdf") {
+                errors.push("Tamil PDF must be a valid PDF file.");
+            }
         }
-        if (pdf_en && pdf_en.type !== "application/pdf") {
-            errors.push("English PDF must be a valid PDF file.");
-        }
-        if (pdf_ta && pdf_ta.type !== "application/pdf") {
-            errors.push("Tamil PDF must be a valid PDF file.");
-        }
-    }
 
-    // Show errors
-    if (errors.length > 0) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Validation Error',
-            html: errors.join('<br>')
+        // Show errors
+        if (errors.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                html: errors.join('<br>')
+            });
+            return;
+        }
+
+        // 🟢 Proceed to AJAX if validation passes
+        let submitBtn = $(form).find('button[type="submit"]');
+        submitBtn.prop('disabled', true).text('Saving...');
+
+        $.ajax({
+            url: BASE_URL + "/admin/whatsnew/updatescrollboard", // adjust route accordingly
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                if (response.success) {
+                    const news = response.data;
+
+                    const pageType = news.page_type;
+                    const statusBadge = news.status == 1 ? 'badge-success' :
+                        (news.status == 0 ? 'badge-dark' :
+                            (news.status == 2 ? 'badge-danger' : ''));
+
+                    const statusText = news.status == 1 ? 'Published' :
+                        (news.status == 0 ? 'Draft' :
+                            (news.status == 2 ? 'Disabled' : ''));
+
+                    let newRow = `
+                        <td class="checkbox-column text-center">#</td>
+                    <td>${wordWrap(news.subject_en, 20)}</td>
+                        <td>${wordWrap(news.subject_ta, 20)}</td>
+                        <td>${formatDate(news.startdate)}</td>
+                        <td>${formatDate(news.enddate)}</td>
+                        <td class="table_tdcontrol">${pageType}</td>
+                        <td><span class="badge ${statusBadge}">${statusText}</span></td>
+                        <td class="text-center">
+                            <ul class="table-controls">
+                                <li>
+                                    <a href="javascript:void(0);"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#inputFormModaleditboard"
+                                    data-id="${news.id}"
+                                    data-subject_en="${news.subject_en}"
+                                    data-subject_ta="${news.subject_ta}"
+                                    data-startdate="${news.startdate}"
+                                    data-enddate="${news.enddate}"
+                                    data-page_type="${news.page_type}"
+                                    data-pdf_en="${news.pdf_en ? '/' + news.pdf_en : ''}"
+                                    data-pdf_ta="${news.pdf_ta ? '/' + news.pdf_ta : ''}"
+                                    data-external_url="${news.external_url || ''}"
+                                    class="bs-tooltip editboardMenucontent" title="Edit">
+                                        <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
+                                    </a>
+                                </li>
+                                ${news.page_type === 'Static Page' ? `
+                                    <li><a href="/admin/noticeboardcontent/${news.id}"  title="Edit">
+                                        <i class="fa fa-file-text-o"></i></a></li>` : ''}
+                            </ul>
+                        </td>
+                    `;
+
+                    // Update the row in table
+                    const row = $(`tr[data-id="${news.id}"]`);
+                    row.html(newRow);
+
+                    // Reset and close modal
+                    form.reset();
+                    let modal = bootstrap.Modal.getInstance(document.getElementById('inputFormModaleditboard'));
+                    modal.hide();
+
+                    Swal.fire('Success', response.message, 'success');
+                } else {
+                    Swal.fire('Error', 'Update failed', 'error');
+                }
+                submitBtn.prop('disabled', false).text('Update');
+            },
+            error: function (xhr) {
+                submitBtn.prop('disabled', false).text('Update');
+
+                if (xhr.status === 422) {
+                    let errorList = '';
+                    $.each(xhr.responseJSON.errors, function (key, value) {
+                        errorList += `• ${value[0]}<br>`;
+                    });
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Server Validation Error',
+                        html: errorList
+                    });
+                } else {
+                    Swal.fire('Error', 'Something went wrong. Try again.', 'error');
+                }
+            }
         });
-        return;
-    }
-
-    // 🟢 Proceed to AJAX if validation passes
-    let submitBtn = $(form).find('button[type="submit"]');
-    submitBtn.prop('disabled', true).text('Saving...');
-
-    $.ajax({
-        url:  BASE_URL + "/admin/whatsnew/updatescrollboard", // adjust route accordingly
-        method: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function (response) {
-            if (response.success) {
-                const news = response.data;
-
-                const pageType = news.page_type;
-                const statusBadge = news.status == 1 ? 'badge-success' :
-                                    (news.status == 0 ? 'badge-dark' :
-                                    (news.status == 2 ? 'badge-danger' : ''));
-
-                const statusText = news.status == 1 ? 'Published' :
-                                   (news.status == 0 ? 'Draft' :
-                                   (news.status == 2 ? 'Disabled' : ''));
-
-                let newRow = `
-                    <td class="checkbox-column text-center">#</td>
-                   <td>${wordWrap(news.subject_en, 20)}</td>
-                     <td>${wordWrap(news.subject_ta, 20)}</td>
-                    <td>${formatDate(news.startdate)}</td>
-                    <td>${formatDate(news.enddate)}</td>
-                    <td class="table_tdcontrol">${pageType}</td>
-                    <td><span class="badge ${statusBadge}">${statusText}</span></td>
-                    <td class="text-center">
-                        <ul class="table-controls">
-                            <li>
-                                <a href="javascript:void(0);"
-                                   data-bs-toggle="modal"
-                                   data-bs-target="#inputFormModaleditboard"
-                                   data-id="${news.id}"
-                                   data-subject_en="${news.subject_en}"
-                                   data-subject_ta="${news.subject_ta}"
-                                   data-startdate="${news.startdate}"
-                                   data-enddate="${news.enddate}"
-                                   data-page_type="${news.page_type}"
-                                   data-pdf_en="${news.pdf_en ? '/' + news.pdf_en : ''}"
-                                   data-pdf_ta="${news.pdf_ta ? '/' + news.pdf_ta : ''}"
-                                   data-external_url="${news.external_url || ''}"
-                                   class="bs-tooltip editboardMenucontent" title="Edit">
-                                    <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
-                                </a>
-                            </li>
-                            ${news.page_type === 'Static Page' ? `
-                                <li><a href="/admin/noticeboardcontent/${news.id}"  title="Edit">
-                                    <i class="fa fa-file-text-o"></i></a></li>` : ''}
-                        </ul>
-                    </td>
-                `;
-
-                // Update the row in table
-                const row = $(`tr[data-id="${news.id}"]`);
-                row.html(newRow);
-
-                // Reset and close modal
-                form.reset();
-                let modal = bootstrap.Modal.getInstance(document.getElementById('inputFormModaleditboard'));
-                modal.hide();
-
-                Swal.fire('Success', response.message, 'success');
-            } else {
-                Swal.fire('Error', 'Update failed', 'error');
-            }
-            submitBtn.prop('disabled', false).text('Update');
-        },
-          error: function (xhr) {
-            submitBtn.prop('disabled', false).text('Update');
-
-            if (xhr.status === 422) {
-                let errorList = '';
-                $.each(xhr.responseJSON.errors, function (key, value) {
-                    errorList += `• ${value[0]}<br>`;
-                });
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Server Validation Error',
-                    html: errorList
-                });
-            } else {
-                Swal.fire('Error', 'Something went wrong. Try again.', 'error');
-            }
-        }
     });
-});
 
 
-function wordWrap(str, maxWidth) {
-    if (!str) return "";
-    let newLineStr = "<br>";
-    let result = "";
-    while (str.length > maxWidth) {
-        let found = false;
-        // break line at last space within maxWidth
-        for (let i = maxWidth; i >= 0; i--) {
-            if (str.charAt(i).match(/\s/)) {
-                result += str.slice(0, i) + newLineStr;
-                str = str.slice(i + 1);
-                found = true;
-                break;
-            }
-        }
-        // if no space found, force break
-        if (!found) {
-            result += str.slice(0, maxWidth) + newLineStr;
-            str = str.slice(maxWidth);
-        }
-    }
-    return result + str;
-}
-// Format date to dd-mm-yyyy
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    return ('0' + date.getDate()).slice(-2) + '-' +
-           ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
-           date.getFullYear();
-}
 
-
-// ------------------------------newsboardcontent update------------------
-
-
-$(document).ready(function () {
     // English
     $('#newsboardcontent_en').on('submit', function (e) {
         e.preventDefault();
         let formData = new FormData(this);
 
         $.ajax({
-            url: BASE_URL +  "/admin/newsboard/updateNewsBoardContent",
+            url: BASE_URL + "/admin/newsboard/updateNewsBoardContent",
             method: "POST",
             data: formData,
             contentType: false,
@@ -2894,6 +2274,7 @@ $(document).ready(function () {
             }
         });
     });
+
 
     // Tamil
     $('#newsboardcontent_ta').on('submit', function (e) {
@@ -2901,7 +2282,7 @@ $(document).ready(function () {
         let formData = new FormData(this);
 
         $.ajax({
-            url: BASE_URL +  "/admin/newsboard/updateNewsBoardContent",
+            url: BASE_URL + "/admin/newsboard/updateNewsBoardContent",
             method: "POST",
             data: formData,
             contentType: false,
@@ -2918,12 +2299,10 @@ $(document).ready(function () {
             }
         });
     });
-});
 
-// ---------------------------------------
-$(document).ready(function () {
-    const today = new Date().toISOString().split('T')[0];
-    // $('#freshamount_starts, #renewalamount_starts, #latefee_starts').attr('min', today);
+
+    // const today = new Date().toISOString().split('T')[0];
+
 
     $('#newFormMaster').on('submit', function (e) {
         e.preventDefault();
@@ -2951,7 +2330,7 @@ $(document).ready(function () {
         let formData = new FormData(this);
 
         $.ajax({
-            url: BASE_URL +  "/admin/forms/newforminsert",
+            url: BASE_URL + "/admin/forms/newforminsert",
             type: "POST",
             data: formData,
             processData: false,
@@ -2981,118 +2360,71 @@ $(document).ready(function () {
         });
     });
 
-    function appendFormRow(form) {
-        let statusClass = form.status == '1' ? 'badge-success' :
-                          form.status == '0' ? 'badge-dark' : 'badge-danger';
-        let statusText = form.status == '1' ? 'Active' : 'Inactive';
 
-        let row = `
-        <tr data-id="${form.id}">
-            <td>${form.form_name}</td>
-            <td>${form.license_name}</td>
-            <td>${form.fresh_amount}</td>
-            <td>${form.freshamount_starts} to <br>${form.freshamount_ends ?? '--'}<br>[ ${form.freshamount_starts && form.freshamount_ends ? moment(form.freshamount_ends).diff(moment(form.freshamount_starts), 'days') : '--'} days ]</td>
-            <td>${form.renewal_amount}</td>
-            <td>${form.renewalamount_starts} to <br>${form.renewalamount_ends ?? '--'}<br>[ ${form.renewalamount_starts && form.renewalamount_ends ? moment(form.renewalamount_ends).diff(moment(form.renewalamount_starts), 'days') : '--'} days ]</td>
-            <td>${form.latefee_amount}</td>
-            <td>${form.latefee_starts} to <br>${form.latefee_ends ?? '--'}<br>[ ${form.latefee_starts && form.latefee_ends ? moment(form.latefee_ends).diff(moment(form.latefee_starts), 'days') : '--'} days ]</td>
-            <td>${form.duration_freshfee || '--'}</td>
-            <td>${form.duration_renewalfee || '--'}</td>
-            <td>${form.duration_latefee || '--'}</td>
-            <td><span class="badge ${statusClass}">${statusText}</span></td>
-            <td>
-                <ul class="table-controls">
-                    <li>
-                        <a href="javascript:void(0);" class="editformdata" data-id="${form.id}" data-form_name="${form.form_name}" data-license_name="${form.license_name}" data-fresh_amount="${form.fresh_amount}" data-renewal_amount="${form.renewal_amount}" data-freshamount_starts="${form.freshamount_starts}" data-freshamount_ends="${form.freshamount_ends}" data-renewalamount_starts="${form.renewalamount_starts}" data-renewalamount_ends="${form.renewalamount_ends}" data-latefee_amount="${form.latefee_amount}" data-latefee_starts="${form.latefee_starts}" data-latefee_ends="${form.latefee_ends}" data-status="${form.status}" data-bs-toggle="modal" data-bs-target="#inputFormModaleditforms">
-                            <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
-                        </a>
-                        <a href="/admin/forms/instructions/${form.id}">
-                            <i class="fa fa-book"></i>
-                        </a>
-                    </li>
-                </ul>
-            </td>
-        </tr>`;
+    // Handle Edit Button Click
+    $(document).on('click', '.editformdata', function () {
+        // Get data attributes from clicked element
+        let form_id = $(this).data('id');
+        let form_name = $(this).data('form_name');
+        let license_name = $(this).data('license_name');
 
-        $('#formtable').prepend(row);
-    }
-});
+        // (I think you meant separate period fields here – right now you are reusing license_name)
+        let fresh_period = $(this).data('fresh_period');
+        // alert(fresh_period);
+        let renewal_period = $(this).data('renewal_period');
 
+        let fresh_amount = $(this).data('fresh_amount');
+        let renewal_amount = $(this).data('renewal_amount');
+        let instructions = $(this).data('instructions');
+        let status = $(this).data('status');
 
+        // Handle dates (strip time part if exists)
+        let freshamount_starts = $(this).data('freshamount_starts') ? $(this).data('freshamount_starts').toString().split(" ")[0] : "";
+        let freshamount_ends = $(this).data('freshamount_ends') ? $(this).data('freshamount_ends').toString().split(" ")[0] : "";
+        let renewalamount_starts = $(this).data('renewalamount_starts') ? $(this).data('renewalamount_starts').toString().split(" ")[0] : "";
+        let renewalamount_ends = $(this).data('renewalamount_ends') ? $(this).data('renewalamount_ends').toString().split(" ")[0] : "";
+        let latefee_starts = $(this).data('latefee_starts') ? $(this).data('latefee_starts').toString().split(" ")[0] : "";
+        let latefee_ends = $(this).data('latefee_ends') ? $(this).data('latefee_ends').toString().split(" ")[0] : "";
 
+        let latefee_amount = $(this).data('latefee_amount');
+        let duration_freshfee = $(this).data('duration_freshfee');
+        let duration_renewalfee = $(this).data('duration_renewalfee');
+        let duration_latefee = $(this).data('duration_latefee');
 
-// -------------------formtbl----------------------
+        // Set values into modal form fields
+        $('#form_id').val(form_id);
+        $('#editformstbls input[name="form_name"]').val(form_name);
+        $('#editformstbls input[name="license_name"]').val(license_name);
 
-// Handle Edit Button Click
-$(document).on('click', '.editformdata', function () {
-    // Get data attributes from clicked element
-    let form_id = $(this).data('id');
-    let form_name = $(this).data('form_name');
-    let license_name = $(this).data('license_name');
+        $('#editformstbls input[name="fresh_period"]').val(fresh_period);
+        $('#editformstbls input[name="renewal_period"]').val(renewal_period);
 
-    // (I think you meant separate period fields here – right now you are reusing license_name)
-    let fresh_period = $(this).data('fresh_period');
-    // alert(fresh_period);
-    let renewal_period = $(this).data('renewal_period');
+        $('#editformstbls input[name="fresh_amount"]').val(fresh_amount);
+        $('#editformstbls input[name="renewal_amount"]').val(renewal_amount);
+        $('#editformstbls textarea[name="instructions"]').val(instructions);
+        $('#editformstbls select[name="status"]').val(status);
 
-    let fresh_amount = $(this).data('fresh_amount');
-    let renewal_amount = $(this).data('renewal_amount');
-    let instructions = $(this).data('instructions');
-    let status = $(this).data('status');
+        // Dates (in yyyy-mm-dd so <input type="date"> accepts them)
+        $('#editformstbls input[name="freshamount_starts"]').val(freshamount_starts);
+        $('#editformstbls input[name="freshamount_ends"]').val(freshamount_ends);
+        $('#editformstbls input[name="renewalamount_starts"]').val(renewalamount_starts);
+        $('#editformstbls input[name="renewalamount_ends"]').val(renewalamount_ends);
+        $('#editformstbls input[name="latefee_starts"]').val(latefee_starts);
+        $('#editformstbls input[name="latefee_ends"]').val(latefee_ends);
 
-    // Handle dates (strip time part if exists)
-    let freshamount_starts = $(this).data('freshamount_starts') ? $(this).data('freshamount_starts').toString().split(" ")[0] : "";
-    let freshamount_ends = $(this).data('freshamount_ends') ? $(this).data('freshamount_ends').toString().split(" ")[0] : "";
-    let renewalamount_starts = $(this).data('renewalamount_starts') ? $(this).data('renewalamount_starts').toString().split(" ")[0] : "";
-    let renewalamount_ends = $(this).data('renewalamount_ends') ? $(this).data('renewalamount_ends').toString().split(" ")[0] : "";
-    let latefee_starts = $(this).data('latefee_starts') ? $(this).data('latefee_starts').toString().split(" ")[0] : "";
-    let latefee_ends = $(this).data('latefee_ends') ? $(this).data('latefee_ends').toString().split(" ")[0] : "";
+        $('#editformstbls input[name="latefee_amount"]').val(latefee_amount);
+        $('#editformstbls input[name="duration_freshfee"]').val(duration_freshfee);
+        $('#editformstbls input[name="duration_renewalfee"]').val(duration_renewalfee);
+        $('#editformstbls input[name="duration_latefee"]').val(duration_latefee);
+    });
 
-    let latefee_amount = $(this).data('latefee_amount');
-    let duration_freshfee = $(this).data('duration_freshfee');
-    let duration_renewalfee = $(this).data('duration_renewalfee');
-    let duration_latefee = $(this).data('duration_latefee');
-
-    // Set values into modal form fields
-    $('#form_id').val(form_id);
-    $('#editformstbls input[name="form_name"]').val(form_name);
-    $('#editformstbls input[name="license_name"]').val(license_name);
-
-    $('#editformstbls input[name="fresh_period"]').val(fresh_period);
-    $('#editformstbls input[name="renewal_period"]').val(renewal_period);
-
-    $('#editformstbls input[name="fresh_amount"]').val(fresh_amount);
-    $('#editformstbls input[name="renewal_amount"]').val(renewal_amount);
-    $('#editformstbls textarea[name="instructions"]').val(instructions);
-    $('#editformstbls select[name="status"]').val(status);
-
-    // Dates (in yyyy-mm-dd so <input type="date"> accepts them)
-    $('#editformstbls input[name="freshamount_starts"]').val(freshamount_starts);
-    $('#editformstbls input[name="freshamount_ends"]').val(freshamount_ends);
-    $('#editformstbls input[name="renewalamount_starts"]').val(renewalamount_starts);
-    $('#editformstbls input[name="renewalamount_ends"]').val(renewalamount_ends);
-    $('#editformstbls input[name="latefee_starts"]').val(latefee_starts);
-    $('#editformstbls input[name="latefee_ends"]').val(latefee_ends);
-
-    $('#editformstbls input[name="latefee_amount"]').val(latefee_amount);
-    $('#editformstbls input[name="duration_freshfee"]').val(duration_freshfee);
-    $('#editformstbls input[name="duration_renewalfee"]').val(duration_renewalfee);
-    $('#editformstbls input[name="duration_latefee"]').val(duration_latefee);
-});
-
-
-
-// ------------------------------------------------
-
-
-$(document).ready(function () {
     // English
     $('#forminstructions').on('submit', function (e) {
         e.preventDefault();
         let formData = new FormData(this);
 
         $.ajax({
-            url: BASE_URL +  "/admin/formcontent/updateforminstructions",
+            url: BASE_URL + "/admin/formcontent/updateforminstructions",
             method: "POST",
             data: formData,
             contentType: false,
@@ -3110,153 +2442,83 @@ $(document).ready(function () {
         });
     });
 
- 
-});
 
-// -------------------------------------Edit form Details---------------------
+    $(document).on("submit", "#editformstbls", function (e) {
+        e.preventDefault();
 
+        let formData = new FormData(this);
 
-$(document).on("submit", "#editformstbls", function (e) {
-    e.preventDefault();
+        // Frontend Date Validation
+        const dates = {
+            fresh_start: $('#freshamount_starts').val(),
+            fresh_end: $('#freshamount_ends').val(),
+            renewal_start: $('#renewalamount_starts').val(),
+            renewal_end: $('#renewalamount_ends').val(),
+            late_start: $('#latefee_starts').val(),
+            late_end: $('#latefee_ends').val()
+        };
 
-    let formData = new FormData(this);
-
-    // Frontend Date Validation
-    const dates = {
-        fresh_start: $('#freshamount_starts').val(),
-        fresh_end: $('#freshamount_ends').val(),
-        renewal_start: $('#renewalamount_starts').val(),
-        renewal_end: $('#renewalamount_ends').val(),
-        late_start: $('#latefee_starts').val(),
-        late_end: $('#latefee_ends').val()
-    };
-
-    if (dates.fresh_end < dates.fresh_start) {
-        return Swal.fire('Invalid', 'Fresh License End Date must be after Start Date.', 'error');
-    }
-    if (dates.renewal_end < dates.renewal_start) {
-        return Swal.fire('Invalid', 'Renewal End Date must be after Start Date.', 'error');
-    }
-    if (dates.late_end < dates.late_start) {
-        return Swal.fire('Invalid', 'Late Fee End Date must be after Start Date.', 'error');
-    }
-
-    $.ajax({
-        url: BASE_URL +  '/admin/forms/updateform',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function (response) {
-            Swal.fire("Success", "Form updated successfully", "success").then(() => {
-                  location.reload();
-                // $('#inputFormModaleditforms').modal('hide');
-
-                // Remove old row and add new
-                // $('tr[data-id="' + $('input[name="id"]').val() + '"]').remove();
-                // $('#formtable').prepend(generateRowHTML(response.form));
-            });
-        },
-        error: function (xhr) {
-            if (xhr.status === 422) {
-                if (xhr.responseJSON.message) {
-                    // Show custom start date error
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Validation Error',
-                        text: xhr.responseJSON.message
-                    });
-                } else if (xhr.responseJSON.errors) {
-                    // Show normal Laravel validation errors
-                    let errorMsg = '<ul class="text-start">';
-                    $.each(xhr.responseJSON.errors, function (field, message) {
-                        errorMsg += `<li>${message[0]}</li>`;
-                    });
-                    errorMsg += '</ul>';
-                    Swal.fire({ icon: 'error', title: 'Validation Error', html: errorMsg });
-                }
-            } else {
-                Swal.fire("Error", "Something went wrong. Try again.", "error");
-            }
+        if (dates.fresh_end < dates.fresh_start) {
+            return Swal.fire('Invalid', 'Fresh License End Date must be after Start Date.', 'error');
         }
+        if (dates.renewal_end < dates.renewal_start) {
+            return Swal.fire('Invalid', 'Renewal End Date must be after Start Date.', 'error');
+        }
+        if (dates.late_end < dates.late_start) {
+            return Swal.fire('Invalid', 'Late Fee End Date must be after Start Date.', 'error');
+        }
+
+        $.ajax({
+            url: BASE_URL + '/admin/forms/updateform',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                Swal.fire("Success", "Form updated successfully", "success").then(() => {
+                    location.reload();
+                    // $('#inputFormModaleditforms').modal('hide');
+
+                    // Remove old row and add new
+                    // $('tr[data-id="' + $('input[name="id"]').val() + '"]').remove();
+                    // $('#formtable').prepend(generateRowHTML(response.form));
+                });
+            },
+            error: function (xhr) {
+                if (xhr.status === 422) {
+                    if (xhr.responseJSON.message) {
+                        // Show custom start date error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validation Error',
+                            text: xhr.responseJSON.message
+                        });
+                    } else if (xhr.responseJSON.errors) {
+                        // Show normal Laravel validation errors
+                        let errorMsg = '<ul class="text-start">';
+                        $.each(xhr.responseJSON.errors, function (field, message) {
+                            errorMsg += `<li>${message[0]}</li>`;
+                        });
+                        errorMsg += '</ul>';
+                        Swal.fire({ icon: 'error', title: 'Validation Error', html: errorMsg });
+                    }
+                } else {
+                    Swal.fire("Error", "Something went wrong. Try again.", "error");
+                }
+            }
+        });
     });
-});
-function generateRowHTML(form) {
-    return `
-        <tr data-id="${form.id}">
-            <td>${form.form_name}</td>
-            <td>${form.license_name}</td>
-            <td>${form.fresh_amount}</td>
-            <td>${form.freshamount_starts} </td>
-            <td>${form.renewal_amount}</td>
-            <td>${form.renewalamount_starts} </td>
-            <td>${form.latefee_amount}</td>
-            <td>${form.latefee_starts} </td>
-            <td>${form.duration_freshfee ?? '--'}</td>
-            <td>${form.duration_renewalfee ?? '--'}</td>
-            <td>${form.duration_latefee ?? '--'}</td>
-            <td>
-                <span class="badge ${form.status == 1 ? 'badge-success' : (form.status == 0 ? 'badge-dark' : 'badge-danger')}">
-                    ${form.status == 1 ? 'Active' : (form.status == 0 ? 'Inactive' : 'Disabled')}
-                </span>
-            </td>
-            <td>
-                <ul class="table-controls">
-                     <ul class="table-controls">
-                    <li>
-                        <a href="javascript:void(0);" class="editformdata"
-                            data-id="${form.id}"
-                            data-form_name="${form.form_name}"
-                            data-license_name="${form.license_name}"
-                            data-fresh_amount="${form.fresh_amount}"
-                            data-renewal_amount="${form.renewal_amount}"
-                            data-instructions="${form.instructions ?? ''}"
-                            data-freshamount_starts="${form.freshamount_starts}"
-                            data-freshamount_ends="${form.freshamount_ends ?? ''}"
-                            data-renewalamount_starts="${form.renewalamount_starts}"
-                            data-renewalamount_ends="${form.renewalamount_ends ?? ''}"
-                            data-latefee_amount="${form.latefee_amount}"
-                            data-latefee_starts="${form.latefee_starts}"
-                            data-latefee_ends="${form.latefee_ends ?? ''}"
-                            data-duration_freshfee="${form.duration_freshfee ?? ''}"
-                            data-duration_renewalfee="${form.duration_renewalfee ?? ''}"
-                            data-duration_latefee="${form.duration_latefee ?? ''}"
-                            data-status="${form.status}"
-                            data-bs-toggle="modal" data-bs-target="#inputFormModaleditforms">
-                            <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/admin/form_instructions/${form.id}">
-                            <i class="fa fa-book"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/admin/form_history/${form.old_id ?? form.id}">
-                            <i class="fa fa-history"></i>
-                        </a>
-                    </li>
-                </ul>
-            </td>
-        </tr>
-    `;
-}
 
-
-
-// -----------staff Add---------------------
-
-$(document).ready(function () {
     $("#newstaffmaster").on("submit", function (e) {
         e.preventDefault();
 
         let formData = new FormData(this);
 
         $.ajax({
-            url: BASE_URL +  "/admin/staff/insertstaff",
+            url: BASE_URL + "/admin/staff/insertstaff",
             type: "POST",
             data: formData,
             processData: false,
@@ -3270,7 +2532,7 @@ $(document).ready(function () {
                     let formNames = response.form_names.join(', ');
                     let statusText = '';
                     let statusClass = '';
-            
+
                     if (staff.status == '1') {
                         statusText = 'Published';
                         statusClass = 'badge-success';
@@ -3281,7 +2543,7 @@ $(document).ready(function () {
                         statusText = 'Disabled';
                         statusClass = 'badge-danger';
                     }
-            
+
                     let newRow = `
                         <tr data-id="${staff.id}">
                             <td class="text-center">New</td>
@@ -3309,18 +2571,18 @@ $(document).ready(function () {
                             </td>
                         </tr>
                     `;
-            
+
                     $('#formtable').append(newRow);
                     $('#newstaffmaster')[0].reset(); // Optional: reset form
                     $('#newstaffModal').modal('hide'); // Hide modal if used
                 });
             },
-            
+
             error: function (xhr) {
                 if (xhr.status === 422) {
                     let errors = xhr.responseJSON.errors;
                     let messages = '';
-            
+
                     // Map field names to readable labels
                     const fieldNames = {
                         name: 'Designation Name',
@@ -3329,12 +2591,12 @@ $(document).ready(function () {
                         handle_forms: 'Handling Forms',
                         status: 'Status'
                     };
-            
+
                     Object.keys(errors).forEach(function (key) {
                         let label = fieldNames[key] || key;
                         messages += `<strong>${label}:</strong> ${errors[key][0]}<br>`;
                     });
-            
+
                     Swal.fire({
                         icon: 'error',
                         title: 'Validation Error',
@@ -3344,55 +2606,50 @@ $(document).ready(function () {
                     Swal.fire("Error", "Something went wrong!", "error");
                 }
             }
-            
-            
+
+
         });
     });
-});
 
-// -------------------------edit
-$(document).on('click', '.editstaffdata', function () {
-    let staff_id = $(this).data('id');
-    let staff_name = $(this).data('staff_name');
-    let name = $(this).data('name');
-    let email = $(this).data('email');
-    let handle_forms = $(this).data('handle_forms'); // This is JSON string or array
-    let status = $(this).data('status');
 
-    // Set values
-    $('#editstaffstbls input[name="id"]').val(staff_id);
-    $('#editstaffstbls input[name="staff_name"]').val(staff_name);
-    $('#editstaffstbls input[name="name"]').val(name);
-    $('#editstaffstbls input[name="email"]').val(email);
-    $('#editstaffstbls select[name="status"]').val(status);
+    $(document).on('click', '.editstaffdata', function () {
+        let staff_id = $(this).data('id');
+        let staff_name = $(this).data('staff_name');
+        let name = $(this).data('name');
+        let email = $(this).data('email');
+        let handle_forms = $(this).data('handle_forms'); // This is JSON string or array
+        let status = $(this).data('status');
 
-    // Reset all checkboxes first
-    $('#editstaffstbls input[name="handle_forms[]"]').prop('checked', false);
+        // Set values
+        $('#editstaffstbls input[name="id"]').val(staff_id);
+        $('#editstaffstbls input[name="staff_name"]').val(staff_name);
+        $('#editstaffstbls input[name="name"]').val(name);
+        $('#editstaffstbls input[name="email"]').val(email);
+        $('#editstaffstbls select[name="status"]').val(status);
 
-    try {
-        let formsArray = typeof handle_forms === 'string' ? JSON.parse(handle_forms) : handle_forms;
+        // Reset all checkboxes first
+        $('#editstaffstbls input[name="handle_forms[]"]').prop('checked', false);
 
-        if (Array.isArray(formsArray)) {
-            formsArray.forEach(function (formId) {
-                $('#handle_forms_' + formId).prop('checked', true);
-            });
+        try {
+            let formsArray = typeof handle_forms === 'string' ? JSON.parse(handle_forms) : handle_forms;
+
+            if (Array.isArray(formsArray)) {
+                formsArray.forEach(function (formId) {
+                    $('#handle_forms_' + formId).prop('checked', true);
+                });
+            }
+        } catch (e) {
+            console.error("Invalid handle_forms data", e);
         }
-    } catch (e) {
-        console.error("Invalid handle_forms data", e);
-    }
-});
+    });
 
-// --------------------update staff----------------------------
-
-
-$(document).ready(function () {
     $("#editstaffstbls").on("submit", function (e) {
         e.preventDefault();
 
         let formData = new FormData(this);
 
         $.ajax({
-            url: BASE_URL +  "/admin/staff/updatestaff",
+            url: BASE_URL + "/admin/staff/updatestaff",
             type: "POST",
             data: formData,
             processData: false,
@@ -3406,7 +2663,7 @@ $(document).ready(function () {
                     let formNames = response.form_names.join(', ');
                     let statusText = '';
                     let statusClass = '';
-            
+
                     if (staff.status == '1') {
                         statusText = 'Published';
                         statusClass = 'badge-success';
@@ -3417,7 +2674,7 @@ $(document).ready(function () {
                         statusText = 'Disabled';
                         statusClass = 'badge-danger';
                     }
-            
+
                     let updatedRow = `
                         <td class="text-center">-</td>
                         <td>${staff.name}</td>
@@ -3442,16 +2699,16 @@ $(document).ready(function () {
                             </ul>
                         </td>
                     `;
-            
+
                     // Replace the row content based on staff ID
                     $(`#formtable tr[data-id="${staff.id}"]`).html(updatedRow);
-            
+
                     // Optional: reset form and close modal
                     $('#editstaffstbls')[0].reset();
                     $('#inputFormModaleditstaffs').modal('hide');
                 });
             },
-            
+
             error: function (xhr) {
                 if (xhr.status === 422) {
                     let errors = xhr.responseJSON.errors;
@@ -3470,19 +2727,14 @@ $(document).ready(function () {
             }
         });
     });
-});
 
-
-// -------------contact Details----------------
-
-$(document).ready(function () {
     $('#contactdetailsupdate').on('submit', function (e) {
         e.preventDefault();
 
         let formData = new FormData(this);
 
         $.ajax({
-            url: BASE_URL +  '/admin/contact/updatecontact', // change URL if needed
+            url: BASE_URL + '/admin/contact/updatecontact', // change URL if needed
             method: 'POST',
             data: formData,
             processData: false,
@@ -3511,11 +2763,6 @@ $(document).ready(function () {
             }
         });
     });
-});
-
-// -----------------------------------------------------------------------
-
-$(document).ready(function () {
 
     // Submit Add Menu Form
     $('#quicklinksForm').on('submit', function (e) {
@@ -3525,26 +2772,26 @@ $(document).ready(function () {
         let submitBtn = $('#quicklinksForm button[type="submit"]');
         submitBtn.prop('disabled', true).text('Saving...');
 
-          // Get page type to validate conditionally
-    const pageType = $('select[name="page_type"]').val();
-    const externalUrl = $('input[name="external_url"]').val();
+        // Get page type to validate conditionally
+        const pageType = $('select[name="page_type"]').val();
+        const externalUrl = $('input[name="external_url"]').val();
 
-    if (pageType === 'url') {
-        // Regex to check if URL starts with http:// or https://
-        const urlPattern = /^(http:\/\/|https:\/\/).+/i;
-        if (!urlPattern.test(externalUrl)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid URL',
-                text: 'Please enter a valid URL starting with http:// or https://'
-            });
-            submitBtn.prop('disabled', false).text('Add');
-            return;
+        if (pageType === 'url') {
+            // Regex to check if URL starts with http:// or https://
+            const urlPattern = /^(http:\/\/|https:\/\/).+/i;
+            if (!urlPattern.test(externalUrl)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid URL',
+                    text: 'Please enter a valid URL starting with http:// or https://'
+                });
+                submitBtn.prop('disabled', false).text('Add');
+                return;
+            }
         }
-    }
 
         $.ajax({
-            url: BASE_URL +  "/admin/quicklinks/insertquicklinks",
+            url: BASE_URL + "/admin/quicklinks/insertquicklinks",
             method: "POST",
             data: formData,
             contentType: false,
@@ -3552,7 +2799,7 @@ $(document).ready(function () {
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
-         success: function (response) {
+            success: function (response) {
                 if (response.success && response.data) {
                     const menu = response.data;
                     const page = menu.menu_page;
@@ -3599,23 +2846,21 @@ $(document).ready(function () {
                             <td class="text-capitalize">${menu.page_type}</td>
                             <td class="external-url">${pageTypeContent}</td>
                             <td>
-                                ${
-                                    menu.menu_id
-                                        ? 'Main Menu'
-                                        : menu.submenu_id
-                                            ? 'Sub Menu'
-                                            : '--'
-                                }
+                                ${menu.menu_id
+                            ? 'Main Menu'
+                            : menu.submenu_id
+                                ? 'Sub Menu'
+                                : '--'
+                        }
                             </td>
                             <td>${menu.order_id}</td>
                             <td>
                                 <span class="badge ${badgeClass}">${statusLabel}</span>
                             </td>
                             <td>
-                                ${
-                                    menu.menu_id || menu.submenu_id
-                                        ? 'Edit Not <br>Allowed'
-                                        : `
+                                ${menu.menu_id || menu.submenu_id
+                            ? 'Edit Not <br>Allowed'
+                            : `
                                         <ul class="table-controls">
                                             <li>
                                                 <a href="javascript:void(0);" class="editquicklinks"
@@ -3638,7 +2883,7 @@ $(document).ready(function () {
                                             ${staticPageLink}
                                         </ul>
                                     `
-                                }
+                        }
                             </td>
                         </tr>`;
 
@@ -3677,358 +2922,245 @@ $(document).ready(function () {
         });
     });
 
-    // Handle Edit Menu
-  $(document).on('click', '.editquicklinks', function () {
-    const el = $(this);
-    $('#quicklinksFormedit')[0].reset();
+    $(document).on('click', '.editquicklinks', function () {
+        const el = $(this);
+        $('#quicklinksFormedit')[0].reset();
 
-    // Set basic fields first
-    $('#quicklinksFormedit input[name="id"]').val(el.data('id'));
-    $('#quicklinksFormedit input[name="footer_menu_en"]').val(el.data('footer_menu_en'));
-    $('#quicklinksFormedit input[name="footer_menu_ta"]').val(el.data('footer_menu_ta'));
-    $('#quicklinksFormedit input[name="order_id"]').val(el.data('order_id'));
-    $('#quicklinksFormedit select[name="page_type"]').val(el.data('page_type'));
-    $('#quicklinksFormedit select[name="status"]').val(el.data('status'));
+        // Set basic fields first
+        $('#quicklinksFormedit input[name="id"]').val(el.data('id'));
+        $('#quicklinksFormedit input[name="footer_menu_en"]').val(el.data('footer_menu_en'));
+        $('#quicklinksFormedit input[name="footer_menu_ta"]').val(el.data('footer_menu_ta'));
+        $('#quicklinksFormedit input[name="order_id"]').val(el.data('order_id'));
+        $('#quicklinksFormedit select[name="page_type"]').val(el.data('page_type'));
+        $('#quicklinksFormedit select[name="status"]').val(el.data('status'));
 
-    // Call toggleFieldsEdit BEFORE setting conditional values
-    const type = el.data('page_type');
-    toggleFieldsEdit(type); // <-- Moved up
+        // Call toggleFieldsEdit BEFORE setting conditional values
+        const type = el.data('page_type');
+        toggleFieldsEdit(type); // <-- Moved up
 
-    // Now set conditional values
-    if (type === 'Static Page') {
-        $('#quicklinksFormedit input[name="page_url"]').val(el.data('page_url'));
-        $('#quicklinksFormedit input[name="page_url_ta"]').val(el.data('page_url_ta'));
-    } else if (type === 'pdf') {
-        if (el.data('pdf_en')) {
-            $('#pdf_en_link').attr('href', el.data('pdf_en')).show();
-        } else {
-            $('#pdf_en_link').hide();
-        }
-
-        if (el.data('pdf_ta')) {
-            $('#pdf_ta_link').attr('href', el.data('pdf_ta')).show();
-        } else {
-            $('#pdf_ta_link').hide();
-        }
-    } else if (type === 'url') {
-        $('#quicklinksFormedit input[name="external_url"]').val(el.data('external_url'));
-    }
-
-    $('#inputFormModaledit').modal('show');
-});
-
-
-    // Toggle fields based on page type
-    function toggleFieldsEdit(type) {
-        $('#staticFieldsEdit, #pdfFieldsEdit, #urlFieldsEdit').hide();
+        // Now set conditional values
         if (type === 'Static Page') {
-            $('#staticFieldsEdit').show();
+            $('#quicklinksFormedit input[name="page_url"]').val(el.data('page_url'));
+            $('#quicklinksFormedit input[name="page_url_ta"]').val(el.data('page_url_ta'));
         } else if (type === 'pdf') {
-            $('#pdfFieldsEdit').show();
+            if (el.data('pdf_en')) {
+                $('#pdf_en_link').attr('href', el.data('pdf_en')).show();
+            } else {
+                $('#pdf_en_link').hide();
+            }
+
+            if (el.data('pdf_ta')) {
+                $('#pdf_ta_link').attr('href', el.data('pdf_ta')).show();
+            } else {
+                $('#pdf_ta_link').hide();
+            }
         } else if (type === 'url') {
-            $('#urlFieldsEdit').show();
+            $('#quicklinksFormedit input[name="external_url"]').val(el.data('external_url'));
         }
-    }
+
+        $('#inputFormModaledit').modal('show');
+    });
 
     // On dropdown change in edit form
     $('#page_type_menuedit').on('change', function () {
         toggleFieldsEdit($(this).val());
     });
 
-});
 
+    $(document).on('submit', '#quicklinksFormedit', function (e) {
+        e.preventDefault();
 
-// --------------update quicklinks-------------------
+        const form = this;
+        const formData = new FormData(form);
 
-$(document).on('submit', '#quicklinksFormedit', function(e) {
-    e.preventDefault();
+        const pageType = $(form).find('select[name="page_type"]').val();
+        const externalUrl = $(form).find('input[name="external_url"]').val();
+        const menuNameEn = $(form).find('input[name="footer_menu_en"]').val().trim();
+        const menuNameTa = $(form).find('input[name="footer_menu_ta"]').val().trim();
 
-    const form = this;
-    const formData = new FormData(form);
+        // ✅ Validate required fields manually before AJAX
+        if (menuNameEn === '' || menuNameTa === '') {
+            let message = '';
+            if (menuNameEn === '') message += 'Menu Name (English) is required.<br>';
+            if (menuNameTa === '') message += 'Menu Name (Tamil) is required.<br>';
 
-    const pageType = $(form).find('select[name="page_type"]').val();
-    const externalUrl = $(form).find('input[name="external_url"]').val();
-    const menuNameEn = $(form).find('input[name="footer_menu_en"]').val().trim();
-    const menuNameTa = $(form).find('input[name="footer_menu_ta"]').val().trim();
-
-    // ✅ Validate required fields manually before AJAX
-    if (menuNameEn === '' || menuNameTa === '') {
-        let message = '';
-        if (menuNameEn === '') message += 'Menu Name (English) is required.<br>';
-        if (menuNameTa === '') message += 'Menu Name (Tamil) is required.<br>';
-
-        Swal.fire({
-            icon: 'error',
-            title: 'Validation Error',
-            html: message,
-        });
-        return; // stop form submission
-    }
-
-    // ✅ Validate external_url if page_type is "url"
-    if (pageType === 'url') {
-        const urlPattern = /^(http:\/\/|https:\/\/)/i;
-        if (!externalUrl || !urlPattern.test(externalUrl)) {
             Swal.fire({
                 icon: 'error',
-                title: 'Invalid External URL',
-                text: 'Please enter a valid URL starting with http:// or https://'
+                title: 'Validation Error',
+                html: message,
             });
-            return;
+            return; // stop form submission
         }
-    }
 
-    $.ajax({
-        url: BASE_URL +  "/admin/quicklinks/quicklinksedit",
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-       success: function(response) {
-            if (response.success) {
-                const menu = response.menu;
-                const page = menu.menu_page || {};
-                const row = $(`#sortable tr[data-id="${menu.id}"]`);
+        // ✅ Validate external_url if page_type is "url"
+        if (pageType === 'url') {
+            const urlPattern = /^(http:\/\/|https:\/\/)/i;
+            if (!externalUrl || !urlPattern.test(externalUrl)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid External URL',
+                    text: 'Please enter a valid URL starting with http:// or https://'
+                });
+                return;
+            }
+        }
 
-                // Update fields
-                row.find('td:nth-child(2)').text(menu.footer_menu_en || '');
-                row.find('td:nth-child(3)').text(menu.footer_menu_ta || '');
-                row.find('td:nth-child(4)').text(menu.page_type || '');
+        $.ajax({
+            url: BASE_URL + "/admin/quicklinks/quicklinksedit",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                if (response.success) {
+                    const menu = response.menu;
+                    const page = menu.menu_page || {};
+                    const row = $(`#sortable tr[data-id="${menu.id}"]`);
 
-                // Page type content
-                let contentHtml = '—';
-                if (menu.page_type === 'Static Page') {
-                    contentHtml = page.page_url || '—';
-                } else if (menu.page_type === 'pdf') {
-                    contentHtml = '';
-                    if (page.pdf_en) {
-                        contentHtml += `<a href="/${page.pdf_en}" target="_blank" class="me-2" title="English PDF"><i class="fa fa-file-pdf-o text-danger"></i></a>`;
+                    // Update fields
+                    row.find('td:nth-child(2)').text(menu.footer_menu_en || '');
+                    row.find('td:nth-child(3)').text(menu.footer_menu_ta || '');
+                    row.find('td:nth-child(4)').text(menu.page_type || '');
+
+                    // Page type content
+                    let contentHtml = '—';
+                    if (menu.page_type === 'Static Page') {
+                        contentHtml = page.page_url || '—';
+                    } else if (menu.page_type === 'pdf') {
+                        contentHtml = '';
+                        if (page.pdf_en) {
+                            contentHtml += `<a href="/${page.pdf_en}" target="_blank" class="me-2" title="English PDF"><i class="fa fa-file-pdf-o text-danger"></i></a>`;
+                        }
+                        if (page.pdf_ta) {
+                            contentHtml += `<a href="/${page.pdf_ta}" target="_blank" title="Tamil PDF"><i class="fa fa-file-pdf-o text-success"></i></a>`;
+                        }
+                    } else if (menu.page_type === 'url') {
+                        contentHtml = `<a href="${page.external_url}" target="_blank">External Link</a>`;
                     }
-                    if (page.pdf_ta) {
-                        contentHtml += `<a href="/${page.pdf_ta}" target="_blank" title="Tamil PDF"><i class="fa fa-file-pdf-o text-success"></i></a>`;
+
+                    row.find('td:nth-child(5)').html(contentHtml);
+
+                    // Interlink
+                    const interlink = menu.menu_id ? 'Main Menu' : (menu.submenu_id ? 'Sub Menu' : '--');
+                    row.find('td:nth-child(6)').text(interlink);
+
+                    // Order ID
+                    row.find('td:nth-child(7)').text(menu.order_id || '');
+
+                    // Status
+                    const badge = row.find('td:nth-child(8) .badge');
+                    badge.removeClass('badge-success badge-dark badge-danger');
+                    if (menu.status == 1) {
+                        badge.addClass('badge-success').text('Published');
+                    } else if (menu.status == 0) {
+                        badge.addClass('badge-dark').text('Draft');
+                    } else if (menu.status == 2) {
+                        badge.addClass('badge-danger').text('Disabled');
                     }
-                } else if (menu.page_type === 'url') {
-                    contentHtml = `<a href="${page.external_url}" target="_blank">External Link</a>`;
+
+                    // Update edit button
+                    const editBtn = row.find('.editquicklinks');
+                    editBtn.data('footer_menu_en', menu.footer_menu_en || '');
+                    editBtn.data('footer_menu_ta', menu.footer_menu_ta || '');
+                    editBtn.data('page_type', menu.page_type || '');
+                    editBtn.data('order_id', menu.order_id || '');
+                    editBtn.data('status', menu.status || '');
+                    editBtn.data('page_url', page.page_url || '');
+                    editBtn.data('page_url_ta', page.page_url_ta || '');
+                    editBtn.data('external_url', page.external_url || '');
+                    editBtn.data('pdf_en', page.pdf_en ? `/${page.pdf_en}` : '');
+                    editBtn.data('pdf_ta', page.pdf_ta ? `/${page.pdf_ta}` : '');
+
+                    // Update static page content icon
+                    const controls = row.find('ul.table-controls');
+                    controls.find('li').eq(1).remove();
+                    if (menu.page_type === 'Static Page') {
+                        controls.append(`
+                            <li>
+                                <a href="/admin/quicklinkscontent/${menu.id}" title="Edit">
+                                    <i class="fa fa-file-text-o"></i>
+                                </a>
+                            </li>
+                        `);
+                    }
+
+                    // Close modal and feedback
+                    $('#inputFormModaledit').modal('hide');
+                    $('#quicklinksFormedit')[0].reset();
+                    row.addClass('table-success');
+                    setTimeout(() => row.removeClass('table-success'), 1500);
                 }
-
-                row.find('td:nth-child(5)').html(contentHtml);
-
-                // Interlink
-                const interlink = menu.menu_id ? 'Main Menu' : (menu.submenu_id ? 'Sub Menu' : '--');
-                row.find('td:nth-child(6)').text(interlink);
-
-                // Order ID
-                row.find('td:nth-child(7)').text(menu.order_id || '');
-
-                // Status
-                const badge = row.find('td:nth-child(8) .badge');
-                badge.removeClass('badge-success badge-dark badge-danger');
-                if (menu.status == 1) {
-                    badge.addClass('badge-success').text('Published');
-                } else if (menu.status == 0) {
-                    badge.addClass('badge-dark').text('Draft');
-                } else if (menu.status == 2) {
-                    badge.addClass('badge-danger').text('Disabled');
+            },
+            error: function (xhr) {
+                let errors = xhr.responseJSON?.errors;
+                if (errors) {
+                    let msg = '';
+                    $.each(errors, (key, val) => msg += `${val[0]}<br>`);
+                    Swal.fire({ icon: 'error', title: 'Validation Error', html: msg });
+                } else {
+                    Swal.fire('Error', 'Unexpected error occurred.', 'error');
                 }
-
-                // Update edit button
-                const editBtn = row.find('.editquicklinks');
-                editBtn.data('footer_menu_en', menu.footer_menu_en || '');
-                editBtn.data('footer_menu_ta', menu.footer_menu_ta || '');
-                editBtn.data('page_type', menu.page_type || '');
-                editBtn.data('order_id', menu.order_id || '');
-                editBtn.data('status', menu.status || '');
-                editBtn.data('page_url', page.page_url || '');
-                editBtn.data('page_url_ta', page.page_url_ta || '');
-                editBtn.data('external_url', page.external_url || '');
-                editBtn.data('pdf_en', page.pdf_en ? `/${page.pdf_en}` : '');
-                editBtn.data('pdf_ta', page.pdf_ta ? `/${page.pdf_ta}` : '');
-
-                // Update static page content icon
-                const controls = row.find('ul.table-controls');
-                controls.find('li').eq(1).remove();
-                if (menu.page_type === 'Static Page') {
-                    controls.append(`
-                        <li>
-                            <a href="/admin/quicklinkscontent/${menu.id}" title="Edit">
-                                <i class="fa fa-file-text-o"></i>
-                            </a>
-                        </li>
-                    `);
-                }
-
-                // Close modal and feedback
-                $('#inputFormModaledit').modal('hide');
-                $('#quicklinksFormedit')[0].reset();
-                row.addClass('table-success');
-                setTimeout(() => row.removeClass('table-success'), 1500);
             }
-        },
-        error: function(xhr) {
-            let errors = xhr.responseJSON?.errors;
-            if (errors) {
-                let msg = '';
-                $.each(errors, (key, val) => msg += `${val[0]}<br>`);
-                Swal.fire({ icon: 'error', title: 'Validation Error', html: msg });
-            } else {
-                Swal.fire('Error', 'Unexpected error occurred.', 'error');
-            }
-        }
+        });
+
     });
 
-    function handleMenuUpdate(menu) {
-        const row = $(`#sortable tr[data-id="${menu.id}"]`);
-    
-        // 1. Update Menu Name, Page Type
-        row.find('td:nth-child(2)').text(menu.menu_name_en || '');
-        row.find('td:nth-child(3)').text(menu.menu_name_ta || '');
-        row.find('td:nth-child(4)').text(menu.page_type || '');
-    
-        // 2. Page Type Content Column
-        let contentCol = '';
-        if (menu.page_type === 'Static Page') {
-            contentCol = menu.page_url || '—';
-        } else if (menu.page_type === 'pdf') {
-            const links = [];
-            if (menu.pdf_en) {
-                links.push(`<a href="/${menu.pdf_en}" target="_blank" class="me-2" title="English PDF">
-                                <i class="fa fa-file-pdf-o text-danger"></i>
-                            </a>`);
+
+    $(document).on('submit', '#quicklinkscontentedit_en', function (e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+
+        $.ajax({
+            url: BASE_URL + "/admin/quicklinkscontent/updatequicklinkcontent",
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                Swal.fire('Success', response.message, 'success');
+            },
+            error: function () {
+                Swal.fire('Error', 'Fill the Fields Properly.', 'error');
             }
-            if (menu.pdf_ta) {
-                links.push(`<a href="/${menu.pdf_ta}" target="_blank" title="Tamil PDF">
-                                <i class="fa fa-file-pdf-o text-success"></i>
-                            </a>`);
+        });
+    });
+
+
+    $(document).on('submit', '#quicklinkscontentedit_ta', function (e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+        // updatemenucontent
+        $.ajax({
+            url: BASE_URL + "/admin/quicklinkscontent/updatequicklinkcontent",
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                Swal.fire('Success', response.message, 'success');
+            },
+            error: function () {
+                Swal.fire('Error', 'Fill the Fields Properly.', 'error');
             }
-            contentCol = links.join(' ');
-        } else if (menu.page_type === 'url') {
-            contentCol = `<a href="${menu.external_url}" target="_blank">External Link</a>`;
-        } else if (menu.page_type === 'submenu') {
-            contentCol = '—';
-        }
-        row.find('td:nth-child(5)').html(contentCol);
-    
-        // 3. Order ID
-        row.find('td:nth-child(6)').text(menu.order_id || '');
-    
-        // 4. Status Badge
-        const badge = row.find('td:nth-child(7) .badge');
-        badge.removeClass('badge-success badge-dark badge-danger');
-        if (menu.status == 1) {
-            badge.addClass('badge-success').text('Published');
-        } else if (menu.status == 0) {
-            badge.addClass('badge-dark').text('Draft');
-        } else if (menu.status == 2) {
-            badge.addClass('badge-danger').text('Disabled');
-        }
-    
-        // 5. Update Edit Button Attributes
-        const page = menu.menu_page || {};
-
-        const editBtn = row.find('.editMenu');
-        editBtn.data('menu_name_en', menu.menu_name_en || '');
-        editBtn.data('menu_name_ta', menu.menu_name_ta || '');
-        editBtn.data('page_type', menu.page_type || '');
-        editBtn.data('order_id', menu.order_id || '');
-        editBtn.data('status', menu.status);
-        
-        editBtn.data('page_url', page.page_url || '');
-        editBtn.data('page_url_ta', page.page_url_ta || '');
-        editBtn.data('external_url', page.external_url || '');
-        editBtn.data('pdf_en', page.pdf_en ? `/${page.pdf_en}` : '');
-        editBtn.data('pdf_ta', page.pdf_ta ? `/${page.pdf_ta}` : '');
-        
-    
-        // 6. Update Static Page icon (fa-file-text-o)
-        const controlsList = row.find('ul.table-controls');
-        controlsList.find('li').eq(1).remove(); // remove second icon if exists
-    
-        if (menu.page_type === 'Static Page') {
-            controlsList.append(`
-                <li>
-                    <a href="/admin/quicklinkscontent/${menu.id}"  title="Edit">
-                        <i class="fa fa-file-text-o"></i>
-                    </a>
-                </li>
-            `);
-        }
-    
-        // 7. Close modal and reset form
-        $('#inputFormModaledit').modal('hide');
-        $('#quicklinksFormedit')[0].reset();
-    
-        // 8. Visual feedback
-        row.addClass('table-success');
-        setTimeout(() => row.removeClass('table-success'), 1500);
-    }
-    
-    
-    
-    
-    
-});
-// -----------------------------------Quicklinks Content------------------
-
-
-$(document).on('submit', '#quicklinkscontentedit_en', function (e) {
-    e.preventDefault();
-    let formData = new FormData(this);
-
-    $.ajax({
-        url: BASE_URL + "/admin/quicklinkscontent/updatequicklinkcontent",
-        method: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        success: function (response) {
-            Swal.fire('Success', response.message, 'success');
-        },
-        error: function () {
-            Swal.fire('Error', 'Fill the Fields Properly.', 'error');
-        }
+        });
     });
-});
 
-// Tamil Content Submit
-$(document).on('submit', '#quicklinkscontentedit_ta', function (e) {
-    e.preventDefault();
-    let formData = new FormData(this);
-// updatemenucontent
-    $.ajax({
-        url: BASE_URL + "/admin/quicklinkscontent/updatequicklinkcontent",
-        method: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        success: function (response) {
-            Swal.fire('Success', response.message, 'success');
-        },
-        error: function () {
-            Swal.fire('Error', 'Fill the Fields Properly.', 'error');
-        }
-    });
-});
-
-
-
-// -----------------------------------------------
-$(document).ready(function () {
     // Open modal and update order_id on show
     $('#inputFormModaladdusefullinks').on('shown.bs.modal', function () {
         let nextOrderId = $('#usefulLinksTable tbody tr').length + 1;
         $('input[name="order_id"]').val(nextOrderId);
     });
 
-    // Handle form submission
+
     $(document).on('submit', '#usefullinksnew', function (e) {
         e.preventDefault();
 
@@ -4179,260 +3311,178 @@ $(document).ready(function () {
             }
         });
     });
-});
+
+    $('#page_type_menuedit').on('change', function () {
+        toggleFieldsEdit($(this).val());
+    });
 
 
-// -------------------------edit useful links-----------------------------
+    $(document).on('click', '.editusefullinks', function () {
+        const el = $(this);
+        $('#editusefullinks')[0].reset(); // Reset form
 
-function toggleFieldsEdit(type) {
-    $('#staticFieldsEdit, #pdfFieldsEdit, #urlFieldsEdit').hide();
+        // Set base values
+        $('#editusefullinks input[name="id"]').val(el.data('id'));
+        $('#editusefullinks input[name="original_order_id"]').val(el.data('order_id'));
+        $('#editusefullinks input[name="menu_name_en"]').val(el.data('menu_name_en'));
+        $('#editusefullinks input[name="menu_name_ta"]').val(el.data('menu_name_ta'));
+        $('#editusefullinks input[name="order_id"]').val(el.data('order_id'));
+        $('#editusefullinks select[name="status"]').val(el.data('status'));
 
-    if (type === 'Static Page') {
-        $('#staticFieldsEdit').show();
-    } else if (type === 'pdf') {
-        $('#pdfFieldsEdit').show();
-    } else if (type === 'url') {
-        $('#urlFieldsEdit').show();
-    }
-}
+        const type = el.data('page_type');
+        $('#editusefullinks select[name="page_type"]').val(type).trigger('change');
 
-$('#page_type_menuedit').on('change', function () {
-    toggleFieldsEdit($(this).val());
-});
+        // Set type-specific values
+        if (type === 'Static Page') {
+            $('#editusefullinks input[name="page_url"]').val(el.data('page_url'));
+            $('#editusefullinks input[name="page_url_ta"]').val(el.data('page_url_ta'));
+        } else if (type === 'pdf') {
+            $('#pdf_en_link').attr('href', el.data('pdf_en')).toggle(!!el.data('pdf_en'));
+            $('#pdf_ta_link').attr('href', el.data('pdf_ta')).toggle(!!el.data('pdf_ta'));
+        } else if (type === 'url') {
+            $('#editusefullinks input[name="external_url"]').val(el.data('external_url'));
+        }
 
-$(document).on('click', '.editusefullinks', function () {
-    const el = $(this);
-    $('#editusefullinks')[0].reset(); // Reset form
+        // Show modal
+        $('#inputFormModaledit').modal('show');
+    });
 
-    // Set base values
-    $('#editusefullinks input[name="id"]').val(el.data('id'));
-    $('#editusefullinks input[name="original_order_id"]').val(el.data('order_id'));
-    $('#editusefullinks input[name="menu_name_en"]').val(el.data('menu_name_en'));
-    $('#editusefullinks input[name="menu_name_ta"]').val(el.data('menu_name_ta'));
-    $('#editusefullinks input[name="order_id"]').val(el.data('order_id'));
-    $('#editusefullinks select[name="status"]').val(el.data('status'));
+    $(document).on('submit', '#editusefullinks', function (e) {
+        e.preventDefault();
 
-    const type = el.data('page_type');
-    $('#editusefullinks select[name="page_type"]').val(type).trigger('change');
+        const form = this;
+        const formData = new FormData(form);
 
-    // Set type-specific values
-    if (type === 'Static Page') {
-        $('#editusefullinks input[name="page_url"]').val(el.data('page_url'));
-        $('#editusefullinks input[name="page_url_ta"]').val(el.data('page_url_ta'));
-    } else if (type === 'pdf') {
-        $('#pdf_en_link').attr('href', el.data('pdf_en')).toggle(!!el.data('pdf_en'));
-        $('#pdf_ta_link').attr('href', el.data('pdf_ta')).toggle(!!el.data('pdf_ta'));
-    } else if (type === 'url') {
-        $('#editusefullinks input[name="external_url"]').val(el.data('external_url'));
-    }
+        const pageType = $(form).find('select[name="page_type"]').val();
+        const externalUrl = $(form).find('input[name="external_url"]').val();
+        const menuNameEn = $(form).find('input[name="menu_name_en"]').val().trim();
+        const menuNameTa = $(form).find('input[name="menu_name_ta"]').val().trim();
 
-    // Show modal
-    $('#inputFormModaledit').modal('show');
-});
-// ----------------------------------------
-$(document).on('submit', '#editusefullinks', function (e) {
-    e.preventDefault();
+        if (menuNameEn === '' || menuNameTa === '') {
+            let message = '';
+            if (menuNameEn === '') message += 'Menu Name (English) is required.<br>';
+            if (menuNameTa === '') message += 'Menu Name (Tamil) is required.<br>';
 
-    const form = this;
-    const formData = new FormData(form);
-
-    const pageType = $(form).find('select[name="page_type"]').val();
-    const externalUrl = $(form).find('input[name="external_url"]').val();
-    const menuNameEn = $(form).find('input[name="menu_name_en"]').val().trim();
-    const menuNameTa = $(form).find('input[name="menu_name_ta"]').val().trim();
-
-    if (menuNameEn === '' || menuNameTa === '') {
-        let message = '';
-        if (menuNameEn === '') message += 'Menu Name (English) is required.<br>';
-        if (menuNameTa === '') message += 'Menu Name (Tamil) is required.<br>';
-
-        Swal.fire({
-            icon: 'error',
-            title: 'Validation Error',
-            html: message,
-        });
-        return;
-    }
-
-    if (pageType === 'url') {
-        const urlPattern = /^(http:\/\/|https:\/\/)/i;
-        if (!externalUrl || !urlPattern.test(externalUrl)) {
             Swal.fire({
                 icon: 'error',
-                title: 'Invalid External URL',
-                text: 'Please enter a valid URL starting with http:// or https://'
+                title: 'Validation Error',
+                html: message,
             });
             return;
         }
-    }
 
-    $.ajax({
-        url: BASE_URL + "/admin/usefullinks/updatelinks",
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function (response) {
-            if (response.conflict) {
+        if (pageType === 'url') {
+            const urlPattern = /^(http:\/\/|https:\/\/)/i;
+            if (!externalUrl || !urlPattern.test(externalUrl)) {
                 Swal.fire({
-                    title: 'Duplicate Order ID',
-                    text: response.message,
-                    icon: 'warning',
-                    confirmButtonText: 'OK',
+                    icon: 'error',
+                    title: 'Invalid External URL',
+                    text: 'Please enter a valid URL starting with http:// or https://'
                 });
                 return;
             }
-
-            if (response.success) {
-                updateTableRow(response.menu);
-                 $('#inputFormModaledit').modal('hide'); 
-            }
-        },
-        error: function (xhr) {
-            let errors = xhr.responseJSON?.errors;
-            if (errors) {
-                let errorMessages = '';
-                $.each(errors, function (key, messages) {
-                    errorMessages += `${messages[0]}<br>`;
-                });
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Error',
-                    html: errorMessages,
-                });
-            } else {
-                Swal.fire('Error', 'An unexpected error occurred.', 'error');
-            }
         }
+
+        $.ajax({
+            url: BASE_URL + "/admin/usefullinks/updatelinks",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                if (response.conflict) {
+                    Swal.fire({
+                        title: 'Duplicate Order ID',
+                        text: response.message,
+                        icon: 'warning',
+                        confirmButtonText: 'OK',
+                    });
+                    return;
+                }
+
+                if (response.success) {
+                    updateTableRow(response.menu);
+                    $('#inputFormModaledit').modal('hide');
+                }
+            },
+            error: function (xhr) {
+                let errors = xhr.responseJSON?.errors;
+                if (errors) {
+                    let errorMessages = '';
+                    $.each(errors, function (key, messages) {
+                        errorMessages += `${messages[0]}<br>`;
+                    });
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        html: errorMessages,
+                    });
+                } else {
+                    Swal.fire('Error', 'An unexpected error occurred.', 'error');
+                }
+            }
+        });
     });
 
-    function updateTableRow(menu) {
-        const page = menu.menu_page || {};
-        const row = $(`#usefulLinksTable tr[data-id="${menu.id}"]`);
+    // English Content Submit
+    $(document).on('submit', '#usefullinkscontent_en', function (e) {
+        e.preventDefault();
+        let formData = new FormData(this);
 
-        row.find('td:nth-child(2)').text(menu.menu_name_en);
-        row.find('td:nth-child(3)').text(menu.menu_name_ta);
-        row.find('td:nth-child(4)').text(menu.page_type);
 
-        // Handle content (PDF/URL/Static)
-        let contentHtml = '—';
-        if (menu.page_type === 'Static Page') {
-            contentHtml = page.page_url || '—';
-        } else if (menu.page_type === 'url') {
-            contentHtml = `<a href="${page.external_url}" target="_blank">External Link</a>`;
-        } else if (menu.page_type === 'pdf') {
-            const links = [];
-            if (page.pdf_en) {
-                links.push(`<a href="/${page.pdf_en}" target="_blank" class="me-2" title="English PDF">
-                                <i class="fa fa-file-pdf-o text-danger"></i>
-                            </a>`);
+
+        $.ajax({
+            url: BASE_URL + "/admin/usefullinkscontent/updateusefullinkscontent",
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                Swal.fire('Success', response.message, 'success');
+            },
+            error: function () {
+                Swal.fire('Error', 'Fill the Fields Properly.', 'error');
             }
-            if (page.pdf_ta) {
-                links.push(`<a href="/${page.pdf_ta}" target="_blank" title="Tamil PDF">
-                                <i class="fa fa-file-pdf-o text-success"></i>
-                            </a>`);
+        });
+    });
+
+    // Tamil Content Submit
+    $(document).on('submit', '#usefullinkscontent_ta', function (e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+
+        $.ajax({
+            url: BASE_URL + "/admin/usefullinkscontent/updateusefullinkscontent",
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                Swal.fire('Success', response.message, 'success');
+            },
+            error: function () {
+                Swal.fire('Error', 'Fill the Fields Properly.', 'error');
             }
-            contentHtml = links.join(' ');
-        }
-        row.find('td:nth-child(5)').html(contentHtml);
-
-        // Order ID
-        row.find('td:nth-child(6)').text(menu.order_id);
-
-        // Status badge
-        const badge = row.find('td:nth-child(7) .badge');
-        badge.removeClass('badge-success badge-dark badge-danger');
-        if (menu.status == 1) {
-            badge.addClass('badge-success').text('Published');
-        } else if (menu.status == 0) {
-            badge.addClass('badge-dark').text('Draft');
-        } else if (menu.status == 2) {
-            badge.addClass('badge-danger').text('Disabled');
-        }
-
-        // Update data-* attributes of the edit button
-        const editBtn = row.find('.editusefullinks');
-        editBtn.data('menu_name_en', menu.menu_name_en);
-        editBtn.data('menu_name_ta', menu.menu_name_ta);
-        editBtn.data('page_type', menu.page_type);
-        editBtn.data('order_id', menu.order_id);
-        editBtn.data('status', menu.status);
-        editBtn.data('page_url', page.page_url || '');
-        editBtn.data('page_url_ta', page.page_url_ta || '');
-        editBtn.data('external_url', page.external_url || '');
-        editBtn.data('pdf_en', page.pdf_en ? `/${page.pdf_en}` : '');
-        editBtn.data('pdf_ta', page.pdf_ta ? `/${page.pdf_ta}` : '');
-
-        // Visual feedback
-        row.addClass('table-success');
-        setTimeout(() => row.removeClass('table-success'), 1500);
-    }
-});
-
-// ---------------------------usefullinkscontent-------------------------------
-
-
-
-// English Content Submit
-$(document).on('submit', '#usefullinkscontent_en', function (e) {
-    e.preventDefault();
-    let formData = new FormData(this);
-
-   
-
-    $.ajax({
-        url: BASE_URL + "/admin/usefullinkscontent/updateusefullinkscontent",
-        method: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        success: function (response) {
-            Swal.fire('Success', response.message, 'success');
-        },
-        error: function () {
-            Swal.fire('Error', 'Fill the Fields Properly.', 'error');
-        }
+        });
     });
-});
 
-// Tamil Content Submit
-$(document).on('submit', '#usefullinkscontent_ta', function (e) {
-    e.preventDefault();
-    let formData = new FormData(this);
 
-    $.ajax({
-        url: BASE_URL + "/admin/usefullinkscontent/updateusefullinkscontent",
-        method: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        success: function (response) {
-            Swal.fire('Success', response.message, 'success');
-        },
-        error: function () {
-            Swal.fire('Error', 'Fill the Fields Properly.', 'error');
-        }
-    });
-});
-
-// ---------------------------footerbottomlinks-------------
-
-$(document).ready(function () {
     // Open modal and update order_id on show
     $('#inputFormModaladdfooterbottom').on('shown.bs.modal', function () {
         let nextOrderId = $('#footerbottomTable tbody tr').length + 1;
         $('input[name="order_id"]').val(nextOrderId);
     });
+
 
     // Handle form submission
     $(document).on('submit', '#footerbottomlinksnew', function (e) {
@@ -4585,261 +3635,174 @@ $(document).ready(function () {
             }
         });
     });
-});
+
+    $('#page_type_menuedit').on('change', function () {
+        toggleFieldsEdit($(this).val());
+    });
+
+    $(document).on('click', '.editfooterbottomlinks', function () {
+        const el = $(this);
+        $('#editfooterbottomlinks')[0].reset(); // Reset form
+
+        // Set base values
+        $('#editfooterbottomlinks input[name="id"]').val(el.data('id'));
+        $('#editfooterbottomlinks input[name="original_order_id"]').val(el.data('order_id'));
+        $('#editfooterbottomlinks input[name="menu_name_en"]').val(el.data('menu_name_en'));
+        $('#editfooterbottomlinks input[name="menu_name_ta"]').val(el.data('menu_name_ta'));
+        $('#editfooterbottomlinks input[name="order_id"]').val(el.data('order_id'));
+        $('#editfooterbottomlinks select[name="status"]').val(el.data('status'));
+
+        const type = el.data('page_type');
+        $('#editfooterbottomlinks select[name="page_type"]').val(type).trigger('change');
+
+        // Set type-specific values
+        if (type === 'Static Page') {
+            $('#editfooterbottomlinks input[name="page_url"]').val(el.data('page_url'));
+            $('#editfooterbottomlinks input[name="page_url_ta"]').val(el.data('page_url_ta'));
+        } else if (type === 'pdf') {
+            $('#pdf_en_link').attr('href', el.data('pdf_en')).toggle(!!el.data('pdf_en'));
+            $('#pdf_ta_link').attr('href', el.data('pdf_ta')).toggle(!!el.data('pdf_ta'));
+        } else if (type === 'url') {
+            $('#editfooterbottomlinks input[name="external_url"]').val(el.data('external_url'));
+        }
+
+        // Show modal
+        $('#inputFormModaledit').modal('show');
+    });
 
 
-// --------------------------------------edit footer_bottom--------------
+    // ----------------------------edit footerbottom----------------------
 
+    $(document).on('submit', '#editfooterbottomlinks', function (e) {
+        e.preventDefault();
 
-function toggleFieldsEdit(type) {
-    $('#staticFieldsEdit, #pdfFieldsEdit, #urlFieldsEdit').hide();
+        const form = this;
+        const formData = new FormData(form);
 
-    if (type === 'Static Page') {
-        $('#staticFieldsEdit').show();
-    } else if (type === 'pdf') {
-        $('#pdfFieldsEdit').show();
-    } else if (type === 'url') {
-        $('#urlFieldsEdit').show();
-    }
-}
+        const pageType = $(form).find('select[name="page_type"]').val();
+        const externalUrl = $(form).find('input[name="external_url"]').val();
+        const menuNameEn = $(form).find('input[name="menu_name_en"]').val().trim();
+        const menuNameTa = $(form).find('input[name="menu_name_ta"]').val().trim();
 
-$('#page_type_menuedit').on('change', function () {
-    toggleFieldsEdit($(this).val());
-});
+        if (menuNameEn === '' || menuNameTa === '') {
+            let message = '';
+            if (menuNameEn === '') message += 'Menu Name (English) is required.<br>';
+            if (menuNameTa === '') message += 'Menu Name (Tamil) is required.<br>';
 
-$(document).on('click', '.editfooterbottomlinks', function () {
-    const el = $(this);
-    $('#editfooterbottomlinks')[0].reset(); // Reset form
-
-    // Set base values
-    $('#editfooterbottomlinks input[name="id"]').val(el.data('id'));
-    $('#editfooterbottomlinks input[name="original_order_id"]').val(el.data('order_id'));
-    $('#editfooterbottomlinks input[name="menu_name_en"]').val(el.data('menu_name_en'));
-    $('#editfooterbottomlinks input[name="menu_name_ta"]').val(el.data('menu_name_ta'));
-    $('#editfooterbottomlinks input[name="order_id"]').val(el.data('order_id'));
-    $('#editfooterbottomlinks select[name="status"]').val(el.data('status'));
-
-    const type = el.data('page_type');
-    $('#editfooterbottomlinks select[name="page_type"]').val(type).trigger('change');
-
-    // Set type-specific values
-    if (type === 'Static Page') {
-        $('#editfooterbottomlinks input[name="page_url"]').val(el.data('page_url'));
-        $('#editfooterbottomlinks input[name="page_url_ta"]').val(el.data('page_url_ta'));
-    } else if (type === 'pdf') {
-        $('#pdf_en_link').attr('href', el.data('pdf_en')).toggle(!!el.data('pdf_en'));
-        $('#pdf_ta_link').attr('href', el.data('pdf_ta')).toggle(!!el.data('pdf_ta'));
-    } else if (type === 'url') {
-        $('#editfooterbottomlinks input[name="external_url"]').val(el.data('external_url'));
-    }
-
-    // Show modal
-    $('#inputFormModaledit').modal('show');
-});
-
-
-// ----------------------------edit footerbottom----------------------
-
-$(document).on('submit', '#editfooterbottomlinks', function (e) {
-    e.preventDefault();
-
-    const form = this;
-    const formData = new FormData(form);
-
-    const pageType = $(form).find('select[name="page_type"]').val();
-    const externalUrl = $(form).find('input[name="external_url"]').val();
-    const menuNameEn = $(form).find('input[name="menu_name_en"]').val().trim();
-    const menuNameTa = $(form).find('input[name="menu_name_ta"]').val().trim();
-
-    if (menuNameEn === '' || menuNameTa === '') {
-        let message = '';
-        if (menuNameEn === '') message += 'Menu Name (English) is required.<br>';
-        if (menuNameTa === '') message += 'Menu Name (Tamil) is required.<br>';
-
-        Swal.fire({
-            icon: 'error',
-            title: 'Validation Error',
-            html: message,
-        });
-        return;
-    }
-
-    if (pageType === 'url') {
-        const urlPattern = /^(http:\/\/|https:\/\/)/i;
-        if (!externalUrl || !urlPattern.test(externalUrl)) {
             Swal.fire({
                 icon: 'error',
-                title: 'Invalid External URL',
-                text: 'Please enter a valid URL starting with http:// or https://'
+                title: 'Validation Error',
+                html: message,
             });
             return;
         }
-    }
 
-    $.ajax({
-        url: BASE_URL + "/admin/editfooterbottomlinks/updatebottomlinks",
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function (response) {
-            if (response.conflict) {
+        if (pageType === 'url') {
+            const urlPattern = /^(http:\/\/|https:\/\/)/i;
+            if (!externalUrl || !urlPattern.test(externalUrl)) {
                 Swal.fire({
-                    title: 'Duplicate Order ID',
-                    text: response.message,
-                    icon: 'warning',
-                    confirmButtonText: 'OK',
+                    icon: 'error',
+                    title: 'Invalid External URL',
+                    text: 'Please enter a valid URL starting with http:// or https://'
                 });
                 return;
             }
-
-            if (response.success) {
-                updateTableRow(response.menu);
-                 $('#inputFormModaledit').modal('hide'); 
-            }
-        },
-        error: function (xhr) {
-            let errors = xhr.responseJSON?.errors;
-            if (errors) {
-                let errorMessages = '';
-                $.each(errors, function (key, messages) {
-                    errorMessages += `${messages[0]}<br>`;
-                });
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Error',
-                    html: errorMessages,
-                });
-            } else {
-                Swal.fire('Error', 'An unexpected error occurred.', 'error');
-            }
         }
+
+        $.ajax({
+            url: BASE_URL + "/admin/editfooterbottomlinks/updatebottomlinks",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                if (response.conflict) {
+                    Swal.fire({
+                        title: 'Duplicate Order ID',
+                        text: response.message,
+                        icon: 'warning',
+                        confirmButtonText: 'OK',
+                    });
+                    return;
+                }
+
+                if (response.success) {
+                    updateTableRow(response.menu);
+                    $('#inputFormModaledit').modal('hide');
+                }
+            },
+            error: function (xhr) {
+                let errors = xhr.responseJSON?.errors;
+                if (errors) {
+                    let errorMessages = '';
+                    $.each(errors, function (key, messages) {
+                        errorMessages += `${messages[0]}<br>`;
+                    });
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        html: errorMessages,
+                    });
+                } else {
+                    Swal.fire('Error', 'An unexpected error occurred.', 'error');
+                }
+            }
+        });
+
     });
 
-    function updateTableRow(menu) {
-        const page = menu.menu_page || {};
-        const row = $(`#footerbottomTable tr[data-id="${menu.id}"]`);
+    // English Content Submit
+    $(document).on('submit', '#footerbottomcontent_en', function (e) {
+        e.preventDefault();
+        let formData = new FormData(this);
 
-        row.find('td:nth-child(2)').text(menu.menu_name_en);
-        row.find('td:nth-child(3)').text(menu.menu_name_ta);
-        row.find('td:nth-child(4)').text(menu.page_type);
 
-        // Handle content (PDF/URL/Static)
-        let contentHtml = '—';
-        if (menu.page_type === 'Static Page') {
-            contentHtml = page.page_url || '—';
-        } else if (menu.page_type === 'url') {
-            contentHtml = `<a href="${page.external_url}" target="_blank">External Link</a>`;
-        } else if (menu.page_type === 'pdf') {
-            const links = [];
-            if (page.pdf_en) {
-                links.push(`<a href="/${page.pdf_en}" target="_blank" class="me-2" title="English PDF">
-                                <i class="fa fa-file-pdf-o text-danger"></i>
-                            </a>`);
+
+        $.ajax({
+            url: BASE_URL + "/admin/footerbottomlinkscontent/updatefootercontent",
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                Swal.fire('Success', response.message, 'success');
+            },
+            error: function () {
+                Swal.fire('Error', 'Fill the Fields Properly.', 'error');
             }
-            if (page.pdf_ta) {
-                links.push(`<a href="/${page.pdf_ta}" target="_blank" title="Tamil PDF">
-                                <i class="fa fa-file-pdf-o text-success"></i>
-                            </a>`);
+        });
+    });
+
+    // Tamil Content Submit
+    $(document).on('submit', '#footerbottomcontent_ta', function (e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+
+        $.ajax({
+            url: BASE_URL + "/admin/footerbottomlinkscontent/updatefootercontent",
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                Swal.fire('Success', response.message, 'success');
+            },
+            error: function () {
+                Swal.fire('Error', 'Fill the Fields Properly.', 'error');
             }
-            contentHtml = links.join(' ');
-        }
-        row.find('td:nth-child(5)').html(contentHtml);
-
-        // Order ID
-        row.find('td:nth-child(6)').text(menu.order_id);
-
-        // Status badge
-        const badge = row.find('td:nth-child(7) .badge');
-        badge.removeClass('badge-success badge-dark badge-danger');
-        if (menu.status == 1) {
-            badge.addClass('badge-success').text('Published');
-        } else if (menu.status == 0) {
-            badge.addClass('badge-dark').text('Draft');
-        } else if (menu.status == 2) {
-            badge.addClass('badge-danger').text('Disabled');
-        }
-
-        // Update data-* attributes of the edit button
-        const editBtn = row.find('.editfooterbottomlinks');
-        editBtn.data('menu_name_en', menu.menu_name_en);
-        editBtn.data('menu_name_ta', menu.menu_name_ta);
-        editBtn.data('page_type', menu.page_type);
-        editBtn.data('order_id', menu.order_id);
-        editBtn.data('status', menu.status);
-        editBtn.data('page_url', page.page_url || '');
-        editBtn.data('page_url_ta', page.page_url_ta || '');
-        editBtn.data('external_url', page.external_url || '');
-        editBtn.data('pdf_en', page.pdf_en ? `/${page.pdf_en}` : '');
-        editBtn.data('pdf_ta', page.pdf_ta ? `/${page.pdf_ta}` : '');
-
-        // Visual feedback
-        row.addClass('table-success');
-        setTimeout(() => row.removeClass('table-success'), 1500);
-    }
-});
-
-
-// --------------------footer bottom content------------------
-
-
-
-// English Content Submit
-$(document).on('submit', '#footerbottomcontent_en', function (e) {
-    e.preventDefault();
-    let formData = new FormData(this);
-
-   
-
-    $.ajax({
-        url: BASE_URL + "/admin/footerbottomlinkscontent/updatefootercontent",
-        method: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        success: function (response) {
-            Swal.fire('Success', response.message, 'success');
-        },
-        error: function () {
-            Swal.fire('Error', 'Fill the Fields Properly.', 'error');
-        }
+        });
     });
-});
 
-// Tamil Content Submit
-$(document).on('submit', '#footerbottomcontent_ta', function (e) {
-    e.preventDefault();
-    let formData = new FormData(this);
-
-    $.ajax({
-        url: BASE_URL + "/admin/footerbottomlinkscontent/updatefootercontent",
-        method: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        success: function (response) {
-            Swal.fire('Success', response.message, 'success');
-        },
-        error: function () {
-            Swal.fire('Error', 'Fill the Fields Properly.', 'error');
-        }
-    });
-});
-
-
-// ------------------------------footerbottom content textarea-------------
-
-$(document).ready(function () {
     $('#footerbottomupdate_en, #footerbottomupdate_ta').on('submit', function (e) {
         e.preventDefault();
 
@@ -4879,30 +3842,29 @@ $(document).ready(function () {
             }
         });
     });
-});
 
-// ---------------------------------------media--------
+    const fileTypeSelect = document.getElementById('fileTypeSelect');
+    const fileInput = document.getElementById('fileInput');
 
-  document.getElementById('fileTypeSelect').addEventListener('change', function () {
-        const selectedType = this.value;
-        const fileInput = document.getElementById('fileInput');
+    if (fileTypeSelect && fileInput) {
+        // Attach change event
+        fileTypeSelect.addEventListener('change', function () {
+            const selectedType = this.value;
 
-        if (selectedType === 'pdf') {
-            fileInput.setAttribute('accept', 'application/pdf');
-        } else if (selectedType === 'image') {
-            fileInput.setAttribute('accept', 'image/*');
-        } else {
-            fileInput.removeAttribute('accept');
-        }
-    });
+            if (selectedType === 'pdf') {
+                fileInput.setAttribute('accept', 'application/pdf');
+            } else if (selectedType === 'image') {
+                fileInput.setAttribute('accept', 'image/*');
+            } else {
+                fileInput.removeAttribute('accept');
+            }
+        });
 
+        // Trigger the change event once on load
+        fileTypeSelect.dispatchEvent(new Event('change'));
+    }
     // Trigger the change once on load to set default accept value
-    document.getElementById('fileTypeSelect').dispatchEvent(new Event('change'));
-
-
-    // -------------------------media Insert---------------
-
-    
+    // document.getElementById('fileTypeSelect').dispatchEvent(new Event('change'));
 
 
     // Change file accept type on selection
@@ -4917,11 +3879,13 @@ $(document).ready(function () {
         }
     }).trigger('change');
 
+
+
     // AJAX form submission
     $('#insertmedia').on('submit', function (e) {
         e.preventDefault();
 
-   
+
 
         const fileInput = document.getElementById('fileInput');
         const file = fileInput.files[0];
@@ -4947,15 +3911,15 @@ $(document).ready(function () {
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
-         success: function (response) {
-    $('#addmediaitems').modal('hide');
+            success: function (response) {
+                $('#addmediaitems').modal('hide');
 
-    if (response.success && response.media) {
-        const media = response.media;
+                if (response.success && response.media) {
+                    const media = response.media;
 
-        let html = '';
-        if (media.type === 'image') {
-            html += `
+                    let html = '';
+                    if (media.type === 'image') {
+                        html += `
                 <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-6 mb-4">
                     <a class="card style-6" href="#">
                         <img src="/${media.filepath_img_pdf}" alt="${media.alt_text_en}" class="slider-image text-center img-thumbnail1" />
@@ -4974,8 +3938,8 @@ $(document).ready(function () {
                     </a>
                 </div>
             `;
-        } else {
-            html += `
+                    } else {
+                        html += `
                 <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-6 mb-4">
                     <div class="card style-6">
                         <a href="/${media.filepath_img_pdf}" target="_blank">
@@ -4996,228 +3960,218 @@ $(document).ready(function () {
                     </div>
                 </div>
             `;
-        }
+                    }
 
-        $('#gallery-row').prepend(html); // Add new card at the top
-        $('#insertmedia')[0].reset();
-        $('#fileTypeSelect').trigger('change');
+                    $('#gallery-row').prepend(html); // Add new card at the top
+                    $('#insertmedia')[0].reset();
+                    $('#fileTypeSelect').trigger('change');
 
-        // ✅ Show SweetAlert success
-        Swal.fire({
-            icon: 'success',
-            title: 'Media Added!',
-            text: 'Your file has been added successfully.',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'OK'
-        });
-    }
-},
-       error: function (xhr) {
-    if (xhr.status === 422) {
-        let errors = xhr.responseJSON.errors;
-        let errorMessages = '';
-
-        // Combine all validation error messages
-        Object.values(errors).forEach(function (messages) {
-            messages.forEach(function (msg) {
-                errorMessages += `<div>${msg}</div>`;
-            });
-        });
-
-        Swal.fire({
-            icon: 'error',
-            title: 'Validation Error',
-            html: errorMessages,
-            confirmButtonColor: '#d33',
-        });
-    } else {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops!',
-            text: 'Something went wrong. Please try again.',
-            confirmButtonColor: '#d33',
-        });
-    }
-}
-
-
-        });
-    });
-
-
-// ----------------------media delete------------------
-
-$(document).on('click', '.delete-media', function () {
-    let button = $(this); // the clicked delete button
-    let id = button.data('id');
-
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "This will deactivate the media item.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, deactivate it!',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: BASE_URL + '/admin/media/delete/' + id,
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function (response) {
-                    Swal.fire(
-                        'Deactivated!',
-                        'The media item has been removed.',
-                        'success'
-                    );
-
-                    // Remove the full card (col div)
-                    button.closest('.col-xxl-2, .col-xl-2, .col-lg-2, .col-md-2, .col-sm-6').remove();
-                },
-                error: function () {
-                    Swal.fire(
-                        'Error!',
-                        'Something went wrong while deleting.',
-                        'error'
-                    );
+                    // ✅ Show SweetAlert success
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Media Added!',
+                        text: 'Your file has been added successfully.',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    });
                 }
-            });
-        }
+            },
+            error: function (xhr) {
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    let errorMessages = '';
+
+                    // Combine all validation error messages
+                    Object.values(errors).forEach(function (messages) {
+                        messages.forEach(function (msg) {
+                            errorMessages += `<div>${msg}</div>`;
+                        });
+                    });
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        html: errorMessages,
+                        confirmButtonColor: '#d33',
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops!',
+                        text: 'Something went wrong. Please try again.',
+                        confirmButtonColor: '#d33',
+                    });
+                }
+            }
+
+
+        });
     });
-});
 
 
-// ---------------media edit-------------------
-$(document).on('click', '.open-edit-media-modal', function (e) {
-    e.preventDefault();
+    // ----------------------media delete------------------
 
-    const id = $(this).data('id');
-    const titleEn = $(this).data('title-en');
-    const titleTa = $(this).data('title-ta');
-    const altEn = $(this).data('alt-en');
-    const altTa = $(this).data('alt-ta');
-    const type = $(this).data('type');
-    const filePath = $(this).data('path'); // Use full path to PDF or image
+    $(document).on('click', '.delete-media', function () {
+        let button = $(this); // the clicked delete button
+        let id = button.data('id');
 
-    // Fill form fields
-    $('#editImageId').val(id);
-    $('#editmediaForm input[name="title_en"]').val(titleEn);
-    $('#editmediaForm input[name="title_ta"]').val(titleTa);
-    $('#editmediaForm input[name="alt_text_en"]').val(altEn);
-    $('#editmediaForm input[name="alt_text_ta"]').val(altTa);
-    $('#editmediaForm select[name="type"]').val(type);
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will deactivate the media item.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, deactivate it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: BASE_URL + '/admin/media/delete/' + id,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+                        Swal.fire(
+                            'Deactivated!',
+                            'The media item has been removed.',
+                            'success'
+                        );
 
-    // Reset preview block
-    $('#editImagePreview').hide();
-    $('#editPdfLink').hide();
-    $('#currentImageWrapper').hide();
+                        // Remove the full card (col div)
+                        button.closest('.col-xxl-2, .col-xl-2, .col-lg-2, .col-md-2, .col-sm-6').remove();
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Error!',
+                            'Something went wrong while deleting.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
 
-    // Show correct preview
-   if (type === 'image') {
-        $('#editImagePreview').attr('src', filePath).show();
-        $('#editPdfLink').hide(); // ensure link is hidden
-        $('#currentImageWrapper').show();
-    } else if (type === 'pdf') {
-        $('#editPdfLink').attr('href', filePath).text('View PDF').show();
-        $('#editImagePreview').hide(); // ensure image is hidden
-        $('#currentImageWrapper').show();
-    }
+    // ---------------media edit-------------------
+    $(document).on('click', '.open-edit-media-modal', function (e) {
+        e.preventDefault();
 
-    // Open modal
-    $('#inputFormModaleditgallery').modal('show');
-});
+        const id = $(this).data('id');
+        const titleEn = $(this).data('title-en');
+        const titleTa = $(this).data('title-ta');
+        const altEn = $(this).data('alt-en');
+        const altTa = $(this).data('alt-ta');
+        const type = $(this).data('type');
+        const filePath = $(this).data('path'); // Use full path to PDF or image
+
+        // Fill form fields
+        $('#editImageId').val(id);
+        $('#editmediaForm input[name="title_en"]').val(titleEn);
+        $('#editmediaForm input[name="title_ta"]').val(titleTa);
+        $('#editmediaForm input[name="alt_text_en"]').val(altEn);
+        $('#editmediaForm input[name="alt_text_ta"]').val(altTa);
+        $('#editmediaForm select[name="type"]').val(type);
+
+        // Reset preview block
+        $('#editImagePreview').hide();
+        $('#editPdfLink').hide();
+        $('#currentImageWrapper').hide();
+
+        // Show correct preview
+        if (type === 'image') {
+            $('#editImagePreview').attr('src', filePath).show();
+            $('#editPdfLink').hide(); // ensure link is hidden
+            $('#currentImageWrapper').show();
+        } else if (type === 'pdf') {
+            $('#editPdfLink').attr('href', filePath).text('View PDF').show();
+            $('#editImagePreview').hide(); // ensure image is hidden
+            $('#currentImageWrapper').show();
+        }
+
+        // Open modal
+        $('#inputFormModaleditgallery').modal('show');
+    });
 
 
-// --------------------update media------------------
-$(document).on("submit", "#editmediaForm", function (e) {
-    e.preventDefault();
+    // --------------------update media------------------
+    $(document).on("submit", "#editmediaForm", function (e) {
+        e.preventDefault();
 
-    let form = $(this);
-    let formData = new FormData(this);
-    let submitBtn = form.find("button[type='submit']");
+        let form = $(this);
+        let formData = new FormData(this);
+        let submitBtn = form.find("button[type='submit']");
 
-    submitBtn.prop("disabled", true).text("Updating...");
+        submitBtn.prop("disabled", true).text("Updating...");
 
-    $.ajax({
-        url: BASE_URL + "/admin/media/updatemedia",
-        method: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function (response) {
-            if (response.status === "success") {
-                Swal.fire("Success", response.message, "success");
+        $.ajax({
+            url: BASE_URL + "/admin/media/updatemedia",
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response.status === "success") {
+                    Swal.fire("Success", response.message, "success");
 
-                const media = response.media;
+                    const media = response.media;
 
-                const updatedCard = `
-                    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-6 mb-4">
-                        <a class="card style-6 open-edit-media-modal"
-                            href="#"
-                            data-id="${media.id}"
-                            data-title-en="${media.title_en}"
-                            data-title-ta="${media.title_ta}"
-                            data-alt-en="${media.alt_text_en}"
-                            data-alt-ta="${media.alt_text_ta}"
-                            data-type="${media.type}"
-                            data-path="${media.path}">
+                    const updatedCard = `
+                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-6 mb-4">
+                            <a class="card style-6 open-edit-media-modal"
+                                href="#"
+                                data-id="${media.id}"
+                                data-title-en="${media.title_en}"
+                                data-title-ta="${media.title_ta}"
+                                data-alt-en="${media.alt_text_en}"
+                                data-alt-ta="${media.alt_text_ta}"
+                                data-type="${media.type}"
+                                data-path="${media.path}">
 
-                            <img src="${media.type === 'pdf' ? '/assets/portaladmin/pdf-icon.png' : media.path}" alt="${media.alt_text_en}" class="slider-image text-center img-thumbnail1" />
+                                <img src="${media.type === 'pdf' ? '/assets/portaladmin/pdf-icon.png' : media.path}" alt="${media.alt_text_en}" class="slider-image text-center img-thumbnail1" />
 
-                            <div class="card-footer">
-                                <div class="row">
-                                    <div class="col-8 text-left mb-4">
-                                        <b>${media.title_en || 'Untitled'}</b>
-                                    </div>
-                                    <div class="col-4 text-left">
-                                        <button class="btn btn-danger delete-media" data-id="${media.id}">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-8 text-left mb-4">
+                                            <b>${media.title_en || 'Untitled'}</b>
+                                        </div>
+                                        <div class="col-4 text-left">
+                                            <button class="btn btn-danger delete-media" data-id="${media.id}">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
-                    </div>
-                `;
+                            </a>
+                        </div>
+                    `;
 
-                $(`#gallery-row .open-edit-media-modal[data-id='${media.id}']`).closest(".col-xxl-2").replaceWith(updatedCard);
-                $('#inputFormModaleditgallery').modal('hide');
-            } else {
-                Swal.fire("Error", response.message, "error");
+                    $(`#gallery-row .open-edit-media-modal[data-id='${media.id}']`).closest(".col-xxl-2").replaceWith(updatedCard);
+                    $('#inputFormModaleditgallery').modal('hide');
+                } else {
+                    Swal.fire("Error", response.message, "error");
+                }
+
+                submitBtn.prop("disabled", false).text("Update");
+            },
+            error: function (xhr) {
+                let message = "Something went wrong";
+
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors).map(arr => arr[0]).join("<br>");
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+
+                Swal.fire("Validation Error", message, "error");
+                submitBtn.prop("disabled", false).text("Update");
             }
-
-            submitBtn.prop("disabled", false).text("Update");
-        },
-        error: function (xhr) {
-            let message = "Something went wrong";
-
-            if (xhr.status === 422 && xhr.responseJSON?.errors) {
-                message = Object.values(xhr.responseJSON.errors).map(arr => arr[0]).join("<br>");
-            } else if (xhr.responseJSON?.message) {
-                message = xhr.responseJSON.message;
-            }
-
-            Swal.fire("Validation Error", message, "error");
-            submitBtn.prop("disabled", false).text("Update");
-        }
+        });
     });
-});
 
-// --------------media menu----------------------
-let currentPdfTarget = '';
 
-    function openMediaLibraryPdf(fieldId) {
-
-          
-        currentPdfTarget = fieldId;
-      alert(currentPdfTarget);
-        const modal = new bootstrap.Modal(document.getElementById('mediaLibraryModalpdfmenu'));
-        modal.show();
-    }
+    let currentPdfTarget = '';
 
     document.addEventListener('DOMContentLoaded', function () {
         const selectBtn = document.getElementById('selectImageBtnpdfmenu');
@@ -5252,6 +4206,734 @@ let currentPdfTarget = '';
             modalInstance.hide();
         });
     });
+
+});
+
+function toggleSubMenuFields(type) {
+    if (type === 'pdf') {
+        $('.pdf-inputs').removeClass('d-none');
+        $('.static-page-inputs').addClass('d-none');
+        $('.url-inputs').addClass('d-none');
+    } else if (type === 'Static Page') {
+        $('.static-page-inputs').removeClass('d-none');
+        $('.pdf-inputs').addClass('d-none');
+        $('.url-inputs').addClass('d-none');
+    } else if (type === 'url') {
+        $('.url-inputs').removeClass('d-none');
+        $('.static-page-inputs').addClass('d-none');
+        $('.pdf-inputs').addClass('d-none');
+    } else {
+        $('.pdf-inputs').addClass('d-none');
+        $('.static-page-inputs').addClass('d-none');
+        $('.url-inputs').addClass('d-none');
+    }
+}
+
+function toggleSubMenuInputs(type) {
+    if (type && type.toLowerCase() === 'pdf') {
+        $('.pdf-input').removeClass('d-none');
+        $('.rte-input').addClass('d-none');
+    } else {
+        $('.pdf-input').addClass('d-none');
+        $('.rte-input').removeClass('d-none');
+    }
+}
+
+function formatDMY(dateStr) {
+    const d = new Date(dateStr);
+    return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
+}
+function toggleFieldsEdit(pageType) {
+    $('#staticFieldsEdit, #pdfFieldsEdit, #urlFieldsEdit').hide();
+
+    if (pageType === 'Static Page') {
+        $('#staticFieldsEdit').show();
+    } else if (pageType === 'pdf') {
+        $('#pdfFieldsEdit').show();
+    } else if (pageType === 'url') {
+        $('#urlFieldsEdit').show();
+    }
+}
+
+
+// Toggle fields based on page type
+function toggleFieldsEdit(type) {
+    $('#staticFieldsEdit, #pdfFieldsEdit, #urlFieldsEdit').hide();
+    if (type === 'Static Page') {
+        $('#staticFieldsEdit').show();
+    } else if (type === 'pdf') {
+        $('#pdfFieldsEdit').show();
+    } else if (type === 'url') {
+        $('#urlFieldsEdit').show();
+    }
+}
+
+
+function toggleFieldsEdit(pageType) {
+    $('#staticFieldsEdit, #pdfFieldsEdit, #urlFieldsEdit').hide();
+
+    if (pageType === 'Static Page') {
+        $('#staticFieldsEdit').show();
+    } else if (pageType === 'pdf') {
+        $('#pdfFieldsEdit').show();
+    } else if (pageType === 'url') {
+        $('#urlFieldsEdit').show();
+    }
+}
+
+function handleMenuUpdate(menu) {
+    const row = $(`#sortable tr[data-id="${menu.id}"]`);
+
+    // 1. Update Menu Name, Page Type
+    row.find('td:nth-child(2)').text(menu.menu_name_en || '');
+    row.find('td:nth-child(3)').text(menu.menu_name_ta || '');
+    row.find('td:nth-child(4)').text(menu.page_type || '');
+
+    // 2. Page Type Content Column
+    let contentCol = '';
+    if (menu.page_type === 'Static Page') {
+        contentCol = menu.page_url || '—';
+    } else if (menu.page_type === 'pdf') {
+        const links = [];
+        if (menu.pdf_en) {
+            links.push(`<a href="/${menu.pdf_en}" target="_blank" class="me-2" title="English PDF">
+                                <i class="fa fa-file-pdf-o text-danger"></i>
+                            </a>`);
+        }
+        if (menu.pdf_ta) {
+            links.push(`<a href="/${menu.pdf_ta}" target="_blank" title="Tamil PDF">
+                                <i class="fa fa-file-pdf-o text-success"></i>
+                            </a>`);
+        }
+        contentCol = links.join(' ');
+    } else if (menu.page_type === 'url') {
+        contentCol = `<a href="${menu.external_url}" target="_blank">External Link</a>`;
+    } else if (menu.page_type === 'submenu') {
+        contentCol = '—';
+    }
+    row.find('td:nth-child(5)').html(contentCol);
+
+    // 3. Order ID
+    row.find('td:nth-child(6)').text(menu.order_id || '');
+
+    // 4. Status Badge
+    const badge = row.find('td:nth-child(7) .badge');
+    badge.removeClass('badge-success badge-dark badge-danger');
+    if (menu.status == 1) {
+        badge.addClass('badge-success').text('Published');
+    } else if (menu.status == 0) {
+        badge.addClass('badge-dark').text('Draft');
+    } else if (menu.status == 2) {
+        badge.addClass('badge-danger').text('Disabled');
+    }
+
+    // 5. Update Edit Button Attributes
+    const page = menu.menu_page || {};
+
+    const editBtn = row.find('.editMenu');
+    editBtn.data('menu_name_en', menu.menu_name_en || '');
+    editBtn.data('menu_name_ta', menu.menu_name_ta || '');
+    editBtn.data('page_type', menu.page_type || '');
+    editBtn.data('order_id', menu.order_id || '');
+    editBtn.data('status', menu.status);
+
+    editBtn.data('page_url', page.page_url || '');
+    editBtn.data('page_url_ta', page.page_url_ta || '');
+    editBtn.data('external_url', page.external_url || '');
+    editBtn.data('pdf_en', page.pdf_en ? `/${page.pdf_en}` : '');
+    editBtn.data('pdf_ta', page.pdf_ta ? `/${page.pdf_ta}` : '');
+    editBtn.data('footer_quicklinks_id', page.footer_quicklinks_id || 0); // ✅ Added
+
+    // 6. Update Static Page icon (fa-file-text-o)
+    const controlsList = row.find('ul.table-controls');
+    controlsList.find('li').eq(1).remove(); // remove second icon if exists
+
+    if (menu.page_type === 'Static Page') {
+        controlsList.append(`
+                <li>
+                    <a href="/admin/menuscontent/${menu.id}"  title="Edit">
+                        <i class="fa fa-file-text-o"></i>
+                    </a>
+                </li>
+            `);
+    }
+
+    // 7. Close modal and reset form
+    $('#inputFormModaledit').modal('hide');
+    $('#menuFormedit')[0].reset();
+
+    // 8. Visual feedback
+    row.addClass('table-success');
+    setTimeout(() => row.removeClass('table-success'), 1500);
+}
+
+
+function toggleEditFields() {
+    const selected = $('#page_type_edit').val();
+
+    $('.static-page-inputs, .pdf-inputs, .url-inputs').addClass('d-none');
+
+    if (selected === 'Static Page') {
+        $('.static-page-inputs').removeClass('d-none');
+    } else if (selected === 'pdf') {
+        $('.pdf-inputs').removeClass('d-none');
+    } else if (selected === 'url') {
+        $('.url-inputs').removeClass('d-none');
+    }
+}
+
+
+
+
+function handleSubmenuUpdate(menu) {
+    const row = $(`#sortable-submenu tr[data-id="${menu.id}"]`);
+    if (row.length === 0) {
+        console.warn("Row not found for submenu ID:", menu.id);
+        return;
+    }
+
+    row.find('td:nth-child(2)').text(menu.menu_name_en || '');
+    row.find('td:nth-child(3)').text(menu.menu_name_ta || '');
+    row.find('td:nth-child(4)').text(menu.parent_menu_name || '—');
+    row.find('td:nth-child(5)').text(menu.order_id || '');
+
+    // ✅ Update status badge
+    const badge = row.find('td:nth-child(6) .badge');
+    badge.removeClass('badge-success badge-dark badge-danger');
+
+    if (menu.status == 1) {
+        badge.addClass('badge-success').text('Published');
+    } else if (menu.status == 0) {
+        badge.addClass('badge-dark').text('Draft');
+    } else if (menu.status == 2) {
+        badge.addClass('badge-danger').text('Disabled');
+    }
+
+    // ✅ Update footer quick links checkbox/text (Assuming column 8)
+    row.find('td:nth-child(8)').html(menu.footer_quicklinks_id == 1
+        ? '<i class="fa fa-check text-success"></i>'
+        : '<i class="fa fa-times text-danger"></i>');
+
+    // ✅ Update Action links (Static Page Link)
+    const actionCell = row.find('td:nth-child(7) ul');
+    actionCell.find('li.static-page-link').remove();
+
+    if (menu.page_type === 'Static Page') {
+        const staticLink = `
+                    <li class="static-page-link">
+                        <a href="/admin/submenuscontent/${menu.id}" title="Edit">
+                            <i class="fa fa-file-text-o"></i>
+                        </a>
+                    </li>
+                `;
+        actionCell.append(staticLink);
+    }
+
+    $('#inputFormModaledit').modal('hide');
+    $('#submenuFormedit')[0].reset();
+
+    row.addClass('table-success');
+    setTimeout(() => row.removeClass('table-success'), 1500);
+}
+
+
+function toggleEditBoardFields(type, data = {}) {
+    if (type === 'pdf') {
+        $('#pdfFields').show();
+        $('#urlFields').hide();
+
+        // Show existing PDF links
+        if (data.pdf_en) {
+            $('#existing_pdf_en').removeClass('d-none').attr('href', '/' + data.pdf_en);
+        } else {
+            $('#existing_pdf_en').addClass('d-none');
+        }
+
+        if (data.pdf_ta) {
+            $('#existing_pdf_ta').removeClass('d-none').attr('href', '/' + data.pdf_ta);
+        } else {
+            $('#existing_pdf_ta').addClass('d-none');
+        }
+
+    } else if (type === 'url') {
+        $('#pdfFields').hide();
+        $('#urlFields').show();
+
+        $('#external_url_input').val(data.external_url || '');
+    } else {
+        $('#pdfFields').hide();
+        $('#urlFields').hide();
+    }
+}
+
+
+
+// Example: Fill form when edit button is clicked
+function populateNoticeBoardEditForm(data) {
+    $('#board_id').val(data.id);
+    $('textarea[name="subject_en"]').val(data.subject_en);
+    $('textarea[name="subject_ta"]').val(data.subject_ta);
+    $('input[name="startdate"]').val(data.startdate);
+    $('input[name="enddate"]').val(data.enddate);
+    $('#contenttype_editboard').val(data.page_type);
+
+    toggleEditBoardFields(data.page_type, data);
+}
+
+
+// ✅ URL validation helper
+function isValidUrl(string) {
+    try {
+        let url = new URL(string);
+        return url.protocol === "http:" || url.protocol === "https:";
+    } catch (_) {
+        return false;
+    }
+}
+
+function breakTextByWords(text, wordsPerLine = 6) {
+    if (!text) return '';
+    let words = text.split(/\s+/);
+    let lines = [];
+    for (let i = 0; i < words.length; i += wordsPerLine) {
+        lines.push(words.slice(i, i + wordsPerLine).join(" "));
+    }
+    return lines.join("<br>");
+}
+
+
+// Format date to dd-mm-yyyy
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return ('0' + date.getDate()).slice(-2) + '-' +
+        ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+        date.getFullYear();
+}
+
+function updateRow(news) {
+    let row = $('#news_row_' + news.id);
+
+    row.find('.subject_en').text(news.subject_en);
+    row.find('.subject_ta').text(news.subject_ta);
+    row.find('.startdate').text(formatDate(news.startdate));
+    row.find('.enddate').text(formatDate(news.enddate));
+    row.find('.page_type').text(news.page_type);
+
+    // Update data attributes for edit button (optional)
+    let editBtn = row.find('.editNewsBtn');
+    editBtn.data('subject_en', news.subject_en);
+    editBtn.data('subject_ta', news.subject_ta);
+    editBtn.data('startdate', news.startdate);
+    editBtn.data('enddate', news.enddate);
+    editBtn.data('page_type', news.page_type);
+    editBtn.data('external_url', news.external_url);
+}
+
+function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-GB'); // DD-MM-YYYY
+}
+
+
+function wordWrap(str, maxWidth) {
+    if (!str) return "";
+    let newLineStr = "<br>";
+    let result = "";
+    while (str.length > maxWidth) {
+        let found = false;
+        // break line at last space within maxWidth
+        for (let i = maxWidth; i >= 0; i--) {
+            if (str.charAt(i).match(/\s/)) {
+                result += str.slice(0, i) + newLineStr;
+                str = str.slice(i + 1);
+                found = true;
+                break;
+            }
+        }
+        // if no space found, force break
+        if (!found) {
+            result += str.slice(0, maxWidth) + newLineStr;
+            str = str.slice(maxWidth);
+        }
+    }
+    return result + str;
+}
+
+
+// Format date to dd-mm-yyyy
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return ('0' + date.getDate()).slice(-2) + '-' +
+        ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+        date.getFullYear();
+}
+
+
+
+function appendFormRow(form) {
+    let statusClass = form.status == '1' ? 'badge-success' :
+        form.status == '0' ? 'badge-dark' : 'badge-danger';
+    let statusText = form.status == '1' ? 'Active' : 'Inactive';
+
+    let row = `
+        <tr data-id="${form.id}">
+            <td>${form.form_name}</td>
+            <td>${form.license_name}</td>
+            <td>${form.fresh_amount}</td>
+            <td>${form.freshamount_starts} to <br>${form.freshamount_ends ?? '--'}<br>[ ${form.freshamount_starts && form.freshamount_ends ? moment(form.freshamount_ends).diff(moment(form.freshamount_starts), 'days') : '--'} days ]</td>
+            <td>${form.renewal_amount}</td>
+            <td>${form.renewalamount_starts} to <br>${form.renewalamount_ends ?? '--'}<br>[ ${form.renewalamount_starts && form.renewalamount_ends ? moment(form.renewalamount_ends).diff(moment(form.renewalamount_starts), 'days') : '--'} days ]</td>
+            <td>${form.latefee_amount}</td>
+            <td>${form.latefee_starts} to <br>${form.latefee_ends ?? '--'}<br>[ ${form.latefee_starts && form.latefee_ends ? moment(form.latefee_ends).diff(moment(form.latefee_starts), 'days') : '--'} days ]</td>
+            <td>${form.duration_freshfee || '--'}</td>
+            <td>${form.duration_renewalfee || '--'}</td>
+            <td>${form.duration_latefee || '--'}</td>
+            <td><span class="badge ${statusClass}">${statusText}</span></td>
+            <td>
+                <ul class="table-controls">
+                    <li>
+                        <a href="javascript:void(0);" class="editformdata" data-id="${form.id}" data-form_name="${form.form_name}" data-license_name="${form.license_name}" data-fresh_amount="${form.fresh_amount}" data-renewal_amount="${form.renewal_amount}" data-freshamount_starts="${form.freshamount_starts}" data-freshamount_ends="${form.freshamount_ends}" data-renewalamount_starts="${form.renewalamount_starts}" data-renewalamount_ends="${form.renewalamount_ends}" data-latefee_amount="${form.latefee_amount}" data-latefee_starts="${form.latefee_starts}" data-latefee_ends="${form.latefee_ends}" data-status="${form.status}" data-bs-toggle="modal" data-bs-target="#inputFormModaleditforms">
+                            <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
+                        </a>
+                        <a href="/admin/forms/instructions/${form.id}">
+                            <i class="fa fa-book"></i>
+                        </a>
+                    </li>
+                </ul>
+            </td>
+        </tr>`;
+
+    $('#formtable').prepend(row);
+}
+
+
+
+function generateRowHTML(form) {
+    return `
+            <tr data-id="${form.id}">
+                <td>${form.form_name}</td>
+                <td>${form.license_name}</td>
+                <td>${form.fresh_amount}</td>
+                <td>${form.freshamount_starts} </td>
+                <td>${form.renewal_amount}</td>
+                <td>${form.renewalamount_starts} </td>
+                <td>${form.latefee_amount}</td>
+                <td>${form.latefee_starts} </td>
+                <td>${form.duration_freshfee ?? '--'}</td>
+                <td>${form.duration_renewalfee ?? '--'}</td>
+                <td>${form.duration_latefee ?? '--'}</td>
+                <td>
+                    <span class="badge ${form.status == 1 ? 'badge-success' : (form.status == 0 ? 'badge-dark' : 'badge-danger')}">
+                        ${form.status == 1 ? 'Active' : (form.status == 0 ? 'Inactive' : 'Disabled')}
+                    </span>
+                </td>
+                <td>
+                    <ul class="table-controls">
+                        <ul class="table-controls">
+                        <li>
+                            <a href="javascript:void(0);" class="editformdata"
+                                data-id="${form.id}"
+                                data-form_name="${form.form_name}"
+                                data-license_name="${form.license_name}"
+                                data-fresh_amount="${form.fresh_amount}"
+                                data-renewal_amount="${form.renewal_amount}"
+                                data-instructions="${form.instructions ?? ''}"
+                                data-freshamount_starts="${form.freshamount_starts}"
+                                data-freshamount_ends="${form.freshamount_ends ?? ''}"
+                                data-renewalamount_starts="${form.renewalamount_starts}"
+                                data-renewalamount_ends="${form.renewalamount_ends ?? ''}"
+                                data-latefee_amount="${form.latefee_amount}"
+                                data-latefee_starts="${form.latefee_starts}"
+                                data-latefee_ends="${form.latefee_ends ?? ''}"
+                                data-duration_freshfee="${form.duration_freshfee ?? ''}"
+                                data-duration_renewalfee="${form.duration_renewalfee ?? ''}"
+                                data-duration_latefee="${form.duration_latefee ?? ''}"
+                                data-status="${form.status}"
+                                data-bs-toggle="modal" data-bs-target="#inputFormModaleditforms">
+                                <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/admin/form_instructions/${form.id}">
+                                <i class="fa fa-book"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/admin/form_history/${form.old_id ?? form.id}">
+                                <i class="fa fa-history"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        `;
+}
+
+
+// Toggle fields based on page type
+function toggleFieldsEdit(type) {
+    $('#staticFieldsEdit, #pdfFieldsEdit, #urlFieldsEdit').hide();
+    if (type === 'Static Page') {
+        $('#staticFieldsEdit').show();
+    } else if (type === 'pdf') {
+        $('#pdfFieldsEdit').show();
+    } else if (type === 'url') {
+        $('#urlFieldsEdit').show();
+    }
+}
+
+
+
+
+function handleMenuUpdate(menu) {
+    const row = $(`#sortable tr[data-id="${menu.id}"]`);
+
+    // 1. Update Menu Name, Page Type
+    row.find('td:nth-child(2)').text(menu.menu_name_en || '');
+    row.find('td:nth-child(3)').text(menu.menu_name_ta || '');
+    row.find('td:nth-child(4)').text(menu.page_type || '');
+
+    // 2. Page Type Content Column
+    let contentCol = '';
+    if (menu.page_type === 'Static Page') {
+        contentCol = menu.page_url || '—';
+    } else if (menu.page_type === 'pdf') {
+        const links = [];
+        if (menu.pdf_en) {
+            links.push(`<a href="/${menu.pdf_en}" target="_blank" class="me-2" title="English PDF">
+                                <i class="fa fa-file-pdf-o text-danger"></i>
+                            </a>`);
+        }
+        if (menu.pdf_ta) {
+            links.push(`<a href="/${menu.pdf_ta}" target="_blank" title="Tamil PDF">
+                                <i class="fa fa-file-pdf-o text-success"></i>
+                            </a>`);
+        }
+        contentCol = links.join(' ');
+    } else if (menu.page_type === 'url') {
+        contentCol = `<a href="${menu.external_url}" target="_blank">External Link</a>`;
+    } else if (menu.page_type === 'submenu') {
+        contentCol = '—';
+    }
+    row.find('td:nth-child(5)').html(contentCol);
+
+    // 3. Order ID
+    row.find('td:nth-child(6)').text(menu.order_id || '');
+
+    // 4. Status Badge
+    const badge = row.find('td:nth-child(7) .badge');
+    badge.removeClass('badge-success badge-dark badge-danger');
+    if (menu.status == 1) {
+        badge.addClass('badge-success').text('Published');
+    } else if (menu.status == 0) {
+        badge.addClass('badge-dark').text('Draft');
+    } else if (menu.status == 2) {
+        badge.addClass('badge-danger').text('Disabled');
+    }
+
+    // 5. Update Edit Button Attributes
+    const page = menu.menu_page || {};
+
+    const editBtn = row.find('.editMenu');
+    editBtn.data('menu_name_en', menu.menu_name_en || '');
+    editBtn.data('menu_name_ta', menu.menu_name_ta || '');
+    editBtn.data('page_type', menu.page_type || '');
+    editBtn.data('order_id', menu.order_id || '');
+    editBtn.data('status', menu.status);
+
+    editBtn.data('page_url', page.page_url || '');
+    editBtn.data('page_url_ta', page.page_url_ta || '');
+    editBtn.data('external_url', page.external_url || '');
+    editBtn.data('pdf_en', page.pdf_en ? `/${page.pdf_en}` : '');
+    editBtn.data('pdf_ta', page.pdf_ta ? `/${page.pdf_ta}` : '');
+
+
+    // 6. Update Static Page icon (fa-file-text-o)
+    const controlsList = row.find('ul.table-controls');
+    controlsList.find('li').eq(1).remove(); // remove second icon if exists
+
+    if (menu.page_type === 'Static Page') {
+        controlsList.append(`
+                <li>
+                    <a href="/admin/quicklinkscontent/${menu.id}"  title="Edit">
+                        <i class="fa fa-file-text-o"></i>
+                    </a>
+                </li>
+            `);
+    }
+
+    // 7. Close modal and reset form
+    $('#inputFormModaledit').modal('hide');
+    $('#quicklinksFormedit')[0].reset();
+
+    // 8. Visual feedback
+    row.addClass('table-success');
+    setTimeout(() => row.removeClass('table-success'), 1500);
+}
+
+
+function toggleFieldsEdit(type) {
+    $('#staticFieldsEdit, #pdfFieldsEdit, #urlFieldsEdit').hide();
+
+    if (type === 'Static Page') {
+        $('#staticFieldsEdit').show();
+    } else if (type === 'pdf') {
+        $('#pdfFieldsEdit').show();
+    } else if (type === 'url') {
+        $('#urlFieldsEdit').show();
+    }
+}
+
+
+function updateTableRow(menu) {
+    const page = menu.menu_page || {};
+    const row = $(`#usefulLinksTable tr[data-id="${menu.id}"]`);
+
+    row.find('td:nth-child(2)').text(menu.menu_name_en);
+    row.find('td:nth-child(3)').text(menu.menu_name_ta);
+    row.find('td:nth-child(4)').text(menu.page_type);
+
+    // Handle content (PDF/URL/Static)
+    let contentHtml = '—';
+    if (menu.page_type === 'Static Page') {
+        contentHtml = page.page_url || '—';
+    } else if (menu.page_type === 'url') {
+        contentHtml = `<a href="${page.external_url}" target="_blank">External Link</a>`;
+    } else if (menu.page_type === 'pdf') {
+        const links = [];
+        if (page.pdf_en) {
+            links.push(`<a href="/${page.pdf_en}" target="_blank" class="me-2" title="English PDF">
+                                <i class="fa fa-file-pdf-o text-danger"></i>
+                            </a>`);
+        }
+        if (page.pdf_ta) {
+            links.push(`<a href="/${page.pdf_ta}" target="_blank" title="Tamil PDF">
+                                <i class="fa fa-file-pdf-o text-success"></i>
+                            </a>`);
+        }
+        contentHtml = links.join(' ');
+    }
+    row.find('td:nth-child(5)').html(contentHtml);
+
+    // Order ID
+    row.find('td:nth-child(6)').text(menu.order_id);
+
+    // Status badge
+    const badge = row.find('td:nth-child(7) .badge');
+    badge.removeClass('badge-success badge-dark badge-danger');
+    if (menu.status == 1) {
+        badge.addClass('badge-success').text('Published');
+    } else if (menu.status == 0) {
+        badge.addClass('badge-dark').text('Draft');
+    } else if (menu.status == 2) {
+        badge.addClass('badge-danger').text('Disabled');
+    }
+
+    // Update data-* attributes of the edit button
+    const editBtn = row.find('.editusefullinks');
+    editBtn.data('menu_name_en', menu.menu_name_en);
+    editBtn.data('menu_name_ta', menu.menu_name_ta);
+    editBtn.data('page_type', menu.page_type);
+    editBtn.data('order_id', menu.order_id);
+    editBtn.data('status', menu.status);
+    editBtn.data('page_url', page.page_url || '');
+    editBtn.data('page_url_ta', page.page_url_ta || '');
+    editBtn.data('external_url', page.external_url || '');
+    editBtn.data('pdf_en', page.pdf_en ? `/${page.pdf_en}` : '');
+    editBtn.data('pdf_ta', page.pdf_ta ? `/${page.pdf_ta}` : '');
+
+    // Visual feedback
+    row.addClass('table-success');
+    setTimeout(() => row.removeClass('table-success'), 1500);
+}
+
+
+function toggleFieldsEdit(type) {
+    $('#staticFieldsEdit, #pdfFieldsEdit, #urlFieldsEdit').hide();
+
+    if (type === 'Static Page') {
+        $('#staticFieldsEdit').show();
+    } else if (type === 'pdf') {
+        $('#pdfFieldsEdit').show();
+    } else if (type === 'url') {
+        $('#urlFieldsEdit').show();
+    }
+}
+
+
+function updateTableRow(menu) {
+    const page = menu.menu_page || {};
+    const row = $(`#footerbottomTable tr[data-id="${menu.id}"]`);
+
+    row.find('td:nth-child(2)').text(menu.menu_name_en);
+    row.find('td:nth-child(3)').text(menu.menu_name_ta);
+    row.find('td:nth-child(4)').text(menu.page_type);
+
+    // Handle content (PDF/URL/Static)
+    let contentHtml = '—';
+    if (menu.page_type === 'Static Page') {
+        contentHtml = page.page_url || '—';
+    } else if (menu.page_type === 'url') {
+        contentHtml = `<a href="${page.external_url}" target="_blank">External Link</a>`;
+    } else if (menu.page_type === 'pdf') {
+        const links = [];
+        if (page.pdf_en) {
+            links.push(`<a href="/${page.pdf_en}" target="_blank" class="me-2" title="English PDF">
+                                <i class="fa fa-file-pdf-o text-danger"></i>
+                            </a>`);
+        }
+        if (page.pdf_ta) {
+            links.push(`<a href="/${page.pdf_ta}" target="_blank" title="Tamil PDF">
+                                <i class="fa fa-file-pdf-o text-success"></i>
+                            </a>`);
+        }
+        contentHtml = links.join(' ');
+    }
+    row.find('td:nth-child(5)').html(contentHtml);
+
+    // Order ID
+    row.find('td:nth-child(6)').text(menu.order_id);
+
+    // Status badge
+    const badge = row.find('td:nth-child(7) .badge');
+    badge.removeClass('badge-success badge-dark badge-danger');
+    if (menu.status == 1) {
+        badge.addClass('badge-success').text('Published');
+    } else if (menu.status == 0) {
+        badge.addClass('badge-dark').text('Draft');
+    } else if (menu.status == 2) {
+        badge.addClass('badge-danger').text('Disabled');
+    }
+
+    // Update data-* attributes of the edit button
+    const editBtn = row.find('.editfooterbottomlinks');
+    editBtn.data('menu_name_en', menu.menu_name_en);
+    editBtn.data('menu_name_ta', menu.menu_name_ta);
+    editBtn.data('page_type', menu.page_type);
+    editBtn.data('order_id', menu.order_id);
+    editBtn.data('status', menu.status);
+    editBtn.data('page_url', page.page_url || '');
+    editBtn.data('page_url_ta', page.page_url_ta || '');
+    editBtn.data('external_url', page.external_url || '');
+    editBtn.data('pdf_en', page.pdf_en ? `/${page.pdf_en}` : '');
+    editBtn.data('pdf_ta', page.pdf_ta ? `/${page.pdf_ta}` : '');
+
+    // Visual feedback
+    row.addClass('table-success');
+    setTimeout(() => row.removeClass('table-success'), 1500);
+}
+
+
+function openMediaLibraryPdf(fieldId) {
+
+
+    currentPdfTarget = fieldId;
+    alert(currentPdfTarget);
+    const modal = new bootstrap.Modal(document.getElementById('mediaLibraryModalpdfmenu'));
+    modal.show();
+}
+
+
 
 
 

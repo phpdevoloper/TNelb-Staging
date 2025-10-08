@@ -3143,7 +3143,7 @@ fieldset:disabled .btn {
 }
 .table > :not(:first-child) {
   border: none;
-  text-align: center;
+  /* text-align: center; */
 }
 .table:not(.dataTable) tbody tr td svg {
   width: 17px;

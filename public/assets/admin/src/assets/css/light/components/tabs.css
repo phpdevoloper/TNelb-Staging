@@ -28,9 +28,9 @@
   height: 20px;
 }
 .nav.nav-tabs li.nav-item button.nav-link.active {
-  border-bottom: 1.6px solid #4361ee;
+  /* border-bottom: 1.6px solid #4361ee; */
   color: #ffffff;
-  background: #00ab55;
+  background: #067ea3;
   font-weight: 600;
 }
 .nav.nav-tabs li.nav-item button.nav-link.active svg {
