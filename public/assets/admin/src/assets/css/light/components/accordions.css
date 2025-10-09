@@ -9,7 +9,7 @@
 	===============================
 */
 h1, h2, h3, h4, h5, h6 {
-  color: #e0e6ed;
+  /* color: #e0e6ed; */
 }
 
 /*
@@ -37,7 +37,7 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 1px;
 }
 .accordion .card-header section > div.collapsed {
-  color: #888ea8;
+  color: #4361ee;
 }
 .accordion .card-header section > div:not(.collapsed) {
   color: #4361ee;

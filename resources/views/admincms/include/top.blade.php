@@ -26,21 +26,12 @@
     <!-- Bootstrap & Core Styles -->
     <link rel="stylesheet" href="{{ asset('assets/admin/src/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/layouts/vertical-light-menu/css/light/plugins.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/admin/layouts/vertical-light-menu/css/dark/plugins.css') }}">
-
-    <!-- Loader Styles -->
-    <!-- <link rel="stylesheet" href="{{ asset('assets/admin/layouts/vertical-light-menu/css/light/loader.css') }}"> -->
-    <!-- <link rel="stylesheet" href="{{ asset('assets/admin/layouts/vertical-light-menu/css/dark/loader.css') }}"> -->
-    <!-- <script src="{{ asset('assets/admin/layouts/vertical-light-menu/loader.js') }}"></script> -->
 
     <!-- Page-Level Plugins/Custom Styles -->
     <link rel="stylesheet" href="{{ asset('assets/admin/src/plugins/src/apex/apexcharts.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/light/components/list-group.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/dark/components/list-group.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/light/dashboard/dash_1.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/dark/dashboard/dash_1.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/light/dashboard/dash_2.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/dark/dashboard/dash_2.css') }}">
 
     <!-- File Upload Styles -->
     <link rel="stylesheet" href="{{ asset('assets/admin/src/plugins/src/filepond/filepond.min.css') }}">
@@ -62,17 +53,14 @@
     <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/light/forms/switches.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/light/users/account-setting.css') }}">
 
-    <!-- Dark Theme Styles -->
-    <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/dark/scrollspyNav.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/dark/components/carousel.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/dark/components/modal.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/dark/components/tabs.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/admin/src/plugins/css/dark/filepond/custom-filepond.css') }}">
+
+     {{-- <link href="{{ ../src/assets/css/light/scrollspyNav.css }}" rel="stylesheet" type="text/css" /> --}}
+    <link href="{{ asset('assets/admin//src/assets/css/light/components/accordions.css') }}" rel="stylesheet" type="text/css" />
+
 
     <!-- Datatables CSS -->
     <link rel="stylesheet" href="{{ asset('assets/admin/src/plugins/src/table/datatable/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/src/plugins/css/light/table/datatable/dt-global_style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/admin/src/plugins/css/dark/table/datatable/dt-global_style.css') }}">
 
     <!-- Main Styles -->
     <link rel="stylesheet" href="{{ asset('assets/admin/main.css') }}">
