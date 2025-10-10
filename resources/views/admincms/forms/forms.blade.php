@@ -18,6 +18,14 @@
         padding: 5px 5px;
         border: 1px solid #e1d9d9;
     }
+
+    .custom-box{
+        padding: 10px 10px;
+        border: 1px solid #d3d3d3;
+        border-radius: 11px;
+        background: #fff;
+        box-shadow: rgba(145, 158, 171, 0.2) 0px 0px 2px 0px, rgba(145, 158, 171, 0.12) 0px 12px 24px -4px;
+    }
 </style>
 <div id="content" class="main-content">
     <div class="layout-px-spacing">
@@ -162,53 +170,6 @@
                     </div>
                     {{-- <div class="widget-content widget-content-area br-8"></div> --}}
                 </div>
-                <div class="col-xl-12 col-lg-12 col-sm-12  layout-spacing mb-5">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Cerificate / Licence Management</h5>
-                        </div>
-                        <div class="card-body">
-                            <button class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#addFormModal"><i class="fa fa-plus"></i> Add</button>
-                                <table class="zero-config table dt-table-hover" style="width:100%">
-                                    <thead>
-                                        <tr>
-                                            <th>S.No</th>
-                                            <th>Cerificate Name</th>
-                                            <th>Form Name</th>
-                                            <th>Created Date</th>
-                                            <th>Updated Date</th>
-                                            <th>Status</th>
-                                            <th class="no-content">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Certificate S</td>
-                                            <td>FORM C</td>
-                                            <td>2011/04/25</td>
-                                            <td>2011/04/25</td>
-                                            <td>Active</td>
-                                            <td>
-                                                <span class="badge badge-primary"><i class="fa fa-edit"></i></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>Certificate B</td>
-                                            <td>FORM W</td>
-                                            <td>2011/07/25</td>
-                                            <td>2011/07/25</td>
-                                            <td>Active</td>
-                                            <td>
-                                                <span class="badge badge-primary"><i class="fa fa-edit"></i></span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -227,115 +188,105 @@
                   <svg> ... </svg>
                 </button>
             </div>
+            <form id="feesForm" enctype="multipart/form-data">
             <div class="modal-body">
-                <form class="row g-3 mb-3">
+                <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label for="inputEmail4" class="form-label">Certificate Name <span class="text-danger">*</span> </label>
-                        <input type="email" class="form-control" id="inputEmail4">
+                        <input type="text" class="form-control" name="cert_name">
                     </div>
                     <div class="col-md-6">
                         <label for="inputPassword4" class="form-label">Form Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="inputPassword4">
+                        <input type="text" class="form-control" name="form_name">
                     </div>
-                    {{-- <div class="col-12 d-flex align-items-center justify-content-end">
-                        <button type="submit" class="btn btn-primary">Sign in</button>
-                    </div> --}}
-                </form>
+                </div>
 
-                <div id="iconsAccordion" class="accordion-icons accordion mb-3">
-                    <div class="card mb-3">
-                        <div class="card-header" id="...">
-                            <section class="mb-0 mt-0">
-                                <div role="menu" class="collapsed" data-bs-toggle="collapse" data-bs-target="#iconAccordionOne" aria-expanded="true" aria-controls="iconAccordionOne">
-                                    <div class="accordion-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                    </div>
-                                    Fees Details , Period  <div class="icons"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-                                </div>
-                            </section>
-                        </div>
+                <hr style="border-top: 1px solid #4361ee;">
 
-                        <div id="iconAccordionOne" class="collapse show" aria-labelledby="..." data-bs-parent="#iconsAccordion">
-                            <div class="card-body">
-                                 <div class="row g-3 mb-3">
-                                    <div class="col">
-                                        <label for="inputEmail4" class="form-label">Fees for Fresh Form <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control fees_amount" name="">
-                                    </div>
-                                    <div class="col">
-                                        <label for="inputEmail4" class="form-label">Start Date <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control">
-                                    </div>
-                                    <div class="col">
-                                        <label for="inputPassword4" class="form-label">Fees for Renewal Form <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="inputPassword4">
-                                    </div>
-                                    <div class="col">
-                                        <label for="inputEmail4" class="form-label">Start Date <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control">
-                                    </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6 custom-box mb-3">
+                        <div class="text-primary mb-3">₹ Fees Details</div>
+                        <div class="row g-3">
+                            <div class="col-md-6 mb-2">
+                                <label for="inputEmail4" class="form-label">Fees for Fresh Form <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">₹</span>
+                                    <input type="number" class="form-control" id="fresh_fees" name="fresh_fees" min="0" placeholder="0">
                                 </div>
-                                <form class="row g-3 mb-3">
-                                    <div class="col">
-                                        <label for="inputEmail4" class="form-label">Duration for Fresh Form <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control">
-                                    </div>
-                                    <div class="col">
-                                        <label for="inputEmail4" class="form-label">Start Date <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control">
-                                    </div>
-                                    <div class="col">
-                                        <label for="inputEmail4" class="form-label">Duration for Renewal Form <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control">
-                                    </div>
-                                    <div class="col">
-                                        <label for="inputEmail4" class="form-label">Start Date <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control">
-                                    </div>
-                                </form>
-                                <form class="row g-3">
-                                    <div class="col">
-                                        <label for="inputEmail4" class="form-label">Late Fees for Renewal Form <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control">
-                                    </div>
-                                    <div class="col">
-                                        <label for="inputEmail4" class="form-label">Start Date <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control">
-                                    </div>
-                                </form>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label for="inputEmail4" class="form-label">Fresh Form Fees As on<span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" name="fresh_fees_on">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label for="inputPassword4" class="form-label">Fees for Renewal Form <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">₹</span>
+                                    <input type="number" class="form-control" name="renewal_fees" min="0" placeholder="0">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label for="inputEmail4" class="form-label">Renewal Form As on<span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" name="renewal_fees_on">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label for="inputPassword4" class="form-label">Late Fees for Renewal Form <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">₹</span>
+                                    <input type="number" class="form-control" name="renewal_fees" min="0" placeholder="0">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label for="inputEmail4" class="form-label">Renewal Late Fees As on<span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" name="renewal_fees_on">
                             </div>
                         </div>
                     </div>
-
-                    <div class="card">
-                        <div class="card-header" id="...">
-                            <section class="mb-0 mt-0">
-                                <div role="menu" class="collapsed" data-bs-toggle="collapse" data-bs-target="#iconAccordionThree" aria-expanded="true" aria-controls="iconAccordionTwo">
-                                    <div class="accordion-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
-                                    Others  <div class="icons"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+                    <div class="col-md-6 custom-box mb-3">
+                        <div class="text-primary mb-3"><i class="fa fa-clock-o"></i> Durations</div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="inputEmail4" class="form-label">Duration for Fresh Form <span class="text-danger">*</span></label><br>
+                                <div class="input-group">
+                                    <input type="number" class="form-control fees_amount" name="fresh_form_duration" min="0" max="20">
+                                    <span class="input-group-text">months</span>
                                 </div>
-                            </section>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputEmail4" class="form-label">Fresh Form Duration As on<span class="text-danger">*</span></label>
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputPassword4" class="form-label">Duration for Renewal Form <span class="text-danger">*</span></label><br>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="renewal_form_duration"  min="0" max="20">
+                                    <span class="input-group-text">months</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputEmail4" class="form-label">Renewal Duration As on<span class="text-danger">*</span></label>
+                                <input type="date" name="renewal_duration_on" class="form-control">
+                            </div>
                         </div>
-                        <div id="iconAccordionThree" class="collapse show" aria-labelledby="..." data-bs-parent="#iconsAccordion">
-                            <div class="card-body">
-                                <form class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="inputEmail4" class="form-label">Instrctions Upload</label>
-                                        <input type="file" class="form-control" id="inputEmail4">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="inputEmail4" class="form-label d-block mb-2">Status</label>
-                                        <!-- Switch centered -->
-                                        <div class="d-inline-block text-center">
-                                            <div class="switch form-switch-custom switch-inline form-switch-success form-switch-custom dual-label-toggle">
-                                                <label class="switch-label switch-label-left" for="form-custom-switch-dual-label">In Active</label>
-                                                <div class="input-checkbox">
-                                                    <input class="switch-input" type="checkbox" role="switch" id="form-custom-switch-dual-label" checked>
-                                                </div>
-                                                <label class="switch-label switch-label-right" for="form-custom-switch-dual-label">Active</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
+                    </div>
+                </div>
+                <div class="row custom-box g-3">
+                    <div class="text-primary mb-3"><i class="fa fa-file-pdf-o"></i> Others</div>
+                    <div class="col-md-6">
+                        <label for="inputEmail4" class="form-label">Instrctions Upload</label>
+                        <span class="text-success">(PDF. Max size of 200K)</span>
+                        <input type="file" class="form-control" id="inputEmail4">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="inputEmail4" class="form-label d-block mb-2">Status</label>
+                        <!-- Switch centered -->
+                        <div class="d-inline-block text-center">
+                            <div class="switch form-switch-custom switch-inline form-switch-success form-switch-custom dual-label-toggle">
+                                <label class="switch-label switch-label-left" for="form-custom-switch-dual-label">In Active</label>
+                                <div class="input-checkbox">
+                                    <input class="switch-input" type="checkbox" role="switch" name="form_status" checked>
+                                </div>
+                                <label class="switch-label switch-label-right" for="form-custom-switch-dual-label">Active</label>
                             </div>
                         </div>
                     </div>
@@ -343,8 +294,9 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i> Discard</button>
-                <button type="button" class="btn btn-primary">Save</button>
+                <button type="submit" class="btn btn-primary">Save</button>
             </div>
+            </form>
         </div>
     </div>
 </div>

@@ -499,47 +499,47 @@
 </script> -->
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Enable jQuery UI Sortable
-        $('#sortable-menu').sortable({
-            update: function(event, ui) {
-                let data = [];
-                $('#sortable-menu tr').each(function(index) {
-                    let id = $(this).data('id');
-                    data.push({
-                        id: id,
-                        order_id: index + 1
-                    });
-                });
+    // document.addEventListener("DOMContentLoaded", function() {
+    //     // Enable jQuery UI Sortable
+    //     $('#sortable-menu').sortable({
+    //         update: function(event, ui) {
+    //             let data = [];
+    //             $('#sortable-menu tr').each(function(index) {
+    //                 let id = $(this).data('id');
+    //                 data.push({
+    //                     id: id,
+    //                     order_id: index + 1
+    //                 });
+    //             });
 
-                // Send new order to the backend
-                $.ajax({
-                    url: '{{ route("admin.menu.reorder") }}', // Adjust URL if needed
-                    method: 'POST',
-                    data: {
-                        data: data,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            $('#reorderAlert').removeClass('d-none').fadeIn();
+    //             // Send new order to the backend
+    //             $.ajax({
+    //                 url: '{{ route("admin.menu.reorder") }}', // Adjust URL if needed
+    //                 method: 'POST',
+    //                 data: {
+    //                     data: data,
+    //                     _token: '{{ csrf_token() }}'
+    //                 },
+    //                 success: function(response) {
+    //                     if (response.status === 'success') {
+    //                         $('#reorderAlert').removeClass('d-none').fadeIn();
 
-                            // Hide after 3 seconds
-                            setTimeout(function() {
-                                $('#reorderAlert').fadeOut();
-                            }, 3000);
-                        } else {
-                            alert('Reorder failed: ' + response.message);
-                        }
-                    },
-                    error: function(xhr) {
-                        alert('AJAX error: ' + xhr.responseText);
-                    }
+    //                         // Hide after 3 seconds
+    //                         setTimeout(function() {
+    //                             $('#reorderAlert').fadeOut();
+    //                         }, 3000);
+    //                     } else {
+    //                         alert('Reorder failed: ' + response.message);
+    //                     }
+    //                 },
+    //                 error: function(xhr) {
+    //                     alert('AJAX error: ' + xhr.responseText);
+    //                 }
 
-                });
-            }
-        });
-    });
+    //             });
+    //         }
+    //     });
+    // });
 </script>
 <script>
     $(document).ready(function() {
@@ -838,5 +838,6 @@
 </script>
 
 <script src="{{ asset('assets/portaladmin/scriptmenu.js') }}"></script>
+<script src="{{ asset('assets/portaladmin/custom-ajax.js') }}"></script>
 
 <!-- END PAGE LEVEL SCRIPTS -->

@@ -722,9 +722,6 @@
 
                                                         <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
                                                     </a>
-
-
-
                                                 </li>
 
                                                 <li>
@@ -733,21 +730,14 @@
                                                             <!-- <button class="btn btn-sm btn-dark">
                                                         Click to Edit
                                                         </button> -->
-
                                                     </a>
                                                 </li>
                                                 <li>
                                                     <a href="{{ route('admin.form_history', $form->old_id ?? $form->id) }}">
                                                         <i class="fa fa-history" title="License History"></i>
-
-
                                                     </a>
                                                 </li>
-
-
                                             </ul>
-
-
                                         </td>
                                     </tr>
                                     @endforeach
