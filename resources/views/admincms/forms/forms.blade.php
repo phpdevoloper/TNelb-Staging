@@ -187,6 +187,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                   <svg> ... </svg>
                 </button>
+                {{-- <span><span class="text-danger">(Note:</span> Currently, late fees are applicable only during the last 3 months before the expiry date.)</span> --}}
             </div>
             <form id="feesForm" enctype="multipart/form-data">
             <div class="modal-body">
@@ -233,12 +234,12 @@
                                 <label for="inputPassword4" class="form-label">Late Fees for Renewal Form <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text">₹</span>
-                                    <input type="number" class="form-control" name="renewal_fees" min="0" placeholder="0">
+                                    <input type="number" class="form-control" name="latefee_for_renewal" min="0" placeholder="0">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label for="inputEmail4" class="form-label">Renewal Late Fees As on<span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" name="renewal_fees_on">
+                                <input type="date" class="form-control" name="late_renewal_fees_on">
                             </div>
                         </div>
                     </div>
@@ -248,24 +249,35 @@
                             <div class="col-md-6">
                                 <label for="inputEmail4" class="form-label">Duration for Fresh Form <span class="text-danger">*</span></label><br>
                                 <div class="input-group">
-                                    <input type="number" class="form-control fees_amount" name="fresh_form_duration" min="0" max="20">
+                                    <input type="number" class="form-control fees_amount" name="fresh_form_duration" min="0">
                                     <span class="input-group-text">months</span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="inputEmail4" class="form-label">Fresh Form Duration As on<span class="text-danger">*</span></label>
-                                <input type="date" class="form-control">
+                                <input type="date" name="fresh_form_duration_on" class="form-control">
                             </div>
                             <div class="col-md-6">
                                 <label for="inputPassword4" class="form-label">Duration for Renewal Form <span class="text-danger">*</span></label><br>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" name="renewal_form_duration"  min="0" max="20">
+                                    <input type="number" class="form-control" name="renewal_form_duration"  min="0">
                                     <span class="input-group-text">months</span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="inputEmail4" class="form-label">Renewal Duration As on<span class="text-danger">*</span></label>
                                 <input type="date" name="renewal_duration_on" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputPassword4" class="form-label">Duration of Renewal Late Fees<span class="text-danger">*</span></label><br>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="renewal_late_fee_duration"  min="0">
+                                    <span class="input-group-text">Days</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputEmail4" class="form-label">Renewal Late Duration As on<span class="text-danger">*</span></label>
+                                <input type="date" name="renewal_late_fee_duration_on" class="form-control">
                             </div>
                         </div>
                     </div>
@@ -274,8 +286,8 @@
                     <div class="text-primary mb-3"><i class="fa fa-file-pdf-o"></i> Others</div>
                     <div class="col-md-6">
                         <label for="inputEmail4" class="form-label">Instrctions Upload</label>
-                        <span class="text-success">(PDF. Max size of 200K)</span>
-                        <input type="file" class="form-control" id="inputEmail4">
+                        <span class="text-success">(PDF. Max size of 250K)</span>
+                        <input type="file" class="form-control" name="instruction_upload">
                     </div>
                     <div class="col-md-6">
                         <label for="inputEmail4" class="form-label d-block mb-2">Status</label>
