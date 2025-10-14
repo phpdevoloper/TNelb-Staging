@@ -18,7 +18,12 @@ class FormsManagementController extends BaseController
 {
 
     public function index(){
-        return view('admincms.forms.forms');
+
+        $activeForms = TnelbForms::where('status', 1)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+        return view('admincms.forms.forms', compact('activeForms'));
     }
 
 
@@ -27,37 +32,38 @@ class FormsManagementController extends BaseController
 
         // var_dump($request->all());die;
 
-        $request->validate([
-            'cert_name' => 'required|string',
-            'form_name' => 'required|string',
-            // 'license_name' => 'required|string',
-            'fresh_fees' => 'required|numeric',
-            'fresh_fees_on' => 'required|date',
-            // 'freshamount_ends' => 'nullable|date',
-            'renewal_fees' => 'required|numeric',
-            'renewal_fees_on' => 'required|date',
-            // 'renewalamount_ends' => 'nullable|date',
-            'latefee_for_renewal' => 'required|numeric',
-            'late_renewal_fees_on' => 'required|date',
-            'fresh_form_duration' => 'required|numeric',
-            'fresh_form_duration_on' => 'required|date',
+        // $request->validate([
+        //     'cert_name' => 'required|string',
+        //     'form_name' => 'required|string',
+        //     // 'license_name' => 'required|string',
+        //     'fresh_fees' => 'required|numeric',
+        //     'fresh_fees_on' => 'required|date',
+        //     // 'freshamount_ends' => 'nullable|date',
+        //     'renewal_fees' => 'required|numeric',
+        //     'renewal_fees_on' => 'required|date',
+        //     // 'renewalamount_ends' => 'nullable|date',
+        //     'latefee_for_renewal' => 'required|numeric',
+        //     'late_renewal_fees_on' => 'required|date',
+        //     'fresh_form_duration' => 'required|numeric',
+        //     'fresh_form_duration_on' => 'required|date',
             
-            'renewal_form_duration' => 'required|numeric',
-            'renewal_duration_on' => 'required|date',
-            'renewal_late_fee_duration' => 'required|numeric',
-            'renewal_late_fee_duration_on' => 'required|date',
-            'instruction_upload' => 'required|file|mimes:pdf|min:5| max:250',
-            'form_status' => 'required',
-        ],[
-            'instruction_upload.min' => 'File size permitted only 5KB to 250KB.',
-            'instruction_upload.max' => 'File size permitted only 5KB to 250KB.',
-        ]);
+        //     'renewal_form_duration' => 'required|numeric',
+        //     'renewal_duration_on' => 'required|date',
+        //     'renewal_late_fee_duration' => 'required|numeric',
+        //     'renewal_late_fee_duration_on' => 'required|date',
+        //     'instruction_upload' => 'required|file|mimes:pdf|min:5| max:250',
+        //     'form_status' => 'required',
+        // ],[
+        //     'instruction_upload.min' => 'File size permitted only 5KB to 250KB.',
+        //     'instruction_upload.max' => 'File size permitted only 5KB to 250KB.',
+        // ]);
 
         DB::beginTransaction(); 
         
 
         try {
 
+            
             $filePath = null;
             if ($request->hasFile('instruction_upload')) {
                 $file = $request->file('instruction_upload');
@@ -68,8 +74,8 @@ class FormsManagementController extends BaseController
             $form = TnelbForms::create([
                 'form_name'                 => $request->form_name,
                 'license_name'              => $request->cert_name,
-                'fresh_fee_amount'              => $request->fresh_fees,
-                'fresh_fee_starts'        => $request->fresh_fees_on,
+                'fresh_fee_amount'          => $request->fresh_fees,
+                'fresh_fee_starts'          => $request->fresh_fees_on,
                 // 'freshamount_ends'          => $request->freshamount_ends,
                 'renewal_amount'            => $request->renewal_fees,
                 'renewalamount_starts'      => $request->renewal_fees_on,
@@ -79,16 +85,16 @@ class FormsManagementController extends BaseController
                 'latefee_ends'              => $request->latefee_ends,
                 'duration_freshfee'         => $request->fresh_form_duration,
                 'duration_renewalfee'       => $request->renewal_form_duration,
+                'duration_latefee'              => $request->renewal_late_fee_duration,
+                'duration_freshfee_starts'    => $request->fresh_form_duration_on,
                 'duration_renewalfee_starts'    => $request->renewal_duration_on,
-                'duration_latefee'              => $request->duration_latefee,
-                'duration_latefee_starts'       => $request->duration_latefee,
+                'duration_latefee_starts'       => $request->renewal_late_fee_duration_on,
                 'duration_latefee_ends'         => $request->duration_latefee,
                 'instructions_upload'           => $filePath,
                 'status'                        => $request->form_status,
                 'created_by'                    => now(),       
                 'category',
-                'status',
-            ]);
+            ]); 
 
             DB::commit();
 
