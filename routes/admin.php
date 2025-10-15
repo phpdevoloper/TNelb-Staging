@@ -366,6 +366,8 @@ use App\Http\Controllers\Admin\GalleryController;
         //Licence management controller routes
         Route::get('/forms', [FormsManagementController::class, 'index'])->name('forms');
         Route::post('/forms/addNewForm', [FormsManagementController::class, 'addNewForm'])->name('addNewForm');
+        Route::post('/forms/updateForm', [FormsManagementController::class, 'updateForm'])->name('updateForm');
+        Route::get('/forms/formHistory', [FormsManagementController::class, 'formHistory'])->name('formHistory');
 
         });
 
