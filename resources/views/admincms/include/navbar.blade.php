@@ -206,7 +206,7 @@
 
 
                 <li class="menu {{ request()->routeIs('admin.forms') ? 'active' : '' }}">
-                    <a href="{{ route('admin.forms') }}" aria-expanded="false" class="dropdown-toggle">
+                    <a href="#licences" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('admin.forms') ? 'true' : 'false' }}" class="dropdown-toggle">
                         <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -216,7 +216,28 @@
                             </svg>
                             <span>Licence Management</span>
                         </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-chevron-right">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
                     </a>
+                    <ul class="collapse submenu list-unstyled {{ in_array($currentRoute, $footerRoutes) ? 'show' : '' }}" id="licences" data-bs-parent="#accordionExample">
+
+                        <li class="{{ $currentRoute == 'admin.forms' ? 'active' : '' }}">
+                            <a href="{{ route('admin.forms') }}">
+                                All Certificates / Licences
+                            </a>
+                        </li>
+
+                        <li class="{{ $currentRoute == 'admin.licenceCategory' ? 'active' : '' }}">
+                            <a href="{{route('admin.licenceCategory')}}">Category</a>
+                        </li>
+                        <li class="{{ $currentRoute == 'admin.addnewform' ? 'active' : '' }}">
+                            <a href="{{route('admin.addnewform')}}">Old Link</a>
+                        </li>
+                    </ul>
                 </li>
                 {{-- <li class="menu {{ request()->routeIs('admin.addnewform') ? 'active' : '' }}">
                     <a href="{{ route('admin.addnewform') }}" aria-expanded="false" class="dropdown-toggle">

@@ -25,9 +25,9 @@
 
 // CMS
     use App\Http\Controllers\Admin\AddFormController;
-use App\Http\Controllers\Admin\FormsManagementController;
 use App\Http\Controllers\Admin\GalleryController;
-    use App\Http\Controllers\Admin\MediaController as AdminMediaController;
+use App\Http\Controllers\Admin\LicenceManagementController;
+use App\Http\Controllers\Admin\MediaController as AdminMediaController;
     use App\Http\Controllers\Admin\MenuController;
     use App\Http\Controllers\Admin\NewsController;
     use App\Http\Controllers\Admin\PageController;
@@ -250,22 +250,6 @@ use App\Http\Controllers\Admin\GalleryController;
 
             Route::get('/admin/staff/{id}/edit', [AdminRolesController::class, 'edit']);
 
-        // -----------------addnewform------------------------
-
-            Route::get('/addnewform', [AddFormController::class, 'addnewform'])->name('addnewform');
-
-            Route::post('forms/newforminsert', [AddFormController::class, 'newforminsert']);
-            
-
-            Route::get('/form_instructions/{id}', [AddFormController::class, 'form_instructions'])->name('form_instructions');
-
-        // form_instructions
-            Route::post('/formcontent/updateforminstructions', [AddFormController::class, 'updateforminstructions'])->name('formcontent.updateforminstructions');
-
-            Route::post('/forms/updateform', [AddFormController::class, 'updateform'])->name('forms.updateform');
-
-            Route::get('/form_history/{formid}', [AddFormController::class, 'form_history'])->name('form_history');
-
 
         // -----------------staffs--------------
 
@@ -363,11 +347,21 @@ use App\Http\Controllers\Admin\GalleryController;
 
 
 
+        // -----------------addnewform old links------------------------
+
+        Route::get('/addnewform', [AddFormController::class, 'addnewform'])->name('addnewform');
+        Route::post('forms/newforminsert', [AddFormController::class, 'newforminsert']);
+        Route::get('/form_instructions/{id}', [AddFormController::class, 'form_instructions'])->name('form_instructions');
+        Route::post('/formcontent/updateforminstructions', [AddFormController::class, 'updateforminstructions'])->name('formcontent.updateforminstructions');
+        Route::post('/forms/updateform', [AddFormController::class, 'updateform'])->name('forms.updateform');
+        Route::get('/form_history/{formid}', [AddFormController::class, 'form_history'])->name('form_history');
+
         //Licence management controller routes
-        Route::get('/forms', [FormsManagementController::class, 'index'])->name('forms');
-        Route::post('/forms/addNewForm', [FormsManagementController::class, 'addNewForm'])->name('addNewForm');
-        Route::post('/forms/updateForm', [FormsManagementController::class, 'updateForm'])->name('updateForm');
-        Route::get('/forms/formHistory', [FormsManagementController::class, 'formHistory'])->name('formHistory');
+        Route::get('/forms', [LicenceManagementController::class, 'index'])->name('forms');
+        Route::post('/forms/addNewForm', [LicenceManagementController::class, 'addNewForm'])->name('addNewForm');
+        Route::post('/forms/updateForm', [LicenceManagementController::class, 'updateForm'])->name('updateForm');
+        Route::get('/forms/formHistory', [LicenceManagementController::class, 'formHistory'])->name('formHistory');
+        Route::get('/forms/licenceCategory', [LicenceManagementController::class, 'licenceCategory'])->name('licenceCategory');
 
         });
 

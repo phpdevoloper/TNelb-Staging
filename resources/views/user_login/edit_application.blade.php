@@ -31,11 +31,6 @@
     #question {
         background: grey;
     }
-
-    /* .swal2-popup.swal2-modal.swal2-show {
-        width: 100%;
-    } */
-
     .swal2-popup li {
         font-size: 15px;
         margin-bottom: 8px;
@@ -94,35 +89,12 @@
                                                 <div class="col-12 col-md-6 ">
                                                     <div class="row align-items-center">
                                                         <div class="col-12 col-md-5 ">
-                                                            <label for="Name">1. Applicant's Name <span
-                                                                    style="color: red;">*</span></label>
+                                                            <label for="Name">1. Applicant's Name <span style="color: red;">*</span></label>
                                                             <br>
-                                                            <label for="tamil" class="tamil">விண்ணப்பதாரர்
-                                                                பெயர்</label>
+                                                            <label for="tamil" class="tamil">விண்ணப்பதாரர் பெயர்</label>
                                                         </div>
-
                                                         <div class="col-12 col-md-7">
-                                                            <input type="hidden"
-                                                                class="form-control text-box single-line"
-                                                                id="login_id_store" name="login_id" type="text"
-                                                                value="{{ Auth::user()->login_id }}">
-
-                                                            {{-- <input type="text"
-                                                                class="form-control text-box single-line"
-                                                                id="old_id" name="old_id" type="text"
-                                                                value="value= "{{ $applicationid }}"> --}}
-
-
-                                                            <input type="hidden" id="application_id"
-                                                                name="application_id"
-                                                                value="{{ isset($application_details) ? $application_details->application_id : '' }}">
-                                                            <input type="hidden" id="license_number"
-                                                                name="license_number"
-                                                                value="{{ isset($license_details) ? $license_details->license_number : '' }}">
-                                                            <input autocomplete="off"
-                                                                class="form-control text-box single-line"
-                                                                id="Applicant_Name" name="applicant_name" type="text"
-                                                                value="{{ isset($application_details) ? $application_details->applicant_name : Auth::user()->name }}" readonly> 
+                                                            <input autocomplete="off" class="form-control text-box single-line" id="Applicant_Name" name="applicant_name" type="text" value="{{ isset($application_details) ? $application_details->applicant_name : Auth::user()->name }}" readonly> 
                                                         </div>
                                                     </div>
                                                 </div>
@@ -777,12 +749,12 @@
                                                         check the declaration box before proceeding.</p>
                                                 </label>
                                             </div>
-                                            <input type="hidden" id="form_name" name="form_name"
-                                                value="{{ isset($application_details) ? $application_details->form_name : '' }}">
-                                            <input type="hidden" id="license_name" name="license_name"
-                                                value="{{ isset($application_details) ? $application_details->license_name : '' }}">
-                                            <input type="hidden" id="form_id" name="form_id"
-                                                value="{{ isset($application_details) ? $application_details->form_id : '' }}">
+                                            <input type="hidden" class="form-control text-box single-line" id="login_id_store" name="login_id" value="{{ Auth::user()->login_id }}">
+                                            <input type="hidden" id="application_id" name="application_id" value="{{ isset($application_details) ? $application_details->application_id : '' }}">
+                                            <input type="hidden" id="license_number" name="license_number" value="{{ isset($license_details) ? $license_details->license_number : '' }}">
+                                            <input type="hidden" id="form_name" name="form_name" value="{{ isset($application_details) ? $application_details->form_name : '' }}">
+                                            <input type="hidden" id="license_name" name="license_name" value="{{ isset($application_details) ? $application_details->license_name : '' }}">
+                                            <input type="hidden" id="form_id" name="form_id" value="{{ isset($application_details) ? $application_details->form_id : '' }}">
                                             <input type="hidden" id="amount" name="amount" value="750">
                                             <input type="hidden" id="appl_type" name="appl_type" value="N">
                                             {{-- <input type="hidden" id="form_action" name="form_action" value="{{ isset($application_details) ? $application_details->payment_status : '' }}"> --}}

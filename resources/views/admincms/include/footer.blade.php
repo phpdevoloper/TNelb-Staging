@@ -74,6 +74,7 @@
 <script src="{{ asset('assets/portaladmin/ckeditor.js') }}"></script>
 
 <script src={{ asset("assets/admin/src/plugins/src/table/datatable/datatables.js") }}></script>
+<script src={{ asset("assets/admin/src/assets/js/forms/bootstrap_validation/bs_validation_script.js") }}></script>
 
 <script>
     // var editor1 = new RichTextEditor("#div_editor1");

@@ -103,7 +103,7 @@
                                                         </div> --}}
 
                                                         <div class="col-12 col-md-7">
-                                                            <input autocomplete="off" class="form-control text-box single-line" id="Applicant_Name" name="applicant_name" type="text" value="{{ $user['salutation'].'. '.$user['applicant_name'] }}" readonly>
+                                                            <input autocomplete="off" class="form-control text-box single-line" id="Applicant_Name" name="applicant_name" type="text" value="{{ $user['salutation'].' '.$user['applicant_name'] }}" readonly>
                                                         </div>
                                                     </div>
                                                 </div>

@@ -2385,27 +2385,27 @@
 
 
     async function showDeclarationPopup(form_name) {
+
     let appl_type = $('#appl_type').val();
+
+    let form_cost = 750;
 
     try {
         // 🔹 Fetch form cost dynamically
-        let response = await $.ajax({
-            url: '{{ route('getFormCost') }}',
-            method: 'GET',
-            data: { appl_type: appl_type, form_name: form_name }
-        });
+        // let response = await $.ajax({
+        //     url: '{{ route('getFormCost') }}',
+        //     method: 'GET',
+        //     data: { appl_type: appl_type, form_name: form_name }
+        // });
 
-        let form_cost = response.form_cost;
+        // let form_cost = response.form_cost;
 
-        if (form_cost === null) {
-            console.log("No cost found for this form");
-            return;
-        }
+        // if (form_cost === null) {
+        //     console.log("No cost found for this form");
+        //     return;
+        // }
 
         console.log("Form Cost:", form_cost);
-
-
-        // return false;
 
         // 🔹 Now you can safely use form_cost everywhere below
         const modalEl = document.getElementById('competencyInstructionsModal');

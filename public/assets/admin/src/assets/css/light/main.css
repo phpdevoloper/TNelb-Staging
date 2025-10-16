@@ -863,11 +863,11 @@ select.form-control.form-custom {
 /*      Input Group append       */
 /*      Input Group Append       */
 /*      Validation Customization      */
-.invalid-feedback {
+/* .invalid-feedback {
   color: #e7515a;
   font-size: 13px;
   letter-spacing: 1px;
-}
+} */
 
 .valid-feedback {
   color: #009688;

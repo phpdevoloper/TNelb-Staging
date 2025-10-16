@@ -14,7 +14,7 @@ use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\Storage;
 use Exception;
 
-class FormsManagementController extends BaseController
+class LicenceManagementController extends BaseController
 {
     protected $userId;
 
@@ -41,6 +41,11 @@ class FormsManagementController extends BaseController
                     ->get();
 
         return view('admincms.forms.forms', compact('activeForms'));
+    }
+
+
+    public function licenceCategory(){
+        return view('admincms.forms.category');
     }
 
     public function formHistory(){
