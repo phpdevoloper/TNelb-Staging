@@ -12,7 +12,7 @@ $(document).ready(function() {
             });
 
             $.ajax({
-                url: BASE_URL + '/admin/forms/addNewForm', 
+                url: BASE_URL + '/admin/licences/addNewForm', 
                 type: 'POST',
                 data: formData,
                 contentType: false,
@@ -131,7 +131,7 @@ $(document).ready(function() {
         });
 
         $.ajax({
-            url: BASE_URL + '/admin/forms/updateForm', // your Laravel route
+            url: BASE_URL + '/admin/licences/updateForm', // your Laravel route
             method: 'POST',
             data: formData,
             contentType: false,
@@ -173,7 +173,7 @@ $(document).ready(function() {
     $('#openHistoryBtn').on('click', function() {
 
         $.ajax({
-            url: BASE_URL + '/admin/forms/formHistory', // your Laravel route
+            url: BASE_URL + '/admin/licences/formHistory', // your Laravel route
             method: 'GET',
             dataType: 'json',
             headers: {
@@ -211,34 +211,92 @@ $(document).ready(function() {
 
     // Master category script for add License category
 
-   window.addEventListener('load', function() {
-        // Fetch all the forms we want to apply custom Bootstrap validation styles to
-        var forms = document.getElementsByClassName('simple-example');
-        var invalid = $('.simple-example .invalid-feedback');
+    $("#addCategory").on("submit", function (e) {
+        e.preventDefault();
 
-       
-        
+        let cateInput = $("input[name='cate_name']");
+        let cateName = $.trim(cateInput.val());
+        let errorMsg = $(".error-cate");
 
+        // Reset previous states
+        cateInput.css("border", "");
+        errorMsg.addClass("d-none");
 
+        // Custom validation
+        if (cateName === "") {
+            cateInput.css("border", "1px solid red");
+            errorMsg.text("Please fill the Category").removeClass("d-none");
+            cateInput.focus();
+            return false;
+        } else if (cateName.length < 3) {
+            cateInput.css("border", "1px solid red");
+            errorMsg.text("Category name must be at least 3 characters").removeClass("d-none");
+            cateInput.focus();
+            return false;
+        } else if (!/^[a-zA-Z\s]+$/.test(cateName)) {
+            cateInput.css("border", "1px solid red");
+            errorMsg.text("Category name should contain only letters and spaces").removeClass("d-none");
+            cateInput.focus();
+            return false;
+        }
 
-        // Loop over them and prevent submission
-        var validation = Array.prototype.filter.call(forms, function(form) {
-        form.addEventListener('submit', function(event) {
-             console.log(forms.checkValidity());
-        console.log(invalid);
-            if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-                invalid.css('display', 'block');
-            } else {
+        // Prepare form data
+        let formData = new FormData(this);
 
-                invalid.css('display', 'none');
+        $.ajax({
+            url: BASE_URL + "/admin/licences/add_category", // change this to your route
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            // beforeSend: function () {
+            //     $("#addCategory button[type='submit']")
+            //         .prop("disabled", true)
+            //         .text("Creating...");
+            // },
+            success: function (response) {
+                console.log(response);
+                
+                if (response.status) {
+                    Swal.fire({
+                        icon: "success",
+                        title: response.message || "Category created successfully!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    $("#addCategory")[0].reset();
 
-                form.classList.add('was-validated');
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Failed",
+                        text: response.message || "Something went wrong!",
+                    });
+                }
+            },
+            error: function (xhr) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Server Error",
+                    text: xhr.responseJSON?.message || "Please try again later.",
+                });
+            },
+            complete: function () {
+                $("#addCategory button[type='submit']")
+                    .prop("disabled", false)
+                    .text("Create");
             }
-        }, false);
         });
+    });
 
-    }, false);
+    // Optional: remove red border while typing
+    $("input[name='cate_name']").on("input", function () {
+        $(this).css("border", "");
+        $(".error-cate").addClass("d-none");
+    });
 
 });

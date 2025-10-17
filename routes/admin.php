@@ -356,12 +356,19 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
         Route::post('/forms/updateform', [AddFormController::class, 'updateform'])->name('forms.updateform');
         Route::get('/form_history/{formid}', [AddFormController::class, 'form_history'])->name('form_history');
 
+
+        
+
         //Licence management controller routes
-        Route::get('/forms', [LicenceManagementController::class, 'index'])->name('forms');
-        Route::post('/forms/addNewForm', [LicenceManagementController::class, 'addNewForm'])->name('addNewForm');
-        Route::post('/forms/updateForm', [LicenceManagementController::class, 'updateForm'])->name('updateForm');
-        Route::get('/forms/formHistory', [LicenceManagementController::class, 'formHistory'])->name('formHistory');
-        Route::get('/forms/licenceCategory', [LicenceManagementController::class, 'licenceCategory'])->name('licenceCategory');
+        Route::get('/licences', [LicenceManagementController::class, 'index'])->name('forms');
+        Route::post('/licences/addNewForm', [LicenceManagementController::class, 'addNewForm'])->name('addNewForm');
+        Route::post('/licences/updateForm', [LicenceManagementController::class, 'updateForm'])->name('updateForm');
+        Route::get('/licences/formHistory', [LicenceManagementController::class, 'formHistory'])->name('formHistory');
+        Route::get('/licences/licenceCategory', [LicenceManagementController::class, 'licenceCategory'])->name('licenceCategory');
+        
+        Route::post('/licences/add_category', [LicenceManagementController::class, 'add_category'])->name('add_category');
+
+        Route::get('/licences/view_licences', [LicenceManagementController::class, 'view_licences'])->name('view_licences');
 
         });
 

@@ -126,6 +126,8 @@
                  @php
                 $footerRoutes = ['admin.contactdetails', 'admin.quicklinks', 'admin.usefullinks', 'admin.footerbottom'];    
                 $currentRoute = Route::currentRouteName();
+
+                // var_dump($currentRoute);die;
                 @endphp
 
                 <li class="menu {{ in_array($currentRoute, $footerRoutes) ? 'active' : '' }}">
@@ -206,7 +208,7 @@
 
 
                 <li class="menu {{ request()->routeIs('admin.forms') ? 'active' : '' }}">
-                    <a href="#licences" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('admin.forms') ? 'true' : 'false' }}" class="dropdown-toggle">
+                    <a href="#licences" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('admin.licences') ? 'true' : 'false' }}" class="dropdown-toggle">
                         <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -230,13 +232,15 @@
                                 All Certificates / Licences
                             </a>
                         </li>
-
+                         <li class="{{ $currentRoute == 'admin.view_licences' ? 'active' : '' }}">
+                            <a href="{{route('admin.view_licences')}}">Add Certificates / Licences</a>
+                        </li>
                         <li class="{{ $currentRoute == 'admin.licenceCategory' ? 'active' : '' }}">
                             <a href="{{route('admin.licenceCategory')}}">Category</a>
                         </li>
-                        <li class="{{ $currentRoute == 'admin.addnewform' ? 'active' : '' }}">
+                        {{-- <li class="{{ $currentRoute == 'admin.addnewform' ? 'active' : '' }}">
                             <a href="{{route('admin.addnewform')}}">Old Link</a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
                 {{-- <li class="menu {{ request()->routeIs('admin.addnewform') ? 'active' : '' }}">

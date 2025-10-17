@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
+use App\Models\Admin\LicenceCategory;
 use App\Models\Admin\TnelbForms;
+use App\Models\MstLicence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -13,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\Storage;
 use Exception;
+use Illuminate\Validation\Rule;
 
 class LicenceManagementController extends BaseController
 {
@@ -43,9 +46,49 @@ class LicenceManagementController extends BaseController
         return view('admincms.forms.forms', compact('activeForms'));
     }
 
+    public function view_licences(){
+
+         $all_licences = MstLicence::where('status', 1)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+        return view('admincms.forms.add_licences', compact('all_licences'));
+    }
+
 
     public function licenceCategory(){
-        return view('admincms.forms.category');
+
+        $categories = LicenceCategory::where('status', 1)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+
+        return view('admincms.forms.category', compact('categories'));
+    }
+
+    public function add_category(Request $request){
+         $request->validate([
+            'cate_name' => ['required', 'regex:/^[a-zA-Z\s]+$/', Rule::unique((new LicenceCategory())->getTable(), 'category_name')],
+        ], [
+            'cate_name.required' => 'Category name is required.',
+            'cate_name.regex' => 'Category name should contain only letters and spaces.',
+            'cate_name.unique' => 'This category already exists.',
+        ]);
+
+
+        $category = LicenceCategory::create([
+            'category_name' => $request->cate_name,
+            'status' => 1, 
+            'created_by' => $this->userId,
+            'created_at' => now()->toDateString(),
+            'updated_at' => now()->toDateString(),
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Category added successfully',
+            'data' => $category
+        ]);
     }
 
     public function formHistory(){
