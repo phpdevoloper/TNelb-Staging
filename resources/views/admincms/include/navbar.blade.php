@@ -229,7 +229,7 @@
 
                         <li class="{{ $currentRoute == 'admin.forms' ? 'active' : '' }}">
                             <a href="{{ route('admin.forms') }}">
-                                All Certificates / Licences
+                                Update Fees Details
                             </a>
                         </li>
                          <li class="{{ $currentRoute == 'admin.view_licences' ? 'active' : '' }}">

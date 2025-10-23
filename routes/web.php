@@ -103,6 +103,11 @@ Route::middleware(['auth'])->group(function () {
 
     //New Modified Routes added here 
     Route::get('forms/new_application/{form_code}', [FormController::class, 'new_application'])->name('forms.new_application');
+    
+    Route::post('payments/getPaymentDetails', [PaymentController::class, 'getPaymentDetails'])->name('payments.getPaymentDetails');
+
+
+    
 });
 
 // ------------------------ Form Submit & PDF Routes ------------------------

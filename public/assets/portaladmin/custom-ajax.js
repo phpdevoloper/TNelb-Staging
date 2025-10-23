@@ -347,6 +347,7 @@ $(document).ready(function() {
                 console.log(response);
                 
                 if (response.status) {
+                    $('#addForms').modal('hide');
                     Swal.fire({
                         icon: "success",
                         title: response.message || "Category created successfully!",
@@ -356,6 +357,7 @@ $(document).ready(function() {
                     $("#addCategory")[0].reset();
 
                 } else {
+                    $('#addForms').modal('hide');
                     Swal.fire({
                         icon: "error",
                         title: "Failed",
@@ -517,7 +519,7 @@ $(document).ready(function() {
                 if (response.status) {
                     Swal.fire({
                         icon: "success",
-                        title: response.message || "Category created successfully!",
+                        title: response.message || "Form created successfully!",
                         showConfirmButton: false,
                         timer: 1500,
                     });

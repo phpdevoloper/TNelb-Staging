@@ -107,6 +107,7 @@
                                                 <th class="checkbox-column dt-no-sorting"> S.No </th>
                                                 <th>Certificate / Licence Name</th>
                                                 <th>Form Name</th>
+                                                <th>Category</th>
                                                 <th class="text-center">Status</th>
                                                 <th class="text-center">Created At</th>
                                                 <th class="text-center dt-no-sorting">Action</th>
@@ -122,6 +123,8 @@
                                                     <td>{{ $category->licence_name }}</td>
 
                                                     <td>{{ $category->form_name }}</td>
+                                                    
+                                                    <td>{{ $category->category_name }}</td>
 
                                                     <!-- Status -->
                                                     <td class="text-center">
@@ -132,7 +135,7 @@
                                                         @endif
                                                     </td>
 
-                                                    <td>{{ $category->created_at }}</td>
+                                                    <td class="text-center">{{ $category->created_at }}</td>
 
                                                     <!-- Action -->
                                                     <td class="text-center">

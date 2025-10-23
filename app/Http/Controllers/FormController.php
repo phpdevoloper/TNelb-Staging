@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\admin\TnelbForms;
 use App\Models\Mst_documents;
 use App\Models\Mst_education;
 use App\Models\Mst_experience;
 use App\Models\Mst_Form_s_w;
+use App\Models\MstLicence;
 use App\Models\TnelbApplicantPhoto;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +23,6 @@ class FormController extends BaseController
         $this->middleware('web');
     }
 
-    // Single function for competency application form (Form S, Form W, Form WH)
     public function new_application($form_id = null){
 
         if (!Auth::check()) {
@@ -28,78 +30,44 @@ class FormController extends BaseController
         }
 
         try {
-
+            
             $form_id = Crypt::decrypt($form_id);
-
             $authUser = Auth::user();
-
+            
             $user = [
                 'user_id' => $authUser->login_id,
                 'salutation' => $authUser->salutation,
                 'applicant_name' => $authUser->first_name.' '.$authUser->last_name,
             ];
-
-
-            // var_dump($form_id);die;
-
-
-
-            $form_details = [
-                [
-                    'form_id' => 1,
-                    'form_code' => 'S',
-                    'form_name' => 'FORM S', 
-                    'licence_name' => 'Certificate C', 
-                ],
-                [
-
-                    'form_id'      => 2,
-                    'form_code' => 'W',
-                    'form_name'    => 'FORM W',
-                    'licence_name' => 'Certificate B',
-                ],
-                [
-                    'form_id'      => 3,
-                    'form_code' => 'H',
-                    'form_name'    => 'FORM WH',
-                    'licence_name' => 'Certificate H',
-                ],
-            ];
-
-
-            // $formName = match ($form_id) {
-            //     'S' => 'Supervisor',
-            //     'W' => 'FORM W',
-            //     'H' => 'FORM WH',
-            //     default => 'Unknown Form',
-            // };
-
+            
+            $form_details = MstLicence::where('status', 1)
+            ->select('*')
+            ->get()
+            ->toArray();
+            
             $current_form = collect($form_details)->firstWhere('form_code', $form_id);
 
-            // var_dump($current_form);die;
+            $fees_details = TnelbForms::where('status', 1)
+            ->where('license_name', $current_form['id'])
+            ->whereDate('fresh_fee_starts', today())
+            ->select('fresh_fee_amount','fresh_fee_starts')
+            ->first();
 
+            if (!$fees_details) {
+                abort(505, 'The requested form details could not be found.');
+            }
+
+
+            
             if (!$current_form) {
                 abort(404, 'Form not found');
             }
 
-
-
-            return view('forms.new_application', compact('user','current_form'));
+            return view('forms.new_application', compact('user','current_form','fees_details'));
 
         } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
             abort(404, 'Invalid form link');
         }
-
-        
-        
-        // $check_applications = Mst_Form_s_w::where('login_id', $user_id)
-        //         ->where('form_name', 'S')
-        //         ->exists();
-
-        // if ($check_applications) {
-        //     return redirect()->route('dashboard')->with('already_applied', true);
-        // }
-
         
     }
 
@@ -128,7 +96,7 @@ class FormController extends BaseController
             'form_name'            => 'required|string|max:2',
             'license_name'         => 'required|string|max:2',
             'form_id'              => 'required|integer',
-            'amount'               => 'required|numeric|min:0',
+            // 'amount'               => 'required|numeric|min:0',
             'certificate_no'            => 'nullable|string',
             'certificate_date'              => 'nullable|date',
 
@@ -1562,6 +1530,8 @@ if ($request->hasFile('pancard_doc')) {
     public function update(Request $request, $id)
     {
 
+        // var_dump($request->all());die;
+
 
         $request->merge([
             'aadhaar' => preg_replace('/\D/', '', $request->aadhaar)
@@ -1604,7 +1574,7 @@ if ($request->hasFile('pancard_doc')) {
                 'form_name'          => 'nullable|string|max:2',
                 'license_name'       => 'nullable|string|max:2',
                 'form_id'            => 'nullable|integer',
-                'amount'             => 'nullable|numeric|min:0',
+                // 'amount'             => 'nullable|numeric|min:0',
     
                 'educational_level'    => 'nullable|array|min:1',
                 'educational_level.*'  => 'nullable|string|max:50',
@@ -1779,11 +1749,11 @@ if ($request->hasFile('pancard_doc')) {
                     'certificate_date'   => $request->certificate_date ?? null,
                     'appl_type'          => $appl_type,
                     'license_number'     => $request->license_number,
-                    'payment_status'     => ($action === 'draft') ? 'draft' : 'payment',
+                    'payment_status'     => 'draft',
                     // 'aadhaar_doc'        => $form->aadhaar_doc,
                     // 'pan_doc'            => $form->pan_doc,
-                      'aadhaar_doc'        => $aadhaarFilename ?? $form?->aadhaar_doc ?? null,
-                      'pan_doc'            => $panFilename ?? $form?->pan_doc ?? null,
+                    'aadhaar_doc'        => $aadhaarFilename ?? $form?->aadhaar_doc ?? null,
+                    'pan_doc'            => $panFilename ?? $form?->pan_doc ?? null,
                     'cert_verify'        => $request->cert_verify ?? '0',
                     'license_verify'     => $request->l_verify ?? '0',
                     'old_application'    => $id ?? '',

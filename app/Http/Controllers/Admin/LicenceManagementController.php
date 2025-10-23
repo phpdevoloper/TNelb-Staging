@@ -49,12 +49,6 @@ class LicenceManagementController extends BaseController
         ->orderBy('tnelb_forms.created_at', 'desc')
         ->select('mst_licences.licence_name', 'tnelb_forms.*')
         ->get();
-        // ->toArray();
-
-        // dd($activeForms);die;
-
-        // var_dump($activeForms);die;
-        
         
 
         return view('admincms.forms.forms', compact('activeForms', 'all_licences'));
@@ -68,9 +62,12 @@ class LicenceManagementController extends BaseController
                     ->orderBy('created_at', 'desc')
                     ->get();
 
-         $all_licences = MstLicence::where('status', 1)
-                    ->orderBy('created_at', 'desc')
+         $all_licences = MstLicence::leftJoin('mst_licence_category', 'mst_licences.category_id', '=', 'mst_licence_category.id')
+                    ->where('mst_licences.status', 1)
+                    ->orderBy('mst_licences.created_at', 'desc')
+                    ->select('mst_licence_category.category_name', 'mst_licences.*')
                     ->get();
+
 
         return view('admincms.forms.view_forms', compact('categories','all_licences'));
     }

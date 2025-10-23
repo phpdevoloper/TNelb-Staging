@@ -855,8 +855,8 @@
                 return;
             }
 
-            let form_name = $("#form_name").val();
-            showDeclarationPopup(form_name);
+            let license_name = $("#license_name").val();
+            showDeclarationPopup(license_name);
         });
 
 
@@ -2384,7 +2384,10 @@
 
 
 
-    async function showDeclarationPopup(form_name) {
+    async function showDeclarationPopup(licence_code) {
+
+    console.log(licence_code);
+    
 
     let appl_type = $('#appl_type').val();
 
