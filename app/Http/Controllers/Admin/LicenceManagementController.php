@@ -39,21 +39,102 @@ class LicenceManagementController extends BaseController
 
     public function index(){
 
-        $activeForms = TnelbForms::where('status', 1)
+        $all_licences = MstLicence::where('status', 1)
                     ->orderBy('created_at', 'desc')
                     ->get();
 
-        return view('admincms.forms.forms', compact('activeForms'));
+
+        $activeForms = TnelbForms::leftJoin('mst_licences', DB::raw('CAST(tnelb_forms.license_name AS INTEGER)'), '=', 'mst_licences.id')
+        ->where('tnelb_forms.status', 1)
+        ->orderBy('tnelb_forms.created_at', 'desc')
+        ->select('mst_licences.licence_name', 'tnelb_forms.*')
+        ->get();
+        // ->toArray();
+
+        // dd($activeForms);die;
+
+        // var_dump($activeForms);die;
+        
+        
+
+        return view('admincms.forms.forms', compact('activeForms', 'all_licences'));
     }
 
+    
+
     public function view_licences(){
+
+        $categories = LicenceCategory::where('status', 1)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
 
          $all_licences = MstLicence::where('status', 1)
                     ->orderBy('created_at', 'desc')
                     ->get();
 
-        return view('admincms.forms.add_licences', compact('all_licences'));
+        return view('admincms.forms.view_forms', compact('categories','all_licences'));
     }
+
+    public function add_licence(Request $request)
+    {
+        // var_dump($request->all());die;
+        try {
+            // 🔹 1. Validate input fields
+            $validated = $request->validate([
+                'form_cate'     => 'required|integer',
+                'cert_name'         => 'required|string|min:3|max:100',
+                'cate_licence_code' => 'required|string|max:5|unique:mst_licences,cert_licence_code',
+                'form_name'         => 'required|string|min:2|max:100',
+                'form_code'         => 'required|string|max:5|unique:mst_licences,form_code',
+                'form_status'       => 'required|in:1,2',
+            ], [
+                'form_cate.required'         => 'Please choose the category',
+                'cert_name.required'         => 'Please fill the Certificate / Licence Name',
+                'cate_licence_code.required' => 'Please fill the Certificate / Licence Code',
+                'cate_licence_code.unique'   => 'This Certificate / Licence Code already exists',
+                'form_name.required'         => 'Please fill the Form Name',
+                'form_code.required'         => 'Please fill the Form Code',
+                'form_code.unique'           => 'This Form Code already exists',
+                'form_status.required'       => 'Please choose the Status',
+            ]);
+
+            // 🔹 2. Insert into database (example table: mst_licences)
+            $data = [
+                'category_id'       => $request->form_cate,
+                'licence_name'      => trim($request->cert_name),
+                'cert_licence_code' => strtoupper(trim($request->cate_licence_code)),
+                'form_name'         => trim($request->form_name),
+                'form_code'         => strtoupper(trim($request->form_code)),
+                'status'            => $request->form_status,
+                'created_at'        => now(),
+                'updated_at'        => now(),
+            ];
+
+
+            DB::table('mst_licences')->insert($data);
+
+            // 🔹 3. Return JSON response for AJAX
+            return response()->json([
+                'status'  => true,
+                'message' => 'Form created successfully!',
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // 🔸 Handle validation errors
+            return response()->json([
+                'status'  => false,
+                'message' => $e->validator->errors()->first(),
+            ], 422);
+
+        } catch (\Exception $e) {
+            // 🔸 Handle unexpected errors
+            return response()->json([
+                'status'  => false,
+                'message' => 'Something went wrong: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
 
 
     public function licenceCategory(){
@@ -154,11 +235,7 @@ class LicenceManagementController extends BaseController
             'renewal_duration_on' => 'required|date',
             'renewal_late_fee_duration' => 'required|numeric',
             'renewal_late_fee_duration_on' => 'required|date',
-            'instruction_upload' => 'required|file|mimes:pdf|min:5| max:250',
             'form_status' => 'required',
-        ],[
-            'instruction_upload.min' => 'File size permitted only 5KB to 250KB.',
-            'instruction_upload.max' => 'File size permitted only 5KB to 250KB.',
         ]);
 
         DB::beginTransaction(); 
@@ -167,12 +244,7 @@ class LicenceManagementController extends BaseController
         try {
 
             
-            $filePath = null;
-            if ($request->hasFile('instruction_upload')) {
-                $file = $request->file('instruction_upload');
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $filePath = $file->storeAs('formInstructions', $fileName, 'public'); // stores in storage/app/public/uploads/forms
-            }
+            
 
             $form = TnelbForms::create([
                 'form_name'                 => $request->form_name,
@@ -193,7 +265,6 @@ class LicenceManagementController extends BaseController
                 'duration_renewalfee_starts'    => $request->renewal_duration_on,
                 'duration_latefee_starts'       => $request->renewal_late_fee_duration_on,
                 'duration_latefee_ends'         => $request->duration_latefee,
-                'instructions_upload'           => $filePath,
                 'status'                        => $request->form_status,
                 'created_by'                    => $this->userId,       
                 'category', 
@@ -253,20 +324,65 @@ class LicenceManagementController extends BaseController
             'renewal_late_fee_duration_on'      => 'required|date',
             'renewal_late_fee_duration_ends_on' => 'nullable|date',
 
-            'instruction_upload' => 'required|file|mimes:pdf|min:5| max:250',
             'form_status' => 'required',
-        ],[
-            'instruction_upload.min' => 'File size permitted only 5KB to 250KB.',
-            'instruction_upload.max' => 'File size permitted only 5KB to 250KB.',
         ]);
 
         DB::beginTransaction(); 
         
 
         try {
+            // var_dump($checked_form);die;
+
+            // if ($checked_form) {
+                
+            // }
 
             $form_id = $request->form_id;
             $checked_form = TnelbForms::find($form_id);
+
+            if (!$checked_form) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Form not found',
+                ]);
+            }
+            
+            // Create an array of fields to compare
+            $fieldsToCompare = [
+                'form_name'                 => $request->form_name,
+                'license_name'              => $request->cert_name,
+                'fresh_fee_amount'          => $request->fresh_fees,
+                'fresh_fee_starts'          => $request->fresh_fees_on,
+                'renewal_amount'            => $request->renewal_fees,
+                'renewalamount_starts'      => $request->renewal_fees_on,
+                'latefee_amount'            => $request->latefee_for_renewal,
+                'latefee_starts'            => $request->late_renewal_fees_on,
+                'duration_freshfee'         => $request->fresh_form_duration,
+                'duration_renewalfee'       => $request->renewal_form_duration,
+                'duration_latefee'          => $request->renewal_late_fee_duration,
+                'duration_freshfee_starts'  => $request->fresh_form_duration_on,
+                'duration_renewalfee_starts'=> $request->renewal_duration_on,
+                'duration_latefee_starts'   => $request->renewal_late_fee_duration_on,
+                'status'                    => $request->form_status,
+            ];
+            
+            // Compare current vs old
+            $changes = [];
+            foreach ($fieldsToCompare as $key => $newValue) {
+                $oldValue = $checked_form->$key;
+                if ((string)$oldValue !== (string)$newValue) {
+                    $changes[$key] = ['old' => $oldValue, 'new' => $newValue];
+                }
+            }
+            
+            // If no changes, stop
+            if (empty($changes)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No changes detected. Form remains unchanged.',
+                ]);
+            }
+
 
 
             if ($checked_form) {
@@ -278,12 +394,7 @@ class LicenceManagementController extends BaseController
 
 
 
-            $filePath = null;
-            if ($request->hasFile('instruction_upload')) {
-                $file = $request->file('instruction_upload');
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $filePath = $file->storeAs('formInstructions', $fileName, 'public'); // stores in storage/app/public/uploads/forms
-            }
+            
 
             $form = TnelbForms::create([
                 'form_name'                 => $request->form_name,
@@ -314,7 +425,6 @@ class LicenceManagementController extends BaseController
                 'duration_latefee_starts'       => $request->renewal_late_fee_duration_on,
                 'duration_latefee_ends'         => $request->renewal_late_fee_duration_ends_on,
 
-                'instructions_upload'           => $filePath,
                 'status'                        => $request->form_status,
                 'created_by'                    => $this->userId,       
                 'category', 
