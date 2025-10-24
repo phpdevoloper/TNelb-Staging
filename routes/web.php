@@ -85,14 +85,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/apply-form-a', [RegisterController::class, 'apply_form_a'])->name('apply-form-a');
     Route::get('/successpage', [RegisterController::class, 'successpage'])->name('successpage');
     Route::get('/editApplication/{application_id}', [FormController::class, 'editApplication'])->name('edit-application');
-    Route::get('/renew_formcc/{application_id}', [RegisterController::class, 'renew_formcc'])->name('renew_formcc');
+    Route::get('/renew_form/{application_id}', [RegisterController::class, 'renew_form'])->name('renew_form');
     Route::get('/renew-form_ea/{application_id}', [EA_RenewalController::class, 'renew_form_ea'])->name('renew-form_ea');
     Route::get('/document/{type}/{filename}', [FormController::class, 'showEncryptedDocument'])->name('document.show');
     Route::post('/delete_education', [FormController::class, 'delete_education'])->name('delete_education');
     Route::post('/delete_experience', [FormController::class, 'delete_experience'])->name('delete_experience');
     
     // ------------------------------------form A------------
-    Route::get('/renew_form/{application_id}', [EA_RenewalController::class, 'renew_form'])->name('renew_form');
+    // Route::get('/renew_form/{application_id}', [EA_RenewalController::class, 'renew_form'])->name('renew_form');
     Route::get('/renew-form_ea/{application_id}', [EA_RenewalController::class, 'renew_form_ea'])->name('renew-form_ea');
     
     // ------------draft form-----------------------------

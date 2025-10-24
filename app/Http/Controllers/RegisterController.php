@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\admin\TnelbForms;
 use App\Models\EA_Application_model;
 use App\Models\Mst_Form_s_w;
+use App\Models\MstLicence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Register;
@@ -156,8 +158,10 @@ class RegisterController extends BaseController
     }
 
 
-    public function renew_formcc($appl_id)
+    public function renew_form($appl_id)
     {
+
+
         if (!Auth::check()) {
             return redirect()->route('logout');
         }
@@ -170,6 +174,32 @@ class RegisterController extends BaseController
         ->where('application_id', $appl_id)
         ->select('*')
         ->first();
+
+
+        $form_details = MstLicence::where('status', 1)
+            ->select('*')
+            ->get()
+            ->toArray();
+        
+        $current_form = collect($form_details)->firstWhere('form_code', $application_details->form_name);
+
+
+        if (!$current_form) {
+            abort(504, 'Form Not Found..');
+        }
+        
+        $fees_details = TnelbForms::where('status', 1)
+        ->where('license_name', $current_form['id'])
+        ->whereDate('renewalamount_starts', '<=', today())
+        ->select('renewal_amount','renewalamount_starts')
+        ->first();
+
+        
+
+
+        if (!$fees_details) {
+            abort(505, 'The requested form details could not be found.');
+        }
 
 
 
@@ -213,7 +243,8 @@ class RegisterController extends BaseController
         ->first();
 
         $applicationid = $appl_id;
-        return view('user_login.renew-form', compact( 'applicationid','application_details','edu_details','exp_details','apps_doc','license_details','applicant_photo'));
+        return view('user_login.renew-form', compact( 'applicationid','application_details','edu_details','exp_details','apps_doc','license_details','applicant_photo',
+    'fees_details'));
     }
 
 

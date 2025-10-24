@@ -25,10 +25,11 @@ class FormController extends BaseController
 
     public function new_application($form_id = null){
 
+        
         if (!Auth::check()) {
             return redirect()->route('logout');
         }
-
+        
         try {
             
             $form_id = Crypt::decrypt($form_id);
@@ -47,11 +48,18 @@ class FormController extends BaseController
             
             $current_form = collect($form_details)->firstWhere('form_code', $form_id);
 
+            if (!$current_form) {
+                abort(504, 'Form Not Found..');
+            }
+
+
             $fees_details = TnelbForms::where('status', 1)
             ->where('license_name', $current_form['id'])
-            ->whereDate('fresh_fee_starts', today())
+            ->whereDate('fresh_fee_starts', '<=', today())
             ->select('fresh_fee_amount','fresh_fee_starts')
             ->first();
+
+            // var_dump($fees_details);die; 
 
             if (!$fees_details) {
                 abort(505, 'The requested form details could not be found.');
@@ -69,6 +77,88 @@ class FormController extends BaseController
             abort(404, 'Invalid form link');
         }
         
+    }
+
+    public function editApplication($appl_id)
+    {
+
+
+        if (!Auth::check()) {
+            return redirect()->route('logout');
+        }
+
+        if (!$appl_id) {
+            return redirect()->route('dashboard')->with('error', 'Application ID is required.');
+        }
+
+        
+        $application_details = DB::table('tnelb_application_tbl')
+        ->where('application_id', $appl_id)
+        ->select('*')
+        ->first();
+
+        
+        $form_details = MstLicence::where('status', 1)
+            ->select('*')
+            ->get()
+            ->toArray();
+        
+        $current_form = collect($form_details)->firstWhere('form_code', $application_details->form_name);
+
+
+        if (!$current_form) {
+            abort(504, 'Form Not Found..');
+        }
+        
+        $fees_details = TnelbForms::where('status', 1)
+        ->where('license_name', $current_form['id'])
+        ->whereDate('fresh_fee_starts', '<=', today())
+        ->select('fresh_fee_amount','fresh_fee_starts')
+        ->first();
+
+        if (!$fees_details) {
+            abort(505, 'The requested form details could not be found.');
+        }
+
+
+        if (!$application_details) {
+            return redirect()->route('dashboard')->with('error', 'Application not found.');
+        }
+
+        $edu_details = DB::table('tnelb_applicants_edu')
+            ->where('application_id', $appl_id)
+            ->select('*')
+            ->orderBy('year_of_passing', 'desc')
+            ->get();
+
+        $exp_details = DB::table('tnelb_applicants_exp')
+            ->where('application_id', $appl_id)
+            ->select('*')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $apps_doc = DB::table('tnelb_applicants_doc')
+            ->where('application_id', $appl_id)
+            ->select('*')
+            ->get();
+
+
+        $license_details = DB::table('tnelb_license')
+            ->where('application_id', $appl_id)
+            ->select('*')
+            ->first();
+
+        $applicant_photo = TnelbApplicantPhoto::where('application_id', $appl_id)->first();
+
+        $proof_doc = Mst_documents::where('application_id', $appl_id)->first();
+
+        $applicationid = $appl_id;
+
+      
+
+        return view('user_login.edit_application', compact('applicationid', 'application_details', 'edu_details', 'exp_details', 'apps_doc', 'license_details', 'applicant_photo', 'proof_doc',
+    'fees_details'));
+
     }
 
     public function store(Request $request)
@@ -2002,66 +2092,6 @@ if ($request->hasFile('pancard_doc')) {
             'updated_at' => now(),
         ]);
     }
-
-
-    public function editApplication($appl_id)
-    {
-
-
-        if (!Auth::check()) {
-            return redirect()->route('logout');
-        }
-
-        if (!$appl_id) {
-            return redirect()->route('dashboard')->with('error', 'Application ID is required.');
-        }
-
-        $application_details = DB::table('tnelb_application_tbl')
-            ->where('application_id', $appl_id)
-            ->select('*')
-            ->first();
-
-
-        if (!$application_details) {
-            return redirect()->route('dashboard')->with('error', 'Application not found.');
-        }
-
-        $edu_details = DB::table('tnelb_applicants_edu')
-            ->where('application_id', $appl_id)
-            ->select('*')
-            ->orderBy('year_of_passing', 'desc')
-            ->get();
-
-        $exp_details = DB::table('tnelb_applicants_exp')
-            ->where('application_id', $appl_id)
-            ->select('*')
-            ->orderBy('id', 'asc')
-            ->get();
-
-        $apps_doc = DB::table('tnelb_applicants_doc')
-            ->where('application_id', $appl_id)
-            ->select('*')
-            ->get();
-
-
-        $license_details = DB::table('tnelb_license')
-            ->where('application_id', $appl_id)
-            ->select('*')
-            ->first();
-
-        $applicant_photo = TnelbApplicantPhoto::where('application_id', $appl_id)->first();
-
-        $proof_doc = Mst_documents::where('application_id', $appl_id)->first();
-
-        $applicationid = $appl_id;
-
-      
-
-        return view('user_login.edit_application', compact('applicationid', 'application_details', 'edu_details', 'exp_details', 'apps_doc', 'license_details', 'applicant_photo', 'proof_doc'));
-
-    }
-
-
 
     public function showEncryptedDocument($type, $filename)
     {

@@ -579,7 +579,6 @@
 
         //-------------------------------------------------- competency form submit action---------------------------------------
 
-        //-------------------------------------------------- competency form submit action---------------------------------------
 
         $('#submitPaymentBtn').on('click', function (e) {
             e.preventDefault();
@@ -2391,7 +2390,7 @@
 
     let appl_type = $('#appl_type').val();
 
-    let form_cost = 750;
+    let form_cost = $('#amount').val();
 
     try {
         // 🔹 Fetch form cost dynamically

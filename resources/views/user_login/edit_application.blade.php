@@ -755,7 +755,7 @@
                                             <input type="hidden" id="form_name" name="form_name" value="{{ isset($application_details) ? $application_details->form_name : '' }}">
                                             <input type="hidden" id="license_name" name="license_name" value="{{ isset($application_details) ? $application_details->license_name : '' }}">
                                             <input type="hidden" id="form_id" name="form_id" value="{{ isset($application_details) ? $application_details->form_id : '' }}">
-                                            <input type="hidden" id="amount" name="amount" value="750">
+                                            <input type="hidden" id="amount" name="amount" value="{{ $fees_details->fresh_fee_amount }}">
                                             <input type="hidden" id="appl_type" name="appl_type" value="N">
                                             {{-- <input type="hidden" id="form_action" name="form_action" value="{{ isset($application_details) ? $application_details->payment_status : '' }}"> --}}
 
