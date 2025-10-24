@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin\LicenceCategory;
 use App\Models\admin\TnelbForms;
 use App\Models\Mst_documents;
 use App\Models\Mst_education;
@@ -1420,7 +1421,7 @@ if ($request->hasFile('pancard_doc')) {
                 'pancard'            => $encrypted_pancard,
                 'appl_type'          => $appl_type,           // ensure 'R'
                 'license_number'     => $request->license_number,
-                'payment_status'     => $action === 'draft' ? 'draft' : 'payment',
+                'payment_status'     => 'draft',
                 'aadhaar_doc'        => $aadhaarFilename ?? null,
                 'pan_doc'            => $panFilename ?? null,
                 'certificate_no'     => $request->certificate_no ?? null,
@@ -1619,38 +1620,25 @@ if ($request->hasFile('pancard_doc')) {
 
     public function update(Request $request, $id)
     {
-
-        // var_dump($request->all());die;
-
-
         $request->merge([
             'aadhaar' => preg_replace('/\D/', '', $request->aadhaar)
         ]);
-
-
         $applicationId = $id;
-
         $existingForm = Mst_Form_s_w::where('application_id', $applicationId)->first();
-
         $existingPhoto = TnelbApplicantPhoto::where('application_id', $applicationId)->first();
 
         if (!$existingForm && $applicationId) {
             return response()->json(['status' => 'error', 'message' => 'Draft not found!'], 404);
         }
-
         $uploadPhotoRule = (!$existingPhoto || empty($existingPhoto->upload_path))
         ? 'image|mimes:jpg,jpeg,png|max:50'
         : 'nullable|image|mimes:jpg,jpeg,png|max:50';
-
         $aadhaarDocRule = ($existingForm && !$existingForm->aadhaar_doc)
             ? 'mimes:pdf|max:250'
             : 'nullable|mimes:pdf|max:250';
-
         $pancardDocRule = ($existingForm && !$existingForm->pan_doc)
             ? 'mimes:pdf|max:250'
             : 'nullable|mimes:pdf|max:250';
-
-
             $request->validate([
                 'login_id'           => 'nullable|string',
                 'applicant_name'     => 'nullable|string|max:255',
@@ -1665,7 +1653,6 @@ if ($request->hasFile('pancard_doc')) {
                 'license_name'       => 'nullable|string|max:2',
                 'form_id'            => 'nullable|integer',
                 // 'amount'             => 'nullable|numeric|min:0',
-    
                 'educational_level'    => 'nullable|array|min:1',
                 'educational_level.*'  => 'nullable|string|max:50',
                 'institute_name'       => 'nullable|array|min:1',
@@ -1674,8 +1661,6 @@ if ($request->hasFile('pancard_doc')) {
                 'year_of_passing.*'    => 'nullable',
                 'percentage'           => 'nullable|array|min:1',
                 'percentage.*'         => 'nullable|numeric|min:0|max:100',
-    
-    
                 'upload_photo'   => $uploadPhotoRule,
                 'aadhaar_doc'    => $aadhaarDocRule,
                 'pancard_doc'    => $pancardDocRule,
@@ -1689,53 +1674,35 @@ if ($request->hasFile('pancard_doc')) {
             // education arrays
             'education_document.*'    => 'Educational document size permitted only 5 KB to 200 KB.',
             'work_document.*.max'    => 'Experience document size permitted only 5 KB to 200 KB.',
-
-
             'educational_level.*.string'    => 'Educational level must be a valid string.',
             'educational_level.*.max'       => 'Educational level may not be greater than 50 characters.',
-
             'institute_name.*.string'       => 'Institute name must be a valid string.',
             'institute_name.*.max'          => 'Institute name may not be greater than 255 characters.',
-
-
             'percentage.*.numeric'          => 'Percentage/Grade must be a number.',
             'percentage.*.min'              => 'Percentage/Grade must be at least 0.',
             'percentage.*.max'              => 'Percentage/Grade may not exceed 100.',
-
             // work experience arrays
             'work_level.*.string'           => 'Work level must be a valid string.',
             'work_level.*.max'              => 'Work level may not be greater than 50 characters.',
-
             'experience.*.integer'          => 'Experience must be an integer.',
             'experience.*.min'              => 'Experience cannot be negative.',
             'experience.*.max'              => 'Experience may not exceed 50 years.',
-
             'designation.*.string'          => 'Designation must be a valid string.',
             'designation.*.max'             => 'Designation may not be greater than 100 characters.',
-
             'aadhaar.digits' => 'Aadhaar number should be 12 digits.',
-
             'pancard_doc.max' => 'The pancard doc size permitted only 5 KB to 250 KB',
         ]);
-
-
 
         $action = $request->form_action;
         $loginId = $request->login_id;
 
-
         DB::beginTransaction();
 
         try {
-            // Find existing application by application_id instead of id
             $appl_type = $request->appl_type ?? '';
-
             $form = Mst_Form_s_w::where('application_id', $id)
             ->where('appl_type', $appl_type)
             ->first();
-
-
-
 
             if ($form) {
                 $applicationId = $form->application_id;
@@ -1749,15 +1716,8 @@ if ($request->hasFile('pancard_doc')) {
                     $applicationId = $appl_type . $request->form_name . $request->license_name . date('y') . '1111111';
                 }
             }
-
-            // var_dump($applicationId);die;
-
-
-
             $encrypted_aadhaar = Crypt::encryptString($request->aadhaar);
             $encrypted_pancard = Crypt::encryptString($request->pancard);
-        
-
             if ($request->hasFile('aadhaar_doc')) {
                 $file = $request->file('aadhaar_doc');
 
@@ -1783,40 +1743,31 @@ if ($request->hasFile('pancard_doc')) {
                 if ($aadhaarFilename == null) {
                     $aadhaarFilename = Mst_Form_s_w::where('application_id', $id)->value('aadhaar_doc');
                 }
-
             }
-            
                  
             if ($request->hasFile('pancard_doc')) {
                 // ✅ New file uploaded
                 $file = $request->file('pancard_doc');
                 $contents = file_get_contents($file->getRealPath());
                 $encrypted = Crypt::encrypt($contents);
-            
                 $panFilename = time() . '_' . rand(10000, 9999999) . '.bin';
                 $destinationPath = storage_path('app/private_documents');
-            
                 if (!is_dir($destinationPath)) {
                     mkdir($destinationPath, 0755, true);
                 }
-            
                 file_put_contents($destinationPath . '/' . $panFilename, $encrypted);
+
             } elseif ($request->input('pan_doc_removed') == "1") {
-                // ✅ Removed but not replaced
                 $panFilename = null;
             } else {
-                // ✅ Keep the old one
                 $panFilename = $form?->pan_doc ?? null;
-
                 if ($panFilename == null) {
                     $panFilename = Mst_Form_s_w::where('application_id', $id)->value('pan_doc');
                 }
-
             }
 
             $renewal_form = Mst_Form_s_w::updateOrCreate(
                 [
-                    // Match condition
                     'application_id' => $applicationId
                 ],
                 [
@@ -1840,8 +1791,6 @@ if ($request->hasFile('pancard_doc')) {
                     'appl_type'          => $appl_type,
                     'license_number'     => $request->license_number,
                     'payment_status'     => 'draft',
-                    // 'aadhaar_doc'        => $form->aadhaar_doc,
-                    // 'pan_doc'            => $form->pan_doc,
                     'aadhaar_doc'        => $aadhaarFilename ?? $form?->aadhaar_doc ?? null,
                     'pan_doc'            => $panFilename ?? $form?->pan_doc ?? null,
                     'cert_verify'        => $request->cert_verify ?? '0',
@@ -1850,9 +1799,26 @@ if ($request->hasFile('pancard_doc')) {
                 ]
             );
 
-                     
-
             $applicationId = $renewal_form->application_id;
+
+            $form_details = MstLicence::where('status', 1)
+            ->select('*')
+            ->get()
+            ->toArray();
+            $form_category = LicenceCategory::where('status', 1)
+            ->select('*')
+            ->get()
+            ->toArray();
+
+            // var_dump($form_details);
+            // var_dump($renewal_form->license_name);die;
+            $current_form = collect($form_details)->firstWhere('cert_licence_code', $renewal_form->license_name);
+            $category_type = collect($form_category)->firstWhere('id', $current_form['category_id']);
+
+            $licence_details['licence_name'] = $current_form['licence_name'];
+            $licence_details['category_name'] = $category_type['category_name'];
+
+
 
             // Update Education Records
             if ($request->has('educational_level')) {
@@ -1889,18 +1855,6 @@ if ($request->hasFile('pancard_doc')) {
                     $lastNum++;
                     $newSerial = 'edu_' . $lastNum;
 
-                    // Mst_education::updateOrCreate([
-                    //     'login_id'          => $loginId,
-                    //     'application_id'    => $applicationId,
-                    //     'educational_level' => $levelName,
-                    //     'institute_name'    => $institute,
-                    //     'year_of_passing'   => $year,
-                    //     'percentage'        => $percentage,
-                    //     'upload_document'   => $finalDoc,    // may be NULL — that’s okay for renewal
-                    //     'edu_serial'        => $newSerial,
-                    // ]);
-
-
                     Mst_education::updateOrCreate(
                         [
                             'login_id'          => $loginId,
@@ -1918,8 +1872,6 @@ if ($request->hasFile('pancard_doc')) {
                 }
             }
             
-
-
             if ($request->has('work_level')) {
                 $lastExp = Mst_experience::whereNotNull('exp_serial')->latest('id')->value('exp_serial');
                 $lastNum = $lastExp ? (int) str_replace('exp_', '', $lastExp) : 0;
@@ -1951,16 +1903,6 @@ if ($request->hasFile('pancard_doc')) {
                     $lastNum++;
                     $newSerial = 'exp_' . $lastNum;
 
-                    // Mst_experience::create([
-                    //     'login_id'        => $loginId,
-                    //     'application_id'  => $applicationId,
-                    //     'company_name'    => $companyName,
-                    //     'experience'      => $expYears,
-                    //     'designation'     => $designation,
-                    //     'upload_document' => $finalDoc,   // may be NULL
-                    //     'exp_serial'      => $newSerial,
-                    // ]);
-
                     Mst_experience::updateOrCreate(
                         [
                             'login_id'       => $loginId,
@@ -1977,8 +1919,6 @@ if ($request->hasFile('pancard_doc')) {
                 }
             }
 
-            
-
             // process photo
              if ($request->hasFile('upload_photo')) {
                 $photoName = 'user_' . time() . '.' . $request->file('upload_photo')->getClientOriginalExtension();
@@ -1994,14 +1934,16 @@ if ($request->hasFile('pancard_doc')) {
             }
 
             // Process Payment for update
-
             DB::commit();
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Renewal Form submitted successfully!',
+                'message' => 'Form submitted successfully!',
                 'application_id' => $applicationId,
-                'applicantName' => $renewal_form->applicant_name
+                'applicantName' => $renewal_form->applicant_name,
+                'form_name' => $renewal_form->form_name,
+                'licence_name' => $licence_details['licence_name'],
+                'type_of_apps' => $licence_details['category_name']
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

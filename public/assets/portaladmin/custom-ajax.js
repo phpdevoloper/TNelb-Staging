@@ -83,12 +83,15 @@ $(document).ready(function() {
         const renewal_late_fees_duration_ends_on =  $(this).data('renewal_late_fees_duration_ends_on');
         const status = $(this).data('form_status');
 
-        console.log(form_name);
+        console.log(cert_name);
 
         
 
         // Fill modal inputs
         $('#form_id').val(form_id);
+        // $('#openHistoryBtn').attr('data-form_id', '').attr('data-form_id', cert_name);
+
+        
         $('#cert_name').val(cert_name);
         $('#form_name_edit').val(form_name);
         $('#fresh_fees').val(fresh_fee);
@@ -182,12 +185,19 @@ $(document).ready(function() {
     });
 
 
-    $('#openHistoryBtn').on('click', function() {
+    $(document).on('click', '#openHistoryBtn', function() {
+
+        const form_id = $(this).data('id');
+        console.log(form_id);
+        
 
         $.ajax({
             url: BASE_URL + '/admin/licences/formHistory', // your Laravel route
-            method: 'GET',
+            method: 'POST',
             dataType: 'json',
+            data:{
+                form_id : form_id
+            },
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
             },
@@ -207,16 +217,17 @@ $(document).ready(function() {
                     });
             }
         });
+        $('#viewHistoryModal').modal('show');
 
         // Close the first modal
-        $('#editFormModal').modal('hide');
+        // $('#editFormModal').modal('hide');
 
         // Open the second modal after the first one is hidden
-        $('#editFormModal').on('hidden.bs.modal', function() {
-            $('#viewHistoryModal').modal('show');
-            // Remove this handler so it doesn't trigger again
-            $(this).off('hidden.bs.modal');
-        });
+        // $('#editFormModal').on('hidden.bs.modal', function() {
+        //     $('#viewHistoryModal').modal('show');
+        //     // Remove this handler so it doesn't trigger again
+        //     $(this).off('hidden.bs.modal');
+        // });
     });
 
 
@@ -544,5 +555,7 @@ $(document).ready(function() {
             },
         });
     });
+
+    payment
 
 });

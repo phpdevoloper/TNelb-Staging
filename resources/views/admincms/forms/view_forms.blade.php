@@ -12,7 +12,7 @@
                 <nav class="breadcrumb-style-one" aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="#">Licences Management</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Add Certificates / Licences</li>
+                        <li class="breadcrumb-item active" aria-current="page">Certificates & Licences</li>
                     </ol>
                 </nav>
             </div>

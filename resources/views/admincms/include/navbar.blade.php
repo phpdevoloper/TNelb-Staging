@@ -206,8 +206,12 @@
                     </a>
                 </li>
 
+                @php
+                    $licence_routes = ['admin.forms', 'admin.licenceCategory', 'admin.view_licences'];
+                @endphp
 
-                <li class="menu {{ request()->routeIs('admin.forms') ? 'active' : '' }}">
+
+                <li class="menu {{ in_array($currentRoute, $licence_routes) ? 'active' : '' }}">
                     <a href="#licences" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('admin.licences') ? 'true' : 'false' }}" class="dropdown-toggle">
                         <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -225,18 +229,18 @@
                             <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
                     </a>
-                    <ul class="collapse submenu list-unstyled {{ in_array($currentRoute, $footerRoutes) ? 'show' : '' }}" id="licences" data-bs-parent="#accordionExample">
+                    <ul class="collapse submenu list-unstyled {{ in_array($currentRoute, $licence_routes) ? 'show' : '' }}" id="licences" data-bs-parent="#accordionExample">
 
+                        <li class="{{ $currentRoute == 'admin.licenceCategory' ? 'active' : '' }}">
+                            <a href="{{route('admin.licenceCategory')}}">Category</a>
+                        </li>
+                        <li class="{{ $currentRoute == 'admin.view_licences' ? 'active' : '' }}">
+                           <a href="{{route('admin.view_licences')}}">Certificates / Licences</a>
+                       </li>
                         <li class="{{ $currentRoute == 'admin.forms' ? 'active' : '' }}">
                             <a href="{{ route('admin.forms') }}">
                                 Update Fees Details
                             </a>
-                        </li>
-                         <li class="{{ $currentRoute == 'admin.view_licences' ? 'active' : '' }}">
-                            <a href="{{route('admin.view_licences')}}">Add Certificates / Licences</a>
-                        </li>
-                        <li class="{{ $currentRoute == 'admin.licenceCategory' ? 'active' : '' }}">
-                            <a href="{{route('admin.licenceCategory')}}">Category</a>
                         </li>
                         {{-- <li class="{{ $currentRoute == 'admin.addnewform' ? 'active' : '' }}">
                             <a href="{{route('admin.addnewform')}}">Old Link</a>

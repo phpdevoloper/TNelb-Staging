@@ -2324,9 +2324,8 @@
                             buttonsStyling: false
                         }).then((result) => {
                             if (result.isConfirmed) {
-
                                 $.ajax({
-                                    url: "{{ route('form.updatePayment') }}",
+                                    url: "{{ route('payment.updatePayment') }}",
                                     type: "POST",
                                     data: {
                                         login_id: login_id,
@@ -2393,21 +2392,6 @@
     let form_cost = $('#amount').val();
 
     try {
-        // 🔹 Fetch form cost dynamically
-        // let response = await $.ajax({
-        //     url: '{{ route('getFormCost') }}',
-        //     method: 'GET',
-        //     data: { appl_type: appl_type, form_name: form_name }
-        // });
-
-        // let form_cost = response.form_cost;
-
-        // if (form_cost === null) {
-        //     console.log("No cost found for this form");
-        //     return;
-        // }
-
-        console.log("Form Cost:", form_cost);
 
         // 🔹 Now you can safely use form_cost everywhere below
         const modalEl = document.getElementById('competencyInstructionsModal');
@@ -2468,96 +2452,128 @@
                 }
             });
 
-            console.log(saveResponse.status);
-            // return false;
-
             if (saveResponse.status === "success") {
-
-
                 const login_id = window.login_id || "{{ auth()->user()->login_id ?? '' }}";
                 const application_id = saveResponse.application_id;
                 const transactionDate = new Date().toLocaleDateString('en-GB');
                 const applicantName = saveResponse.applicantName || 'N/A';
+                const form_name = saveResponse.form_name || 'N/A';
+                const category = saveResponse.type_of_apps || 'N/A';
+                const Type_apps = saveResponse.licence_name || 'N/A';
                 const amount = form_cost;
-
-                
-
-
+                const serviceCharge = 10;
+                const total_charge = Number(amount) + Number(serviceCharge);
                 const transactionId = "TRX" + Math.floor(100000 + Math.random() * 900000);
                 const payment_mode = 'UPI';
-
-
-
                 // 🔹 Show payment popup
                 Swal.fire({
-                     title: "<span style='color:#0d6efd;'>Initiate Payment</span>",
-                            html: `
-                                <div class="text-start" style="font-size: 14px; padding: 10px 0;">
-                                    <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
-                                        <tbody>
-                                            <tr>
-                                                <th style="text-align: left; padding: 6px 10px; width: 50%; color: #555;">Application ID</th>
-                                                <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${application_id}</td>
-                                            </tr>
-                                            <tr>
-                                                <th style="text-align: left; padding: 6px 10px; color: #555;">Transaction ID</th>
-                                                <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${transactionId}</td>
-                                            </tr>
-                                            <tr>
-                                                <th style="text-align: left; padding: 6px 10px; color: #555;">Date</th>
-                                                <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${transactionDate}</td>
-                                            </tr>
-                                            <tr>
-                                                <th style="text-align: left; padding: 6px 10px; color: #555;">Applicant Name</th>
-                                                <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${applicantName}</td>
-                                            </tr>
-                                            <tr>
-                                                <th style="text-align: left; padding: 10px; color: #333;">Amount</th>
-                                                <td style="text-align: right; padding: 10px; font-weight: bold; color: #0d6efd;">Rs. ${amount} /-</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            `,
-                            icon: "info",
-                            iconHtml: '<i class="swal2-icon" style="font-size: 1 em">ℹ️</i>',
-                            width: '450px',
-                            showCancelButton: true,
-                            confirmButtonText: '<span class="btn btn-primary px-4 pr-4">Pay Now</span>',
-                            cancelButtonText: '<span class="btn btn-danger px-4">Cancel</span>',
-                            showCloseButton: true,
-                            customClass: {
-                                popup: 'swal2-border-radius',
-                                actions: 'd-flex justify-content-around mt-3',
-                            },
-                            buttonsStyling: false
-                }).then(async (result) => {
-                    if (result.isConfirmed) {
-                        let paymentResponse = await $.ajax({
-                            url: "{{ route('form.updatePayment') }}",
-                            type: "POST",
-                            data: {
-                                login_id: login_id,
-                                application_id: application_id,
-                                transaction_id: transactionId,
-                                transactionDate: transactionDate,
-                                amount: amount,
-                                payment_mode: payment_mode,
-                                form_name: form_name,
-                                _token: $('meta[name="csrf-token"]').attr('content')
+                    title: "<span style='color:#0d6efd;'>Initiate Payment</span>",
+                    html: `
+                        <div class="text-start" style="font-size: 14px; padding: 10px 0;">
+                            <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+                                <tbody>
+                                    <tr>
+                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Applicant Name</th>
+                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${applicantName}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Date</th>
+                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${transactionDate}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align: left; padding: 10px; color: #333;">Amount</th>
+                                        <td style="text-align: right; padding: 10px; font-weight: bold; color: #0d6efd;">Rs. ${amount} /-</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align: left; padding: 6px 10px; width: 50%; color: #555;">Type</th>
+                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${category}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Type of Applications</th>
+                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${Type_apps}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Service Charge</th>
+                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${serviceCharge}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Total</th>
+                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${total_charge}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    `,
+                    icon: "info",
+                    iconHtml: '<i class="swal2-icon" style="font-size: 1 em">ℹ️</i>',
+                    width: '450px',
+                    showCancelButton: true,
+                    confirmButtonText: '<span class="btn btn-primary px-4 pr-4 payment">Pay Now</span>',
+                    cancelButtonText: '<span class="btn btn-danger px-4">Cancel</span>',
+                    showCloseButton: true,
+                    customClass: {
+                        popup: 'swal2-border-radius',
+                        actions: 'd-flex justify-content-around mt-3',
+                    },
+                    buttonsStyling: false,
+                    preConfirm: async () => {
+                        try {
+                            console.log('Entry');
+
+                            const paymentResponse = await $.ajax({
+                                url: "{{ route('payment.updatePayment') }}",
+                                type: "POST",
+                                dataType: "json",
+                                data: {
+                                    login_id,
+                                    application_id,
+                                    transaction_id: transactionId,
+                                    transactionDate,
+                                    amount,
+                                    payment_mode,
+                                    form_name
+                                },
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                }
+                            });
+
+                            console.log("After AJAX Call");
+
+                            // ✅ Success condition
+                            if (paymentResponse.status === 200) {
+                                showPaymentSuccessPopup(
+                                    application_id,
+                                    transactionId,
+                                    transactionDate,
+                                    applicantName,
+                                    amount
+                                );
+                            } else {
+                                Swal.fire({
+                                    title: "Payment Failed",
+                                    text: paymentResponse.message || "Something went wrong!",
+                                    icon: "error",
+                                    timer: 3000,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    window.location.href = BASE_URL + "/dashboard";
+                                });
                             }
-                        });
 
-                        // console.log(paymentResponse);
-                        // return false;
+                        } catch (xhr) {
+                            console.error("❌ AJAX Error:", xhr);
 
-                        if (paymentResponse.status == 200) {
-                            showPaymentSuccessPopup(application_id, transactionId, transactionDate, applicantName, amount);
-                        } else {
-                            alert(paymentResponse.message || 'Something went wrong!');
+                            // Swal.fire({
+                            //     title: "Server Error",
+                            //     text: xhr.responseJSON?.message || "Unable to update payment status",
+                            //     icon: "error",
+                            //     timer: 3000,
+                            //     showConfirmButton: false
+                            // }).then(() => {
+                            //     window.location.href = BASE_URL + "/dashboard";
+                            // });
                         }
-                    } else {
-                        Swal.fire("Payment Failed", "Application saved as draft", "error");
                     }
                 });
             } else {
@@ -2569,283 +2585,6 @@
         console.error("Error fetching form cost or saving form:", err);
     }
 }
-
-
-    // function showDeclarationPopup(form_name) {
-
-    //     let appl_type = $('#appl_type').val();
-
-    //     // console.log(appl_type);
-    //     // return false;
-
-    //     var form_cost;
-    //     if (appl_type == 'R') {
-    //         if (form_name == 'S') {
-    //             form_cost = 375;
-    //         } else if (form_name == 'W') {
-    //             form_cost = 250;
-    //         } else if (form_name == 'WH') {
-    //             form_cost = 120;
-    //         }
-            
-    //     }else{
-    //         if (form_name == 'S') {
-    //             form_cost = 750;
-    //         } else if (form_name == 'W') {
-    //             form_cost = 500;
-    //         } else if (form_name == 'WH') {
-    //             form_cost = 250;
-    //         }
-    //     }
-
-    //     console.log(form_cost);
-
-    //     // return false;
-
-    //     const modalEl = document.getElementById('competencyInstructionsModal');
-    //     const agreeCheckbox = modalEl.querySelector('#declaration-agree-renew');
-    //     const errorText = modalEl.querySelector('#declaration-error-renew');
-    //     const proceedBtn = modalEl.querySelector('#proceedPayment');
-
-    //     document.getElementById('form_fees').textContent = 'Rs.' + form_cost + '/-';
-
-    //     // Reset state
-    //     agreeCheckbox.checked = false;
-    //     errorText.classList.add('d-none');
-
-    //     // Show the modal
-    //     const modal = new bootstrap.Modal(modalEl, {
-    //         backdrop: 'static', // Prevent closing by clicking outside
-    //         keyboard: false // Prevent closing with Esc
-    //     });
-    //     modal.show();
-
-
-    //     // Remove any previous event listener to avoid duplicates
-    //     proceedBtn.replaceWith(proceedBtn.cloneNode(true));
-
-    //     // Re-assign proceed button listener
-    //     modalEl.querySelector('#proceedPayment').addEventListener('click', function() {
-    //         if (!agreeCheckbox.checked) {
-    //             errorText.classList.remove('d-none');
-    //             return;
-    //         }
-
-    //         // Hide modal
-    //         modal.hide();
-
-    //         let formData = new FormData($('#competency_form_ws')[0]);
-
-
-    //         // let formUrl = applicationId ? "{{ url('formdraft-update') }}/" + applicationId : "{{ route('form.store') }}";
-
-
-    //         let applicationId = $('#application_id').val();
-
-    //         let formUrl = applicationId ? "{{ route('form.update', ['appl_id' => '__APPL_ID__']) }}".replace('__APPL_ID__', applicationId) : "{{ route('form.store') }}";
-
-    //         // console.log(formUrl);
-    //         // return false;
-
-    //         $.ajax({
-    //             url: formUrl,
-    //             type: "POST",
-    //             data: formData,
-    //             processData: false,
-    //             contentType: false,
-    //             headers: {
-    //                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    //             },
-    //             success: function(response) {
-
-    //                 if (response.status == "success") {
-
-    //                     const login_id = window.login_id || "{{ auth()->user()->login_id ?? '' }}";
-    //                     const application_id = response.application_id;
-    //                     const transactionDate = new Date().toLocaleDateString('en-GB'); // e.g., 23/06/2025
-    //                     const applicantName = response.applicantName || 'N/A';
-    //                     const amount = form_cost;
-    //                     const transactionId = "TRX" + Math.floor(100000 + Math.random() *
-    //                         900000); // random ID
-    //                     const payment_mode = 'UPI';
-
-    //                     Swal.fire({
-    //                         title: "<span style='color:#0d6efd;'>Initiate Payment</span>",
-    //                         html: `
-    //                             <div class="text-start" style="font-size: 14px; padding: 10px 0;">
-    //                                 <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
-    //                                     <tbody>
-    //                                         <tr>
-    //                                             <th style="text-align: left; padding: 6px 10px; width: 50%; color: #555;">Application ID</th>
-    //                                             <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${application_id}</td>
-    //                                         </tr>
-    //                                         <tr>
-    //                                             <th style="text-align: left; padding: 6px 10px; color: #555;">Transaction ID</th>
-    //                                             <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${transactionId}</td>
-    //                                         </tr>
-    //                                         <tr>
-    //                                             <th style="text-align: left; padding: 6px 10px; color: #555;">Date</th>
-    //                                             <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${transactionDate}</td>
-    //                                         </tr>
-    //                                         <tr>
-    //                                             <th style="text-align: left; padding: 6px 10px; color: #555;">Applicant Name</th>
-    //                                             <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${applicantName}</td>
-    //                                         </tr>
-    //                                         <tr>
-    //                                             <th style="text-align: left; padding: 10px; color: #333;">Amount</th>
-    //                                             <td style="text-align: right; padding: 10px; font-weight: bold; color: #0d6efd;">Rs. ${amount} /-</td>
-    //                                         </tr>
-    //                                     </tbody>
-    //                                 </table>
-    //                             </div>
-    //                         `,
-    //                         icon: "info",
-    //                         iconHtml: '<i class="swal2-icon" style="font-size: 1 em">ℹ️</i>',
-    //                         width: '450px',
-    //                         showCancelButton: true,
-    //                         confirmButtonText: '<span class="btn btn-primary px-4 pr-4">Pay Now</span>',
-    //                         cancelButtonText: '<span class="btn btn-danger px-4">Cancel</span>',
-    //                         showCloseButton: true,
-    //                         customClass: {
-    //                             popup: 'swal2-border-radius',
-    //                             actions: 'd-flex justify-content-around mt-3',
-    //                         },
-    //                         buttonsStyling: false
-    //                     }).then((result) => {
-    //                         if (result.isConfirmed) {
-
-    //                             $.ajax({
-    //                                 url: "{{ route('form.updatePayment') }}",
-    //                                 type: "POST",
-    //                                 data: {
-    //                                     login_id: login_id,
-    //                                     application_id: application_id,
-    //                                     transaction_id: transactionId,
-    //                                     transactionDate: transactionDate,
-    //                                     amount: amount,
-    //                                     payment_mode: payment_mode,
-    //                                     form_name: form_name,
-    //                                     _token: $('meta[name="csrf-token"]').attr(
-    //                                         'content')
-    //                                 },
-
-    //                                 success: function(response) {
-    //                                     if (response.status == 200) {
-    //                                         showPaymentSuccessPopup(
-    //                                             application_id,
-    //                                             transactionId,
-    //                                             transactionDate,
-    //                                             applicantName, amount);
-    //                                     } else {
-    //                                         alert(response.message ||
-    //                                             'Something went wrong!');
-    //                                     }
-    //                                 },
-    //                                 error: function(xhr) {
-    //                                     if (xhr.responseJSON && xhr.responseJSON
-    //                                         .errors) {
-    //                                         let messages = Object.values(xhr
-    //                                                 .responseJSON.errors).flat()
-    //                                             .join("\n");
-    //                                         alert("Validation errors:\n" +
-    //                                             messages);
-    //                                     } else {
-    //                                         alert("An error occurred: " + xhr
-    //                                             .responseText);
-    //                                     }
-    //                                 }
-    //                             });
-
-    //                         } else {
-    //                             Swal.fire("Payment Failed", "Application saved as draft",
-    //                                 "danger");
-    //                         }
-    //                     });
-    //                 } else {
-    //                     Swal.fire("Form Submission Failed", "Application not submitted", "danger");
-    //                 }
-
-
-
-    //             },
-    //             error: function(xhr) {
-    //                 if (xhr.responseJSON && xhr.responseJSON.errors) {
-    //                     let messages = Object.values(xhr.responseJSON.errors)
-    //                         .flat()
-    //                         .map(msg => `<li>${msg}</li>`)
-    //                         .join("");
-
-    //                     Swal.fire({
-    //                         title: "Validation Failed",
-    //                         html: `<ul style="text-align:left;">${messages}</ul>`,
-    //                         icon: "error"
-    //                     });
-    //                 } else {
-    //                     Swal.fire("Error", xhr.responseText || "An unexpected error occurred.",
-    //                         "error");
-    //                 }
-    //             }
-    //         });
-    //     });
-    // }
-
-
-
-
-    // function showDeclarationPopup(loginId) {
-
-    //     Swal.fire({
-    //         title: "Instructions",
-    //         html: `
-    //     <div style="text-align: left;">
-    //         <p><strong>Please confirm the following:</strong></p>
-
-    //         <ul style="text-align: left; margin-top: 10px;margin-left:5px;">
-    //             <li><strong>1.(i)</strong> Fees for the issue of 'EA' Contractor licence from 01.01.2024 onwards Rs.30,000/-.</li>
-    //             <li><strong>(ii)</strong> Mode of Payment: Fees should be sent in favour of the Secretary, Electrical Licensing Board, Chennai by Bank Demand Draft obtained from any Scheduled Bank or Co-operative Bank payable at Chennai. Remittance of fees by any other method will not be accepted.</li>
-    //             <li><strong>2.</strong> The Proprietor or the Managing Partner/Director should have attained the age of 25 years and should have passed a minimum educational qualification of VIII Standard.</li>
-    //             <li><strong>3.</strong> Establishment: The applicant shall employ the following minimum staff on a full-time basis solely for the purpose of contract works:</li>
-    //             <li><strong>(i)</strong> One Supervisor holding Supervisor Competency Certificate granted by the Board with a minimum Technical Educational qualification of a Diploma in Electrical Engineering...</li>
-    //             <li><strong>4.</strong> Instruments: The applicant should possess the following instruments: 
-    //                 <ul>
-    //                     <li>One Number Earth Resistance Tester</li>
-    //                     <li>One Number 500 Volts Insulation Tester</li>
-    //                     <li>One Number 1000 Volts Insulation Tester</li>
-    //                     <li>One Number Phase Sequence Indicator</li>
-    //                     <li>One Number Tong Type Ammeter</li>
-    //                     <li>One Number Live Line Tester</li>
-    //                     <li>One Number Portable Voltmeter (Hand Operated)</li>
-    //                 </ul>
-    //             </li>
-    //             <li><strong>9.</strong> Financial Status: The applicant shall produce a Bank Solvency Certificate for Rs.50,000/- in Form 'G'...</li>
-    //         </ul>
-
-    //         <input type="checkbox" id="declaration-agree" name="cc_form" required>
-    //         <label for="declaration-agree"> I agree to the following terms:</label>
-    //     </div>
-    //     `,
-    //         showCancelButton: true,
-    //         confirmButtonText: "Proceed",
-    //         cancelButtonText: "Cancel",
-    //         preConfirm: () => {
-    //             let isChecked = document.getElementById("declaration-agree").checked;
-    //             if (!isChecked) {
-    //                 Swal.showValidationMessage("You must agree to proceed.");
-    //             }
-    //             return isChecked;
-    //         }
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             showPaymentInitiationPopup(loginId);
-    //         }
-    //     });
-    // }
-
-    // function showPaymentInitiationPopup(loginId,form_cost) {
-
-    // }
-
-
 
     function showPaymentSuccessPopup(loginId, transactionId, transactionDate, applicantName, amount) {
         Swal.fire({

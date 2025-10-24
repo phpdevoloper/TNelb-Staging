@@ -201,7 +201,7 @@
                                         @if ($workflow->payment_status == 'draft')
                                             @php
                                                 $view_page = isset($workflow->appl_type) && $workflow->appl_type == 'R'
-                                                    ? 'renew_formcc'
+                                                    ? 'renew_form'
                                                     : 'edit-application';
                                             @endphp
                                             <a href="{{ route($view_page, ['application_id' => $workflow->application_id]) }}" class="btn btn-warning btn-sm">
@@ -351,7 +351,7 @@
                                                             $view_page =
                                                                 isset($workflow->appl_type) &&
                                                                 $workflow->appl_type == 'R'
-                                                                    ? 'renew_formcc'
+                                                                    ? 'renew_form'
                                                                     : 'edit-application';
 
                                                         @endphp

@@ -157,7 +157,7 @@ Route::get('/generaterenewalTamilPDF/{login_id}', [PDFRenewalController::class, 
 
 // ----------------------Payment------------------------
 
-Route::post('/form/updatePayment', [PaymentController::class, 'updatePayment'])->name('form.updatePayment');
+Route::post('/payment/updatePayment', [PaymentController::class, 'updatePayment'])->name('payment.updatePayment');
 
 //Testing Pages 
 

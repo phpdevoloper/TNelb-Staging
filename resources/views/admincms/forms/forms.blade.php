@@ -31,10 +31,67 @@
         font-weight: 900;
     }
 </style>
+<!-- View History Modal -->
+<div class="modal fade" id="viewHistoryModal" tabindex="-1" role="dialog" aria-labelledby="viewHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewHistoryModalLabel">Form History</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="formHistoryTable" class="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">S.No</th>
+                                <th scope="col">Form Name</th>
+                                <th scope="col">Certificate Name</th>
+                                <th scope="col">Fresh Form Fees</th>
+                                <th scope="col">Fresh Form As On</th>
+                                <th scope="col">Fresh Form Ends On</th>
+                                <th scope="col">Renewal Fees</th>
+                                <th scope="col">Renewal Fees As on </th>
+                                <th scope="col">Renewal Fees Ends on </th>
+                                <th scope="col">Renewal Late Fees </th>
+                                <th scope="col">Renewal Late Fees As on </th>
+                                <th scope="col">Renewal Late Fees Ends on</th>
+                                <th class="text-center" scope="col">Status</th>
+                                {{-- <th class="text-center" scope="col">Sales</th> --}}
+                                <th scope="col">Created Date</th>
+                                <th scope="col">Updated Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {{-- <div class="modal-footer">
+                <button class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i> Discard</button>
+                <button type="button" class="btn btn-primary">Save</button>
+            </div> --}}
+        </div>
+    </div>
+</div>
 <div id="content" class="main-content">
     <div class="layout-px-spacing">
 
         <div class="middle-content p-0">
+            <div class="page-meta">
+                <nav class="breadcrumb-style-one" aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Licences Management</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Update Fees Details</li>
+                    </ol>
+                </nav>
+            </div>
             <!--  BEGIN BREADCRUMBS  -->
             <div class="secondary-nav">
                 <div class="breadcrumbs-container" data-page-heading="Analytics">
@@ -67,7 +124,7 @@
                 <div class="col-xl-12 col-lg-12 col-sm-12  layout-spacing mb-5">
                     <div class="card">
                         <div class="card-header">
-                            <h5>Update Certificate / Licence Details</h5>
+                            <h5>Update Fees Details</h5>
                         </div>
                         <div class="card-body">
                             <button class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#addFormModal"><i class="fa fa-plus"></i> Add</button>
@@ -76,6 +133,10 @@
                                         <tr>
                                             <th>S.No</th>
                                             <th>Cerificate Name / Form Name</th>
+                                            <th>Fresh Fees</th>
+                                            <th>Fresh Fees As on</th>
+                                            <th>Renewal Fees</th>
+                                            <th>Renewal Fees As on</th>
                                             <th>Created Date</th>
                                             <th>Updated Date</th>
                                             <th>Status</th>
@@ -88,6 +149,10 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $form->licence_name.' / '. $form->form_name}}</td>
+                                            <td>{{ $form->fresh_fee_amount}}</td>
+                                            <td>{{ \Carbon\Carbon::parse($form->fresh_fee_starts)->format('d/m/Y') }}</td>
+                                            <td>{{ $form->renewal_amount}}</td>
+                                            <td>{{ \Carbon\Carbon::parse($form->renewalamount_starts)->format('d/m/Y') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($form->created_at)->format('d/m/Y') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($form->updated_at)->format('d/m/Y') }}</td>
                                             <td>
@@ -123,6 +188,9 @@
                                                 data-form_status ="{{ $form->status }}">
                                                     <i class="fa fa-edit"></i>
                                                 </span>
+                                                <button class="btn btn-primary" id="openHistoryBtn"
+                                                data-id="{{ $form->license_name }}"
+                                                ><i class="fa fa-refresh"></i></button>
                                             </td>
                                         </tr>
                                         @endforeach
@@ -448,7 +516,6 @@
             <div class="modal-header">
                 <h5 class="modal-title">View Form</h5>
                 <div class="d-flex align-items-center gap-2">
-                    <button class="btn btn-primary" id="openHistoryBtn">View History</a>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle">
                             <circle cx="12" cy="12" r="10"></circle>
@@ -608,59 +675,6 @@
         </div>
     </div>
 </div>
-
-<!-- View History Modal -->
-<div class="modal fade" id="viewHistoryModal" tabindex="-1" role="dialog" aria-labelledby="viewHistoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="viewHistoryModalLabel">Form History</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                    </svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table id="formHistoryTable" class="table table-hover table-bordered">
-                        <thead>
-                            <tr>
-                                <th scope="col">S.No</th>
-                                <th scope="col">Form Name</th>
-                                <th scope="col">Certificate Name</th>
-                                <th scope="col">Fresh Form Fees</th>
-                                <th scope="col">Fresh Form As On</th>
-                                <th scope="col">Fresh Form Ends On</th>
-                                <th scope="col">Renewal Fees</th>
-                                <th scope="col">Renewal Fees As on </th>
-                                <th scope="col">Renewal Fees Ends on </th>
-                                <th scope="col">Renewal Late Fees </th>
-                                <th scope="col">Renewal Late Fees As on </th>
-                                <th scope="col">Renewal Late Fees Ends on</th>
-                                <th class="text-center" scope="col">Status</th>
-                                {{-- <th class="text-center" scope="col">Sales</th> --}}
-                                <th scope="col">Created Date</th>
-                                <th scope="col">Updated Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            {{-- <div class="modal-footer">
-                <button class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i> Discard</button>
-                <button type="button" class="btn btn-primary">Save</button>
-            </div> --}}
-        </div>
-    </div>
-</div>
-
-
-
 
 
 @include('admincms.include.footer');

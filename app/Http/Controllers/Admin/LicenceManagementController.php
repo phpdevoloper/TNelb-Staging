@@ -40,8 +40,8 @@ class LicenceManagementController extends BaseController
     public function index(){
 
         $all_licences = MstLicence::where('status', 1)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+        ->orderBy('created_at', 'desc')
+        ->get();
 
 
         $activeForms = TnelbForms::leftJoin('mst_licences', DB::raw('CAST(tnelb_forms.license_name AS INTEGER)'), '=', 'mst_licences.id')
@@ -59,22 +59,20 @@ class LicenceManagementController extends BaseController
     public function view_licences(){
 
         $categories = LicenceCategory::where('status', 1)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-         $all_licences = MstLicence::leftJoin('mst_licence_category', 'mst_licences.category_id', '=', 'mst_licence_category.id')
-                    ->where('mst_licences.status', 1)
-                    ->orderBy('mst_licences.created_at', 'desc')
-                    ->select('mst_licence_category.category_name', 'mst_licences.*')
-                    ->get();
-
+        $all_licences = MstLicence::leftJoin('mst_licence_category', 'mst_licences.category_id', '=', 'mst_licence_category.id')
+        ->where('mst_licences.status', 1)
+        ->orderBy('mst_licences.created_at', 'desc')
+        ->select('mst_licence_category.category_name', 'mst_licences.*')
+        ->get();
 
         return view('admincms.forms.view_forms', compact('categories','all_licences'));
     }
 
     public function add_licence(Request $request)
     {
-        // var_dump($request->all());die;
         try {
             // 🔹 1. Validate input fields
             $validated = $request->validate([
@@ -169,9 +167,14 @@ class LicenceManagementController extends BaseController
         ]);
     }
 
-    public function formHistory(){
+    public function formHistory(Request $request){
+
+
+        $form_id = $request->form_id;
+
 
         $formHistory = TnelbForms::where('status', 0)
+                    ->where('license_name', $form_id)
                     ->orderBy('created_at', 'desc')
                     ->get();
 
