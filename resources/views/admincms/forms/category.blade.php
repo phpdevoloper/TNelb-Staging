@@ -69,6 +69,8 @@
                                                 <th class="checkbox-column dt-no-sorting"> S.No </th>
                                                 <th>Category Name</th>
                                                 <th class="text-center">Status</th>
+                                                <th class="text-center">Created Date</th>
+                                                <th class="text-center">Updated Date</th>
                                                 <th class="text-center dt-no-sorting">Action</th>
                                             </tr>
                                         </thead>
@@ -90,18 +92,27 @@
                                                         @endif
                                                     </td>
 
+                                                    <td>{{ \Carbon\Carbon::parse($category->created_at)->format('d/m/Y') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($category->updated_at)->format('d/m/Y') }}</td>
+
                                                     <!-- Action -->
                                                     <td class="text-center">
-                                                        <a href="javascript:void(0);" class="bs-tooltip" 
-                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
-                                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
-                                                                class="feather feather-edit">
-                                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                                        <a href="javascript:void(0);" 
+                                                            class="bs-tooltip editCategoryBtn"
+                                                            title="Edit"
+                                                            data-cate_id="{{ $category->id }}"
+                                                            data-category_name="{{ $category->category_name }}"
+                                                            data-status="{{ $category->status }}"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#addCategoryModal">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                                    class="feather feather-edit">
+                                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                                             </svg>
-                                                        </a>
+                                                            </a>
                                                     </td>
                                                 </tr>
                                             @empty
@@ -118,17 +129,17 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
 
+
 <!-- Modal -->
-<div class="modal fade" id="addFormModal" tabindex="-1" role="dialog" aria-labelledby="addFormModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
+<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addFormModalLabel"><span class="badge badge-primary"><i class="fa fa-wpforms"></i></span> Add Form</h5>
+                <h5 class="modal-title" id="addCategoryModalLabel"><span class="badge badge-primary"></span> Edit Category</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle">
@@ -140,119 +151,23 @@
                 </button>
                 {{-- <span><span class="text-danger">(Note:</span> Currently, late fees are applicable only during the last 3 months before the expiry date.)</span> --}}
             </div>
-            <form id="feesForm" enctype="multipart/form-data">
+            <form id="edit_category_form" enctype="multipart/form-data">
             <div class="modal-body">
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label for="inputEmail4" class="form-label">Certificate Name <span class="text-danger">*</span> </label>
-                        <input type="text" class="form-control" name="cert_name">
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label for="inputEmail4" class="form-label">Category Name <span class="text-danger">*</span> </label>
+                        <input type="text" class="form-control" name="edit_cate_name" id="edit_cate_name">
+                        <small class="text-danger d-none error-cate">Please fill the Category</small>
                     </div>
-                    <div class="col-md-6">
-                        <label for="inputPassword4" class="form-label">Form Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="form_name">
-                    </div>
-                </div>
-
-                <hr style="border-top: 1px solid #4361ee;">
-
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6 custom-box mb-3">
-                        <div class="text-primary mb-3">₹ Fees Details</div>
-                        <div class="row g-3">
-                            <div class="col-md-6 mb-2">
-                                <label for="inputEmail4" class="form-label">Fees for Fresh Form <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text">₹</span>
-                                    <input type="number" class="form-control" name="fresh_fees" min="0" placeholder="0">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <label for="inputEmail4" class="form-label">Fresh Form Fees As on<span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" name="fresh_fees_on">
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <label for="inputPassword4" class="form-label">Fees for Renewal Form <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text">₹</span>
-                                    <input type="number" class="form-control" name="renewal_fees" min="0" placeholder="0">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <label for="inputEmail4" class="form-label">Renewal Form As on<span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" name="renewal_fees_on">
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <label for="inputPassword4" class="form-label">Late Fees for Renewal Form <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text">₹</span>
-                                    <input type="number" class="form-control" name="latefee_for_renewal" min="0" placeholder="0">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <label for="inputEmail4" class="form-label">Renewal Late Fees As on<span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" name="late_renewal_fees_on">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 custom-box mb-3">
-                        <div class="text-primary mb-3"><i class="fa fa-clock-o"></i> Durations</div>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="inputEmail4" class="form-label">Duration for Fresh Form <span class="text-danger">*</span></label><br>
-                                <div class="input-group">
-                                    <input type="number" class="form-control fees_amount" name="fresh_form_duration" min="0">
-                                    <span class="input-group-text">months</span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="inputEmail4" class="form-label">Fresh Form Duration As on<span class="text-danger">*</span></label>
-                                <input type="date" name="fresh_form_duration_on" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="inputPassword4" class="form-label">Duration for Renewal Form <span class="text-danger">*</span></label><br>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" name="renewal_form_duration"  min="0">
-                                    <span class="input-group-text">months</span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="inputEmail4" class="form-label">Renewal Duration As on<span class="text-danger">*</span></label>
-                                <input type="date" name="renewal_duration_on" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="inputPassword4" class="form-label">Duration of Renewal Late Fees<span class="text-danger">*</span></label><br>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" name="renewal_late_fee_duration"  min="0">
-                                    <span class="input-group-text">months</span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="inputEmail4" class="form-label">Renewal Late Duration As on<span class="text-danger">*</span></label>
-                                <input type="date" name="renewal_late_fee_duration_on" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row custom-box g-3">
-                    <div class="text-primary mb-3"><i class="fa fa-file-pdf-o"></i> Others</div>
-                    <div class="col-md-6">
-                        <label for="inputEmail4" class="form-label">Instrctions Upload</label>
-                        <span class="text-success">(PDF. Max size of 250K)</span>
-                        <input type="file" class="form-control" name="instruction_upload">
-                    </div>
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <label for="inputEmail4" class="form-label d-block mb-2">Status</label>
-                        <!-- Switch centered -->
-                        <div class="d-inline-block text-center">
-                            <div class="switch form-switch-custom switch-inline form-switch-success form-switch-custom dual-label-toggle">
-                                <label class="switch-label switch-label-left" for="form-custom-switch-dual-label">In Active</label>
-                                <div class="input-checkbox">
-                                    <input class="switch-input" type="checkbox" role="switch" name="form_status" checked>
-                                </div>
-                                <label class="switch-label switch-label-right" for="form-custom-switch-dual-label">Active</label>
-                            </div>
-                        </div>
+                        <select class="form-select" name="status" id="status">
+                            <option value="1">Active</option>
+                            <option value="2">In Active</option>
+                        </select>
+                        <small class="text-danger d-none error-cate_status">Category Status is required</small>
                     </div>
+                    <input type="hidden" name="cate_id" id="cate_id">
                 </div>
             </div>
             <div class="modal-footer">
@@ -285,7 +200,8 @@
         "pageLength": 7 
     });
 
-    // $(".fees_amount").TouchSpin({
-    //     verticalbuttons: true,
-    // });
+
+    $(function () {
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    });
 </script>

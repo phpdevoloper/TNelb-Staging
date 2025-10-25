@@ -143,26 +143,52 @@ class LicenceManagementController extends BaseController
     }
 
     public function add_category(Request $request){
-         $request->validate([
-            'cate_name' => ['required', 'regex:/^[a-zA-Z\s]+$/', Rule::unique((new LicenceCategory())->getTable(), 'category_name')],
-        ], [
-            'cate_name.required' => 'Category name is required.',
-            'cate_name.regex' => 'Category name should contain only letters and spaces.',
-            'cate_name.unique' => 'This category already exists.',
-        ]);
 
+        $isUpdate = $request->filled('cate_id');
+        
+        if ($isUpdate) {
+            $request->validate([
+                'edit_cate_name' => ['required', 'regex:/^[a-zA-Z\s]+$/', Rule::unique((new LicenceCategory())->getTable(), 'category_name')],
+                'form_status' => ['nullable', 'in:1,2'],
+                ], [
+                    'edit_cate_name.required' => 'Category name is required.',
+                    'edit_cate_name.regex' => 'Category name should contain only letters and spaces.',
+                    'edit_cate_name.unique' => 'This category already exists.',
+                ]);
+            $category = LicenceCategory::findOrFail($request->cate_id);
+            $category->update([
+                'category_name' => $request->edit_cate_name,
+                'status' => $request->form_status ?? $category->status,
+                'updated_by' => $this->userId,
+                'updated_at' => now()->toDateString(),
+            ]);
+    
+            $message = 'Category updated successfully';
+        } else {
 
-        $category = LicenceCategory::create([
-            'category_name' => $request->cate_name,
-            'status' => 1, 
-            'created_by' => $this->userId,
-            'created_at' => now()->toDateString(),
-            'updated_at' => now()->toDateString(),
-        ]);
+            $request->validate([
+                'cate_name' => ['required', 'regex:/^[a-zA-Z\s]+$/', Rule::unique((new LicenceCategory())->getTable(), 'category_name')],
+                'form_status' => ['nullable', 'in:1,2'],
+                ], [
+                    'cate_name.required' => 'Category name is required.',
+                    'cate_name.regex' => 'Category name should contain only letters and spaces.',
+                    'cate_name.unique' => 'This category already exists.',
+                ]);
+
+            $category = LicenceCategory::create([
+                'category_name' => $request->cate_name,
+                'status' => $request->form_status ?? 1,
+                'created_by' => $this->userId,
+                'created_at' => now()->toDateString(),
+                'updated_at' => now()->toDateString(),
+            ]);
+    
+            $message = 'Category added successfully';
+        }
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Category added successfully',
+            'message' => $message,
             'data' => $category
         ]);
     }

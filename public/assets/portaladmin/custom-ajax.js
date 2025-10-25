@@ -556,6 +556,124 @@ $(document).ready(function() {
         });
     });
 
-    payment
+    // Get all data-* attributes for edit category
+    $(document).on('click', '.editCategoryBtn', function () {
+        const cate_id = $(this).data('cate_id');
+        const category_name = $(this).data('category_name');
+        const status = $(this).data('status');
 
+        // Fill modal inputs
+        $('#cate_id').val(cate_id);
+        $('#edit_cate_name').val(category_name);
+        $('#status').val(status);
+        
+    });
+
+    
+    $("#edit_category_form").on("submit", function (e) {
+        e.preventDefault();
+
+        let isValid = true; // flag to track form validity
+    
+        // Define your fields and rules
+        const fields = [
+            {
+                name: "edit_cate_name",
+                selector: "input[name='edit_cate_name']",
+                errorSelector: ".error-cate",
+                validate: function (val) {
+                    if (val == "") return "Please fill the Category Name";
+                    if (!/^[a-zA-Z\s]+$/.test(val)) return "Category name should contain only letters and spaces";
+                    return null;
+                },
+            },
+            {
+                name: "status",
+                selector: "select[name='status']",
+                errorSelector: ".error-cate_status",
+                validate: function (val) {
+                    if (val === "") return "Please choose the category";
+                    return null;
+                },
+            },
+        ];
+    
+        // Reset previous states
+        $(".error").addClass("d-none").text("");
+        $("input, select").css("border", "");
+    
+        // Loop through fields for validation
+        fields.forEach((field) => {
+            const input = $(field.selector);
+            const value = $.trim(input.val());
+            const errorMsg = $(field.errorSelector);
+            const error = field.validate(value);
+    
+            // Add "hide error when typing" listener once
+            input.off("input change").on("input change", function () {
+                $(this).css("border", "");
+                errorMsg.addClass("d-none").text("");
+            });
+
+    
+            if (error) {
+                input.css("border", "1px solid red");
+                errorMsg.text(error).removeClass("d-none");
+                if (isValid) input.focus(); // Focus first invalid field
+                isValid = false;
+            }
+        });
+    
+        if (!isValid) return false; // stop form submission if validation fails
+    
+        // Prepare form data
+        let formData = new FormData(this);
+
+        console.log(formData);
+    
+    
+        // AJAX submission
+        $.ajax({
+            url: BASE_URL + "/admin/licences/add_category",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            success: function (response) {
+                if (response.status) {
+                    $('#addCategoryModal').modal('hide');
+                    Swal.fire({
+                        icon: "success",
+                        title: response.message || "Form created successfully!",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    }).then(() => {
+                        location.reload();
+                    });
+                    
+                } else {
+                    $('#addCategoryModal').modal('hide');
+                    Swal.fire({
+                        icon: "error",
+                        title: "Failed",
+                        text: response.message || "Something went wrong!",
+                    });
+                }
+            },
+            error: function (xhr) {
+                
+                Swal.fire({
+                    icon: "error",
+                    title: "Server Error",
+                    text: xhr.responseJSON?.message || "Please try again later.",
+                });
+            },
+            
+        });
+
+    });
 });
