@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\File;
 
 class PaymentController extends Controller
 {
-    public function getPaymentDetails(){
-        
-    }
 
     public function updatePayment(Request $request)
     {

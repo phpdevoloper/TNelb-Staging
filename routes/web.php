@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\LicenceManagementController;
 use App\Http\Controllers\Admin\LicensepdfController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CaptchaController;
@@ -104,7 +105,7 @@ Route::middleware(['auth'])->group(function () {
     //New Modified Routes added here 
     Route::get('forms/new_application/{form_code}', [FormController::class, 'new_application'])->name('forms.new_application');
     
-    Route::post('payments/getPaymentDetails', [PaymentController::class, 'getPaymentDetails'])->name('payments.getPaymentDetails');
+    Route::post('licences/getPaymentDetails', [LicenceManagementController::class, 'getPaymentDetails'])->name('licences.getPaymentDetails');
 
 
     

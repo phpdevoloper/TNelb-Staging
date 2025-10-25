@@ -400,9 +400,39 @@
         }
     });
 
+
+    function getPaymentsService(licence_code, callback){
+
+         return $.ajax({
+            url: "{{ route('licences.getPaymentDetails') }}",
+            type: "POST",
+            data: {
+                licence_code: licence_code,
+                _token: $('meta[name="csrf-token"]').attr(
+                    'content')
+            },
+            success: function(response) {
+                // console.log(response);
+                // return false;
+                if (response.status == 'success') {
+                   callback(response.fees_details);
+                } else {
+                  Swal.fire("Error", response.messages, "danger");
+                }
+            },
+            error: function(xhr) {
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    let messages = Object.values(xhr.responseJSON.errors).flat().join("\n");
+                    Swal.fire("Error", messages, "danger");
+                } else {
+                    Swal.fire("An error occurred: " + xhr.responseText);
+                }
+            }
+        });
+        
+    }
+
     $(document).ready(function() {
-
-
         let profile = document.querySelector('.profile');
         let menu = document.querySelector('.menu');
 
@@ -2198,7 +2228,7 @@
 
 
 
-    function showDeclarationModal(form_name) {
+    function showDeclarationModal(form_name) {      
 
         let appl_types = $('#appl_type').val();
 
@@ -2381,26 +2411,41 @@
     }
 
 
-
-    async function showDeclarationPopup(licence_code) {
-
-    console.log(licence_code);
     
+    async function showDeclarationPopup(licence_code) {   
+        
+        let appl_type = $('#appl_type').val();
+        
+        if(appl_type == 'R'){
+            
+            getPaymentsService(licence_code, function(response){
+                let data = JSON.stringify(response);
+                console.log(data);
 
-    let appl_type = $('#appl_type').val();
+                let form_name = data.form_name;
+                let renewalAmount = data.renewal_amount;
+                let renewalAmoutStartson  = data.renewalamount_starts;
 
-    let form_cost = $('#amount').val();
-
-    try {
-
+                
+            });
+            
+            
+            
+        }else{
+            let form_cost = $('#amount').val();
+        }
+        
+        
+        try {
+            
         // 🔹 Now you can safely use form_cost everywhere below
         const modalEl = document.getElementById('competencyInstructionsModal');
         const agreeCheckbox = modalEl.querySelector('#declaration-agree-renew');
         const errorText = modalEl.querySelector('#declaration-error-renew');
         const proceedBtn = modalEl.querySelector('#proceedPayment');
-
+        
         document.getElementById('form_fees').textContent = 'Rs.' + form_cost + '/-';
-
+        
         // Reset state
         agreeCheckbox.checked = false;
         errorText.classList.add('d-none');
@@ -2453,6 +2498,10 @@
             });
 
             if (saveResponse.status === "success") {
+
+                console.log(form_name);
+                return false;
+
                 const login_id = window.login_id || "{{ auth()->user()->login_id ?? '' }}";
                 const application_id = saveResponse.application_id;
                 const transactionDate = new Date().toLocaleDateString('en-GB');
@@ -2460,8 +2509,8 @@
                 const form_name = saveResponse.form_name || 'N/A';
                 const category = saveResponse.type_of_apps || 'N/A';
                 const Type_apps = saveResponse.licence_name || 'N/A';
-                const amount = form_cost;
-                const serviceCharge = 10;
+                // const amount = form_cost;
+                // const serviceCharge = 10;
                 const total_charge = Number(amount) + Number(serviceCharge);
                 const transactionId = "TRX" + Math.floor(100000 + Math.random() * 900000);
                 const payment_mode = 'UPI';
@@ -2518,7 +2567,6 @@
                     buttonsStyling: false,
                     preConfirm: async () => {
                         try {
-                            console.log('Entry');
 
                             const paymentResponse = await $.ajax({
                                 url: "{{ route('payment.updatePayment') }}",
@@ -2538,7 +2586,6 @@
                                 }
                             });
 
-                            console.log("After AJAX Call");
 
                             // ✅ Success condition
                             if (paymentResponse.status === 200) {
@@ -2580,7 +2627,7 @@
                 Swal.fire("Form Submission Failed", "Application not submitted", "error");
             }
         });
-
+        
     } catch (err) {
         console.error("Error fetching form cost or saving form:", err);
     }

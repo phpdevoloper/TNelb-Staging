@@ -148,21 +148,21 @@ class LicenceManagementController extends BaseController
         
         if ($isUpdate) {
             $request->validate([
-                'edit_cate_name' => ['required', 'regex:/^[a-zA-Z\s]+$/', Rule::unique((new LicenceCategory())->getTable(), 'category_name')],
+                'edit_cate_name' => ['required', 'regex:/^[a-zA-Z\s]+$/'],
                 'form_status' => ['nullable', 'in:1,2'],
-                ], [
-                    'edit_cate_name.required' => 'Category name is required.',
-                    'edit_cate_name.regex' => 'Category name should contain only letters and spaces.',
-                    'edit_cate_name.unique' => 'This category already exists.',
-                ]);
+            ], [
+                'edit_cate_name.required' => 'Category name is required.',
+                'edit_cate_name.regex' => 'Category name should contain only letters and spaces.',
+            ]);
+            
             $category = LicenceCategory::findOrFail($request->cate_id);
             $category->update([
                 'category_name' => $request->edit_cate_name,
-                'status' => $request->form_status ?? $category->status,
+                'status' => $request->status ?? $category->status,
                 'updated_by' => $this->userId,
                 'updated_at' => now()->toDateString(),
             ]);
-    
+            
             $message = 'Category updated successfully';
         } else {
 
@@ -240,6 +240,43 @@ class LicenceManagementController extends BaseController
         
     }
 
+    public function getPaymentDetails(Request $request){
+
+        $licence_code = $request->licence_code;
+
+        // var_dump($licence_code);die;
+
+        try {
+            $current_licence = DB::table('mst_licences as l')
+            ->leftJoin('tnelb_forms as f', DB::raw('CAST(f.license_name AS INTEGER)'), '=', 'l.id')
+            ->where('f.status', 1)
+            ->where('l.cert_licence_code', $licence_code)
+            ->select('f.*', 'l.*')
+            ->orderBy('f.created_at', 'desc')
+            ->first();
+
+            // var_dump($current_licence);die;
+
+            if ($current_licence) {
+                return response()->json([
+                    'status' => 'success',
+                    'fees_details' => $current_licence,
+                ], 200);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No matching licence found.',
+                ], 404);
+            }
+
+        } catch (Exception $e) {
+             return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong. ' . $e->getMessage(),
+            ], 500);
+        }    
+    }
+
 
     public function addNewForm(Request $request)
     {
@@ -266,11 +303,7 @@ class LicenceManagementController extends BaseController
 
         DB::beginTransaction(); 
         
-
         try {
-
-            
-            
 
             $form = TnelbForms::create([
                 'form_name'                 => $request->form_name,
@@ -357,11 +390,7 @@ class LicenceManagementController extends BaseController
         
 
         try {
-            // var_dump($checked_form);die;
-
-            // if ($checked_form) {
-                
-            // }
+   
 
             $form_id = $request->form_id;
             $checked_form = TnelbForms::find($form_id);
@@ -409,18 +438,12 @@ class LicenceManagementController extends BaseController
                 ]);
             }
 
-
-
             if ($checked_form) {
                 $checked_form->status = 0;
                 $checked_form->updated_by = $this->userId; 
                 $checked_form->updated_at = now(); 
                 $checked_form->save();
             }
-
-
-
-            
 
             $form = TnelbForms::create([
                 'form_name'                 => $request->form_name,
@@ -477,6 +500,8 @@ class LicenceManagementController extends BaseController
             ], 500);
         }
     }
+
+
 
 
     
