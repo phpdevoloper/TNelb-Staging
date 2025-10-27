@@ -401,33 +401,38 @@
     });
 
 
-    function getPaymentsService(licence_code, callback){
-
-         return $.ajax({
-            url: "{{ route('licences.getPaymentDetails') }}",
-            type: "POST",
-            data: {
-                licence_code: licence_code,
-                _token: $('meta[name="csrf-token"]').attr(
-                    'content')
-            },
-            success: function(response) {
-                // console.log(response);
-                // return false;
-                if (response.status == 'success') {
-                   callback(response.fees_details);
-                } else {
-                  Swal.fire("Error", response.messages, "danger");
+    function getPaymentsService(licence_code,issued_licence, callback){
+        
+        return new Promise((resolve, reject) => {
+                $.ajax({
+                url: "{{ route('licences.getPaymentDetails') }}",
+                type: "POST",
+                data: {
+                    licence_code: licence_code,
+                    issued_licence: issued_licence,
+                    _token: $('meta[name="csrf-token"]').attr(
+                        'content')
+                },
+                success: function(response) {
+                    // console.log(response);
+                    // return false;
+                    if (response.status == 'success') {
+                        resolve(response.fees_details);
+                    } else {
+                    Swal.fire("Error", response.messages, "danger");
+                    reject(response);
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        let messages = Object.values(xhr.responseJSON.errors).flat().join("\n");
+                        Swal.fire("Error", messages, "danger");
+                    } else {
+                        Swal.fire("An error occurred: " + xhr.responseText);
+                    }
+                    reject(xhr);
                 }
-            },
-            error: function(xhr) {
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    let messages = Object.values(xhr.responseJSON.errors).flat().join("\n");
-                    Swal.fire("Error", messages, "danger");
-                } else {
-                    Swal.fire("An error occurred: " + xhr.responseText);
-                }
-            }
+            });
         });
         
     }
@@ -2413,31 +2418,51 @@
 
     
     async function showDeclarationPopup(licence_code) {   
-        
-        let appl_type = $('#appl_type').val();
-        
-        if(appl_type == 'R'){
-            
-            getPaymentsService(licence_code, function(response){
-                let data = JSON.stringify(response);
-                console.log(data);
 
-                let form_name = data.form_name;
-                let renewalAmount = data.renewal_amount;
-                let renewalAmoutStartson  = data.renewalamount_starts;
-
-                
-            });
-            
-            
-            
-        }else{
-            let form_cost = $('#amount').val();
-        }
-        
-        
         try {
             
+            let form_cost, form_name, licence, renewalAmoutStartson, latefee_amount, latefee_starts;
+            
+            const appl_type = $('#appl_type').val();
+            const issued_licence = $('#license_number').val();
+
+            // console.log(issued_licence);
+            
+            
+            
+            if(appl_type == 'R'){
+                
+                const data = await getPaymentsService(licence_code, issued_licence);
+                // console.log('🔹 Payment Data:', data);
+
+                // return false;
+
+                    // const data = JSON.stringify(response);
+                    // console.log(data);
+                    
+                    form_name = data.form_name;
+                    form_cost = data.renewal_amount;
+                    renewalAmoutStartson  = data.renewalamount_starts;
+                    latefee_amount  = data.latefee_amount;
+                    latefee_starts  = data.latefee_starts;
+                    licence  = data.licence_name;
+
+                    console.log(form_cost);
+                    
+                // });
+                
+            }else{
+                let form_cost = $('#amount').val();
+            }
+
+
+        console.log(form_cost);
+                // return false;
+
+        
+        
+        
+                
         // 🔹 Now you can safely use form_cost everywhere below
         const modalEl = document.getElementById('competencyInstructionsModal');
         const agreeCheckbox = modalEl.querySelector('#declaration-agree-renew');
@@ -2499,7 +2524,7 @@
 
             if (saveResponse.status === "success") {
 
-                console.log(form_name);
+                console.log(form_cost);
                 return false;
 
                 const login_id = window.login_id || "{{ auth()->user()->login_id ?? '' }}";
@@ -2509,8 +2534,8 @@
                 const form_name = saveResponse.form_name || 'N/A';
                 const category = saveResponse.type_of_apps || 'N/A';
                 const Type_apps = saveResponse.licence_name || 'N/A';
-                // const amount = form_cost;
-                // const serviceCharge = 10;
+                const amount = form_cost;
+                const serviceCharge = 10;
                 const total_charge = Number(amount) + Number(serviceCharge);
                 const transactionId = "TRX" + Math.floor(100000 + Math.random() * 900000);
                 const payment_mode = 'UPI';

@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseController;
 use App\Models\Admin\LicenceCategory;
 use App\Models\Admin\TnelbForms;
 use App\Models\MstLicence;
+use App\Models\TnelbLicense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -241,12 +242,22 @@ class LicenceManagementController extends BaseController
     }
 
     public function getPaymentDetails(Request $request){
-
+        
         $licence_code = $request->licence_code;
-
-        // var_dump($licence_code);die;
+        $issued_licence = $request->issued_licence;
+        
+        // var_dump($issued_licence);die;
 
         try {
+
+
+            $licence_details = TnelbLicense::where('license_number', $issued_licence)
+            ->select('*')
+            ->first();
+
+            // echo $licence_details->issued_at,$licence_details->expiry_date;
+
+
             $current_licence = DB::table('mst_licences as l')
             ->leftJoin('tnelb_forms as f', DB::raw('CAST(f.license_name AS INTEGER)'), '=', 'l.id')
             ->where('f.status', 1)
@@ -255,7 +266,38 @@ class LicenceManagementController extends BaseController
             ->orderBy('f.created_at', 'desc')
             ->first();
 
-            // var_dump($current_licence);die;
+            var_dump($current_licence->latefee_amount);die;
+            $current = Carbon::now();
+
+            // echo $current;
+
+            var_dump($current);die;
+
+            $threeMonthsBeforeExpiry = (clone $licence_details->expiry_date)->modify('-3 months');
+
+            $lateFee = 0;
+
+            if ($current < $threeMonthsBeforeExpiry) {
+                return $lateFee;
+            }
+
+            // Case 2: Within the 3 months before expiry
+            if ($current >= $threeMonthsBeforeExpiry && $current <= $licence_details->expiry_date) {
+                // How many months difference from the start of 3-month window
+                $diff = $threeMonthsBeforeExpiry->diff($current);
+                $monthDiff = $diff->m + ($diff->y * 12);
+
+                // At least 1 month means late fee applies
+                $lateFee = $current_licence->latefee_amount * ($monthDiff + 1);
+                return $lateFee;
+            }
+
+
+
+            // echo $threeMonthsBeforeExpiry;die;
+
+
+
 
             if ($current_licence) {
                 return response()->json([
