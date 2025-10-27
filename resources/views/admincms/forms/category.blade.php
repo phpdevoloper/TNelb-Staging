@@ -157,7 +157,7 @@
                     <div class="col-md-12">
                         <label for="inputEmail4" class="form-label">Category Name <span class="text-danger">*</span> </label>
                         <input type="text" class="form-control" name="edit_cate_name" id="edit_cate_name">
-                        <small class="text-danger d-none error-cate">Please fill the Category</small>
+                        <small class="text-danger d-none error-cate_name_error">Please fill the Category</small>
                     </div>
                     <div class="col-md-12">
                         <label for="inputEmail4" class="form-label d-block mb-2">Status</label>

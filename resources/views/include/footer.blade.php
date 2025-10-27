@@ -2418,93 +2418,71 @@
 
     
     async function showDeclarationPopup(licence_code) {   
-
+        
         try {
             
             let form_cost, form_name, licence, renewalAmoutStartson, latefee_amount, latefee_starts;
             
             const appl_type = $('#appl_type').val();
             const issued_licence = $('#license_number').val();
-
-            // console.log(issued_licence);
-            
             
             
             if(appl_type == 'R'){
                 
                 const data = await getPaymentsService(licence_code, issued_licence);
-                // console.log('🔹 Payment Data:', data);
-
-                // return false;
-
-                    // const data = JSON.stringify(response);
-                    // console.log(data);
-                    
-                    form_name = data.form_name;
-                    form_cost = data.renewal_amount;
-                    renewalAmoutStartson  = data.renewalamount_starts;
-                    latefee_amount  = data.latefee_amount;
-                    latefee_starts  = data.latefee_starts;
-                    licence  = data.licence_name;
-
-                    console.log(form_cost);
-                    
-                // });
+                
+                // form_name = data.form_name;
+                form_cost = data.renewalFee;
+                lateFee  = data.lateFees || 'N/A';
+                licence  = data.certificate_name;
                 
             }else{
                 let form_cost = $('#amount').val();
             }
-
-
-        console.log(form_cost);
-                // return false;
-
-        
-        
-        
-                
-        // 🔹 Now you can safely use form_cost everywhere below
-        const modalEl = document.getElementById('competencyInstructionsModal');
-        const agreeCheckbox = modalEl.querySelector('#declaration-agree-renew');
-        const errorText = modalEl.querySelector('#declaration-error-renew');
-        const proceedBtn = modalEl.querySelector('#proceedPayment');
-        
-        document.getElementById('form_fees').textContent = 'Rs.' + form_cost + '/-';
-        
-        // Reset state
-        agreeCheckbox.checked = false;
-        errorText.classList.add('d-none');
-
-        // Show modal
-        const modal = new bootstrap.Modal(modalEl, {
-            backdrop: 'static',
-            keyboard: false
-        });
-        modal.show();
-
-        // Remove old listeners
+            
+            
+            // 🔹 Now you can safely use form_cost everywhere below
+            const modalEl = document.getElementById('competencyInstructionsModal');
+            const agreeCheckbox = modalEl.querySelector('#declaration-agree-renew');
+            const errorText = modalEl.querySelector('#declaration-error-renew');
+            const proceedBtn = modalEl.querySelector('#proceedPayment');
+            
+            document.getElementById('form_fees').textContent = 'Rs.' + form_cost + '/-';
+            
+            // Reset state
+            agreeCheckbox.checked = false;
+            errorText.classList.add('d-none');
+            
+            // Show modal
+            const modal = new bootstrap.Modal(modalEl, {
+                backdrop: 'static',
+                keyboard: false
+            });
+            modal.show();
+            
+            // Remove old listeners
         proceedBtn.replaceWith(proceedBtn.cloneNode(true));
-
+        
         // Re-assign click listener
         modalEl.querySelector('#proceedPayment').addEventListener('click', async function() {
             if (!agreeCheckbox.checked) {
                 errorText.classList.remove('d-none');
                 return;
             }
-
+            
             modal.hide();
-
+            
             let formData = new FormData($('#competency_form_ws')[0]);
             let applicationId = $('#application_id').val();
             let formUrl;
-
+            
             if (applicationId) {
                 if (appl_type === 'R') {
                     formUrl = "{{ route('form.draft_renewal_submit', ['appl_id' => '__APPL_ID__']) }}"
-                        .replace('__APPL_ID__', applicationId);
+                    .replace('__APPL_ID__', applicationId);
                 } else {
                     formUrl = "{{ route('form.update', ['appl_id' => '__APPL_ID__']) }}"
-                        .replace('__APPL_ID__', applicationId);
+                    .replace('__APPL_ID__', applicationId);
                 }
             } else {
                 formUrl = "{{ route('form.store') }}";
@@ -2521,22 +2499,18 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
+            
             if (saveResponse.status === "success") {
-
-                console.log(form_cost);
-                return false;
 
                 const login_id = window.login_id || "{{ auth()->user()->login_id ?? '' }}";
                 const application_id = saveResponse.application_id;
                 const transactionDate = new Date().toLocaleDateString('en-GB');
                 const applicantName = saveResponse.applicantName || 'N/A';
                 const form_name = saveResponse.form_name || 'N/A';
-                const category = saveResponse.type_of_apps || 'N/A';
-                const Type_apps = saveResponse.licence_name || 'N/A';
+                const type_apps = licence || 'N/A';
                 const amount = form_cost;
                 const serviceCharge = 10;
-                const total_charge = Number(amount) + Number(serviceCharge);
+                const total_charge = Number(amount) + Number(lateFee) + Number(serviceCharge);
                 const transactionId = "TRX" + Math.floor(100000 + Math.random() * 900000);
                 const payment_mode = 'UPI';
                 // 🔹 Show payment popup
@@ -2559,12 +2533,12 @@
                                         <td style="text-align: right; padding: 10px; font-weight: bold; color: #0d6efd;">Rs. ${amount} /-</td>
                                     </tr>
                                     <tr>
-                                        <th style="text-align: left; padding: 6px 10px; width: 50%; color: #555;">Type</th>
-                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${category}</td>
+                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Type</th>
+                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${type_apps}</td>
                                     </tr>
                                     <tr>
-                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Type of Applications</th>
-                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${Type_apps}</td>
+                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Late Fees(Within 3 Months)</th>
+                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${lateFee}</td>
                                     </tr>
                                     <tr>
                                         <th style="text-align: left; padding: 6px 10px; color: #555;">Service Charge</th>

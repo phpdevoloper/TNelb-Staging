@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\DB;
 
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\Storage;
 use Exception;
@@ -75,6 +76,7 @@ class LicenceManagementController extends BaseController
     public function add_licence(Request $request)
     {
         try {
+            $isUpdate = !empty($request->cert_id);
             // 🔹 1. Validate input fields
             $validated = $request->validate([
                 'form_cate'     => 'required|integer',
@@ -102,17 +104,24 @@ class LicenceManagementController extends BaseController
                 'form_name'         => trim($request->form_name),
                 'form_code'         => strtoupper(trim($request->form_code)),
                 'status'            => $request->form_status,
-                'created_at'        => now(),
-                'updated_at'        => now(),
             ];
 
+            if ($isUpdate) {
+                $data['updated_at'] = now();
+                MstLicence::where('id', $request->cert_id)
+                ->update($data);
 
-            DB::table('mst_licences')->insert($data);
+                $message = 'Updated successfully!';
+            }else{
+                $data['created_at'] = now();
+                MstLicence::insert($data);
+                $message = 'Created successfully!';
+            }
 
             // 🔹 3. Return JSON response for AJAX
             return response()->json([
                 'status'  => true,
-                'message' => 'Form created successfully!',
+                'message' => $message,
             ], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -254,10 +263,7 @@ class LicenceManagementController extends BaseController
             $licence_details = TnelbLicense::where('license_number', $issued_licence)
             ->select('*')
             ->first();
-
-            // echo $licence_details->issued_at,$licence_details->expiry_date;
-
-
+       
             $current_licence = DB::table('mst_licences as l')
             ->leftJoin('tnelb_forms as f', DB::raw('CAST(f.license_name AS INTEGER)'), '=', 'l.id')
             ->where('f.status', 1)
@@ -266,43 +272,55 @@ class LicenceManagementController extends BaseController
             ->orderBy('f.created_at', 'desc')
             ->first();
 
-            var_dump($current_licence->latefee_amount);die;
-            $current = Carbon::now();
 
-            // echo $current;
+            $issuedAt = $licence_details->issued_at;
+            $expiry = $licence_details->expires_at;
+            
+            $lateFeeAmount = $current_licence->latefee_amount;
+            $durationInDays = $current_licence->duration_latefee;
+            $lateFeeStarts = $current_licence->latefee_starts;
+            
+            $freshFee = $current_licence->fresh_fee_amount;
+            $freshFeeStarts = $current_licence->fresh_fee_starts;
+            $renewalFee = $current_licence->renewal_amount;
+            $renewalFeeStarts = $current_licence->renewal_amount;
+            
+            $current = new DateTime('2029-7-28');
 
-            var_dump($current);die;
-
-            $threeMonthsBeforeExpiry = (clone $licence_details->expiry_date)->modify('-3 months');
-
+            // Calculate the 3-period-before-expiry date (based on durationInDays)
+            $threePeriodsBeforeExpiry = (clone $expiry)->modify("-" . ($durationInDays * 3) . " days");
+            $fees_details = [];
             $lateFee = 0;
 
-            if ($current < $threeMonthsBeforeExpiry) {
-                return $lateFee;
+            if ($current < $threePeriodsBeforeExpiry) {
+                $lateFee;
             }
 
-            // Case 2: Within the 3 months before expiry
-            if ($current >= $threeMonthsBeforeExpiry && $current <= $licence_details->expiry_date) {
+            if ($current > $expiry) {
+                // ✅ Case 1: After expiry
+                $diff = $expiry->diff($current);
+                $monthDiff = $diff->m + ($diff->y * 12);
+                $fees_details['renewalFee'] = $freshFee;
+                $fees_details['lateFees'] = $lateFee;
+
+            }elseif ($current >= $threePeriodsBeforeExpiry && $current <= $expiry) {
+                // Case 2: Within the 3 months before expiry
                 // How many months difference from the start of 3-month window
-                $diff = $threeMonthsBeforeExpiry->diff($current);
+                $diff = $threePeriodsBeforeExpiry->diff($current);
                 $monthDiff = $diff->m + ($diff->y * 12);
 
                 // At least 1 month means late fee applies
                 $lateFee = $current_licence->latefee_amount * ($monthDiff + 1);
-                return $lateFee;
+                $fees_details['renewalFee'] = $renewalFee;
+                $fees_details['lateFees'] = $lateFee;
             }
 
-
-
-            // echo $threeMonthsBeforeExpiry;die;
-
-
-
+            $fees_details['certificate_name'] = $current_licence->licence_name;
 
             if ($current_licence) {
                 return response()->json([
                     'status' => 'success',
-                    'fees_details' => $current_licence,
+                    'fees_details' => $fees_details,
                 ], 200);
             } else {
                 return response()->json([
@@ -440,9 +458,10 @@ class LicenceManagementController extends BaseController
             if (!$checked_form) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Form not found',
+                    'message' => 'Fees Details not found',
                 ]);
             }
+
             
             // Create an array of fields to compare
             $fieldsToCompare = [
@@ -482,18 +501,24 @@ class LicenceManagementController extends BaseController
 
             if ($checked_form) {
                 $checked_form->status = 0;
+                $checked_form->fresh_fee_ends = now(); 
+                $checked_form->renewalamount_ends = now(); 
+                $checked_form->latefee_ends = now(); 
+                $checked_form->duration_freshfee_ends = now(); 
+                $checked_form->duration_renewalfee_ends = now(); 
+                $checked_form->duration_latefee_ends = now(); 
                 $checked_form->updated_by = $this->userId; 
                 $checked_form->updated_at = now(); 
                 $checked_form->save();
             }
 
             $form = TnelbForms::create([
-                'form_name'                 => $request->form_name,
-                'license_name'              => $request->cert_name,
+                'form_name'                     => $request->form_name,
+                'license_name'                  => $request->cert_name,
 
-                'fresh_fee_amount'          => $request->fresh_fees,
-                'fresh_fee_starts'          => $request->fresh_fees_on,
-                'fresh_fee_ends'            => $request->fresh_fees_ends_on,
+                'fresh_fee_amount'              => $request->fresh_fees,
+                'fresh_fee_starts'              => $request->fresh_fees_on,
+                'fresh_fee_ends'                => $request->fresh_fees_ends_on,
 
                 'renewal_amount'            => $request->renewal_fees,
                 'renewalamount_starts'      => $request->renewal_fees_on,

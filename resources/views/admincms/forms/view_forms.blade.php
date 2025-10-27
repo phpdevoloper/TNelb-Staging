@@ -114,33 +114,41 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse($all_licences as $index => $category)
+                                            @forelse($all_licences as $index => $row)
                                                 <tr>
                                                     <!-- S.No -->
                                                     <td class="text-center">{{ $index + 1 }}</td>
 
                                                     <!-- Category Name -->
-                                                    <td>{{ $category->licence_name }}</td>
+                                                    <td>{{ $row->licence_name }}</td>
 
-                                                    <td>{{ $category->form_name }}</td>
+                                                    <td>{{ $row->form_name }}</td>
                                                     
-                                                    <td>{{ $category->category_name }}</td>
+                                                    <td>{{ $row->category_name }}</td>
 
                                                     <!-- Status -->
                                                     <td class="text-center">
-                                                        @if($category->status == 1)
+                                                        @if($row->status == 1)
                                                             <span class="badge outline-badge-success">Active</span>
                                                         @else
                                                             <span class="badge outline-badge-danger">Inactive</span>
                                                         @endif
                                                     </td>
 
-                                                    <td class="text-center">{{ $category->created_at }}</td>
+                                                    <td class="text-center">{{ $row->created_at }}</td>
 
                                                     <!-- Action -->
                                                     <td class="text-center">
-                                                        <a href="javascript:void(0);" class="bs-tooltip" 
-                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                                                        <a href="javascript:void(0);" class="bs-tooltip editForm" 
+                                                            data-bs-toggle="modal" data-bs-target="#editFormModal" title="Edit"
+                                                            data-row_id="{{ $row->id }}"
+                                                            data-form_name="{{ $row->form_name }}"
+                                                            data-licence_name="{{ $row->licence_name }}"
+                                                            data-category="{{ $row->category_id }}"
+                                                            data-cert_licence_code="{{ $row->cert_licence_code }}"
+                                                            data-form_code="{{ $row->form_code }}"
+                                                            data-status="{{ $row->status }}"
+                                                            >
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
                                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" 
                                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
@@ -170,7 +178,7 @@
 </div>
 
 
-<!-- Modal -->
+<!--Add Modal -->
 <div class="modal fade" id="addFormModal" tabindex="-1" role="dialog" aria-labelledby="addFormModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -230,6 +238,76 @@
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Create</button>
+                            <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#feesForm').trigger('reset');"><i class="flaticon-cancel-12"></i> Discard</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--Add Edit Modal -->
+<div class="modal fade" id="editFormModal" tabindex="-1" role="dialog" aria-labelledby="editFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editFormModalLabel"><span class="badge badge-primary"><i class="fa fa-wpforms"></i></span> Edit Certificate / Licences</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                    </button>
+                </button>
+                {{-- <span><span class="text-danger">(Note:</span> Currently, late fees are applicable only during the last 3 months before the expiry date.)</span> --}}
+            </div>
+            <form id="editForms" class="simple-example" novalidate>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-6 mb-2">
+                            <label for="inputEmail4" class="form-label">Category<span class="text-danger">*</span> </label>
+                            <select class="form-select" name="edit_form_cate" id="edit_form_cate">
+                                <option value="">Please select category</option>
+                                @foreach ($categories as $item)
+                                    <option value="{{ $item->id }}">{{ $item->category_name }}</option>
+                                @endforeach
+                            </select>
+                            <small class="text-danger d-none error-edit_form_cate">Please choose the category</small>
+                        </div>
+                        <div class="col-lg-6 mb-2">
+                            <label for="inputEmail4" class="form-label">Certificate / Licence Name <span class="text-danger">*</span> </label>
+                            <input type="text" class="form-control" name="edit_cert_name" id="edit_cert_name">
+                            <small class="text-danger d-none error-cer_error">Please fill the Certificate / Licence Name</small>
+                        </div>
+                        <div class="col-lg-6 mb-2">
+                            <label for="inputEmail4" class="form-label">Certificate / Licence Code <span class="text-danger">*</span> </label>
+                            <input type="text" class="form-control" name="edit_cate_licence_code" id="edit_cate_licence_code" maxlength="5" placeholder="eg.C,B">
+                            <small class="text-danger d-none error-cert_code_error">Please fill the Certificate / Licence Code</small>
+                        </div>
+                        <div class="col-lg-6 mb-2">
+                            <label for="inputEmail4" class="form-label">Form Name <span class="text-danger">*</span> </label>
+                            <input type="text" class="form-control" name="edit_form_name" id="edit_form_name">
+                            <small class="text-danger d-none error-edit_form_name">Please fill the Form Name</small>
+                        </div>
+                        <div class="col-lg-6 mb-2">
+                            <label for="inputEmail4" class="form-label">Form Code <span class="text-danger">*</span> </label>
+                            <input type="text" class="form-control" name="edit_form_code" id="edit_form_code" maxlength="5" placeholder="eg.S,W">
+                            <small class="text-danger d-none error-edit_form_code">Please choose the Form Code</small>
+                        </div>
+                        <div class="col-lg-6 mb-2">
+                            <label for="inputEmail4" class="form-label">Status<span class="text-danger">*</span> </label>
+                            <select class="form-select" name="edit_form_status" id="edit_form_status">
+                                <option value="1">Active</option>
+                                <option value="2">In Active</option>
+                            </select>
+                            <small class="text-danger d-none error-edit_form_status">Please choose the Form status</small>
+                        </div>
+                        <input type="hidden" name="cert_id" id="edit_cert_id">
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Update</button>
                             <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#feesForm').trigger('reset');"><i class="flaticon-cancel-12"></i> Discard</button>
                         </div>
                     </div>

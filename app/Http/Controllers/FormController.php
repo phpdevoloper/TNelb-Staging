@@ -1439,6 +1439,8 @@ if ($request->hasFile('pancard_doc')) {
                 $form = Mst_Form_s_w::create($data); // brand-new renewal application entry ✅
             }
 
+            // var_dump($form->form_name);die;
+
             // -------------------------
             // ALWAYS-INSERT Education  ✅
             // -------------------------
@@ -1476,18 +1478,7 @@ if ($request->hasFile('pancard_doc')) {
                     $lastNum++;
                     $newSerial = 'edu_' . $lastNum;
 
-                    // Mst_education::updateOrCreate([
-                    //     'login_id'          => $loginId,
-                    //     'application_id'    => $applicationId,
-                    //     'educational_level' => $levelName,
-                    //     'institute_name'    => $institute,
-                    //     'year_of_passing'   => $year,
-                    //     'percentage'        => $percentage,
-                    //     'upload_document'   => $finalDoc,    // may be NULL — that’s okay for renewal
-                    //     'edu_serial'        => $newSerial,
-                    // ]);
-
-
+         
                     Mst_education::updateOrCreate(
                         [
                             'login_id'          => $loginId,
@@ -1538,16 +1529,6 @@ if ($request->hasFile('pancard_doc')) {
 
                     $lastNum++;
                     $newSerial = 'exp_' . $lastNum;
-
-                    // Mst_experience::create([
-                    //     'login_id'        => $loginId,
-                    //     'application_id'  => $applicationId,
-                    //     'company_name'    => $companyName,
-                    //     'experience'      => $expYears,
-                    //     'designation'     => $designation,
-                    //     'upload_document' => $finalDoc,   // may be NULL
-                    //     'exp_serial'      => $newSerial,
-                    // ]);
 
                     Mst_experience::updateOrCreate(
                         [
@@ -1602,8 +1583,10 @@ if ($request->hasFile('pancard_doc')) {
                 'status'         => 'success',
                 'message'        => $action === 'draft' ? 'Draft saved successfully!' : 'Form submitted successfully!',
                 'application_id' => $applicationId,
-                'applicantName'  => $form->applicant_name
+                'applicantName'  => $form->applicant_name,
+                'form_name'      => $form->form_name
             ]);
+
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([

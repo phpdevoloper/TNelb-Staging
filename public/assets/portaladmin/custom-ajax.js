@@ -92,7 +92,10 @@ $(document).ready(function() {
         // $('#openHistoryBtn').attr('data-form_id', '').attr('data-form_id', cert_name);
 
         
-        $('#cert_name').val(cert_name);
+        // $('#cert_name').val(cert_name);
+        $('#cert_name_edit').val(cert_name).trigger('change');
+        $('#cert_val').val(cert_name);
+
         $('#form_name_edit').val(form_name);
         $('#fresh_fees').val(fresh_fee);
         $('#fresh_fees_on').val(fresh_fees_on);
@@ -122,14 +125,13 @@ $(document).ready(function() {
 
     });
 
-    //Update Form Details
 
+    //Update Form Details
     $('#editForm').on('submit', function (e) {
         e.preventDefault();
 
         let formData = new FormData(this);
             
-
         // Handle checkboxes explicitly if needed
         $(this).find('input[type=checkbox]').each(function() {
             formData.set(this.name, $(this).is(':checked') ? 1 : 0);
@@ -312,7 +314,7 @@ $(document).ready(function() {
     });
 
 
-    $("#addForms").on("submit", function (e) {
+    $("#addCategory").on("submit", function (e) {
         e.preventDefault();
 
         let cateInput = $("input[name='cate_name']");
@@ -464,6 +466,7 @@ $(document).ready(function() {
                 errorSelector: ".error-form_name",
                 validate: function (val) {
                     if (val === "") return "Please fill the Form Name";
+                    if (!/^[A-Z0-9]+$/.test(val)) return "Form Name should contain only uppercase letters and numbers";
                     return null;
                 },
             },
@@ -580,7 +583,7 @@ $(document).ready(function() {
             {
                 name: "edit_cate_name",
                 selector: "input[name='edit_cate_name']",
-                errorSelector: ".error-cate",
+                errorSelector: ".error-cate_name_error",
                 validate: function (val) {
                     if (val == "") return "Please fill the Category Name";
                     if (!/^[a-zA-Z\s]+$/.test(val)) return "Category name should contain only letters and spaces";
@@ -675,6 +678,177 @@ $(document).ready(function() {
             
         });
 
+    });
+
+    
+    //Get Edit certificates/Licences
+    $(document).on('click', '.editForm', function () {
+    // Get all data-* attributes
+        const row_id = $(this).data('row_id');
+        const form_name = $(this).data('form_name');
+        const licence_name = $(this).data('licence_name');
+        const category = $(this).data('category');
+        const cert_licence_code = $(this).data('cert_licence_code');
+        const form_code = $(this).data('form_code');
+        const form_status = $(this).data('status');
+
+
+        // Fill modal inputs
+        $('#edit_cert_id').val(row_id);
+        $('#edit_form_cate').val(category).trigger('change');
+        $('#edit_cert_name').val(licence_name);
+        $('#edit_cate_licence_code').val(cert_licence_code);
+        $('#edit_form_name').val(form_name);
+        $('#edit_form_code').val(form_code);
+        $('#edit_form_status').val(form_status).trigger('change');
+        
+    });
+
+    // Update Edit Form/Certificates
+    $("#editForms").on("submit", function (e) {
+        e.preventDefault();
+
+
+        let isValid = true; // flag to track form validity
+    
+        // Define your fields and rules
+        const fields = [
+            {
+                name: "edit_form_cate",
+                selector: "select[name='edit_form_cate']",
+                errorSelector: ".error-edit_form_cate",
+                validate: function (val) {
+                    if (val == "") return "Please fill the Category Name";
+                    return null;
+                },
+            },
+            {
+                name: "edit_cert_name",
+                selector: "input[name='edit_cert_name']",
+                errorSelector: ".error-cer_error",
+                validate: function (val) {
+                    if (val == "") return "Please fill the Certificate / Licence  Name";
+                    if (!/^[a-zA-Z\s]+$/.test(val)) return "Category name should contain only letters and spaces";
+                    return null;
+                },
+            },
+            {
+                name: "edit_cate_licence_code",
+                selector: "input[name='edit_cate_licence_code']",
+                errorSelector: ".error-cert_code_error",
+                validate: function (val) {
+                    if (val == "") return "Please fill the Certificate / Licence  Code";
+                    if (!/^[a-zA-Z\s]+$/.test(val)) return "Certificate / Licence code should contain only letters and spaces";
+                    return null;
+                },
+            },
+            {
+                name: "edit_form_name",
+                selector: "input[name='edit_form_name']",
+                errorSelector: ".error-edit_form_name",
+                validate: function (val) {
+                    if (val == "") return "Please fill the Form Name";
+                    if (!/^[a-zA-Z\s]+$/.test(val)) return "Form Name should contain only letters and spaces";
+                    return null;
+                },
+            },
+            {
+                name: "edit_form_code",
+                selector: "input[name='edit_form_code']",
+                errorSelector: ".error-edit_form_code",
+                validate: function (val) {
+                    if (val == "") return "Please fill the Form Code";
+                    if (!/^[a-zA-Z\s]+$/.test(val)) return "Category name should contain only letters and spaces";
+                    return null;
+                },
+            },
+            
+            {
+                name: "edit_form_status",
+                selector: "select[name='edit_form_status']",
+                errorSelector: ".error-edit_form_status",
+                validate: function (val) {
+                    if (val === "") return "Please select the Status";
+                    return null;
+                },
+            },
+        ];
+    
+        // Reset previous states
+        $(".error").addClass("d-none").text("");
+        $("input, select").css("border", "");
+    
+        // Loop through fields for validation
+        fields.forEach((field) => {
+            const input = $(field.selector);
+            const value = $.trim(input.val());
+            const errorMsg = $(field.errorSelector);
+            const error = field.validate(value);
+    
+            // Add "hide error when typing" listener once
+            input.off("input change").on("input change", function () {
+                $(this).css("border", "");
+                errorMsg.addClass("d-none").text("");
+            });
+
+    
+            if (error) {
+                input.css("border", "1px solid red");
+                errorMsg.text(error).removeClass("d-none");
+                if (isValid) input.focus(); // Focus first invalid field
+                isValid = false;
+            }
+        });
+    
+        if (!isValid) return false; // stop form submission if validation fails
+    
+        // Prepare form data
+        let formData = new FormData(this);
+
+        console.log(formData);
+    
+    
+        // AJAX submission
+        $.ajax({
+            url: BASE_URL + "/admin/licences/add_licence",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            success: function (response) {
+                if (response.status) {
+                    $('#editFormModal').modal('hide');
+                    Swal.fire({
+                        icon: "success",
+                        title: response.message || "Form created successfully!",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    }).then(() => {
+                        location.reload();
+                    });
+                    
+                } else {
+                    $('#editFormModal').modal('hide');
+                    Swal.fire({
+                        icon: "error",
+                        title: "Failed",
+                        text: response.message || "Something went wrong!",
+                    });
+                }
+            },
+            error: function (xhr) {
+                
+                Swal.fire({
+                    icon: "error",
+                    title: "Server Error",
+                    text: xhr.responseJSON?.message || "Please try again later.",
+                });
+            },
+        });
     });
 });
 
