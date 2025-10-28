@@ -236,9 +236,9 @@
                             </select>
                             <small class="text-danger d-none error-form_status">Please choose the Form status</small>
                         </div>
-                        <div class="modal-footer">
+                        <div class="text-center mt-3">
                             <button type="submit" class="btn btn-primary">Create</button>
-                            <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#feesForm').trigger('reset');"><i class="flaticon-cancel-12"></i> Discard</button>
+                            <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#addForms').trigger('reset');"><i class="flaticon-cancel-12"></i> Discard</button>
                         </div>
                     </div>
                 </div>
@@ -306,7 +306,7 @@
                             <small class="text-danger d-none error-edit_form_status">Please choose the Form status</small>
                         </div>
                         <input type="hidden" name="cert_id" id="edit_cert_id">
-                        <div class="modal-footer">
+                        <div class="text-center mt-3">
                             <button type="submit" class="btn btn-primary">Update</button>
                             <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#feesForm').trigger('reset');"><i class="flaticon-cancel-12"></i> Discard</button>
                         </div>

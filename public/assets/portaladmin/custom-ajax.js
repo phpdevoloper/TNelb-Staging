@@ -423,142 +423,6 @@ $(document).ready(function() {
     });
 
 
-
-    $("#addForms").on("submit", function (e) {
-        e.preventDefault();
-    
-        let isValid = true; // flag to track form validity
-    
-        // Define your fields and rules
-        const fields = [
-            {
-                name: "form_cate",
-                selector: "select[name='form_cate']",
-                errorSelector: ".error-form_cate",
-                validate: function (val) {
-                    if (val === "") return "Please choose the category";
-                    return null;
-                },
-            },
-            {
-                name: "cert_name",
-                selector: "input[name='cert_name']",
-                errorSelector: ".error-cer_val",
-                validate: function (val) {
-                    if (val === "") return "Please fill the Certificate / Licence Name";
-                    if (!/^[a-zA-Z\s]+$/.test(val)) return "Category name should contain only letters and spaces";
-                    return null;
-                },
-            },
-            {
-                name: "cate_licence_code",
-                selector: "input[name='cate_licence_code']",
-                errorSelector: ".error-cert_code",
-                validate: function (val) {
-                    if (val === "") return "Please fill the Certificate / Licence Code";
-                    if (!/^[A-Z0-9]+$/.test(val)) return "Category code should contain only uppercase letters and numbers";
-                    return null;
-                },
-            },
-            {
-                name: "form_name",
-                selector: "input[name='form_name']",
-                errorSelector: ".error-form_name",
-                validate: function (val) {
-                    if (val === "") return "Please fill the Form Name";
-                    if (!/^[A-Z0-9]+$/.test(val)) return "Form Name should contain only uppercase letters and numbers";
-                    return null;
-                },
-            },
-            {
-                name: "form_code",
-                selector: "input[name='form_code']",
-                errorSelector: ".error-form_code",
-                validate: function (val) {
-                    if (val === "") return "Please fill the Form code";
-                    return null;
-                },
-            },
-        ];
-    
-        // Reset previous states
-        $(".error").addClass("d-none").text("");
-        $("input, select").css("border", "");
-    
-        // Loop through fields for validation
-        fields.forEach((field) => {
-            const input = $(field.selector);
-            const value = $.trim(input.val());
-            const errorMsg = $(field.errorSelector);
-            const error = field.validate(value);
-    
-            // Add "hide error when typing" listener once
-            input.off("input change").on("input change", function () {
-                $(this).css("border", "");
-                errorMsg.addClass("d-none").text("");
-            });
-
-    
-            if (error) {
-                input.css("border", "1px solid red");
-                errorMsg.text(error).removeClass("d-none");
-                if (isValid) input.focus(); // Focus first invalid field
-                isValid = false;
-            }
-        });
-    
-        if (!isValid) return false; // stop form submission if validation fails
-    
-        // Prepare form data
-        let formData = new FormData(this);
-
-        console.log(formData);
-    
-        // Disable button while submitting
-        const submitBtn = $("#addForms button[type='submit']");
-        submitBtn.prop("disabled", true).text("Creating...");
-    
-        // AJAX submission
-        $.ajax({
-            url: BASE_URL + "/admin/licences/add_licence",
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            dataType: "json",
-            headers: {
-                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-            },
-            success: function (response) {
-                if (response.status) {
-                    Swal.fire({
-                        icon: "success",
-                        title: response.message || "Form created successfully!",
-                        showConfirmButton: false,
-                        timer: 1500,
-                    });
-                    $("#addForms")[0].reset();
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Failed",
-                        text: response.message || "Something went wrong!",
-                    });
-                }
-            },
-            error: function (xhr) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Server Error",
-                    text: xhr.responseJSON?.message || "Please try again later.",
-                });
-            },
-            complete: function () {
-                submitBtn.prop("disabled", false).text("Create");
-            },
-        });
-    });
-
     // Get all data-* attributes for edit category
     $(document).on('click', '.editCategoryBtn', function () {
         const cate_id = $(this).data('cate_id');
@@ -704,111 +568,388 @@ $(document).ready(function() {
         
     });
 
-    // Update Edit Form/Certificates
-    $("#editForms").on("submit", function (e) {
-        e.preventDefault();
 
 
-        let isValid = true; // flag to track form validity
+    // Add/Edit 
+    // $("#addForms").on("submit", function (e) {
+    //     e.preventDefault();
     
-        // Define your fields and rules
-        const fields = [
-            {
-                name: "edit_form_cate",
-                selector: "select[name='edit_form_cate']",
-                errorSelector: ".error-edit_form_cate",
-                validate: function (val) {
-                    if (val == "") return "Please fill the Category Name";
-                    return null;
-                },
-            },
-            {
-                name: "edit_cert_name",
-                selector: "input[name='edit_cert_name']",
-                errorSelector: ".error-cer_error",
-                validate: function (val) {
-                    if (val == "") return "Please fill the Certificate / Licence  Name";
-                    if (!/^[a-zA-Z\s]+$/.test(val)) return "Category name should contain only letters and spaces";
-                    return null;
-                },
-            },
-            {
-                name: "edit_cate_licence_code",
-                selector: "input[name='edit_cate_licence_code']",
-                errorSelector: ".error-cert_code_error",
-                validate: function (val) {
-                    if (val == "") return "Please fill the Certificate / Licence  Code";
-                    if (!/^[a-zA-Z\s]+$/.test(val)) return "Certificate / Licence code should contain only letters and spaces";
-                    return null;
-                },
-            },
-            {
-                name: "edit_form_name",
-                selector: "input[name='edit_form_name']",
-                errorSelector: ".error-edit_form_name",
-                validate: function (val) {
-                    if (val == "") return "Please fill the Form Name";
-                    if (!/^[a-zA-Z\s]+$/.test(val)) return "Form Name should contain only letters and spaces";
-                    return null;
-                },
-            },
-            {
-                name: "edit_form_code",
-                selector: "input[name='edit_form_code']",
-                errorSelector: ".error-edit_form_code",
-                validate: function (val) {
-                    if (val == "") return "Please fill the Form Code";
-                    if (!/^[a-zA-Z\s]+$/.test(val)) return "Category name should contain only letters and spaces";
-                    return null;
-                },
-            },
+    //     let isValid = true;
+    
+    //     const fields = [
+    //         {
+    //             name: "form_cate",
+    //             selector: "select[name='form_cate']",
+    //             errorSelector: ".error-form_cate",
+    //             validate: function (val) {
+    //                 if (val === "") return "Please choose the category";
+    //                 return null;
+    //             },
+    //         },
+    //         {
+    //             name: "cert_name",
+    //             selector: "input[name='cert_name']",
+    //             errorSelector: ".error-cer_val",
+    //             validate: function (val) {
+    //                 if (val === "") return "Please fill the Certificate / Licence Name";
+    //                 if (!/^[a-zA-Z\s]+$/.test(val)) return "Category name should contain only letters and spaces";
+    //                 return null;
+    //             },
+    //         },
+    //         {
+    //             name: "cate_licence_code",
+    //             selector: "input[name='cate_licence_code']",
+    //             errorSelector: ".error-cert_code",
+    //             validate: function (val) {
+    //                 if (val === "") return "Please fill the Certificate / Licence Code";
+    //                 if (!/^[A-Z0-9]+$/.test(val)) return "Category code should contain only uppercase letters and numbers";
+    //                 return null;
+    //             },
+    //         },
+    //         {
+    //             name: "form_name",
+    //             selector: "input[name='form_name']",
+    //             errorSelector: ".error-form_name",
+    //             validate: function (val) {
+    //                 if (val === "") return "Please fill the Form Name";
+    //                 if (!/^[A-Z0-9]+$/.test(val)) return "Form Name should contain only uppercase letters and numbers";
+    //                 return null;
+    //             },
+    //         },
+    //         {
+    //             name: "form_code",
+    //             selector: "input[name='form_code']",
+    //             errorSelector: ".error-form_code",
+    //             validate: function (val) {
+    //                 if (val === "") return "Please fill the Form code";
+    //                 return null;
+    //             },
+    //         },
+    //     ];
+    
+    //     $(".error").addClass("d-none").text("");
+    //     $("input, select").css("border", "");
+    
+    //     fields.forEach((field) => {
+    //         const input = $(field.selector);
+    //         const value = $.trim(input.val());
+    //         const errorMsg = $(field.errorSelector);
+    //         const error = field.validate(value);
+    
+    //         input.off("input change").on("input change", function () {
+    //             $(this).css("border", "");
+    //             errorMsg.addClass("d-none").text("");
+    //         });
+
+    
+    //         if (error) {
+    //             input.css("border", "1px solid red");
+    //             errorMsg.text(error).removeClass("d-none");
+    //             if (isValid) input.focus(); // Focus first invalid field
+    //             isValid = false;
+    //         }
+    //     });
+    
+    //     if (!isValid) return false; // stop form submission if validation fails
+    
+    //     // Prepare form data
+    //     let formData = new FormData(this);
+
+    //     console.log(formData);
+    
+    //     // Disable button while submitting
+    //     const submitBtn = $("#addForms button[type='submit']");
+    //     submitBtn.prop("disabled", true).text("Creating...");
+    
+    //     // AJAX submission
+    //     $.ajax({
+    //         url: BASE_URL + "/admin/licences/add_licence",
+    //         type: "POST",
+    //         data: formData,
+    //         processData: false,
+    //         contentType: false,
+    //         dataType: "json",
+    //         headers: {
+    //             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+    //         },
+    //         success: function (response) {
+    //             if (response.status) {
+    //                 Swal.fire({
+    //                     icon: "success",
+    //                     title: response.message || "Form created successfully!",
+    //                     showConfirmButton: false,
+    //                     timer: 1500,
+    //                 });
+    //                 $("#addForms")[0].reset();
+    //             } else {
+    //                 Swal.fire({
+    //                     icon: "error",
+    //                     title: "Failed",
+    //                     text: response.message || "Something went wrong!",
+    //                 });
+    //             }
+    //         },
+    //         error: function (xhr) {
+    //             Swal.fire({
+    //                 icon: "error",
+    //                 title: "Server Error",
+    //                 text: xhr.responseJSON?.message || "Please try again later.",
+    //             });
+    //         },
+    //         complete: function () {
+    //             submitBtn.prop("disabled", false).text("Create");
+    //         },
+    //     });
+    // });
+
+    // $("#editForms").on("submit", function (e) {
+    //     e.preventDefault();
+
+
+    //     let isValid = true; // flag to track form validity
+    
+    //     // Define your fields and rules
+    //     const fields = [
+    //         {
+    //             name: "edit_form_cate",
+    //             selector: "select[name='edit_form_cate']",
+    //             errorSelector: ".error-edit_form_cate",
+    //             validate: function (val) {
+    //                 if (val == "") return "Please fill the Category Name";
+    //                 return null;
+    //             },
+    //         },
+    //         {
+    //             name: "edit_cert_name",
+    //             selector: "input[name='edit_cert_name']",
+    //             errorSelector: ".error-cer_error",
+    //             validate: function (val) {
+    //                 if (val == "") return "Please fill the Certificate / Licence  Name";
+    //                 if (!/^[a-zA-Z\s]+$/.test(val)) return "Category name should contain only letters and spaces";
+    //                 return null;
+    //             },
+    //         },
+    //         {
+    //             name: "edit_cate_licence_code",
+    //             selector: "input[name='edit_cate_licence_code']",
+    //             errorSelector: ".error-cert_code_error",
+    //             validate: function (val) {
+    //                 if (val == "") return "Please fill the Certificate / Licence  Code";
+    //                 if (!/^[a-zA-Z\s]+$/.test(val)) return "Certificate / Licence code should contain only letters and spaces";
+    //                 return null;
+    //             },
+    //         },
+    //         {
+    //             name: "edit_form_name",
+    //             selector: "input[name='edit_form_name']",
+    //             errorSelector: ".error-edit_form_name",
+    //             validate: function (val) {
+    //                 if (val == "") return "Please fill the Form Name";
+    //                 if (!/^[a-zA-Z\s]+$/.test(val)) return "Form Name should contain only letters and spaces";
+    //                 return null;
+    //             },
+    //         },
+    //         {
+    //             name: "edit_form_code",
+    //             selector: "input[name='edit_form_code']",
+    //             errorSelector: ".error-edit_form_code",
+    //             validate: function (val) {
+    //                 if (val == "") return "Please fill the Form Code";
+    //                 if (!/^[a-zA-Z\s]+$/.test(val)) return "Category name should contain only letters and spaces";
+    //                 return null;
+    //             },
+    //         },
             
+    //         {
+    //             name: "edit_form_status",
+    //             selector: "select[name='edit_form_status']",
+    //             errorSelector: ".error-edit_form_status",
+    //             validate: function (val) {
+    //                 if (val === "") return "Please select the Status";
+    //                 return null;
+    //             },
+    //         },
+    //     ];
+    
+    //     $(".error").addClass("d-none").text("");
+    //     $("input, select").css("border", "");
+    
+    //     fields.forEach((field) => {
+    //         const input = $(field.selector);
+    //         const value = $.trim(input.val());
+    //         const errorMsg = $(field.errorSelector);
+    //         const error = field.validate(value);
+    
+    //         input.off("input change").on("input change", function () {
+    //             $(this).css("border", "");
+    //             errorMsg.addClass("d-none").text("");
+    //         });
+
+    
+    //         if (error) {
+    //             input.css("border", "1px solid red");
+    //             errorMsg.text(error).removeClass("d-none");
+    //             if (isValid) input.focus(); 
+    //             isValid = false;
+    //         }
+    //     });
+    
+    //     if (!isValid) return false;
+    
+    //     // Prepare form data
+    //     let formData = new FormData(this);
+
+    //     console.log(formData);
+    
+    
+    //     // AJAX submission
+    //     $.ajax({
+    //         url: BASE_URL + "/admin/licences/add_licence",
+    //         type: "POST",
+    //         data: formData,
+    //         processData: false,
+    //         contentType: false,
+    //         dataType: "json",
+    //         headers: {
+    //             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+    //         },
+    //         success: function (response) {
+    //             if (response.status) {
+    //                 $('#editFormModal').modal('hide');
+    //                 Swal.fire({
+    //                     icon: "success",
+    //                     title: response.message || "Form created successfully!",
+    //                     showConfirmButton: false,
+    //                     timer: 1500,
+    //                 }).then(() => {
+    //                     location.reload();
+    //                 });
+                    
+    //             } else {
+    //                 $('#editFormModal').modal('hide');
+    //                 Swal.fire({
+    //                     icon: "error",
+    //                     title: "Failed",
+    //                     text: response.message || "Something went wrong!",
+    //                 });
+    //             }
+    //         },
+    //         error: function (xhr) {
+                
+    //             Swal.fire({
+    //                 icon: "error",
+    //                 title: "Server Error",
+    //                 text: xhr.responseJSON?.message || "Please try again later.",
+    //             });
+    //         },
+    //     });
+    // });
+
+
+     function getValidationRules(isEdit = false) {
+        const prefix = isEdit ? "edit_" : "";
+        return [
             {
-                name: "edit_form_status",
-                selector: "select[name='edit_form_status']",
-                errorSelector: ".error-edit_form_status",
-                validate: function (val) {
-                    if (val === "") return "Please select the Status";
+                selector: `select[name='${prefix}form_cate']`,
+                errorSelector: `.error-${prefix}form_cate`,
+                validate: val => val === "" ? "Please choose the category" : null
+            },
+            {
+                selector: `input[name='${prefix}cert_name']`,
+                errorSelector: `.error-${isEdit ? "cer_error" : "cer_val"}`,
+                validate: val => {
+                    if (val === "") return "Please fill the Certificate / Licence Name";
+                    if (!/^[a-zA-Z\s]+$/.test(val))
+                        return "Certificate name should contain only letters and spaces";
                     return null;
-                },
+                }
+            },
+            {
+                selector: `input[name='${prefix}cate_licence_code']`,
+                errorSelector: `.error-${isEdit ? "cert_code_error" : "cert_code"}`,
+                validate: val => {
+                    if (val === "") return "Please fill the Certificate / Licence Code";
+                    if (!/^[A-Z0-9]+$/.test(val))
+                        return "Certificate code should contain only uppercase letters and numbers";
+                    return null;
+                }
+            },
+            {
+                selector: `input[name='${prefix}form_name']`,
+                errorSelector: `.error-${prefix}form_name`,
+                validate: val => val === "" ? "Please fill the Form Name" : null
+            },
+            {
+                selector: `input[name='${prefix}form_code']`,
+                errorSelector: `.error-${prefix}form_code`,
+                validate: val => val === "" ? "Please fill the Form Code" : null
+            },
+            {
+                selector: `select[name='${prefix}form_status']`,
+                errorSelector: `.error-${prefix}form_status`,
+                validate: val => val === "" ? "Please choose the Status" : null
             },
         ];
-    
-        // Reset previous states
-        $(".error").addClass("d-none").text("");
-        $("input, select").css("border", "");
-    
-        // Loop through fields for validation
-        fields.forEach((field) => {
-            const input = $(field.selector);
-            const value = $.trim(input.val());
-            const errorMsg = $(field.errorSelector);
-            const error = field.validate(value);
-    
-            // Add "hide error when typing" listener once
+    }
+
+    $(document).on("submit", "#addForms, #editForms", function (e) {
+        e.preventDefault();
+        const form = $(this);
+        const isEdit = form.attr("id") === "editForms";
+        const fields = getValidationRules(isEdit);
+
+        let isValid = true;
+
+        // Reset errors
+        form.find(".error").addClass("d-none").text("");
+        form.find("input, select").css("border", "");
+
+        // Validate fields
+        fields.forEach(f => {
+            const input = form.find(f.selector);
+            const val = $.trim(input.val());
+            const err = f.validate(val);
+            const errMsg = form.find(f.errorSelector);
+
             input.off("input change").on("input change", function () {
                 $(this).css("border", "");
-                errorMsg.addClass("d-none").text("");
+                errMsg.addClass("d-none").text("");
             });
 
-    
-            if (error) {
+            if (err) {
                 input.css("border", "1px solid red");
-                errorMsg.text(error).removeClass("d-none");
-                if (isValid) input.focus(); // Focus first invalid field
+                errMsg.text(err).removeClass("d-none");
+                if (isValid) input.focus();
                 isValid = false;
             }
         });
-    
-        if (!isValid) return false; // stop form submission if validation fails
-    
-        // Prepare form data
-        let formData = new FormData(this);
 
-        console.log(formData);
-    
-    
-        // AJAX submission
+        if (!isValid) return false;
+
+        // Prepare form data
+        const formData = new FormData();
+
+        // Dynamically rename edit fields to backend expected names
+        if (isEdit) {
+            formData.append("cert_id", form.find("#edit_cert_id").val());
+            formData.append("form_cate", form.find("#edit_form_cate").val());
+            formData.append("cert_name", form.find("#edit_cert_name").val());
+            formData.append("cate_licence_code", form.find("#edit_cate_licence_code").val());
+            formData.append("form_name", form.find("#edit_form_name").val());
+            formData.append("form_code", form.find("#edit_form_code").val());
+            formData.append("form_status", form.find("#edit_form_status").val());
+        } else {
+            formData.append("form_cate", form.find("#form_cate").val());
+            formData.append("cert_name", form.find("#cert_name").val());
+            formData.append("cate_licence_code", form.find("#cate_licence_code").val());
+            formData.append("form_name", form.find("#form_name").val());
+            formData.append("form_code", form.find("#form_code").val());
+            formData.append("form_status", form.find("#form_status").val());
+        }
+
+        const submitBtn = form.find("button[type='submit']");
+        submitBtn.prop("disabled", true).text(isEdit ? "Updating..." : "Creating...");
+
         $.ajax({
             url: BASE_URL + "/admin/licences/add_licence",
             type: "POST",
@@ -816,38 +957,35 @@ $(document).ready(function() {
             processData: false,
             contentType: false,
             dataType: "json",
-            headers: {
-                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-            },
-            success: function (response) {
-                if (response.status) {
-                    $('#editFormModal').modal('hide');
+            headers: { "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content") },
+            success: function (res) {
+                if (res.status) {
                     Swal.fire({
                         icon: "success",
-                        title: response.message || "Form created successfully!",
+                        title: res.message,
                         showConfirmButton: false,
                         timer: 1500,
-                    }).then(() => {
-                        location.reload();
                     });
-                    
+                    form[0].reset();
+                    form.closest(".modal").modal("hide");
                 } else {
-                    $('#editFormModal').modal('hide');
                     Swal.fire({
                         icon: "error",
                         title: "Failed",
-                        text: response.message || "Something went wrong!",
+                        text: res.message || "Something went wrong!",
                     });
                 }
             },
             error: function (xhr) {
-                
                 Swal.fire({
                     icon: "error",
                     title: "Server Error",
                     text: xhr.responseJSON?.message || "Please try again later.",
                 });
             },
+            // complete: function () {
+            //     submitBtn.prop("disabled", false).text(isEdit ? "Update" : "Create");
+            // }
         });
     });
 });

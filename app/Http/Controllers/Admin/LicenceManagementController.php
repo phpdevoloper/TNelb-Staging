@@ -9,12 +9,10 @@ use App\Models\MstLicence;
 use App\Models\TnelbLicense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\DB;
 
 use Carbon\Carbon;
 use DateTime;
-use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\Storage;
 use Exception;
 use Illuminate\Validation\Rule;
@@ -80,17 +78,20 @@ class LicenceManagementController extends BaseController
             // 🔹 1. Validate input fields
             $validated = $request->validate([
                 'form_cate'     => 'required|integer',
-                'cert_name'         => 'required|string|min:3|max:100',
-                'cate_licence_code' => 'required|string|max:5|unique:mst_licences,cert_licence_code',
-                'form_name'         => 'required|string|min:2|max:100',
-                'form_code'         => 'required|string|max:5|unique:mst_licences,form_code',
+                'cert_name'         => 'required|string|regex:/^[A-Z0-9]+$/|min:3|max:100|regex:/^[A-Z0-9]+$/',
+                'cate_licence_code' => ['required','string','max:5',Rule::unique('mst_licences', 'cert_licence_code')->ignore($request->cert_id)],
+                'form_name'         => 'required|string|regex:/^[A-Z0-9]+$/|min:2|max:100',
+                'form_code'         => ['required','string','max:5',Rule::unique('mst_licences', 'form_code')->ignore($request->cert_id)],
                 'form_status'       => 'required|in:1,2',
             ], [
                 'form_cate.required'         => 'Please choose the category',
                 'cert_name.required'         => 'Please fill the Certificate / Licence Name',
+                'cert_name.regex'            => 'Certtificate / Licence Name should contain only letters and spaces',
+                'form_name.regex'            => 'Form Code should contain only letters and spaces',
                 'cate_licence_code.required' => 'Please fill the Certificate / Licence Code',
                 'cate_licence_code.unique'   => 'This Certificate / Licence Code already exists',
                 'form_name.required'         => 'Please fill the Form Name',
+                'form_name.regex'            => 'Form Name should contain only letters and spaces',
                 'form_code.required'         => 'Please fill the Form Code',
                 'form_code.unique'           => 'This Form Code already exists',
                 'form_status.required'       => 'Please choose the Status',
@@ -106,6 +107,8 @@ class LicenceManagementController extends BaseController
                 'status'            => $request->form_status,
             ];
 
+            // var_dump($data);die;
+
             if ($isUpdate) {
                 $data['updated_at'] = now();
                 MstLicence::where('id', $request->cert_id)
@@ -118,21 +121,18 @@ class LicenceManagementController extends BaseController
                 $message = 'Created successfully!';
             }
 
-            // 🔹 3. Return JSON response for AJAX
             return response()->json([
                 'status'  => true,
                 'message' => $message,
             ], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // 🔸 Handle validation errors
             return response()->json([
                 'status'  => false,
                 'message' => $e->validator->errors()->first(),
             ], 422);
 
         } catch (\Exception $e) {
-            // 🔸 Handle unexpected errors
             return response()->json([
                 'status'  => false,
                 'message' => 'Something went wrong: ' . $e->getMessage(),
