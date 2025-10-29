@@ -239,7 +239,7 @@
                        </li>
                         <li class="{{ $currentRoute == 'admin.forms' ? 'active' : '' }}">
                             <a href="{{ route('admin.forms') }}">
-                                Update Fees Details
+                                Fees Details
                             </a>
                         </li>
                         {{-- <li class="{{ $currentRoute == 'admin.addnewform' ? 'active' : '' }}">

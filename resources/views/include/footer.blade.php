@@ -2437,8 +2437,12 @@
                 licence  = data.certificate_name;
                 
             }else{
-                let form_cost = $('#amount').val();
+                form_cost = $('#amount').val();
             }
+
+            console.log(form_cost);
+            
+            
             
             
             // 🔹 Now you can safely use form_cost everywhere below
@@ -2510,9 +2514,14 @@
                 const type_apps = licence || 'N/A';
                 const amount = form_cost;
                 const serviceCharge = 10;
-                const total_charge = Number(amount) + Number(lateFee) + Number(serviceCharge);
+                const total_charge = Number(amount) + Number(serviceCharge);
+                if (appl_type == 'R') {
+                    total_charge = Number(total_charge) + Number(lateFee);
+                }
                 const transactionId = "TRX" + Math.floor(100000 + Math.random() * 900000);
                 const payment_mode = 'UPI';
+
+                const safeLateFee = typeof lateFee !== "undefined" && lateFee !== null ? lateFee : 0;
                 // 🔹 Show payment popup
                 Swal.fire({
                     title: "<span style='color:#0d6efd;'>Initiate Payment</span>",
@@ -2538,7 +2547,7 @@
                                     </tr>
                                     <tr>
                                         <th style="text-align: left; padding: 6px 10px; color: #555;">Late Fees(Within 3 Months)</th>
-                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${lateFee}</td>
+                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${safeLateFee}</td>
                                     </tr>
                                     <tr>
                                         <th style="text-align: left; padding: 6px 10px; color: #555;">Service Charge</th>

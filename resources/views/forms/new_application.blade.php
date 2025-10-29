@@ -550,8 +550,8 @@
                                     </div>
                                     <input type="hidden" class="form-control text-box single-line" id="login_id_store" name="login_id" type="text" value="{{ $user['user_id'] }}">
                                     <input type="hidden" id="application_id" name="application_id" value="{{ $application->id ?? '' }}">
-                                    <input type="hidden" id="form_name" name="form_name" value="S">
-                                    <input type="hidden" id="license_name" name="license_name" value="C">
+                                    <input type="hidden" id="form_name" name="form_name" value="{{ $current_form['form_code'] }}">
+                                    <input type="hidden" id="license_name" name="license_name" value="{{ $current_form['cert_licence_code'] }}">
                                     <input type="hidden" id="form_id" name="form_id" value="1">
                                     <input type="hidden" id="amount" name="amount" value="{{ $fees_details->fresh_fee_amount }}">
                                     <input type="hidden" id="appl_type" name="appl_type" value="N">

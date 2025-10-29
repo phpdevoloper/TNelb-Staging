@@ -948,7 +948,7 @@ $(document).ready(function() {
         }
 
         const submitBtn = form.find("button[type='submit']");
-        submitBtn.prop("disabled", true).text(isEdit ? "Updating..." : "Creating...");
+        // submitBtn.prop("disabled", true).text(isEdit ? "Updating..." : "Creating...");
 
         $.ajax({
             url: BASE_URL + "/admin/licences/add_licence",
@@ -965,7 +965,10 @@ $(document).ready(function() {
                         title: res.message,
                         showConfirmButton: false,
                         timer: 1500,
+                    }).then(() => {
+                        location.reload(); // ✅ reloads page after alert closes
                     });
+                    
                     form[0].reset();
                     form.closest(".modal").modal("hide");
                 } else {

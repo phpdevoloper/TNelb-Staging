@@ -78,9 +78,9 @@ class LicenceManagementController extends BaseController
             // 🔹 1. Validate input fields
             $validated = $request->validate([
                 'form_cate'     => 'required|integer',
-                'cert_name'         => 'required|string|regex:/^[A-Z0-9]+$/|min:3|max:100|regex:/^[A-Z0-9]+$/',
+                'cert_name'         => 'required|string|regex:/^[A-Za-z\s]+$/|min:3|max:100',
                 'cate_licence_code' => ['required','string','max:5',Rule::unique('mst_licences', 'cert_licence_code')->ignore($request->cert_id)],
-                'form_name'         => 'required|string|regex:/^[A-Z0-9]+$/|min:2|max:100',
+                'form_name'         => 'required|string|regex:/^[A-Za-z\s]+$/|min:2|max:100',
                 'form_code'         => ['required','string','max:5',Rule::unique('mst_licences', 'form_code')->ignore($request->cert_id)],
                 'form_status'       => 'required|in:1,2',
             ], [
@@ -145,7 +145,7 @@ class LicenceManagementController extends BaseController
     public function licenceCategory(){
 
         $categories = LicenceCategory::where('status', 1)
-                    ->orderBy('created_at', 'desc')
+                    ->orderBy('created_at', 'asc')
                     ->get();
 
 
