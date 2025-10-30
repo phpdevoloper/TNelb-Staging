@@ -414,7 +414,6 @@ class LicenceManagementController extends BaseController
 
     public function updateForm(Request $request){
 
-
         $request->validate([
             'cert_name' => 'required|string',
             'form_name' => 'required|string',
@@ -566,6 +565,17 @@ class LicenceManagementController extends BaseController
                 'message' => 'Something went wrong. ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function management(){
+
+        $all_licences = MstLicence::where('status', 1)
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+        // compact('activeForms', 'all_licences')
+        return view('admincms.forms.viewLicences', compact('all_licences'));
+
     }
 
 

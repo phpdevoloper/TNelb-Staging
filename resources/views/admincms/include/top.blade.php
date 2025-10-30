@@ -61,6 +61,7 @@
     <!-- Datatables CSS -->
     <link rel="stylesheet" href="{{ asset('assets/admin/src/plugins/src/table/datatable/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/src/plugins/css/light/table/datatable/dt-global_style.css') }}">
+    
 
     <!-- Main Styles -->
     <link rel="stylesheet" href="{{ asset('assets/admin/main.css') }}">
@@ -87,8 +88,6 @@
     <link rel="stylesheet" href="{{ asset('assets/admin/select2/dist/css/select2.min.css') }}">
 
     
-
-
     <!-- FontAwesome -->
     {{-- <link rel="stylesheet" href="{{ asset('assets/admin/src/plugins/src/font-icons/fontawesome/css/regular.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/src/plugins/src/font-icons/fontawesome/css/fontawesome.css') }}"> --}}
@@ -99,6 +98,7 @@
 
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/src/plugins/src/glightbox/glightbox.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/src/assets/css/light/apps/contacts.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/src/assets/css/light/apps/invoice-list.css') }}">
    <!-- --portaladmin---------------- -->
     
 </head>

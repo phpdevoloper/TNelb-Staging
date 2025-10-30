@@ -207,7 +207,7 @@
                 </li>
 
                 @php
-                    $licence_routes = ['admin.forms', 'admin.licenceCategory', 'admin.view_licences'];
+                    $licence_routes = ['admin.forms', 'admin.licenceCategory', 'admin.view_licences','admin.management'];
                 @endphp
 
 
@@ -242,9 +242,9 @@
                                 Fees Details
                             </a>
                         </li>
-                        {{-- <li class="{{ $currentRoute == 'admin.addnewform' ? 'active' : '' }}">
-                            <a href="{{route('admin.addnewform')}}">Old Link</a>
-                        </li> --}}
+                        <li class="{{ $currentRoute == 'admin.management' ? 'active' : '' }}">
+                            <a href="{{route('admin.management')}}">New Link</a>
+                        </li>
                     </ul>
                 </li>
                 {{-- <li class="menu {{ request()->routeIs('admin.addnewform') ? 'active' : '' }}">

@@ -370,6 +370,7 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
         Route::get('/licences/view_licences', [LicenceManagementController::class, 'view_licences'])->name('view_licences');
         Route::post('/licences/add_licence', [LicenceManagementController::class, 'add_licence'])->name('add_licence');
 
+        Route::get('/management', [LicenceManagementController::class, 'management'])->name('management');
         });
 
         

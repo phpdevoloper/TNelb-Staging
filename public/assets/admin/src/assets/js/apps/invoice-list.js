@@ -25,8 +25,12 @@ var invoiceList = $('#invoice-list').DataTable({
         {
             text: 'Add New',
             className: 'btn btn-primary',
+            attr: {
+                'data-bs-toggle': 'modal',
+                'data-bs-target': '#addFormModal'
+            },
             action: function(e, dt, node, config ) {
-                window.location = 'app-invoice-add.html';
+                $('#addFormModal').find('form')[0].reset();
             }
         }
     ],
@@ -43,7 +47,7 @@ var invoiceList = $('#invoice-list').DataTable({
     "pageLength": 10
 });
 
-$("div.toolbar").html('<button class="dt-button dt-delete btn btn-danger" tabindex="0" aria-controls="invoice-list"><span>Delete</span></button>');
+// $("div.toolbar").html('<button class="dt-button dt-delete btn btn-primary" tabindex="0" aria-controls="invoice-list"><span>Add</span></button>');
 
 multiCheck(invoiceList);
 
