@@ -361,7 +361,7 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 
         //Licence management controller routes
         Route::get('/licences', [LicenceManagementController::class, 'index'])->name('forms');
-        Route::post('/licences/addNewForm', [LicenceManagementController::class, 'addNewForm'])->name('addNewForm');
+        Route::post('/licences/updateFees', [LicenceManagementController::class, 'updateFees'])->name('updateFees');
         Route::post('/licences/updateForm', [LicenceManagementController::class, 'updateForm'])->name('updateForm');
         Route::post('/licences/formHistory', [LicenceManagementController::class, 'formHistory'])->name('formHistory');
         Route::get('/licences/licenceCategory', [LicenceManagementController::class, 'licenceCategory'])->name('licenceCategory');

@@ -1,58 +1,252 @@
 $(document).ready(function() {
 
-        $('#feesForm').on('submit', function(e) {
-            e.preventDefault();
+    $('#feesForm').on('submit', function(e) {
+        e.preventDefault();
 
-            let formData = new FormData(this);
-            
-
-            // Handle checkboxes explicitly if needed
-            $(this).find('input[type=checkbox]').each(function() {
-                formData.set(this.name, $(this).is(':checked') ? 1 : 0);
-            });
-
-            $.ajax({
-                url: BASE_URL + '/admin/licences/addNewForm', 
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                dataType: 'json',
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        let isValid = true;
+    
+        const fields = [
+            {
+                name: "form_cate",
+                selector: "select[name='form_cate']",
+                errorSelector: ".error-form_cate",
+                validate: function (val) {
+                    if (val === "") return "Please choose the category";
+                    return null;
                 },
-                success: function(response) {
-                    if (response.status == 'success') {
-                        $('#addFormModal').modal('hide');
-                        $('#feesForm')[0].reset();
-                        Swal.fire({
-                            icon: 'success',
-                            title: response.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            // Refresh the page after the alert closes
-                            location.reload();
-                        });
-                    } else {
-                         Swal.fire({
-                            icon: 'error',
-                            title: response.message,
-                        });
-                    }
+            },
+            {
+                name: "cert_name",
+                selector: "input[name='cert_name']",
+                errorSelector: ".error-cer_val",
+                validate: function (val) {
+                    if (val === "") return "Please fill the Certificate / Licence Name";
+                    if (!/^[a-zA-Z\s]+$/.test(val)) return "Category name should contain only letters and spaces";
+                    return null;
                 },
-                error: function(xhr) {
-                    let msg = 'An unexpected error occurred';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        msg = xhr.responseJSON.message;
-                    }
+            },
+            {
+                name: "cate_licence_code",
+                selector: "input[name='cate_licence_code']",
+                errorSelector: ".error-cert_code",
+                validate: function (val) {
+                    if (val === "") return "Please fill the Certificate / Licence Code";
+                    if (!/^[A-Z0-9]+$/.test(val)) return "Category code should contain only uppercase letters and numbers";
+                    return null;
+                },
+            },
+            {
+                name: "form_name",
+                selector: "input[name='form_name']",
+                errorSelector: ".error-form_name",
+                validate: function (val) {
+                    if (val === "") return "Please fill the Form Name";
+                    if (!/^[A-Z0-9]+$/.test(val)) return "Form Name should contain only uppercase letters and numbers";
+                    return null;
+                },
+            },
+            {
+                name: "form_code",
+                selector: "input[name='form_code']",
+                errorSelector: ".error-form_code",
+                validate: function (val) {
+                    if (val === "") return "Please fill the Form code";
+                    return null;
+                },
+            },
+        ];
+    
+        $(".error").addClass("d-none").text("");
+        $("input, select").css("border", "");
+
+        
+
+        let formData = new FormData(this);
+
+        // console.log(formData);
+        // return false;
+        
+    
+        // Handle checkboxes explicitly if needed
+        $(this).find('input[type=checkbox]').each(function() {
+            formData.set(this.name, $(this).is(':checked') ? 1 : 0);
+        });
+
+        $.ajax({
+            url: BASE_URL + '/admin/licences/updateFees', 
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            success: function(response) {
+                if (response.status == 'success') {
+                    $('#addFormModal').modal('hide');
+                    $('#feesForm')[0].reset();
                     Swal.fire({
+                        icon: 'success',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        // Refresh the page after the alert closes
+                        location.reload();
+                    });
+                } else {
+                        Swal.fire({
                         icon: 'error',
-                        title: msg,
+                        title: response.message,
                     });
                 }
-            });
+            },
+            error: function(xhr) {
+                let msg = 'An unexpected error occurred';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: msg,
+                });
+            }
         });
+    });
+
+    // Add/Edit 
+    $("#addForms").on("submit", function (e) {
+        e.preventDefault();
+    
+        let isValid = true;
+    
+        const fields = [
+            {
+                name: "form_cate",
+                selector: "select[name='form_cate']",
+                errorSelector: ".error-form_cate",
+                validate: function (val) {
+                    if (val === "") return "Please choose the category";
+                    return null;
+                },
+            },
+            {
+                name: "cert_name",
+                selector: "input[name='cert_name']",
+                errorSelector: ".error-cer_val",
+                validate: function (val) {
+                    if (val === "") return "Please fill the Certificate / Licence Name";
+                    if (!/^[a-zA-Z\s]+$/.test(val)) return "Category name should contain only letters and spaces";
+                    return null;
+                },
+            },
+            {
+                name: "cate_licence_code",
+                selector: "input[name='cate_licence_code']",
+                errorSelector: ".error-cert_code",
+                validate: function (val) {
+                    if (val === "") return "Please fill the Certificate / Licence Code";
+                    if (!/^[A-Z0-9]+$/.test(val)) return "Category code should contain only uppercase letters and numbers";
+                    return null;
+                },
+            },
+            {
+                name: "form_name",
+                selector: "input[name='form_name']",
+                errorSelector: ".error-form_name",
+                validate: function (val) {
+                    if (val === "") return "Please fill the Form Name";
+                    if (!/^[A-Z0-9]+$/.test(val)) return "Form Name should contain only uppercase letters and numbers";
+                    return null;
+                },
+            },
+            {
+                name: "form_code",
+                selector: "input[name='form_code']",
+                errorSelector: ".error-form_code",
+                validate: function (val) {
+                    if (val === "") return "Please fill the Form code";
+                    return null;
+                },
+            },
+        ];
+    
+        $(".error").addClass("d-none").text("");
+        $("input, select").css("border", "");
+    
+        fields.forEach((field) => {
+            const input = $(field.selector);
+            const value = $.trim(input.val());
+            const errorMsg = $(field.errorSelector);
+            const error = field.validate(value);
+    
+            input.off("input change").on("input change", function () {
+                $(this).css("border", "");
+                errorMsg.addClass("d-none").text("");
+            });
+
+    
+            if (error) {
+                input.css("border", "1px solid red");
+                errorMsg.text(error).removeClass("d-none");
+                if (isValid) input.focus(); // Focus first invalid field
+                isValid = false;
+            }
+        });
+    
+        if (!isValid) return false; // stop form submission if validation fails
+    
+        // Prepare form data
+        let formData = new FormData(this);
+
+        console.log(formData);
+    
+        // Disable button while submitting
+        const submitBtn = $("#addForms button[type='submit']");
+        submitBtn.prop("disabled", true).text("Creating...");
+    
+        // AJAX submission
+        $.ajax({
+            url: BASE_URL + "/admin/licences/add_licence",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            success: function (response) {
+                if (response.status) {
+                    Swal.fire({
+                        icon: "success",
+                        title: response.message || "Form created successfully!",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                    $("#addForms")[0].reset();
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Failed",
+                        text: response.message || "Something went wrong!",
+                    });
+                }
+            },
+            error: function (xhr) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Server Error",
+                    text: xhr.responseJSON?.message || "Please try again later.",
+                });
+            },
+            complete: function () {
+                submitBtn.prop("disabled", false).text("Create");
+            },
+        });
+    });
+        
 
 
     
@@ -568,139 +762,6 @@ $(document).ready(function() {
         
     });
 
-
-
-    // Add/Edit 
-    // $("#addForms").on("submit", function (e) {
-    //     e.preventDefault();
-    
-    //     let isValid = true;
-    
-    //     const fields = [
-    //         {
-    //             name: "form_cate",
-    //             selector: "select[name='form_cate']",
-    //             errorSelector: ".error-form_cate",
-    //             validate: function (val) {
-    //                 if (val === "") return "Please choose the category";
-    //                 return null;
-    //             },
-    //         },
-    //         {
-    //             name: "cert_name",
-    //             selector: "input[name='cert_name']",
-    //             errorSelector: ".error-cer_val",
-    //             validate: function (val) {
-    //                 if (val === "") return "Please fill the Certificate / Licence Name";
-    //                 if (!/^[a-zA-Z\s]+$/.test(val)) return "Category name should contain only letters and spaces";
-    //                 return null;
-    //             },
-    //         },
-    //         {
-    //             name: "cate_licence_code",
-    //             selector: "input[name='cate_licence_code']",
-    //             errorSelector: ".error-cert_code",
-    //             validate: function (val) {
-    //                 if (val === "") return "Please fill the Certificate / Licence Code";
-    //                 if (!/^[A-Z0-9]+$/.test(val)) return "Category code should contain only uppercase letters and numbers";
-    //                 return null;
-    //             },
-    //         },
-    //         {
-    //             name: "form_name",
-    //             selector: "input[name='form_name']",
-    //             errorSelector: ".error-form_name",
-    //             validate: function (val) {
-    //                 if (val === "") return "Please fill the Form Name";
-    //                 if (!/^[A-Z0-9]+$/.test(val)) return "Form Name should contain only uppercase letters and numbers";
-    //                 return null;
-    //             },
-    //         },
-    //         {
-    //             name: "form_code",
-    //             selector: "input[name='form_code']",
-    //             errorSelector: ".error-form_code",
-    //             validate: function (val) {
-    //                 if (val === "") return "Please fill the Form code";
-    //                 return null;
-    //             },
-    //         },
-    //     ];
-    
-    //     $(".error").addClass("d-none").text("");
-    //     $("input, select").css("border", "");
-    
-    //     fields.forEach((field) => {
-    //         const input = $(field.selector);
-    //         const value = $.trim(input.val());
-    //         const errorMsg = $(field.errorSelector);
-    //         const error = field.validate(value);
-    
-    //         input.off("input change").on("input change", function () {
-    //             $(this).css("border", "");
-    //             errorMsg.addClass("d-none").text("");
-    //         });
-
-    
-    //         if (error) {
-    //             input.css("border", "1px solid red");
-    //             errorMsg.text(error).removeClass("d-none");
-    //             if (isValid) input.focus(); // Focus first invalid field
-    //             isValid = false;
-    //         }
-    //     });
-    
-    //     if (!isValid) return false; // stop form submission if validation fails
-    
-    //     // Prepare form data
-    //     let formData = new FormData(this);
-
-    //     console.log(formData);
-    
-    //     // Disable button while submitting
-    //     const submitBtn = $("#addForms button[type='submit']");
-    //     submitBtn.prop("disabled", true).text("Creating...");
-    
-    //     // AJAX submission
-    //     $.ajax({
-    //         url: BASE_URL + "/admin/licences/add_licence",
-    //         type: "POST",
-    //         data: formData,
-    //         processData: false,
-    //         contentType: false,
-    //         dataType: "json",
-    //         headers: {
-    //             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-    //         },
-    //         success: function (response) {
-    //             if (response.status) {
-    //                 Swal.fire({
-    //                     icon: "success",
-    //                     title: response.message || "Form created successfully!",
-    //                     showConfirmButton: false,
-    //                     timer: 1500,
-    //                 });
-    //                 $("#addForms")[0].reset();
-    //             } else {
-    //                 Swal.fire({
-    //                     icon: "error",
-    //                     title: "Failed",
-    //                     text: response.message || "Something went wrong!",
-    //                 });
-    //             }
-    //         },
-    //         error: function (xhr) {
-    //             Swal.fire({
-    //                 icon: "error",
-    //                 title: "Server Error",
-    //                 text: xhr.responseJSON?.message || "Please try again later.",
-    //             });
-    //         },
-    //         complete: function () {
-    //             submitBtn.prop("disabled", false).text("Create");
-    //         },
-    //     });
-    // });
 
     // $("#editForms").on("submit", function (e) {
     //     e.preventDefault();

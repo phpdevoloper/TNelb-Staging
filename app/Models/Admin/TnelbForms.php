@@ -17,7 +17,7 @@ class TnelbForms extends Model
         // ];
         
     protected $table="tnelb_forms";
-    protected $primaryKey = 'f_id'; 
+    protected $primaryKey = 'id'; 
         
     protected $fillable = [
         'form_name',

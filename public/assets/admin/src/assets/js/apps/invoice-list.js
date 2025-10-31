@@ -3,22 +3,22 @@ var invoiceList = $('#invoice-list').DataTable({
         "<'table-responsive'tr>" +
         "<'inv-list-bottom-section d-sm-flex justify-content-sm-between text-center'<'inv-list-pages-count  mb-sm-0 mb-3'i><'inv-list-pagination'p>>",
 
-    headerCallback:function(e, a, t, n, s) {
-        e.getElementsByTagName("th")[0].innerHTML=`
-        <div class="form-check form-check-primary d-block new-control">
-            <input class="form-check-input chk-parent" type="checkbox" id="form-check-default">
-        </div>`
-    },
+    // headerCallback:function(e, a, t, n, s) {
+    //     e.getElementsByTagName("th")[0].innerHTML=`
+    //     <div class="form-check form-check-primary d-block new-control">
+    //         <input class="form-check-input chk-parent" type="checkbox" id="form-check-default">
+    //     </div>`
+    // },
     columnDefs:[{
-        targets:0,
+        // targets:0,
         width:"30px",
         className:"",
         orderable:!1,
         render:function(e, a, t, n) {
-            return `
-            <div class="form-check form-check-primary d-block new-control">
-                <input class="form-check-input child-chk" type="checkbox" id="form-check-default">
-            </div>`
+            // return `
+            // <div class="form-check form-check-primary d-block new-control">
+            //     <input class="form-check-input child-chk" type="checkbox" id="form-check-default">
+            // </div>`
         },
     }],
     buttons: [
