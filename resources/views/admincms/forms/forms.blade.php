@@ -148,11 +148,11 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $form->licence_name.' / '. $form->form_name}}</td>
                                             <td>{{ $form->fresh_fee_amount}}</td>
-                                            <td>{{ \Carbon\Carbon::parse($form->fresh_fee_starts)->format('d/m/Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($form->fresh_fee_starts)->format('d-m-Y') }}</td>
                                             <td>{{ $form->renewal_amount}}</td>
-                                            <td>{{ \Carbon\Carbon::parse($form->renewalamount_starts)->format('d/m/Y') }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($form->created_at)->format('d/m/Y') }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($form->updated_at)->format('d/m/Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($form->renewalamount_starts)->format('d-m-Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($form->created_at)->format('d-m-Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($form->updated_at)->format('d-m-Y') }}</td>
                                             <td>
                                                 @if($form->status == 1)
                                                     <span class="badge bg-success">Active</span>

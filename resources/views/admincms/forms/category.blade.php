@@ -92,8 +92,8 @@
                                                         @endif
                                                     </td>
 
-                                                    <td>{{ \Carbon\Carbon::parse($category->created_at)->format('d/m/Y') }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($category->updated_at)->format('d/m/Y') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($category->created_at)->format('d-m-Y') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($category->updated_at)->format('d-m-Y') }}</td>
 
                                                     <!-- Action -->
                                                     <td class="text-center">

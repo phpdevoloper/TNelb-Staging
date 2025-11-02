@@ -370,13 +370,13 @@ class LicenceManagementController extends BaseController
 
             $form = TnelbForms::create([
                 'form_name'                 => $request->form_name,
-                'license_id'                => $request->cert_name,
+                'licence_id'                => $request->cert_name,
                 'fresh_fee_amount'          => $request->fresh_fees,
                 'fresh_fee_starts'          => $request->fresh_fees_on,
                 'fresh_fee_ends'            => $request->fresh_fees_ends_on,
 
                 'renewal_amount'            => $request->renewal_fees,
-                'renewalamount_starts'      => $request->renewal_fees_on,
+                'renewalamount_starts'      => $request->renewal_fees_as_on,
                 'renewalamount_ends'        => $request->renewal_fees_ends_on,
 
                 'latefee_amount'            => $request->latefee_for_renewal,
@@ -413,6 +413,7 @@ class LicenceManagementController extends BaseController
     }
 
     public function updateForm(Request $request){
+        // var_dump($request->all());die;
 
         $request->validate([
             'cert_name' => 'required|string',
@@ -513,7 +514,7 @@ class LicenceManagementController extends BaseController
 
             $form = TnelbForms::create([
                 'form_name'                     => $request->form_name,
-                'license_name'                  => $request->cert_name,
+                'licence_id'                  => $request->cert_name,
 
                 'fresh_fee_amount'              => $request->fresh_fees,
                 'fresh_fee_starts'              => $request->fresh_fees_on,
@@ -579,7 +580,7 @@ class LicenceManagementController extends BaseController
         ->select('mst_licences.licence_name', 'tnelb_forms.*')
         ->get();
 
-        // dd($activeForms);die;
+        // dd();die;
 
         // compact('activeForms', 'all_licences')
         return view('admincms.forms.viewLicences', compact('all_licences', 'activeForms'));

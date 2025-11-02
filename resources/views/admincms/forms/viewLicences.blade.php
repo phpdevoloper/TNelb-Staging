@@ -165,6 +165,10 @@
                                                     <th>Fresh Fees As on</th>
                                                     <th>Renewal Fees</th>
                                                     <th>Renewal Fees As on</th>
+                                                    <th>Renewal Fees Ends on</th>
+                                                    <th>Late Fees</th>
+                                                    <th>Late Fees As on</th>
+                                                    <th>Late Fees Ends on</th>
                                                     <th>Created Date</th>
                                                     <th>Updated Date</th>
                                                     <th>Status</th>
@@ -180,6 +184,10 @@
                                                     <td>{{ \Carbon\Carbon::parse($form->fresh_fee_starts)->format('d-m-Y') }}</td>
                                                     <td>{{ $form->renewal_amount}}</td>
                                                     <td>{{ \Carbon\Carbon::parse($form->renewalamount_starts)->format('d-m-Y') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($form->renewalamount_ends)->format('d-m-Y') }}</td>
+                                                    <td>{{ $form->latefee_amount }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($form->latefee_starts)->format('d-m-Y') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($form->latefee_ends)->format('d-m-Y') }}</td>
                                                     <td>{{ \Carbon\Carbon::parse($form->created_at)->format('d-m-Y') }}</td>
                                                     <td>{{ \Carbon\Carbon::parse($form->updated_at)->format('d-m-Y') }}</td>
                                                     <td>
@@ -191,9 +199,9 @@
                                                     </td>
                                                     <td>
                                                         <span class="badge bg-primary bs-tooltip editFormBtn" data-bs-toggle="modal" data-bs-target="#editFormModal" style="cursor:pointer;" 
-                                                        data-id="{{ $form->f_id }}"
+                                                        data-id="{{ $form->id }}"
                                                         data-form_name="{{ $form->form_name }}"
-                                                        data-cert_name ="{{ $form->license_name }}"
+                                                        data-cert_name ="{{ $form->licence_id }}"
                                                         data-fresh_form_fees="{{ $form->fresh_fee_amount }}"
                                                         data-renewal_form_fees="{{ $form->renewal_amount }}"
                                                         data-renewal_late_fees="{{ $form->latefee_amount }}"
@@ -229,12 +237,220 @@
                             </div>
                         </div>
                     </div>
+                    <div class="tab-pane fade" id="animated-underline-contact" role="tabpanel" aria-labelledby="animated-underline-contact-tab">
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 layout-top-spacing layout-spacing">
+                                <div class="widget-content widget-content-area br-8">
+                                    {{-- <button class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#addFormModal"><i class="fa fa-plus"></i> Add</button> --}}
+                                    <table id="validity-list" class="zero-config table dt-table-hover" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>S.No</th>
+                                                <th>Cerificate Name / Form Name</th>
+                                                <th>Fresh Fees</th>
+                                                <th>Fresh Fees As on</th>
+                                                <th>Renewal Fees</th>
+                                                <th>Renewal Fees As on</th>
+                                                <th>Renewal Fees Ends on</th>
+                                                <th>Late Fees</th>
+                                                <th>Late Fees As on</th>
+                                                <th>Late Fees Ends on</th>
+                                                <th>Created Date</th>
+                                                <th>Updated Date</th>
+                                                <th>Status</th>
+                                                <th class="no-content">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($activeForms as $index => $form)
+                                            <tr>
+                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ $form->licence_name.' / '. $form->form_name}}</td>
+                                                <td>{{ $form->fresh_fee_amount}}</td>
+                                                <td>{{ \Carbon\Carbon::parse($form->fresh_fee_starts)->format('d-m-Y') }}</td>
+                                                <td>{{ $form->renewal_amount}}</td>
+                                                <td>{{ \Carbon\Carbon::parse($form->renewalamount_starts)->format('d-m-Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($form->renewalamount_ends)->format('d-m-Y') }}</td>
+                                                <td>{{ $form->latefee_amount }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($form->latefee_starts)->format('d-m-Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($form->latefee_ends)->format('d-m-Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($form->created_at)->format('d-m-Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($form->updated_at)->format('d-m-Y') }}</td>
+                                                <td>
+                                                    @if($form->status == 1)
+                                                    <span class="badge bg-success">Active</span>
+                                                    @else
+                                                    <span class="badge bg-danger">Inactive</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-primary bs-tooltip editFormBtn" data-bs-toggle="modal" data-bs-target="#editFormModal" style="cursor:pointer;" 
+                                                    data-id="{{ $form->id }}"
+                                                    data-form_name="{{ $form->form_name }}"
+                                                    data-cert_name ="{{ $form->licence_id }}"
+                                                    data-fresh_form_fees="{{ $form->fresh_fee_amount }}"
+                                                    data-renewal_form_fees="{{ $form->renewal_amount }}"
+                                                    data-renewal_late_fees="{{ $form->latefee_amount }}"
+                                                    data-fresh_fees_on ="{{ $form->fresh_fee_starts }}"
+                                                    data-fresh_fees_ends_on ="{{ $form->fresh_fee_ends }}"
+                                                    data-renewal_fees_on ="{{ $form->renewalamount_starts }}"
+                                                    data-renewal_fees_ends_on ="{{ $form->renewalamount_ends }}"
+                                                    data-renewal_late_fees_on ="{{ $form->latefee_starts }}"
+                                                    data-renewal_late_fees_ends_on ="{{ $form->latefee_ends }}"
+                                                    {{-- data-fresh_form_duration ="{{ $form->duration_freshfee }}"
+                                                    data-renewal_form_duration ="{{ $form->duration_renewalfee }}"
+                                                    data-renewal_late_fees_duration ="{{ $form->duration_latefee }}"
+                                                    data-fresh_form_duration_on ="{{ $form->fresh_fee_starts }}"
+                                                    data-fresh_form_duration_ends_on ="{{ $form->duration_freshfee_ends }}"
+                                                    data-renewal_form_duration_on ="{{ $form->duration_renewalfee_starts }}"
+                                                    data-renewal_form_duration_ends_on ="{{ $form->duration_renewalfee_ends }}"
+                                                    data-renewal_late_fees_duration_on ="{{ $form->duration_latefee_starts }}"
+                                                    data-renewal_late_fees_duration_ends_on ="{{ $form->duration_latefee_ends }}" --}}
+                                                    data-form_status ="{{ $form->status }}"
+                                                    title="Edit"
+                                                    >
+                                                    <i class="fa fa-edit"></i>
+                                                    </span>
+                                                    <span class="badge badge-primary bs-tooltip" id="openHistoryBtn" title="Previous History"
+                                                    data-id="{{ $form->license_name }}"
+                                                    ><i class="fa fa-refresh"></i></span>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-        
+
+
+<!--Duration Modal -->
+<div class="modal fade" id="addDurationModal" tabindex="-1" role="dialog" aria-labelledby="addDurationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addDurationModalLabel"> Update Validity Periods</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                    </button>
+                </button>
+                {{-- <span><span class="text-danger">(Note:</span> Currently, late fees are applicable only during the last 3 months before the expiry date.)</span> --}}
+            </div>
+            <form id="validity_form" enctype="multipart/form-data">
+            <div class="modal-body">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="inputEmail4" class="form-label">Certificate / Licence Name <span class="text-danger">*</span> </label>
+                        <select class="form-select" name="cert_name" id="cert_name">
+                            <option value="">Please Choose the Certificate / Licence </option>
+                            @foreach ($all_licences as $item)
+                                <option value="{{ $item->id }}" data-form_name="{{ $item->form_name }}">{{ $item->licence_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="inputPassword4" class="form-label">Form Name <span class="text-danger">*</span></label>
+                        <select class="form-select" name="form_name">
+                            <option value="">Please Choose the Form Type </option>
+                            <option value="N">New Form</option>
+                            <option value="R">Renewal Form</option>
+                        </select>
+                    </div>
+                </div>
+
+                <hr style="border-top: 1px solid #4361ee;">
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-12 custom-box mb-3">
+                        <div class="box-head text-primary mb-3"><i class="fa fa-clock-o"></i> Durations for New Form</div>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="inputEmail4" class="form-label">New Form Validity<span class="text-danger">*</span></label><br>
+                                <div class="input-group">
+                                    <input type="number" class="form-control fees_amount" name="fresh_form_duration" min="0">
+                                    <span class="input-group-text">months</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="inputEmail4" class="form-label">Validity From<span class="text-danger">*</span></label>
+                                <input type="date" name="fresh_form_duration_on" class="form-control">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="inputEmail4" class="form-label">Validity To<span class="text-danger">*</span></label>
+                                <input type="date" name="fresh_form_duration_ends_on" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 custom-box mb-3">
+                        <div class="box-head text-primary mb-3"><i class="fa fa-clock-o"></i> Durations Renewal</div>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="inputPassword4" class="form-label">Renewal Validity<span class="text-danger">*</span></label><br>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="renewal_form_duration"  min="0">
+                                    <span class="input-group-text">months</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="inputEmail4" class="form-label">Renewal Validity From<span class="text-danger">*</span></label>
+                                <input type="date" name="renewal_duration_on" class="form-control">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="inputEmail4" class="form-label">Renewal Validity To<span class="text-danger">*</span></label>
+                                <input type="date" name="renewal_duration_on" class="form-control">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="inputPassword4" class="form-label">Late Fees Validity<span class="text-danger">*</span></label><br>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="renewal_late_fee_duration"  min="0">
+                                    <span class="input-group-text">Days</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="inputEmail4" class="form-label">Late Fees Validity From<span class="text-danger">*</span></label>
+                                <input type="date" name="renewal_late_fee_duration_on" class="form-control">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="inputEmail4" class="form-label">Late Fees Validity To<span class="text-danger">*</span></label>
+                                <input type="date" name="renewal_late_fee_duration_on" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row custom-box g-3">
+                    <div class="box-head text-primary mb-3"><i class="fa fa-setting"></i> Status</div>
+                    <div class="col-md-6">
+                        <!-- Switch centered -->
+                        <div class="d-inline-block text-center">
+                            <div class="switch form-switch-custom switch-inline form-switch-success form-switch-custom dual-label-toggle">
+                                <label class="switch-label switch-label-left" for="form-custom-switch-dual-label">In Active</label>
+                                <div class="input-checkbox">
+                                    <input class="switch-input" type="checkbox" role="switch" name="form_status" checked>
+                                </div>
+                                <label class="switch-label switch-label-right" for="form-custom-switch-dual-label">Active</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#feesForm').trigger('reset');"><i class="flaticon-cancel-12"></i> Discard</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>     
 
 <!-- Modal -->
 <div class="modal fade" id="addFormModal" tabindex="-1" role="dialog" aria-labelledby="addFormModalLabel" aria-hidden="true">
@@ -415,12 +631,11 @@
                         <!-- Certificate & Form Name -->
                         <div class="col-md-6">
                             <label class="form-label">Certificate Name <span class="text-danger">*</span></label>
-                            {{-- <input type="text" class="form-control" name="cert_name" id="cert_name"> --}}
                             <select class="form-select" id="cert_name_edit" disabled>
                                 <option value="">Please Choose Certificate / Licence </option>
-                                {{-- @foreach ($all_licences as $item)
+                                @foreach ($all_licences as $item)
                                     <option value="{{ $item->id }}" data-form_name="{{ $item->form_name }}" {{ $item->id == $form->license_name ? 'selected' : '' }}>{{ $item->licence_name }}</option>
-                                @endforeach --}}
+                                @endforeach
                             </select>
                             <input type="hidden" name="cert_name" id="cert_val">
                         </div>
@@ -452,7 +667,7 @@
                                 </div>
                                  <div class="col-md-4 mb-2">
                                     <label for="inputEmail4" class="form-label">Fresh Form Fees <strong>Ends on</strong> <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" name="fresh_fees_ends_on">
+                                    <input type="date" class="form-control" name="fresh_fees_ends_on" id="fresh_fees_ends_on">
                                 </div>
                                
                                 <!-- Renewal Form Fees -->
@@ -487,7 +702,7 @@
                                 </div>
                                 <div class="col-md-4 mb-2">
                                     <label for="inputEmail4" class="form-label">Late Fees Ends on<span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" name="late_renewal_fees_ends_on">
+                                    <input type="date" class="form-control" name="late_renewal_fees_ends_on" id="late_renewal_fees_ends_on">
                                 </div>
                             </div>
                         </div>
@@ -572,7 +787,6 @@
         </div>
     </div>
 </div>
-
 
 @include('admincms.include.footer');
 

@@ -263,18 +263,19 @@ $(document).ready(function() {
         const fresh_fees_on = $(this).data('fresh_fees_on');
         const renewal_fees_on = $(this).data('renewal_fees_on');
         const late_fees_on = $(this).data('renewal_late_fees_on');
-        const fresh_duration = $(this).data('fresh_form_duration');
-        const renewal_duration = $(this).data('renewal_form_duration');
-        const late_duration = $(this).data('renewal_late_fees_duration');
-        const fresh_duration_on = $(this).data('fresh_form_duration_on');
-        const renewal_duration_on = $(this).data('renewal_form_duration_on');
-        const late_duration_on = $(this).data('renewal_late_fees_duration_on');
+        // const fresh_duration = $(this).data('fresh_form_duration');
+        // const renewal_duration = $(this).data('renewal_form_duration');
+        // const late_duration = $(this).data('renewal_late_fees_duration');
+        // const fresh_duration_on = $(this).data('fresh_form_duration_on');
+        // const renewal_duration_on = $(this).data('renewal_form_duration_on');
+        // const late_duration_on = $(this).data('renewal_late_fees_duration_on');
+
         const fresh_fees_ends_on =  $(this).data('fresh_fees_ends_on');
         const renewal_fees_ends_on =  $(this).data('renewal_fees_ends_on');
         const renewal_late_fees_ends_on =  $(this).data('renewal_late_fees_ends_on');
         const fresh_form_duration_ends_on =  $(this).data('fresh_form_duration_ends_on');
-        const renewal_form_duration_ends_on =  $(this).data('renewal_form_duration_ends_on');
-        const renewal_late_fees_duration_ends_on =  $(this).data('renewal_late_fees_duration_ends_on');
+        // const renewal_form_duration_ends_on =  $(this).data('renewal_form_duration_ends_on');
+        // const renewal_late_fees_duration_ends_on =  $(this).data('renewal_late_fees_duration_ends_on');
         const status = $(this).data('form_status');
 
         console.log(cert_name);
@@ -297,18 +298,18 @@ $(document).ready(function() {
         $('#renewal_fees_starts').val(renewal_fees_on);
         $('#latefee_for_renewal').val(late_fee);
         $('#late_renewal_fees_starts').val(late_fees_on);
-        $('#freshform_duration').val(fresh_duration);
-        $('#freshform_duration_starts').val(fresh_duration_on);
-        $('#renewal_form_duration').val(renewal_duration);
-        $('#renewal_duration_starts').val(renewal_duration_on);
-        $('#renewal_late_fee_duration').val(late_duration);
-        $('#renewal_late_fee_duration_starts').val(late_duration_on);
+        // $('#freshform_duration').val(fresh_duration);
+        // $('#freshform_duration_starts').val(fresh_duration_on);
+        // $('#renewal_form_duration').val(renewal_duration);
+        // $('#renewal_duration_starts').val(renewal_duration_on);
+        // $('#renewal_late_fee_duration').val(late_duration);
+        // $('#renewal_late_fee_duration_starts').val(late_duration_on);
         $('#fresh_fees_ends_on').val(fresh_fees_ends_on);
         $('#renewal_fees_ends_on').val(renewal_fees_ends_on);
         $('#late_renewal_fees_ends_on').val(renewal_late_fees_ends_on);
-        $('#freshform_duration_ends').val(fresh_form_duration_ends_on);
-        $('#renewal_duration_ends').val(renewal_form_duration_ends_on);
-        $('#renewal_late_fee_duration_ends').val(renewal_late_fees_duration_ends_on);
+        // $('#freshform_duration_ends').val(fresh_form_duration_ends_on);
+        // $('#renewal_duration_ends').val(renewal_form_duration_ends_on);
+        // $('#renewal_late_fee_duration_ends').val(renewal_late_fees_duration_ends_on);
 
         
         if (status == 1) {

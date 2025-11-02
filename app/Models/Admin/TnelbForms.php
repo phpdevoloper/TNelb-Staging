@@ -21,7 +21,10 @@ class TnelbForms extends Model
         
     protected $fillable = [
         'form_name',
-        'license_name',
+        'licence_id',
+        'cert_licence_code',
+        'form_code',
+        // 'license_name',
         'fresh_fee_amount',
         'fresh_fee_starts',
         'fresh_fee_ends',

@@ -135,7 +135,7 @@
                                                         @endif
                                                     </td>
 
-                                                    <td class="text-center">{{ $row->created_at }}</td>
+                                                    <td class="text-center">{{ \Carbon\Carbon::parse($row->created_at)->format('d-m-Y') }}</td>
 
                                                     <!-- Action -->
                                                     <td class="text-center">
