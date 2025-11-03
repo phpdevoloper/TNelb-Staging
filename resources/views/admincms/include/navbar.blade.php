@@ -207,7 +207,7 @@
                 </li>
 
                 @php
-                    $licence_routes = ['admin.forms', 'admin.licenceCategory', 'admin.view_licences','admin.management'];
+                    $licence_routes = ['admin.fees_validity', 'admin.licenceCategory', 'admin.view_licences','admin.management'];
                 @endphp
 
 
@@ -237,8 +237,8 @@
                         <li class="{{ $currentRoute == 'admin.view_licences' ? 'active' : '' }}">
                            <a href="{{route('admin.view_licences')}}">Certificates / Licences</a>
                        </li>
-                        <li class="{{ $currentRoute == 'admin.forms' ? 'active' : '' }}">
-                            <a href="{{ route('admin.forms') }}">
+                        <li class="{{ $currentRoute == 'admin.fees_validity' ? 'active' : '' }}">
+                            <a href="{{ route('admin.fees_validity') }}">
                                 Fees Details
                             </a>
                         </li>

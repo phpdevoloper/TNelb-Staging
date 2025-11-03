@@ -161,22 +161,16 @@
                                                 <tr>
                                                     <th>S.No</th>
                                                     <th>Cerificate Name / Form Name</th>
-                                                    <th>Fresh Fees</th>
-                                                    <th>Fresh Fees As on</th>
-                                                    <th>Renewal Fees</th>
-                                                    <th>Renewal Fees As on</th>
-                                                    <th>Renewal Fees Ends on</th>
-                                                    <th>Late Fees</th>
-                                                    <th>Late Fees As on</th>
-                                                    <th>Late Fees Ends on</th>
-                                                    <th>Created Date</th>
-                                                    <th>Updated Date</th>
+                                                    <th>Type of Fees</th>
+                                                    <th>Amount</th>
+                                                    <th>Amount</th>
+                                                    <th>Start Date</th>
                                                     <th>Status</th>
                                                     <th class="no-content">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($activeForms as $index => $form)
+                                                {{-- @foreach($activeForms as $index => $form)
                                                 <tr>
                                                     <td>{{ $index + 1 }}</td>
                                                     <td>{{ $form->licence_name.' / '. $form->form_name}}</td>
@@ -211,15 +205,6 @@
                                                         data-renewal_fees_ends_on ="{{ $form->renewalamount_ends }}"
                                                         data-renewal_late_fees_on ="{{ $form->latefee_starts }}"
                                                         data-renewal_late_fees_ends_on ="{{ $form->latefee_ends }}"
-                                                        {{-- data-fresh_form_duration ="{{ $form->duration_freshfee }}"
-                                                        data-renewal_form_duration ="{{ $form->duration_renewalfee }}"
-                                                        data-renewal_late_fees_duration ="{{ $form->duration_latefee }}"
-                                                        data-fresh_form_duration_on ="{{ $form->fresh_fee_starts }}"
-                                                        data-fresh_form_duration_ends_on ="{{ $form->duration_freshfee_ends }}"
-                                                        data-renewal_form_duration_on ="{{ $form->duration_renewalfee_starts }}"
-                                                        data-renewal_form_duration_ends_on ="{{ $form->duration_renewalfee_ends }}"
-                                                        data-renewal_late_fees_duration_on ="{{ $form->duration_latefee_starts }}"
-                                                        data-renewal_late_fees_duration_ends_on ="{{ $form->duration_latefee_ends }}" --}}
                                                         data-form_status ="{{ $form->status }}"
                                                         title="Edit"
                                                         >
@@ -230,7 +215,7 @@
                                                     ><i class="fa fa-refresh"></i></span>
                                                 </td>
                                             </tr>
-                                            @endforeach
+                                            @endforeach --}}
                                         </tbody>
                                     </table>
                                 </div>
@@ -305,7 +290,7 @@
                                                     <i class="fa fa-edit"></i>
                                                     </span>
                                                     <span class="badge badge-primary bs-tooltip" id="openHistoryBtn" title="Previous History"
-                                                    data-id="{{ $form->license_name }}"
+                                                    data-id=""
                                                     ><i class="fa fa-refresh"></i></span>
                                                 </td>
                                             </tr>
@@ -471,115 +456,75 @@
             <div class="modal-body">
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
-                        <label for="inputEmail4" class="form-label">Certificate / Licence Name <span class="text-danger">*</span> </label>
-                        <select class="form-select" name="cert_name" id="cert_name">
-                            <option value="">Please Choose the Certificate / Licence </option>
-                            @foreach ($all_licences as $item)
-                                <option value="{{ $item->id }}" data-form_name="{{ $item->form_name }}">{{ $item->licence_name }}</option>
-                            @endforeach
-                        </select>
+                        <div class="form-group mb-3">
+                            <label for="cert_name" class="form-label text-primary fw-bold">
+                                <i class="fa fa-id-card"></i> Certificate / Licence <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select shadow-sm border-primary-subtle rounded-3" name="cert_name" id="cert_name">
+                                <option value="">Please Choose the Certificate / Licence</option>
+                                @foreach ($all_licences as $item)
+                                    <option value="{{ $item->id }}">
+                                        {{ $item->licence_name . ' [' . $item->form_name . ']' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="col-md-6">
-                        <label for="inputPassword4" class="form-label">Form Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="form_name" id="form_name" readonly style="color: #181616 !important;">
-                        {{-- <select class="form-select" name="form_name">
-                            <option value="">Please Choose the Form Name </option>
-                        </select> --}}
+                        <label for="inputPassword4" class="form-label text-primary fw-bold">Type of Fees <span class="text-danger">*</span></label>
+                        {{-- <input type="text" class="form-control" name="form_name" id="form_name" readonly style="color: #181616 !important;"> --}}
+                        <select class="form-select shadow-sm border-primary-subtle rounded-3" name="fees_type" id="fees_type">
+                            <option value="">Please Choose the Type </option>
+                            <option value="N">Fresh Fees</option>
+                            <option value="R">Renewal Fees</option>
+                        </select>
                     </div>
                 </div>
-
-                <hr style="border-top: 1px solid #4361ee;">
-
                 <div class="row g-3 mb-3">
-                    <div class="col-md-12 custom-box mb-3">
+                    <div id="freshForm" class="col-md-12 custom-box mb-3 shadow-sm border-primary-subtle rounded-3 animated fadeInDown">
                         <div class="box-head text-primary mb-3">₹ Fees Details</div>
                         <hr style="border-color: #000000;">
                         <div class="row g-3">
-                            <div class="col-md-4 mb-2">
-                                <label for="inputEmail4" class="form-label">Fees for Fresh Form <span class="text-danger">*</span></label>
+                            <div class="col-md-6 mb-2">
+                                <label for="inputEmail4" class="form-label">Fees <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text">₹</span>
                                     <input type="number" class="form-control" name="fresh_fees" min="0" placeholder="0">
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-2">
-                                <label for="inputEmail4" class="form-label">Fresh Form Fees As on<span class="text-danger">*</span></label>
+                            <div class="col-md-6 mb-2">
+                                <label for="inputEmail4" class="form-label">Start Date <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control" name="fresh_fees_on">
                             </div>
-                            <div class="col-md-4 mb-2">
-                                <label for="inputEmail4" class="form-label">Fresh Form Fees <strong>Ends on</strong> <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" name="fresh_fees_ends_on">
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <label for="inputPassword4" class="form-label">Renewal Fees<span class="text-danger">*</span></label>
+                        </div>
+                    </div>
+                    <div id="renewalForm" class="col-md-12 custom-box mb-3 shadow-sm border-primary-subtle rounded-3 animated fadeInDown" style="display: none">
+                        <div class="box-head text-primary mb-3">₹ Renewal Fees Details</div>
+                        <div class="row g-3">
+                           <div class="col-md-6 mb-2">
+                                <label for="inputPassword4" class="form-label">Renewal Fees <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text">₹</span>
                                     <input type="number" class="form-control" name="renewal_fees" min="0" placeholder="0">
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-2">
-                                <label for="inputEmail4" class="form-label">Renewal Fees As on<span class="text-danger">*</span></label>
+                            <div class="col-md-6 mb-2">
+                                <label for="inputEmail4" class="form-label">Start Date<span class="text-danger">*</span></label>
                                 <input type="date" class="form-control" name="renewal_fees_as_on">
                             </div>
-                            <div class="col-md-4 mb-2">
-                                <label for="inputEmail4" class="form-label">Renewal Fees Ends on<span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" name="renewal_fees_ends_on">
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <label for="inputPassword4" class="form-label">Late Fees for Renewal<span class="text-danger">*</span></label>
+                            <div class="col-md-6 mb-2">
+                                <label for="inputPassword4" class="form-label">Late Fees<span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text">₹</span>
                                     <input type="number" class="form-control" name="latefee_for_renewal" min="0" placeholder="0">
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-2">
-                                <label for="inputEmail4" class="form-label">Late Fees As on<span class="text-danger">*</span></label>
+                            <div class="col-md-6 mb-2">
+                                <label for="inputEmail4" class="form-label">Start Date<span class="text-danger">*</span></label>
                                 <input type="date" class="form-control" name="late_renewal_fees_on">
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <label for="inputEmail4" class="form-label">Late Fees Ends on<span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" name="late_renewal_fees_ends_on">
                             </div>
                         </div>
                     </div>
-                    {{-- <div class="col-md-6 custom-box mb-3">
-                        <div class="box-head text-primary mb-3"><i class="fa fa-clock-o"></i> Durations</div>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="inputEmail4" class="form-label">Duration for Fresh Form <span class="text-danger">*</span></label><br>
-                                <div class="input-group">
-                                    <input type="number" class="form-control fees_amount" name="fresh_form_duration" min="0">
-                                    <span class="input-group-text">months</span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="inputEmail4" class="form-label">Fresh Form Duration As on<span class="text-danger">*</span></label>
-                                <input type="date" name="fresh_form_duration_on" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="inputPassword4" class="form-label">Duration for Renewal Form <span class="text-danger">*</span></label><br>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" name="renewal_form_duration"  min="0">
-                                    <span class="input-group-text">months</span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="inputEmail4" class="form-label">Renewal Duration As on<span class="text-danger">*</span></label>
-                                <input type="date" name="renewal_duration_on" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="inputPassword4" class="form-label">Duration of Renewal Late Fees<span class="text-danger">*</span></label><br>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" name="renewal_late_fee_duration"  min="0">
-                                    <span class="input-group-text">months</span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="inputEmail4" class="form-label">Renewal Late Duration As on<span class="text-danger">*</span></label>
-                                <input type="date" name="renewal_late_fee_duration_on" class="form-control">
-                            </div>
-                        </div>
-                    </div> --}}
                 </div>
                 <div class="row custom-box g-3">
                     <div class="box-head text-primary mb-3"><i class="fa fa-setting"></i> Status</div>
@@ -707,52 +652,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Durations -->
-                        {{-- <div class="col-md-6 custom-box mb-3">
-                            <div class="text-primary mb-3"><i class="fa fa-clock-o"></i> Durations</div>
-                            <div class="row g-3">
-                                <!-- Fresh Form Duration -->
-                                <div class="col-md-6">
-                                    <label>Duration for Fresh Form <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" name="fresh_form_duration" id="freshform_duration" min="0">
-                                        <span class="input-group-text">months</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label>Fresh Duration As on</label>
-                                    <input type="date" class="form-control" name="fresh_form_duration_on" id="freshform_duration_starts">
-                                </div>
-
-                                <!-- Renewal Form Duration -->
-                                <div class="col-md-6">
-                                    <label>Duration for Renewal Form <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" name="renewal_form_duration" id="renewal_form_duration" min="0">
-                                        <span class="input-group-text">months</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label>Renewal Duration As on</label>
-                                    <input type="date" class="form-control" name="renewal_duration_on" id="renewal_duration_starts">
-                                </div>
-                                
-
-                                <!-- Renewal Late Fees Duration -->
-                                <div class="col-md-6">
-                                    <label class="form-label">Duration of Renewal Late Fee <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" name="renewal_late_fee_duration" id="renewal_late_fee_duration" min="0">
-                                        <span class="input-group-text">days</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label>Late Fee Duration As on</label>
-                                    <input type="date" class="form-control" name="renewal_late_fee_duration_on" id="renewal_late_fee_duration_starts">
-                                </div>
-                            </div>
-                        </div> --}}
                     </div>
 
                     <hr>
@@ -837,8 +736,19 @@
                 $('#newFormDuration').hide();
                 $('#renewalDuration').show();
             }
-            
-            
+        });
+
+
+        $("#fees_type").on("change", function () {
+            const selectedOption = $(this).find(":selected");
+            selectedValue = selectedOption.val();
+            if (selectedValue == 'N') {
+                $('#renewalForm').hide();
+                $('#freshForm').show();
+            }else{
+                $('#freshForm').hide();
+                $('#renewalForm').show();
+            }
         });
     });
 </script>

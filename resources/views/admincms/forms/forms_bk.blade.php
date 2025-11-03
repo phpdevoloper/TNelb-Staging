@@ -377,7 +377,7 @@
                             <select class="form-select" id="cert_name_edit" disabled>
                                 <option value="">Please Choose the Certificate / Licence </option>
                                 @foreach ($all_licences as $item)
-                                    <option value="{{ $item->id }}" data-form_name="{{ $item->form_name }}" {{ $item->id == $form->license_name ? 'selected' : '' }}>{{ $item->licence_name }}</option>
+                                    <option value="{{ $item->id }}" data-form_name="{{ $item->form_name }}">{{ $item->licence_name }}</option>
                                 @endforeach
                             </select>
                             <input type="hidden" name="cert_name" id="cert_val">

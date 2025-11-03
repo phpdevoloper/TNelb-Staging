@@ -79,15 +79,11 @@
     <!-- Light Theme Styles -->
     <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/light/scrollspyNav.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/light/components/timeline.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/src/plugins/src/animate/animate.css') }}">
 
-    <!-- Dark Theme Styles -->
-    <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/dark/scrollspyNav.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/admin/src/assets/css/dark/components/timeline.css') }}">
-    
     <!-- Multi select -->
     <link rel="stylesheet" href="{{ asset('assets/admin/select2/dist/css/select2.min.css') }}">
 
-    
     <!-- FontAwesome -->
     {{-- <link rel="stylesheet" href="{{ asset('assets/admin/src/plugins/src/font-icons/fontawesome/css/regular.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/src/plugins/src/font-icons/fontawesome/css/fontawesome.css') }}"> --}}

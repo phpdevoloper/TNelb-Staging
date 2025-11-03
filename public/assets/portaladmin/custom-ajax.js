@@ -321,6 +321,58 @@ $(document).ready(function() {
     });
 
 
+
+
+    $(document).on('click', '.editValidity', function () {
+    // Get all data-* attributes
+        const rec_id = $(this).data('id');
+        const cert_id = $(this).data('cert_id');
+        const form_type = $(this).data('form_type');
+        const fresh_duration = $(this).data('fresh_form_duration');
+        const renewal_duration = $(this).data('renewal_form_duration');
+        const late_duration = $(this).data('renewal_late_fees_duration');
+
+        const fresh_duration_on = $(this).data('fresh_form_duration_on');
+        const fresh_fees_ends_on =  $(this).data('fresh_fees_ends_on');
+
+        const renewal_duration_on = $(this).data('renewal_form_duration_on');
+        const renewal_form_duration_ends_on =  $(this).data('renewal_form_duration_ends_on');
+        
+        const late_duration_on = $(this).data('renewal_late_fees_duration_on');
+        const renewal_late_fees_ends_on =  $(this).data('renewal_late_fees_duration_ends_on');
+
+        const status = $(this).data('form_status');  
+
+        console.log(form_type);
+        
+
+        // Fill modal inputs
+        $('#edit_form_id').val(rec_id);
+        $('#cert_id').val(cert_id).trigger('change');
+        $('#form_type').val(form_type).trigger('change');   
+        // $('#form_name_edit').val(form_name);
+
+        $('#freshform_duration').val(fresh_duration);
+        $('#freshform_duration_starts').val(fresh_duration_on);
+        $('#fresh_form_duration_ends_on').val(fresh_fees_ends_on);
+        $('#renewal_form_duration').val(renewal_duration);
+        $('#renewal_duration_starts').val(renewal_duration_on);
+        $('#renewal_late_fee_duration').val(late_duration);
+        $('#renewal_late_fee_duration_starts').val(late_duration_on);
+        $('#freshform_duration_ends').val(fresh_form_duration_ends_on);
+        $('#renewal_duration_ends').val(renewal_form_duration_ends_on);
+        $('#renewal_late_fee_duration_ends').val(renewal_late_fees_ends_on);
+
+        
+        if (status == 1) {
+            $('#form_status').prop('checked', true);
+        } else {
+            $('#form_status').prop('checked', false);
+        }
+
+    });
+
+
     //Update Form Details
     $('#editForm').on('submit', function (e) {
         e.preventDefault();
@@ -739,6 +791,249 @@ $(document).ready(function() {
 
     });
 
+
+    // Fields specific to Renewal form (R)
+    function getFieldsByFormType(formType) {
+         // Always common fields
+        const baseFields = [
+            {
+                name: "cert_id",
+                selector: "select[name='cert_id']",
+                errorSelector: ".error-licence",
+                validate: (val) => (!val ? "Please choose the Certificate / Licence" : null),
+            },
+            {
+                name: "form_status",
+                selector: "input[name='form_status']",
+                errorSelector: ".error-form_status",
+                validate: (val) => (val === "" ? "Please choose the status" : null),
+            },
+        ];
+
+        // Fields specific to New form (N)
+            const newFields = [
+                {
+                    name: "fresh_form_duration",
+                    selector: "input[name='fresh_form_duration']",
+                    errorSelector: ".error-validity",
+                    validate: (val) => (!val ? "Please fill the Validity" : null),
+                },
+                {
+                    name: "fresh_form_duration_on",
+                    selector: "input[name='fresh_form_duration_on']",
+                    errorSelector: ".error-validity_from",
+                    validate: (val) => (!val ? "Please choose the validity from date" : null),
+                },
+                {
+                    name: "fresh_form_duration_ends_on",
+                    selector: "input[name='fresh_form_duration_ends_on']",
+                    errorSelector: ".error-validity_to",
+                    validate: (val) => (!val ? "Please choose the validity to date" : null),
+                },
+            ];
+        const renewalFields = [
+            {
+                name: "renewal_form_duration",
+                selector: "input[name='renewal_form_duration']",
+                errorSelector: ".error-renewal_validity",
+                validate: (val) => (!val ? "Please fill the Renewal validity" : null),
+            },
+            {
+                name: "renewal_duration_on",
+                selector: "input[name='renewal_duration_on']",
+                errorSelector: ".error-renewal_from",
+                validate: (val) => (!val ? "Please choose the Renewal from date" : null),
+            },
+            {
+                name: "renewal_duration_ends_on",
+                selector: "input[name='renewal_duration_ends_on']",
+                errorSelector: ".error-renewal_to",
+                validate: (val) => (!val ? "Please choose the Renewal to date" : null),
+            },
+            {
+                name: "renewal_late_fee_duration",
+                selector: "input[name='renewal_late_fee_duration']",
+                errorSelector: ".error-latefee_validity",
+                validate: (val) => (!val ? "Please fill the Late Fee validity" : null),
+            },
+            {
+                name: "renewal_late_fee_duration_on",
+                selector: "input[name='renewal_late_fee_duration_on']",
+                errorSelector: ".error-latefee_from",
+                validate: (val) => (!val ? "Please choose the Late Fee from date" : null),
+            },
+            {
+                name: "renewal_late_fee_duration_ends_on",
+                selector: "input[name='renewal_late_fee_duration_ends_on']",
+                errorSelector: ".error-latefee_to",
+                validate: (val) => (!val ? "Please choose the Late Fee to date" : null),
+            },
+        ];
+
+        if (formType === "N") return [...baseFields, ...newFields];
+        if (formType === "R") return [...baseFields, ...renewalFields];
+        return baseFields; // default fallback
+    }
+
+        // Return fields based on form_type
+
+    // Add Validity
+    $("#validity_form").on("submit", function (e) {
+        e.preventDefault();
+
+        let isValid = true; // flag to track form validity
+
+        const formType = $("select[name='form_type']").val();
+        const fields = getFieldsByFormType(formType);
+    
+        // Define your fields and rules
+        // const fields = [
+        //     {
+        //         name: "cert_id",
+        //         selector: "select[name='cert_id']",
+        //         errorSelector: ".error-licence",
+        //         validate: function (val) {
+        //             if (val === "") return "Please choose the Certificate / Licence";
+        //             return null;
+        //         },
+        //     },
+        //     // {
+        //     //     name: "form_type",
+        //     //     selector: "select[name='form_type']",
+        //     //     errorSelector: ".error-licence",
+        //     //     validate: function (val) {
+        //     //         if (val === "") return "Please choose the Certificate / Licence";
+        //     //         return null;
+        //     //     },
+        //     // },
+        //     {
+        //         name: "fresh_form_duration",
+        //         selector: "input[name='fresh_form_duration']",
+        //         errorSelector: ".error-validity",
+        //         validate: function (val) {
+        //             if (val == "") return "Please fill the Validity";
+        //             return null;
+        //         },
+        //     },
+        //     {
+        //         name: "fresh_form_duration_on",
+        //         selector: "input[name='fresh_form_duration_on']",
+        //         errorSelector: ".error-validity_from",
+        //         validate: function (val) {
+        //             if (val == "") return "Please choose the validity from date";
+        //             return null;
+        //         },
+        //     },
+        //     {
+        //         name: "fresh_form_duration_ends_on",
+        //         selector: "input[name='fresh_form_duration_ends_on']",
+        //         errorSelector: ".error-validity_to",
+        //         validate: function (val) {
+        //             if (val == "") return "Please choose the validity to date";
+        //             return null;
+        //         },
+        //     },
+        //     {
+        //         name: "form_status",
+        //         selector: "input[name='form_status']",
+        //         errorSelector: ".error-form_status",
+        //         validate: function (val) {
+        //             if (val === "") return "Please choose the status";
+        //             return null;
+        //         },
+        //     },
+        // ];
+    
+        // Reset previous states
+        $(".error").addClass("d-none").text("");
+        $("input, select").css("border", "");
+    
+        // Loop through fields for validation
+        fields.forEach((field) => {
+            const input = $(field.selector);
+            const value = $.trim(input.val());
+            const errorMsg = $(field.errorSelector);
+            const error = field.validate(value);
+
+
+            // console.log("🔍 Checking field:", field.name || field.selector);
+            // console.log("   → Value:", value);
+            // console.log("   → Validation result:", error ? "❌ " + error : "✅ OK");
+    
+            // Add "hide error when typing" listener once
+            input.off("input change").on("input change", function () {
+                $(this).css("border", "");
+                errorMsg.addClass("d-none").text("");
+            });
+
+    
+            if (error) {
+                input.css("border", "1px solid red");
+                errorMsg.text(error).removeClass("d-none");
+
+                // console.warn("❌ Validation failed for:", field.name || field.selector);
+                // console.warn("   Error message:", error);
+
+
+                if (isValid) input.focus(); // Focus first invalid field
+                isValid = false;
+            }
+        });
+
+    
+        if (!isValid) return false; // stop form submission if validation fails
+    
+        // Prepare form data
+        let formData = new FormData(this);
+
+        console.log(formData);
+    
+    
+        // AJAX submission
+        $.ajax({
+            url: BASE_URL + "/admin/licences/updateValidity",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            success: function (response) {
+                if (response.status) {
+                    $('#addDurationModal').modal('hide');
+                    Swal.fire({
+                        icon: "success",
+                        title: response.message || "Form created successfully!",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    }).then(() => {
+                        location.reload();
+                    });
+                    
+                } else {
+                    $('#addDurationModal').modal('hide');
+                    Swal.fire({
+                        icon: "error",
+                        title: "Failed",
+                        text: response.message || "Something went wrong!",
+                    });
+                }
+            },
+            error: function (xhr) {
+                
+                Swal.fire({
+                    icon: "error",
+                    title: "Server Error",
+                    text: xhr.responseJSON?.message || "Please try again later.",
+                });
+            },
+            
+        });
+
+    });
+
     
     //Get Edit certificates/Licences
     $(document).on('click', '.editForm', function () {
@@ -762,151 +1057,6 @@ $(document).ready(function() {
         $('#edit_form_status').val(form_status).trigger('change');
         
     });
-
-
-    // $("#editForms").on("submit", function (e) {
-    //     e.preventDefault();
-
-
-    //     let isValid = true; // flag to track form validity
-    
-    //     // Define your fields and rules
-    //     const fields = [
-    //         {
-    //             name: "edit_form_cate",
-    //             selector: "select[name='edit_form_cate']",
-    //             errorSelector: ".error-edit_form_cate",
-    //             validate: function (val) {
-    //                 if (val == "") return "Please fill the Category Name";
-    //                 return null;
-    //             },
-    //         },
-    //         {
-    //             name: "edit_cert_name",
-    //             selector: "input[name='edit_cert_name']",
-    //             errorSelector: ".error-cer_error",
-    //             validate: function (val) {
-    //                 if (val == "") return "Please fill the Certificate / Licence  Name";
-    //                 if (!/^[a-zA-Z\s]+$/.test(val)) return "Category name should contain only letters and spaces";
-    //                 return null;
-    //             },
-    //         },
-    //         {
-    //             name: "edit_cate_licence_code",
-    //             selector: "input[name='edit_cate_licence_code']",
-    //             errorSelector: ".error-cert_code_error",
-    //             validate: function (val) {
-    //                 if (val == "") return "Please fill the Certificate / Licence  Code";
-    //                 if (!/^[a-zA-Z\s]+$/.test(val)) return "Certificate / Licence code should contain only letters and spaces";
-    //                 return null;
-    //             },
-    //         },
-    //         {
-    //             name: "edit_form_name",
-    //             selector: "input[name='edit_form_name']",
-    //             errorSelector: ".error-edit_form_name",
-    //             validate: function (val) {
-    //                 if (val == "") return "Please fill the Form Name";
-    //                 if (!/^[a-zA-Z\s]+$/.test(val)) return "Form Name should contain only letters and spaces";
-    //                 return null;
-    //             },
-    //         },
-    //         {
-    //             name: "edit_form_code",
-    //             selector: "input[name='edit_form_code']",
-    //             errorSelector: ".error-edit_form_code",
-    //             validate: function (val) {
-    //                 if (val == "") return "Please fill the Form Code";
-    //                 if (!/^[a-zA-Z\s]+$/.test(val)) return "Category name should contain only letters and spaces";
-    //                 return null;
-    //             },
-    //         },
-            
-    //         {
-    //             name: "edit_form_status",
-    //             selector: "select[name='edit_form_status']",
-    //             errorSelector: ".error-edit_form_status",
-    //             validate: function (val) {
-    //                 if (val === "") return "Please select the Status";
-    //                 return null;
-    //             },
-    //         },
-    //     ];
-    
-    //     $(".error").addClass("d-none").text("");
-    //     $("input, select").css("border", "");
-    
-    //     fields.forEach((field) => {
-    //         const input = $(field.selector);
-    //         const value = $.trim(input.val());
-    //         const errorMsg = $(field.errorSelector);
-    //         const error = field.validate(value);
-    
-    //         input.off("input change").on("input change", function () {
-    //             $(this).css("border", "");
-    //             errorMsg.addClass("d-none").text("");
-    //         });
-
-    
-    //         if (error) {
-    //             input.css("border", "1px solid red");
-    //             errorMsg.text(error).removeClass("d-none");
-    //             if (isValid) input.focus(); 
-    //             isValid = false;
-    //         }
-    //     });
-    
-    //     if (!isValid) return false;
-    
-    //     // Prepare form data
-    //     let formData = new FormData(this);
-
-    //     console.log(formData);
-    
-    
-    //     // AJAX submission
-    //     $.ajax({
-    //         url: BASE_URL + "/admin/licences/add_licence",
-    //         type: "POST",
-    //         data: formData,
-    //         processData: false,
-    //         contentType: false,
-    //         dataType: "json",
-    //         headers: {
-    //             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-    //         },
-    //         success: function (response) {
-    //             if (response.status) {
-    //                 $('#editFormModal').modal('hide');
-    //                 Swal.fire({
-    //                     icon: "success",
-    //                     title: response.message || "Form created successfully!",
-    //                     showConfirmButton: false,
-    //                     timer: 1500,
-    //                 }).then(() => {
-    //                     location.reload();
-    //                 });
-                    
-    //             } else {
-    //                 $('#editFormModal').modal('hide');
-    //                 Swal.fire({
-    //                     icon: "error",
-    //                     title: "Failed",
-    //                     text: response.message || "Something went wrong!",
-    //                 });
-    //             }
-    //         },
-    //         error: function (xhr) {
-                
-    //             Swal.fire({
-    //                 icon: "error",
-    //                 title: "Server Error",
-    //                 text: xhr.responseJSON?.message || "Please try again later.",
-    //             });
-    //         },
-    //     });
-    // });
-
 
      function getValidationRules(isEdit = false) {
         const prefix = isEdit ? "edit_" : "";

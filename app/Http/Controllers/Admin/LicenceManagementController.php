@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
+use App\Models\Admin\FeesValidity;
 use App\Models\Admin\LicenceCategory;
 use App\Models\Admin\TnelbForms;
 use App\Models\Admin\MstFeesDetail;
@@ -45,14 +46,21 @@ class LicenceManagementController extends BaseController
         ->get();
 
 
-        $activeForms = TnelbForms::leftJoin('mst_licences', DB::raw('CAST(tnelb_forms.license_name AS INTEGER)'), '=', 'mst_licences.id')
+        $activeForms = TnelbForms::leftJoin('mst_licences', 'tnelb_forms.licence_id', '=', 'mst_licences.id')
         ->where('tnelb_forms.status', 1)
         ->orderBy('tnelb_forms.created_at', 'desc')
         ->select('mst_licences.licence_name', 'tnelb_forms.*')
         ->get();
+
+         $validity_periods = FeesValidity::leftJoin('mst_licences', 'fees_validity.licence_id', '=', 'mst_licences.id')
+        ->where('fees_validity.status', 1)
+        ->orderBy('fees_validity.created_at', 'desc')
+        ->select('mst_licences.licence_name','mst_licences.form_name', 'fees_validity.*')
+        ->get();
         
 
-        return view('admincms.forms.forms', compact('activeForms', 'all_licences'));
+        // return view('admincms.forms.forms', compact('activeForms', 'all_licences'));
+        return view('admincms.forms.feesvalidity', compact('activeForms', 'all_licences', 'validity_periods'));
     }
 
     
@@ -211,7 +219,7 @@ class LicenceManagementController extends BaseController
 
 
         $formHistory = TnelbForms::where('status', 0)
-                    ->where('license_name', $form_id)
+                    ->where('licence_id', $form_id)
                     ->orderBy('created_at', 'desc')
                     ->get();
 
@@ -409,7 +417,6 @@ class LicenceManagementController extends BaseController
                 'message' => 'Something went wrong. ' . $e->getMessage(),
             ], 500);
         }
-
     }
 
     public function updateForm(Request $request){
@@ -430,17 +437,17 @@ class LicenceManagementController extends BaseController
             'late_renewal_fees_on'      => 'required|date',
             'late_renewal_fees_ends_on' => 'nullable|date',
 
-            'fresh_form_duration'           => 'required|numeric',
-            'fresh_form_duration_on'        => 'required|date',
-            'fresh_form_duration_ends_on'   => 'nullable|date',
+            // 'fresh_form_duration'           => 'required|numeric',
+            // 'fresh_form_duration_on'        => 'required|date',
+            // 'fresh_form_duration_ends_on'   => 'nullable|date',
 
-            'renewal_form_duration'     => 'required|numeric',
-            'renewal_duration_on'       => 'required|date',
-            'renewal_duration_ends_on'  => 'nullable|date',
+            // 'renewal_form_duration'     => 'required|numeric',
+            // 'renewal_duration_on'       => 'required|date',
+            // 'renewal_duration_ends_on'  => 'nullable|date',
 
-            'renewal_late_fee_duration'         => 'required|numeric',
-            'renewal_late_fee_duration_on'      => 'required|date',
-            'renewal_late_fee_duration_ends_on' => 'nullable|date',
+            // 'renewal_late_fee_duration'         => 'required|numeric',
+            // 'renewal_late_fee_duration_on'      => 'required|date',
+            // 'renewal_late_fee_duration_ends_on' => 'nullable|date',
 
             'form_status' => 'required',
         ]);
@@ -448,7 +455,7 @@ class LicenceManagementController extends BaseController
         DB::beginTransaction(); 
         
         try {
-   
+
             $form_id = $request->form_id;
             $checked_form = TnelbForms::find($form_id);
 
@@ -504,9 +511,9 @@ class LicenceManagementController extends BaseController
                 $checked_form->fresh_fee_ends = now(); 
                 $checked_form->renewalamount_ends = now(); 
                 $checked_form->latefee_ends = now(); 
-                $checked_form->duration_freshfee_ends = now(); 
-                $checked_form->duration_renewalfee_ends = now(); 
-                $checked_form->duration_latefee_ends = now(); 
+                // $checked_form->duration_freshfee_ends = now(); 
+                // $checked_form->duration_renewalfee_ends = now(); 
+                // $checked_form->duration_latefee_ends = now(); 
                 $checked_form->updated_by = $this->userId; 
                 $checked_form->updated_at = now(); 
                 $checked_form->save();
@@ -528,18 +535,18 @@ class LicenceManagementController extends BaseController
                 'latefee_starts'            => $request->late_renewal_fees_on,
                 'latefee_ends'              => $request->late_renewal_fees_ends_on,
 
-                'duration_freshfee'         => $request->fresh_form_duration,
-                'duration_renewalfee'       => $request->renewal_form_duration,
-                'duration_latefee'              => $request->renewal_late_fee_duration,
+                // 'duration_freshfee'         => $request->fresh_form_duration,
+                // 'duration_renewalfee'       => $request->renewal_form_duration,
+                // 'duration_latefee'              => $request->renewal_late_fee_duration,
 
-                'duration_freshfee_starts'    => $request->fresh_form_duration_on,
-                'duration_freshfee_ends'    => $request->fresh_form_duration_ends_on,
+                // 'duration_freshfee_starts'    => $request->fresh_form_duration_on,
+                // 'duration_freshfee_ends'    => $request->fresh_form_duration_ends_on,
 
-                'duration_renewalfee_starts'    => $request->renewal_duration_on,
-                'duration_renewalfee_ends'      => $request->renewal_duration_ends_on,
+                // 'duration_renewalfee_starts'    => $request->renewal_duration_on,
+                // 'duration_renewalfee_ends'      => $request->renewal_duration_ends_on,
 
-                'duration_latefee_starts'       => $request->renewal_late_fee_duration_on,
-                'duration_latefee_ends'         => $request->renewal_late_fee_duration_ends_on,
+                // 'duration_latefee_starts'       => $request->renewal_late_fee_duration_on,
+                // 'duration_latefee_ends'         => $request->renewal_late_fee_duration_ends_on,
 
                 'status'                        => $request->form_status,
                 'created_by'                    => $this->userId,       
@@ -573,6 +580,7 @@ class LicenceManagementController extends BaseController
         $all_licences = MstLicence::where('status', 1)
         ->orderBy('created_at', 'desc')
         ->get();
+        
 
         $activeForms = TnelbForms::leftJoin('mst_licences', 'tnelb_forms.licence_id', '=', 'mst_licences.id')
         ->where('tnelb_forms.status', 1)
@@ -580,11 +588,162 @@ class LicenceManagementController extends BaseController
         ->select('mst_licences.licence_name', 'tnelb_forms.*')
         ->get();
 
-        // dd();die;
+        $validity_periods = FeesValidity::leftJoin('mst_licences', 'fees_validity.licence_id', '=', 'mst_licences.id')
+        ->where('fees_validity.status', 1)
+        ->orderBy('fees_validity.created_at', 'desc')
+        ->select('mst_licences.licence_name','mst_licences.form_name', 'fees_validity.*')
+        ->get();
 
+        
         // compact('activeForms', 'all_licences')
-        return view('admincms.forms.viewLicences', compact('all_licences', 'activeForms'));
+        return view('admincms.forms.viewLicences', compact('all_licences', 'activeForms','validity_periods'));
 
+    }
+
+    public function updateValidity(Request $request)
+    {
+        // var_dump($request->all());die;
+
+        $formType = $request->input('form_type');
+
+        $rules = [
+            'cert_id' => 'required|integer',
+            'form_type'  => 'required|in:N,R',
+            'form_status'=> 'nullable|in:1,0,true,false,on',
+        ];
+
+        $nullable = [
+            'fresh_form_duration'                => 'nullable|numeric|min:1',
+            'fresh_form_duration_on'             => 'nullable|date',
+            'fresh_form_duration_ends_on'        => 'nullable|date|after_or_equal:fresh_form_duration_on',
+
+            'renewal_form_duration'              => 'nullable|numeric|min:1',
+            'renewal_duration_on'                => 'nullable|date',
+            'renewal_duration_ends_on'           => 'nullable|date|after_or_equal:renewal_duration_on',
+
+            'renewal_late_fee_duration'          => 'nullable|numeric|min:1',
+            'renewal_late_fee_duration_on'       => 'nullable|date',
+            'renewal_late_fee_duration_ends_on'  => 'nullable|date|after_or_equal:renewal_late_fee_duration_on',
+        ];
+
+        $rules = array_merge($rules, $nullable);
+
+        // var_dump($formType);die;
+
+        switch ($formType) {
+            case 'N': // New Form
+                $rules = array_merge($rules, [
+                    'fresh_form_duration' => 'required|numeric|min:1',
+                    'fresh_form_duration_on' => 'required|date',
+                    'fresh_form_duration_ends_on' => 'required|date|after_or_equal:fresh_form_duration_on',
+
+                    // prevent mixing renewal fields when form_type = N (optional but strict)
+                    'renewal_form_duration'              => 'prohibited',
+                    'renewal_duration_on'                => 'prohibited',
+                    'renewal_duration_ends_on'           => 'prohibited',
+                    'renewal_late_fee_duration'          => 'prohibited',
+                    'renewal_late_fee_duration_on'       => 'prohibited',
+                    'renewal_late_fee_duration_ends_on'  => 'prohibited',
+                ]);
+                break;
+
+            case 'R': // Renewal
+                $rules = array_merge($rules, [
+                    'renewal_form_duration' => 'required|numeric|min:1',
+                    'renewal_duration_on' => 'required|date',
+                    'renewal_duration_ends_on' => 'required|date|after_or_equal:renewal_duration_on',
+                    'renewal_late_fee_duration' => 'required|numeric|min:1',
+                    'renewal_late_fee_duration_on' => 'required|date',
+                    'renewal_late_fee_duration_ends_on' => 'required|date|after_or_equal:renewal_late_fee_duration_on',
+
+                    // prevent mixing fresh fields when form_type = R (optional but strict)
+                    'fresh_form_duration'         => 'prohibited',
+                    'fresh_form_duration_on'      => 'prohibited',
+                    'fresh_form_duration_ends_on' => 'prohibited',
+                ]);
+                break;
+
+                
+        }
+
+                
+        $messages = [
+            'cert_id.required'          => 'Please choose the certificate / licence.',
+            'form_type.required'          => 'Please choose the form type.',
+            'form_status.required'          => 'Please choose the form status.',
+
+            'fresh_form_duration.required'          => 'Please enter the fresh form duration.',
+            'fresh_form_duration_on.required'       => 'Please select the fresh form start date (As on).',
+            'fresh_form_duration_ends_on.required'  => 'Please select the fresh form end date (Ends on).',
+            'fresh_form_duration_ends_on.after_or_equal' => 'Fresh form end date cannot be earlier than the start date.',
+
+            'renewal_form_duration.required'        => 'Please enter the renewal form duration.',
+            'renewal_duration_on.required'          => 'Please select the renewal start date (As on).',
+            'renewal_duration_ends_on.required'     => 'Please select the renewal end date (Ends on).',
+            'renewal_duration_ends_on.after_or_equal'=> 'Renewal end date must be the same day or later than the start date.',
+
+            'renewal_late_fee_duration.required'    => 'Please enter the late fee duration.',
+            'renewal_late_fee_duration_on.required' => 'Please select the late fee start date (As on).',
+            'renewal_late_fee_duration_ends_on.required' => 'Please select the late fee end date (Ends on).',
+            'renewal_late_fee_duration_ends_on.after_or_equal' => 'Late fee end date must be the same day or later than the start date.',
+
+            'renewal_*.*.prohibited'                => 'Renewal fields are not allowed for New Form.',
+            'fresh_*.*.prohibited'                  => 'Fresh fields are not allowed for Renewal Form.',
+        ];
+
+        $request->validate($rules, $messages);
+
+        // var_dump('dfgfd');die;
+
+        // $request->validate([
+        //     'cert_id' => 'required|int',
+        //     'form_type' => 'required|string',
+        //     // 'license_name' => 'required|string',
+            
+        //     'renewal_form_duration' => 'required|numeric',
+        //     'renewal_duration_on' => 'required|date',
+        //     'renewal_late_fee_duration' => 'required|numeric',
+        //     'renewal_late_fee_duration_on' => 'required|date',
+        //     'form_status' => 'required',
+        // ]);
+
+        DB::beginTransaction(); 
+        
+        try {
+
+            $form = FeesValidity::create([
+                'licence_id'                => $request->cert_id,
+                'form_type'                 => $request->form_type,
+                'duration_freshfee'         => $request->fresh_form_duration,
+                'duration_renewalfee'       => $request->renewal_form_duration,
+                'duration_latefee'              => $request->renewal_late_fee_duration,
+                'duration_freshfee_starts'    => $request->fresh_form_duration_on,
+                'duration_freshfee_ends'    => $request->fresh_form_duration_ends_on,
+                'duration_renewalfee_starts'    => $request->renewal_duration_on,
+                'duration_renewalfee_ends'    => $request->renewal_duration_ends_on,
+
+                'duration_latefee_starts'       => $request->renewal_late_fee_duration_on,
+                'duration_latefee_ends'         => $request->renewal_late_fee_duration_ends_on,
+                'status'                        => in_array($request->form_status, ['1', 1, 'true', true, 'on']) ? 1 : 0,
+                'created_by'                    => $this->userId,       
+                'created_at'                    => now(),       
+            ]); 
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Form created successfully!',
+            ]);
+
+         } catch (Exception $e) {
+            DB::rollBack(); 
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong. ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
 

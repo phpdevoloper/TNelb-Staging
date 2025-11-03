@@ -360,7 +360,7 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
         
 
         //Licence management controller routes
-        Route::get('/licences', [LicenceManagementController::class, 'index'])->name('forms');
+        Route::get('/fees_validity', [LicenceManagementController::class, 'index'])->name('fees_validity');
         Route::post('/licences/updateFees', [LicenceManagementController::class, 'updateFees'])->name('updateFees');
         Route::post('/licences/updateForm', [LicenceManagementController::class, 'updateForm'])->name('updateForm');
         Route::post('/licences/formHistory', [LicenceManagementController::class, 'formHistory'])->name('formHistory');
@@ -369,6 +369,7 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
         Route::post('/licences/add_category', [LicenceManagementController::class, 'add_category'])->name('add_category');
         Route::get('/licences/view_licences', [LicenceManagementController::class, 'view_licences'])->name('view_licences');
         Route::post('/licences/add_licence', [LicenceManagementController::class, 'add_licence'])->name('add_licence');
+        Route::post('/licences/updateValidity', [LicenceManagementController::class, 'updateValidity'])->name('updateValidity');
 
         Route::get('/management', [LicenceManagementController::class, 'management'])->name('management');
         });
