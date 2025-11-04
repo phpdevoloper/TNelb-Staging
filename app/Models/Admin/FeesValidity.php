@@ -15,7 +15,7 @@ class FeesValidity extends Model
      *
      * @var string
      */
-    protected $table = 'fees_validity';
+    protected $table = 'mst_fees_validity';
 
     /**
      * The primary key associated with the table.
@@ -39,18 +39,15 @@ class FeesValidity extends Model
     protected $fillable = [
         'licence_id',
         'form_type',
-        'duration_freshfee',
-        'duration_freshfee_starts',
-        'duration_freshfee_ends',
-        'duration_renewalfee',
-        'duration_renewalfee_starts',
-        'duration_renewalfee_ends',
-        'duration_latefee',
-        'duration_latefee_starts',
-        'duration_latefee_ends',
+        'validity',
+        'vadity_start_date',
+        'validity_date_end',
         'status',
         'created_by',
         'updated_by',
+        'created_at',
+        'updated_at',
+        'ipaddress',
     ];
 
     /**
@@ -59,12 +56,8 @@ class FeesValidity extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'duration_freshfee_starts' => 'date',
-        'duration_freshfee_ends'   => 'date',
-        'duration_renewalfee_starts' => 'date',
-        'duration_renewalfee_ends'   => 'date',
-        'duration_latefee_starts'    => 'date',
-        'duration_latefee_ends'      => 'date',
+        'vadity_start_date' => 'date',
+        'validity_date_end'   => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

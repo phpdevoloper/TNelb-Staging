@@ -163,59 +163,46 @@
                                                     <th>Cerificate Name / Form Name</th>
                                                     <th>Type of Fees</th>
                                                     <th>Amount</th>
-                                                    <th>Amount</th>
                                                     <th>Start Date</th>
-                                                    <th>Status</th>
+                                                    {{-- <th>End Date</th> --}}
+                                                    {{-- <th>Status</th> --}}
                                                     <th class="no-content">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {{-- @foreach($activeForms as $index => $form)
+                                                @foreach($fees_details as $form)
                                                 <tr>
-                                                    <td>{{ $index + 1 }}</td>
+                                                    <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $form->licence_name.' / '. $form->form_name}}</td>
-                                                    <td>{{ $form->fresh_fee_amount}}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($form->fresh_fee_starts)->format('d-m-Y') }}</td>
-                                                    <td>{{ $form->renewal_amount}}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($form->renewalamount_starts)->format('d-m-Y') }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($form->renewalamount_ends)->format('d-m-Y') }}</td>
-                                                    <td>{{ $form->latefee_amount }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($form->latefee_starts)->format('d-m-Y') }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($form->latefee_ends)->format('d-m-Y') }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($form->created_at)->format('d-m-Y') }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($form->updated_at)->format('d-m-Y') }}</td>
                                                     <td>
-                                                        @if($form->status == 1)
-                                                        <span class="badge bg-success">Active</span>
-                                                        @else
-                                                        <span class="badge bg-danger">Inactive</span>
+                                                        @if(trim($form->fees_type) == 'N')
+                                                            Fresh Fees
+                                                        @elseif(trim($form->fees_type) == 'R')
+                                                            Renewal Fees
+                                                        @elseif(trim($form->fees_type) == 'L')
+                                                            Late Fees
                                                         @endif
                                                     </td>
+                                                    <td>{{ $form->fees}}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($form->start_date)->format('d-m-Y') }}</td>
+                                                    {{-- <td>
+                                                            <span class="badge bg-success">Active</span>
+                                                    </td> --}}
                                                     <td>
-                                                        <span class="badge bg-primary bs-tooltip editFormBtn" data-bs-toggle="modal" data-bs-target="#editFormModal" style="cursor:pointer;" 
+                                                        <span class="badge bg-primary bs-tooltip editFeesBtn" data-bs-toggle="modal" data-bs-target="#addFormModal" style="cursor:pointer;" 
                                                         data-id="{{ $form->id }}"
-                                                        data-form_name="{{ $form->form_name }}"
-                                                        data-cert_name ="{{ $form->licence_id }}"
-                                                        data-fresh_form_fees="{{ $form->fresh_fee_amount }}"
-                                                        data-renewal_form_fees="{{ $form->renewal_amount }}"
-                                                        data-renewal_late_fees="{{ $form->latefee_amount }}"
-                                                        data-fresh_fees_on ="{{ $form->fresh_fee_starts }}"
-                                                        data-fresh_fees_ends_on ="{{ $form->fresh_fee_ends }}"
-                                                        data-renewal_fees_on ="{{ $form->renewalamount_starts }}"
-                                                        data-renewal_fees_ends_on ="{{ $form->renewalamount_ends }}"
-                                                        data-renewal_late_fees_on ="{{ $form->latefee_starts }}"
-                                                        data-renewal_late_fees_ends_on ="{{ $form->latefee_ends }}"
-                                                        data-form_status ="{{ $form->status }}"
+                                                        data-cert_name ="{{ $form->cert_licence_id }}"
+                                                        data-fees_type="{{ $form->fees_type }}"
+                                                        data-fees="{{ $form->fees }}"
+                                                        data-start_date="{{ $form->start_date }}"
+                                                        {{-- data-form_status ="{{ $form->status }}" --}}
                                                         title="Edit"
                                                         >
                                                         <i class="fa fa-edit"></i>
                                                     </span>
-                                                    <span class="badge badge-primary bs-tooltip" id="openHistoryBtn" title="Previous History"
-                                                    data-id="{{ $form->license_name }}"
-                                                    ><i class="fa fa-refresh"></i></span>
                                                 </td>
-                                            </tr>
-                                            @endforeach --}}
+                                                </tr>
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -232,25 +219,19 @@
                                             <tr>
                                                 <th>S.No</th>
                                                 <th>Cerificate Name</th>
-                                                <th>Fresh Form Validity</th>
-                                                <th>Fresh Form Validity From</th>
-                                                <th>Fresh Form Validity To</th>
-                                                <th>Renewal Form Validity</th>
-                                                <th>Renewal Form Validity From</th>
-                                                <th>Renewal Form Validity To</th>
-                                                <th>Late Fees Validity</th>
-                                                <th>Late Fees Validity From</th>
-                                                <th>Late Fees Validity To</th>
-                                                <th>Created Date</th>
-                                                <th>Updated Date</th>
+                                                <th>Type</th>
+                                                <th>Validity</th>
+                                                <th>Start Date</th>
+                                                {{-- <th>Created Date</th> --}}
+                                                {{-- <th>Updated Date</th> --}}
                                                 <th>Status</th>
                                                 <th class="no-content">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach($validity_periods as $index => $validity)
+                                            @foreach($validity_periods as $validity)
                                             <tr>
-                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $validity->licence_name.' / '. $validity->form_name}}</td>
                                                 <td>{{ $validity->duration_freshfee??'-' }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($validity->duration_freshfee_starts)->format('d-m-Y')??'-' }}</td>
@@ -332,7 +313,7 @@
                         <select class="form-select" name="cert_id" id="cert_id">
                             <option value="">Please Choose the Certificate / Licence </option>
                             @foreach ($all_licences as $item)
-                                <option value="{{ $item->id }}" data-form_name="{{ $item->form_name }}">{{ $item->licence_name }}</option>
+                                <option value="{{ $item->id }}" data-form_name="{{ $item->form_name }}">{{ $item->licence_name.' ['.$item->form_name.']'  }}</option>
                             @endforeach
                         </select>
                         <small class="text-danger d-none error-licence">Please fill the Category</small>
@@ -352,7 +333,7 @@
                     <div class="col-md-12 custom-box mb-3" id="newFormDuration">
                         <div class="box-head text-primary mb-3"><i class="fa fa-clock-o"></i> Durations for New Form</div>
                         <div class="row g-3">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="inputEmail4" class="form-label">Fresh Form Validity<span class="text-danger">*</span></label><br>
                                 <div class="input-group">
                                     <input type="number" class="form-control fees_amount" name="fresh_form_duration" id="fresh_form_duration" min="0">
@@ -360,20 +341,20 @@
                                 </div>
                                 <small class="text-danger d-none error-validity">Please fill the Validity</small>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="inputEmail4" class="form-label">Validity From<span class="text-danger">*</span></label>
                                 <input type="date" name="fresh_form_duration_on" id="fresh_form_duration_on" class="form-control">
                                 <small class="text-danger d-none error-validity_from">Please choose the validity from date</small>
                             </div>
-                            <div class="col-md-4">
+                            {{-- <div class="col-md-4">
                                 <label for="inputEmail4" class="form-label">Validity To<span class="text-danger">*</span></label>
                                 <input type="date" name="fresh_form_duration_ends_on" id="fresh_form_duration_ends_on" class="form-control">
                                 <small class="text-danger d-none error-validity_to">Please choose the validity to date</small>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="col-md-12 custom-box mb-3" id="renewalDuration" style="display: none">
-                        <div class="box-head text-primary mb-3"><i class="fa fa-clock-o"></i> Durations Renewal</div>
+                        <div class="box-head text-primary mb-3"><i class="fa fa-clock-o"></i> Durations for Renewal</div>
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label for="inputPassword4" class="form-label">Renewal Validity<span class="text-danger">*</span></label><br>
@@ -401,17 +382,36 @@
                                 <label for="inputEmail4" class="form-label">Late Fees Validity From<span class="text-danger">*</span></label>
                                 <input type="date" name="renewal_late_fee_duration_on" id="renewal_late_fee_duration_on" class="form-control">
                             </div>
-                            <div class="col-md-4">
+                            {{-- <div class="col-md-4">
                                 <label for="inputEmail4" class="form-label">Late Fees Validity To<span class="text-danger">*</span></label>
                                 <input type="date" name="renewal_late_fee_duration_ends_on" id="renewal_late_fee_duration_ends_on" class="form-control">
+                            </div> --}}
+                        </div>
+                    </div>
+                    <div class="col-md-12 custom-box mb-3" id="renewalDuration" style="display: none">
+                        <div class="box-head text-primary mb-3"><i class="fa fa-clock-o"></i> Durations for Late</div>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="inputPassword4" class="form-label">Late Fees Validity<span class="text-danger">*</span></label><br>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="renewal_late_fee_duration" id="renewal_late_fee_duration"  min="0">
+                                    <span class="input-group-text">Days</span>
+                                </div>
                             </div>
+                            <div class="col-md-4">
+                                <label for="inputEmail4" class="form-label">Late Fees Validity From<span class="text-danger">*</span></label>
+                                <input type="date" name="renewal_late_fee_duration_on" id="renewal_late_fee_duration_on" class="form-control">
+                            </div>
+                            {{-- <div class="col-md-4">
+                                <label for="inputEmail4" class="form-label">Late Fees Validity To<span class="text-danger">*</span></label>
+                                <input type="date" name="renewal_late_fee_duration_ends_on" id="renewal_late_fee_duration_ends_on" class="form-control">
+                            </div> --}}
                         </div>
                     </div>
                 </div>
-                <div class="row custom-box g-3">
+                {{-- <div class="row custom-box g-3">
                     <div class="box-head text-primary mb-3"><i class="fa fa-setting"></i> Status</div>
                     <div class="col-md-6">
-                        <!-- Switch centered -->
                         <div class="d-inline-block text-center">
                             <div class="switch form-switch-custom switch-inline form-switch-success form-switch-custom dual-label-toggle">
                                 <label class="switch-label switch-label-left" for="form-custom-switch-dual-label">In Active</label>
@@ -423,11 +423,11 @@
                             <small class="text-danger d-none error-form_status">Please choose the form status</small>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <input type="hidden" name="form_id" id="edit_form_id">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#feesForm').trigger('reset');"><i class="flaticon-cancel-12"></i> Discard</button>
+                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#feesForm').trigger('reset');"><i class="flaticon-cancel-12"></i> Clear</button>
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>
             </form>
@@ -452,13 +452,14 @@
                 </button>
                 {{-- <span><span class="text-danger">(Note:</span> Currently, late fees are applicable only during the last 3 months before the expiry date.)</span> --}}
             </div>
-            <form id="feesForm" enctype="multipart/form-data">
+            <form id="addFees" enctype="multipart/form-data">
+                <input type="hidden" name="record_id" id="record_id">
             <div class="modal-body">
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label for="cert_name" class="form-label text-primary fw-bold">
-                                <i class="fa fa-id-card"></i> Certificate / Licence <span class="text-danger">*</span>
+                                Certificate / Licence <span class="text-danger">*</span>
                             </label>
                             <select class="form-select shadow-sm border-primary-subtle rounded-3" name="cert_name" id="cert_name">
                                 <option value="">Please Choose the Certificate / Licence</option>
@@ -468,6 +469,7 @@
                                     </option>
                                 @endforeach
                             </select>
+                            <small class="text-danger d-none error-cert_name">Please choose the Certificate / Licence</small>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -477,7 +479,9 @@
                             <option value="">Please Choose the Type </option>
                             <option value="N">Fresh Fees</option>
                             <option value="R">Renewal Fees</option>
+                            <option value="L">Late Fees</option>
                         </select>
+                        <small class="text-danger d-none error-fees_type">Please choose the Fees Type</small>
                     </div>
                 </div>
                 <div class="row g-3 mb-3">
@@ -491,10 +495,12 @@
                                     <span class="input-group-text">₹</span>
                                     <input type="number" class="form-control" name="fresh_fees" min="0" placeholder="0">
                                 </div>
+                                <small class="text-danger d-none error-fresh_fees">Please enter the Fresh Fees amount</small>
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label for="inputEmail4" class="form-label">Start Date <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control" name="fresh_fees_on">
+                                <small class="text-danger d-none error-fresh_fees_on">Please select the Fresh Fees start date</small>
                             </div>
                         </div>
                     </div>
@@ -507,26 +513,35 @@
                                     <span class="input-group-text">₹</span>
                                     <input type="number" class="form-control" name="renewal_fees" min="0" placeholder="0">
                                 </div>
+                                <small class="text-danger d-none error-renewal_fees">Please enter the Renewal Fees amount</small>
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label for="inputEmail4" class="form-label">Start Date<span class="text-danger">*</span></label>
                                 <input type="date" class="form-control" name="renewal_fees_as_on">
+                                <small class="text-danger d-none error-renewal_fees_as_on">Please select the Renewal Fees start date</small>
                             </div>
-                            <div class="col-md-6 mb-2">
+                        </div>
+                    </div>
+                    <div id="latefees" class="col-md-12 custom-box mb-3 shadow-sm border-primary-subtle rounded-3 animated fadeInDown">
+                        <div class="box-head text-primary mb-3">Late Fees</div>
+                        <div class="row g-3">
+                             <div class="col-md-6 mb-2">
                                 <label for="inputPassword4" class="form-label">Late Fees<span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text">₹</span>
-                                    <input type="number" class="form-control" name="latefee_for_renewal" min="0" placeholder="0">
+                                    <input type="number" class="form-control" name="late_fees" min="0" placeholder="0">
                                 </div>
+                                <small class="text-danger d-none error-late_fees">Please enter the Late Fees Amount</small>
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label for="inputEmail4" class="form-label">Start Date<span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" name="late_renewal_fees_on">
+                                <input type="date" class="form-control" name="late_fees_on">
+                                <small class="text-danger d-none error-late_fees_on">Please select the Late Fees start date</small>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="row custom-box g-3">
+                {{-- <div class="row custom-box g-3">
                     <div class="box-head text-primary mb-3"><i class="fa fa-setting"></i> Status</div>
                     <div class="col-md-6">
                         <!-- Switch centered -->
@@ -540,153 +555,18 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#feesForm').trigger('reset');"><i class="flaticon-cancel-12"></i> Discard</button>
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#addFees').trigger('reset');"><i class="flaticon-cancel-12"></i>Clear</button>
+                <button type="submit" class="btn btn-primary">Update</button>
             </div>
             </form>
         </div>
     </div>
 </div>
 
-<!--View Form Modal -->
-<div class="modal fade" id="editFormModal" tabindex="-1" role="dialog" aria-labelledby="editFormModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Update Fees Details</h5>
-                <div class="d-flex align-items-center gap-2">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="15" y1="9" x2="9" y2="15"></line>
-                            <line x1="9" y1="9" x2="15" y2="15"></line>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            <div class="modal-body">
-                <form id="editForm" enctype="multipart/form-data">
-                <div class="modal-body">
-                    <div class="row g-3 mb-3">
-                        <!-- Certificate & Form Name -->
-                        <div class="col-md-6">
-                            <label class="form-label">Certificate Name <span class="text-danger">*</span></label>
-                            <select class="form-select" id="cert_name_edit" disabled>
-                                <option value="">Please Choose Certificate / Licence </option>
-                                @php
-                                    // var_dump($all_licences);die;
-                                @endphp
-                                @foreach ($all_licences as $item)
-                                    <option value="{{ $item->id }}" data-form_name="{{ $item->form_name }}">{{ $item->licence_name }}</option>
-                                @endforeach
-                            </select>
-                            <input type="hidden" name="cert_name" id="cert_val">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Form Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="form_name" id="form_name_edit" readonly style="color: #181616 !important;">
-                        </div>
-                    </div>
 
-                    <hr>
-
-                    <!-- Fees Details -->
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-12 custom-box mb-3">
-                            <div class="box-head text-primary mb-3">₹ Fees Details</div>
-                            <hr style="border-color: #000000;">
-                            <div class="row g-3">
-                                <!-- Fresh Form Fees -->
-                                <div class="col-md-4">
-                                    <label>Fees for Fresh Form <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">₹</span>
-                                        <input type="number" class="form-control" name="fresh_fees" id="fresh_fees" min="0">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <label>Fresh Fees As on <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" name="fresh_fees_on" id="fresh_fees_on">
-                                </div>
-                                 <div class="col-md-4 mb-2">
-                                    <label for="inputEmail4" class="form-label">Fresh Form Fees <strong>Ends on</strong> <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" name="fresh_fees_ends_on" id="fresh_fees_ends_on">
-                                </div>
-                               
-                                <!-- Renewal Form Fees -->
-                                <div class="col-md-4">
-                                    <label>Renewal Fees<span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">₹</span>
-                                        <input type="number" class="form-control" name="renewal_fees" id="renewal_fees" min="0">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <label>Renewal Fees As on <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" name="renewal_fees_on" id="renewal_fees_starts">
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label for="inputEmail4" class="form-label">Renewal Fees Ends on<span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" name="renewal_fees_ends_on" id="renewal_fees_ends_on">
-                                </div>
-                                
-
-                                <!-- Late Fees -->
-                                <div class="col-md-4">
-                                    <label>Late Fees for Renewal<span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">₹</span>
-                                        <input type="number" class="form-control" name="latefee_for_renewal" id="latefee_for_renewal" min="0">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <label>Late Fees As on <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" name="late_renewal_fees_on" id="late_renewal_fees_starts">
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label for="inputEmail4" class="form-label">Late Fees Ends on<span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" name="late_renewal_fees_ends_on" id="late_renewal_fees_ends_on">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <!-- Others -->
-                    <div class="row g-3">
-                        <div class="box-head text-primary mb-3">
-                            Status
-                        </div>
-                        <div class="col-md-6">
-                            {{-- <label> <span class="text-danger">*</span> :</label> --}}
-                            <div class="d-inline-block text-center">
-                                <div class="switch form-switch-custom switch-inline form-switch-success dual-label-toggle">
-                                    <label class="switch-label switch-label-left">In Active</label>
-                                    <div class="input-checkbox">
-                                        <input class="switch-input" type="checkbox" role="switch" name="form_status" id="form_status" checked>
-                                    </div>
-                                    <label class="switch-label switch-label-right">Active</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <input type="hidden" name="form_id" id="form_id">
-                </div>
-
-                <!-- Modal Footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Discard</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 @include('admincms.include.footer');
 
@@ -739,16 +619,122 @@
         });
 
 
-        $("#fees_type").on("change", function () {
-            const selectedOption = $(this).find(":selected");
-            selectedValue = selectedOption.val();
-            if (selectedValue == 'N') {
-                $('#renewalForm').hide();
-                $('#freshForm').show();
-            }else{
-                $('#freshForm').hide();
-                $('#renewalForm').show();
+$('#latefees').hide();
+
+
+function toggleFeesSections() {
+    const type = $("#fees_type").val();
+
+    // console.log("toggleFeesSections() called, type:", type); // debug
+
+    if (type === "R") {
+        $("#freshForm, #latefees").hide();
+        $("#renewalForm").show();
+    } else if (type === "L") {
+        $("#freshForm, #renewalForm").hide();
+        $("#latefees").show();
+    } else {
+        $("#renewalForm, #latefees").hide();
+        $("#freshForm").show();
+    }
+}
+
+$(document).on("change", "#fees_type", function () {
+    toggleFeesSections();
+});
+
+toggleFeesSections(); 
+
+// $("#fees_type").on("change", function () {
+//     toggleFeesSections();
+//     const selectedOption = $(this).find(":selected");
+//     selectedValue = selectedOption.val();
+//     if (selectedValue == 'R') {
+//         $('#freshForm').hide();
+//         $('#latefees').hide();
+//         $('#renewalForm').show();
+
+//     }else if(selectedValue == 'L') {
+//         console.log('sfsdf');
+        
+//         $('#freshForm').hide();
+//         $('#renewalForm').hide();
+//         $('#latefees').show();
+//     }else{
+//         $('#renewalForm').hide();
+//         $('#latefees').hide();
+//         $('#freshForm').show();
+
+//     }
+// });
+
+
+        // $(document).on("click", ".editFeesBtn", function () {
+        //     const id = $(this).data("id");
+        //     const cert_id = $(this).data("cert_name");
+        //     const type = $(this).data("fees_type");
+        //     const fees = $(this).data("fees");
+        //     const start = $(this).data("start_date");
+
+        //     $("#record_id").val(id);
+        //     $("#cert_name").val(cert_id).trigger("change");
+            
+        //     $('#addFormModal').one('shown.bs.modal', function () {
+        //         console.log("Setting type:", type);
+        //         $("#fees_type").val(type).trigger("change");
+        //     });
+
+        //     if (type === "N") {
+        //         $("input[name='fresh_fees']").val(fees);
+        //         $("input[name='fresh_fees_on']").val(start);
+        //     } else {
+        //         $("input[name='renewal_fees']").val(fees);
+        //         $("input[name='renewal_fees_as_on']").val(start);
+        //     }
+
+        //     $("input[name='form_status']").prop("checked", status == 1);
+
+        //     $(".modal-title").text("Edit Fees Details");
+        // });
+
+        $(document).on("click", ".editFeesBtn", function () {
+            const id      = $(this).data("id");
+            const cert_id = $(this).data("cert_name");
+            const type    = $.trim($(this).data("fees_type")); // ✅ trims spaces
+            const fees    = $(this).data("fees");
+            const start   = $(this).data("start_date");
+            const status  = $(this).data("form_status");
+
+            $("#record_id").val(id);
+            $("#cert_name").val(cert_id).trigger("change");
+            $("#fees_type").val(type).trigger("change"); // now fires properly
+
+            const formattedStart = start ? start.split(" ")[0] : "";
+            if (type === "N") {
+                $("input[name='fresh_fees']").val(fees);
+                $("input[name='fresh_fees_on']").val(formattedStart);
+            } else if (type === "R") {
+                $("input[name='renewal_fees']").val(fees);
+                $("input[name='renewal_fees_as_on']").val(start);
+            } else if (type === "L") {
+                $("input[name='late_fees']").val(fees);
+                $("input[name='late_fees_on']").val(formattedStart);
             }
+
+            $("input[name='form_status']").prop("checked", status == 1);
+            $(".modal-title").text("Edit Fees Details");
+            // $(".submitbtn").text("Update");      
+
         });
+
+
+
+
+
+
     });
+
+
+
+
 </script>

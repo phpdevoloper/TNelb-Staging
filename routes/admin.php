@@ -372,6 +372,11 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
         Route::post('/licences/updateValidity', [LicenceManagementController::class, 'updateValidity'])->name('updateValidity');
 
         Route::get('/management', [LicenceManagementController::class, 'management'])->name('management');
+
+
+        Route::post('/licence/store', [LicenceManagementController::class, 'store'])->name('licence.store');
+        Route::post('/licence/update/{id}', [LicenceManagementController::class, 'update'])->name('licence.update');
+
         });
 
         

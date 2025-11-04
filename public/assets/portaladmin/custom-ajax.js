@@ -802,12 +802,12 @@ $(document).ready(function() {
                 errorSelector: ".error-licence",
                 validate: (val) => (!val ? "Please choose the Certificate / Licence" : null),
             },
-            {
-                name: "form_status",
-                selector: "input[name='form_status']",
-                errorSelector: ".error-form_status",
-                validate: (val) => (val === "" ? "Please choose the status" : null),
-            },
+            // {
+            //     name: "form_status",
+            //     selector: "input[name='form_status']",
+            //     errorSelector: ".error-form_status",
+            //     validate: (val) => (val === "" ? "Please choose the status" : null),
+            // },
         ];
 
         // Fields specific to New form (N)
@@ -824,12 +824,12 @@ $(document).ready(function() {
                     errorSelector: ".error-validity_from",
                     validate: (val) => (!val ? "Please choose the validity from date" : null),
                 },
-                {
-                    name: "fresh_form_duration_ends_on",
-                    selector: "input[name='fresh_form_duration_ends_on']",
-                    errorSelector: ".error-validity_to",
-                    validate: (val) => (!val ? "Please choose the validity to date" : null),
-                },
+                // {
+                //     name: "fresh_form_duration_ends_on",
+                //     selector: "input[name='fresh_form_duration_ends_on']",
+                //     errorSelector: ".error-validity_to",
+                //     validate: (val) => (!val ? "Please choose the validity to date" : null),
+                // },
             ];
         const renewalFields = [
             {
@@ -844,12 +844,12 @@ $(document).ready(function() {
                 errorSelector: ".error-renewal_from",
                 validate: (val) => (!val ? "Please choose the Renewal from date" : null),
             },
-            {
-                name: "renewal_duration_ends_on",
-                selector: "input[name='renewal_duration_ends_on']",
-                errorSelector: ".error-renewal_to",
-                validate: (val) => (!val ? "Please choose the Renewal to date" : null),
-            },
+            // {
+            //     name: "renewal_duration_ends_on",
+            //     selector: "input[name='renewal_duration_ends_on']",
+            //     errorSelector: ".error-renewal_to",
+            //     validate: (val) => (!val ? "Please choose the Renewal to date" : null),
+            // },
             {
                 name: "renewal_late_fee_duration",
                 selector: "input[name='renewal_late_fee_duration']",
@@ -862,12 +862,12 @@ $(document).ready(function() {
                 errorSelector: ".error-latefee_from",
                 validate: (val) => (!val ? "Please choose the Late Fee from date" : null),
             },
-            {
-                name: "renewal_late_fee_duration_ends_on",
-                selector: "input[name='renewal_late_fee_duration_ends_on']",
-                errorSelector: ".error-latefee_to",
-                validate: (val) => (!val ? "Please choose the Late Fee to date" : null),
-            },
+            // {
+            //     name: "renewal_late_fee_duration_ends_on",
+            //     selector: "input[name='renewal_late_fee_duration_ends_on']",
+            //     errorSelector: ".error-latefee_to",
+            //     validate: (val) => (!val ? "Please choose the Late Fee to date" : null),
+            // },
         ];
 
         if (formType === "N") return [...baseFields, ...newFields];
@@ -885,64 +885,6 @@ $(document).ready(function() {
 
         const formType = $("select[name='form_type']").val();
         const fields = getFieldsByFormType(formType);
-    
-        // Define your fields and rules
-        // const fields = [
-        //     {
-        //         name: "cert_id",
-        //         selector: "select[name='cert_id']",
-        //         errorSelector: ".error-licence",
-        //         validate: function (val) {
-        //             if (val === "") return "Please choose the Certificate / Licence";
-        //             return null;
-        //         },
-        //     },
-        //     // {
-        //     //     name: "form_type",
-        //     //     selector: "select[name='form_type']",
-        //     //     errorSelector: ".error-licence",
-        //     //     validate: function (val) {
-        //     //         if (val === "") return "Please choose the Certificate / Licence";
-        //     //         return null;
-        //     //     },
-        //     // },
-        //     {
-        //         name: "fresh_form_duration",
-        //         selector: "input[name='fresh_form_duration']",
-        //         errorSelector: ".error-validity",
-        //         validate: function (val) {
-        //             if (val == "") return "Please fill the Validity";
-        //             return null;
-        //         },
-        //     },
-        //     {
-        //         name: "fresh_form_duration_on",
-        //         selector: "input[name='fresh_form_duration_on']",
-        //         errorSelector: ".error-validity_from",
-        //         validate: function (val) {
-        //             if (val == "") return "Please choose the validity from date";
-        //             return null;
-        //         },
-        //     },
-        //     {
-        //         name: "fresh_form_duration_ends_on",
-        //         selector: "input[name='fresh_form_duration_ends_on']",
-        //         errorSelector: ".error-validity_to",
-        //         validate: function (val) {
-        //             if (val == "") return "Please choose the validity to date";
-        //             return null;
-        //         },
-        //     },
-        //     {
-        //         name: "form_status",
-        //         selector: "input[name='form_status']",
-        //         errorSelector: ".error-form_status",
-        //         validate: function (val) {
-        //             if (val === "") return "Please choose the status";
-        //             return null;
-        //         },
-        //     },
-        // ];
     
         // Reset previous states
         $(".error").addClass("d-none").text("");
@@ -970,10 +912,6 @@ $(document).ready(function() {
             if (error) {
                 input.css("border", "1px solid red");
                 errorMsg.text(error).removeClass("d-none");
-
-                // console.warn("❌ Validation failed for:", field.name || field.selector);
-                // console.warn("   Error message:", error);
-
 
                 if (isValid) input.focus(); // Focus first invalid field
                 isValid = false;
@@ -1201,6 +1139,169 @@ $(document).ready(function() {
             // complete: function () {
             //     submitBtn.prop("disabled", false).text(isEdit ? "Update" : "Create");
             // }
+        });
+    });
+
+
+    function getFeesValidationRules() {
+        const type = $("#fees_type").val();
+
+        const rules = [
+            {
+                selector: "select[name='cert_name']",
+                errorSelector: ".error-cert_name",
+                validate: val => val === "" ? "Please choose the Certificate / Licence" : null
+            },
+            {
+                selector: "select[name='fees_type']",
+                errorSelector: ".error-fees_type",
+                validate: val => val === "" ? "Please choose the Fees Type" : null
+            }
+        ];
+        
+
+        // ✅ Add only the relevant rules based on type
+        if (type === "N") {
+            rules.push(
+                {
+                    selector: "input[name='fresh_fees']",
+                    errorSelector: ".error-fresh_fees",
+                    validate: val => val === "" ? "Please enter the Fresh Fees amount" : null
+                },
+                {
+                    selector: "input[name='fresh_fees_on']",
+                    errorSelector: ".error-fresh_fees_on",
+                    validate: val => val === "" ? "Please select the Fresh Fees start date" : null
+                }
+            );
+        } else if (type === "R") {
+            rules.push(
+                {
+                    selector: "input[name='renewal_fees']",
+                    errorSelector: ".error-renewal_fees",
+                    validate: val => val === "" ? "Please enter the Renewal Fees amount" : null
+                },
+                {
+                    selector: "input[name='renewal_fees_as_on']",
+                    errorSelector: ".error-renewal_fees_as_on",
+                    validate: val => val === "" ? "Please select the Renewal Fees start date" : null
+                },
+            );
+        } else if (type === "L") {
+            rules.push(
+                {
+                    selector: "input[name='late_fees']",
+                    errorSelector: ".error-late_fees",
+                    validate: val => val === "" ? "Please enter the Late Fees amount" : null
+                },
+                {
+                    selector: "input[name='late_fees_on']",
+                    errorSelector: ".error-late_fees_on",
+                    validate: val => val === "" ? "Please select the Late Fees start date" : null
+                }
+            );
+        }
+
+        return rules;
+    }
+
+
+
+    $(document).on("submit", "#addFees", function (e) {
+        e.preventDefault();
+
+        console.log('sdfdsf');
+        
+
+        const form = $(this);
+        const isEdit = form.find("#record_id").val() !== "";
+        const fields = getFeesValidationRules(isEdit);
+
+        let isValid = true;
+
+        // Reset old errors
+        form.find(".error").addClass("d-none").text("");
+        form.find("input, select").css("border", "");
+
+        // Validate
+        fields.forEach(f => {
+            const input = form.find(f.selector);
+            const val = $.trim(input.val());
+            const err = f.validate(val);
+            const errMsg = form.find(f.errorSelector);
+
+            console.log(err);
+            console.log(errMsg);
+
+            input.off("input change").on("input change", function () {
+                $(this).css("border", "");
+                errMsg.addClass("d-none").text("");
+            });
+
+            if (err) {
+                input.css("border", "1px solid red");
+                errMsg.text(err).removeClass("d-none");
+                if (isValid) input.focus();
+                isValid = false;
+            }
+        });
+
+        console.log(isValid);
+
+        if (!isValid) return false;
+
+        // ✅ Prepare FormData
+        const formData = new FormData(form[0]);
+
+        // Convert status (checkbox “on” → 1/0)
+        const status = form.find("input[name='form_status']").is(":checked") ? 1 : 0;
+        formData.set("form_status", status);
+
+        // ✅ Dynamic URL (Add vs Edit)
+        const url = isEdit
+            ? BASE_URL + "/admin/licence/update/" + $("#record_id").val()
+            : BASE_URL + "/admin/licence/store";
+
+        console.log(url);
+        
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+            headers: { "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content") },
+           
+            success: function (res) {
+                Swal.close();
+                if (res.status === "success") {
+                    Swal.fire({
+                        // icon: "success",
+                        title: res.message || "Saved successfully!",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    }).then(() => {
+                        $("#addFormModal").modal("hide");
+                        // Optional: Refresh table
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Failed",
+                        text: res.message || "Something went wrong!",
+                    });
+                }
+            },
+            error: function (xhr) {
+                Swal.close();
+                Swal.fire({
+                    icon: "error",
+                    title: "Server Error",
+                    text: xhr.responseJSON?.message || "Please try again later.",
+                });
+            },
         });
     });
 });
