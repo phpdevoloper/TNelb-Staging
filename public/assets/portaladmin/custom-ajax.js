@@ -320,6 +320,12 @@ $(document).ready(function() {
 
     });
 
+    function formatDateForInput(value) {
+        if (!value) return '';
+        // works for both "2025-11-04 00:00:00" and ISO "2025-11-04T00:00:00.000Z"
+        return value.toString().split('T')[0].split(' ')[0];
+    }
+
 
 
 
@@ -327,48 +333,60 @@ $(document).ready(function() {
     // Get all data-* attributes
         const rec_id = $(this).data('id');
         const cert_id = $(this).data('cert_id');
-        const form_type = $(this).data('form_type');
-        const fresh_duration = $(this).data('fresh_form_duration');
-        const renewal_duration = $(this).data('renewal_form_duration');
-        const late_duration = $(this).data('renewal_late_fees_duration');
+        const form_type = $.trim($(this).data('form_type'));
+        const validity = $(this).data('validity');
+        const start_date = $(this).data('start_date');
 
-        const fresh_duration_on = $(this).data('fresh_form_duration_on');
-        const fresh_fees_ends_on =  $(this).data('fresh_fees_ends_on');
-
-        const renewal_duration_on = $(this).data('renewal_form_duration_on');
-        const renewal_form_duration_ends_on =  $(this).data('renewal_form_duration_ends_on');
-        
-        const late_duration_on = $(this).data('renewal_late_fees_duration_on');
-        const renewal_late_fees_ends_on =  $(this).data('renewal_late_fees_duration_ends_on');
-
-        const status = $(this).data('form_status');  
-
-        console.log(form_type);
-        
+        // const status = $(this).data('form_status');  
 
         // Fill modal inputs
         $('#edit_form_id').val(rec_id);
         $('#cert_id').val(cert_id).trigger('change');
         $('#form_type').val(form_type).trigger('change');   
+
+        $('#fresh_form_duration, #fresh_form_duration_on, #renewal_form_duration, #renewal_duration_on, #renewal_late_fee_duration, #renewal_late_fee_duration_on').val('');
         // $('#form_name_edit').val(form_name);
 
-        $('#freshform_duration').val(fresh_duration);
-        $('#freshform_duration_starts').val(fresh_duration_on);
-        $('#fresh_form_duration_ends_on').val(fresh_fees_ends_on);
-        $('#renewal_form_duration').val(renewal_duration);
-        $('#renewal_duration_starts').val(renewal_duration_on);
-        $('#renewal_late_fee_duration').val(late_duration);
-        $('#renewal_late_fee_duration_starts').val(late_duration_on);
-        $('#freshform_duration_ends').val(fresh_form_duration_ends_on);
-        $('#renewal_duration_ends').val(renewal_form_duration_ends_on);
-        $('#renewal_late_fee_duration_ends').val(renewal_late_fees_ends_on);
+        switch (form_type) {
+            case 'N': // New Form
+                $('#fresh_form_duration').val(validity);
+                $('#fresh_form_duration_on').val(formatDateForInput(start_date));
+                break;
+
+            case 'R': // Renewal Form
+                $('#renewal_form_duration').val(validity);
+                $('#renewal_duration_on').val(formatDateForInput(start_date));
+                break;
+
+            case 'L': // Late Fee Form
+                $('#renewal_late_fee_duration').val(validity);
+                $('#renewal_late_fee_duration_on').val(formatDateForInput(start_date));
+                break;
+
+            default:
+                console.warn('Unknown form_type:', form_type);
+                break;
+        }
+
+        $(".modal-title").text("Edit Validity Details");
+
+        // $('#freshform_duration').val(fresh_duration);
+        // $('#freshform_duration_starts').val(fresh_duration_on);
+        // $('#fresh_form_duration_ends_on').val(fresh_fees_ends_on);
+        // $('#renewal_form_duration').val(renewal_duration);
+        // $('#renewal_duration_starts').val(renewal_duration_on);
+        // $('#renewal_late_fee_duration').val(late_duration);
+        // $('#renewal_late_fee_duration_starts').val(late_duration_on);
+        // $('#freshform_duration_ends').val(fresh_form_duration_ends_on);
+        // $('#renewal_duration_ends').val(renewal_form_duration_ends_on);
+        // $('#renewal_late_fee_duration_ends').val(renewal_late_fees_ends_on);
 
         
-        if (status == 1) {
-            $('#form_status').prop('checked', true);
-        } else {
-            $('#form_status').prop('checked', false);
-        }
+        // if (status == 1) {
+        //     $('#form_status').prop('checked', true);
+        // } else {
+        //     $('#form_status').prop('checked', false);
+        // }
 
     });
 
@@ -434,10 +452,13 @@ $(document).ready(function() {
     });
 
 
-    $(document).on('click', '#openHistoryBtn', function() {
+    $(document).on('click', '.openHistoryBtn', function(e) {
+        e.preventDefault();
 
         const form_id = $(this).data('id');
         console.log(form_id);
+
+        // return false;
         
 
         $.ajax({
@@ -841,15 +862,11 @@ $(document).ready(function() {
             {
                 name: "renewal_duration_on",
                 selector: "input[name='renewal_duration_on']",
-                errorSelector: ".error-renewal_from",
+                errorSelector: ".error-renewal_duration_on",
                 validate: (val) => (!val ? "Please choose the Renewal from date" : null),
             },
-            // {
-            //     name: "renewal_duration_ends_on",
-            //     selector: "input[name='renewal_duration_ends_on']",
-            //     errorSelector: ".error-renewal_to",
-            //     validate: (val) => (!val ? "Please choose the Renewal to date" : null),
-            // },
+        ];
+        const LateFeeFields = [
             {
                 name: "renewal_late_fee_duration",
                 selector: "input[name='renewal_late_fee_duration']",
@@ -859,19 +876,14 @@ $(document).ready(function() {
             {
                 name: "renewal_late_fee_duration_on",
                 selector: "input[name='renewal_late_fee_duration_on']",
-                errorSelector: ".error-latefee_from",
+                errorSelector: ".error-latefee_fee_date",
                 validate: (val) => (!val ? "Please choose the Late Fee from date" : null),
             },
-            // {
-            //     name: "renewal_late_fee_duration_ends_on",
-            //     selector: "input[name='renewal_late_fee_duration_ends_on']",
-            //     errorSelector: ".error-latefee_to",
-            //     validate: (val) => (!val ? "Please choose the Late Fee to date" : null),
-            // },
-        ];
+        ]
 
         if (formType === "N") return [...baseFields, ...newFields];
         if (formType === "R") return [...baseFields, ...renewalFields];
+        if (formType === "L") return [...baseFields, ...LateFeeFields];
         return baseFields; // default fallback
     }
 

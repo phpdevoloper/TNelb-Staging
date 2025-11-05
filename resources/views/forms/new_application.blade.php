@@ -553,7 +553,7 @@
                                     <input type="hidden" id="form_name" name="form_name" value="{{ $current_form['form_code'] }}">
                                     <input type="hidden" id="license_name" name="license_name" value="{{ $current_form['cert_licence_code'] }}">
                                     <input type="hidden" id="form_id" name="form_id" value="1">
-                                    <input type="hidden" id="amount" name="amount" value="{{ $fees_details->fresh_fee_amount }}">
+                                    <input type="hidden" id="amount" name="amount" value="{{ $fees_details->fees }}">
                                     <input type="hidden" id="appl_type" name="appl_type" value="N">
                                     <input type="hidden" id="form_action" name="form_action" value="draft">
                                     @csrf

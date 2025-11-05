@@ -40,7 +40,7 @@ class FeesValidity extends Model
         'licence_id',
         'form_type',
         'validity',
-        'vadity_start_date',
+        'validity_start_date',
         'validity_date_end',
         'status',
         'created_by',

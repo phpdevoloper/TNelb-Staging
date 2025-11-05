@@ -239,12 +239,12 @@
                        </li>
                         <li class="{{ $currentRoute == 'admin.fees_validity' ? 'active' : '' }}">
                             <a href="{{ route('admin.fees_validity') }}">
-                                Fees Details
+                                Fees & Validity Details
                             </a>
                         </li>
-                        <li class="{{ $currentRoute == 'admin.management' ? 'active' : '' }}">
+                        {{-- <li class="{{ $currentRoute == 'admin.management' ? 'active' : '' }}">
                             <a href="{{route('admin.management')}}">New Link</a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
                 {{-- <li class="menu {{ request()->routeIs('admin.addnewform') ? 'active' : '' }}">

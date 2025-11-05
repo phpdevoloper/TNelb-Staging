@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin\LicenceCategory;
+use App\Models\Admin\TnelbFee;
 use App\Models\admin\TnelbForms;
 use App\Models\Mst_documents;
 use App\Models\Mst_education;
@@ -18,67 +19,63 @@ use Illuminate\Support\Facades\Crypt;
 
 class FormController extends BaseController
 {
+    protected $today;
     public function __construct()
     {
         parent::__construct();   
         $this->middleware('web');
+        $this->today = Carbon::today()->toDateString();
     }
-
-    public function new_application($form_id = null){
-
-        
+    
+    private function getApplicableFee($certLicenceId)
+    {
+        return TnelbFee::where('cert_licence_id', $certLicenceId)
+        ->whereDate('start_date', '<=', $this->today)
+        ->select('fees', 'start_date')
+        ->orderBy('start_date', 'desc')
+        ->first();
+    }
+    
+    public function new_application($form_id = null)
+    {
         if (!Auth::check()) {
             return redirect()->route('logout');
         }
         
         try {
-            
             $form_id = Crypt::decrypt($form_id);
             $authUser = Auth::user();
             
             $user = [
                 'user_id' => $authUser->login_id,
                 'salutation' => $authUser->salutation,
-                'applicant_name' => $authUser->first_name.' '.$authUser->last_name,
+                'applicant_name' => trim($authUser->first_name.' '.$authUser->last_name),
             ];
             
-            $form_details = MstLicence::where('status', 1)
-            ->select('*')
-            ->get()
-            ->toArray();
-            
-            $current_form = collect($form_details)->firstWhere('form_code', $form_id);
-
-            if (!$current_form) {
-                abort(504, 'Form Not Found..');
-            }
-
-
-            $fees_details = TnelbForms::where('status', 1)
-            ->where('license_name', $current_form['id'])
-            ->whereDate('fresh_fee_starts', '<=', today())
-            ->select('fresh_fee_amount','fresh_fee_starts')
+            $current_form = MstLicence::where('status', 1)
+            ->where('form_code', $form_id)
             ->first();
-
-            // var_dump($fees_details);die; 
-
-            if (!$fees_details) {
-                abort(505, 'The requested form details could not be found.');
-            }
-
-
             
             if (!$current_form) {
-                abort(404, 'Form not found');
+                abort(404, 'Form not found.');
             }
-
-            return view('forms.new_application', compact('user','current_form','fees_details'));
-
+            
+            $fees_details = $this->getApplicableFee($current_form->id);
+            
+            if (!$fees_details) {
+                abort(404, 'Applicable fee not found for this form.');
+            }
+            
+            return view('forms.new_application', compact('user', 'current_form', 'fees_details'));
+            
         } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-            abort(404, 'Invalid form link');
+            abort(400, 'Invalid form link.');
+        } catch (\Exception $e) {
+            abort(500, 'Unexpected error: '.$e->getMessage());
         }
-        
     }
+
+        
 
     public function editApplication($appl_id)
     {
@@ -111,11 +108,7 @@ class FormController extends BaseController
             abort(504, 'Form Not Found..');
         }
         
-        $fees_details = TnelbForms::where('status', 1)
-        ->where('license_name', $current_form['id'])
-        ->whereDate('fresh_fee_starts', '<=', today())
-        ->select('fresh_fee_amount','fresh_fee_starts')
-        ->first();
+        $fees_details = $this->getApplicableFee($current_form['id']);
 
         if (!$fees_details) {
             abort(505, 'The requested form details could not be found.');
@@ -164,14 +157,14 @@ class FormController extends BaseController
 
     public function store(Request $request)
     {
-
+        
         $request->merge([
             'aadhaar' => preg_replace('/\D/', '', $request->aadhaar)
         ]);
 
-
+        
         $request->validate([
-
+            
             // basic fields
             'login_id'             => 'required|string',
             'applicant_name'       => 'required|string|max:255',
@@ -190,8 +183,8 @@ class FormController extends BaseController
             // 'amount'               => 'required|numeric|min:0',
             'certificate_no'            => 'nullable|string',
             'certificate_date'              => 'nullable|date',
-
-
+            
+            
             // education arrays
             'educational_level'    => 'required|array|min:1',
             'educational_level.*'  => 'required|string|max:50',
@@ -201,7 +194,7 @@ class FormController extends BaseController
             'year_of_passing.*'    => 'required|digits:4',
             'percentage'           => 'required|array|min:1',
             'percentage.*'         => 'required|numeric|min:0|max:100',
-
+            
             // work experience arrays
             'work_level'           => 'required|array|min:1',
             'work_level.*'         => 'required|string|max:50',
@@ -209,20 +202,20 @@ class FormController extends BaseController
             'experience.*'         => 'required|integer|min:0|max:50',
             'designation'          => 'required|array|min:1',
             'designation.*'        => 'required|string|max:100',
-
+            
             // single files
             'upload_photo'         => 'required|image|mimes:jpg,jpeg,png|max:50', // 1MB
             'aadhaar_doc'          => 'required|mimes:pdf|min:10|max:250',
             'pancard_doc'          => 'required|mimes:pdf|min:10|max:250',
-
+            
             // multiple files (arrays)
             'education_document'   => 'required|array|min:1',
             'education_document.*' => 'file|mimes:pdf,jpg,jpeg,png|max:200',
             'work_document'        => 'required|array|min:1',
             'work_document.*'      => 'file|mimes:pdf,jpg,jpeg,png|max:200',
-
+            
         ], [
-
+            
             // education arrays
             'educational_level.required'    => 'Please add at least one educational qualification.',
             'educational_level.*.required'  => 'Educational level is required.',
@@ -233,11 +226,11 @@ class FormController extends BaseController
             'institute_name.*.required'     => 'Institute name is required.',
             'institute_name.*.string'       => 'Institute name must be a valid string.',
             'institute_name.*.max'          => 'Institute name may not be greater than 255 characters.',
-
+            
             'year_of_passing.required'      => 'Please add at least one educational qualification.',
             'year_of_passing.*.required'    => 'Year of passing is required.',
             'year_of_passing.*.digits'      => 'Year of passing must be a 4-digit year.',
-
+            
             'percentage.required'           => 'Please add at least one educational qualification.',
             'percentage.*.required'         => 'Percentage/Grade is required.',
             'percentage.*.numeric'          => 'Percentage/Grade must be a number.',
@@ -249,7 +242,7 @@ class FormController extends BaseController
             'work_level.*.required'         => 'Work level is required.',
             'work_level.*.string'           => 'Work level must be a valid string.',
             'work_level.*.max'              => 'Work level may not be greater than 50 characters.',
-
+            
             'experience.required'           => 'Please add at least one work experience.',
             'experience.*.required'         => 'Experience (in years) is required.',
             'experience.*.integer'          => 'Experience must be an integer.',
@@ -260,26 +253,26 @@ class FormController extends BaseController
             'designation.*.required'        => 'Designation is required.',
             'designation.*.string'          => 'Designation must be a valid string.',
             'designation.*.max'             => 'Designation may not be greater than 100 characters.',
-
+            
             'aadhaar.digits' => 'Aadhaar number should be 12 digits.',
             'pancard_doc.min' => 'PAN card file is too small.',
-
+            
             'education_document.*.max'    => 'Educational document must not be greater than 200 kilobytes.',
             'work_document.*.max'    => 'Experience document must not be greater than 200 kilobytes.',
-
+            
             'pancard_doc.max' => 'The pancard doc must not be greater than 250 kilobytes.',
         ]);
-
-
+        
+        
         $action = $request->input('form_action');
         $loginId = $request->login_id;
-
-
+        
+        
         DB::beginTransaction();
-
+        
         $encrypted_aadhaar = Crypt::encryptString($request->aadhaar);
         $encrypted_pancard = Crypt::encryptString($request->pancard);
-
+        
         try {
             // Generate New Application ID
             $appl_type = $request->appl_type ?? '';
@@ -299,54 +292,48 @@ class FormController extends BaseController
                 } else {
                     $newApplicationId = $request->form_name . $request->license_name . date('y') . '1111111';
                 }
-
+                
             }
-
-
-
-          $aadhaarFilename = null;
+            
+            $aadhaarFilename = null;
             $panFilename = null;
-
+            
             if ($request->hasFile('aadhaar_doc')) {
                 $file = $request->file('aadhaar_doc');
-
+                
                 $contents = file_get_contents($file->getRealPath());
-
+                
                 $encrypted = Crypt::encrypt($contents);
-
+                
                 $aadhaarFilename = time() . '_' . rand(10000, 9999999) . '.bin';
                 $destinationPath = storage_path('app/private_documents');
-
-
+                
+                
                 if (!is_dir($destinationPath)) {
                     mkdir($destinationPath, 0755, true);
                 }
-
+                
                 file_put_contents($destinationPath . '/' . $aadhaarFilename, $encrypted);
             }
-
-
-if ($request->hasFile('pancard_doc')) {
-    $file = $request->file('pancard_doc');
-
-    $contents = file_get_contents($file->getRealPath());
-
-    $encrypted = Crypt::encrypt($contents);
-
-    $panFilename = time() . '_' . rand(10000, 9999999) . '.bin';
-
-    $destinationPath = storage_path('app/private_documents');
-
-
-
-
-    if (!is_dir($destinationPath)) {
-        mkdir($destinationPath, 0755, true);
-    }
-
-    file_put_contents($destinationPath . '/' . $panFilename, $encrypted);
-}
-
+            
+            if ($request->hasFile('pancard_doc')) {
+                $file = $request->file('pancard_doc');
+                
+                $contents = file_get_contents($file->getRealPath());
+                
+                $encrypted = Crypt::encrypt($contents);
+                
+                $panFilename = time() . '_' . rand(10000, 9999999) . '.bin';
+                
+                $destinationPath = storage_path('app/private_documents');
+                
+                if (!is_dir($destinationPath)) {
+                    mkdir($destinationPath, 0755, true);
+                }
+                
+                file_put_contents($destinationPath . '/' . $panFilename, $encrypted);
+            }
+            
             
             $form = Mst_Form_s_w::create([
                 'login_id'            => $loginId,
@@ -374,16 +361,16 @@ if ($request->hasFile('pancard_doc')) {
                 'cert_verify'         => $request->cert_verify ?? '0',
                 'license_verify'      => $request->l_verify ?? '0',
             ]);
-
+            
             $applicationId = $form->application_id;
             $loginId = $form->login_id;
-
+            
             // process education
             if ($request->has('educational_level')) {
                 foreach ($request->educational_level as $key => $level) {
                     // skip empty rows
                     if (empty($level) || empty($request->institute_name[$key])) continue;
-
+                    
                     // compute edu_serial safely
                     $lastEdu = Mst_education::whereNotNull('edu_serial')->latest('id')->value('edu_serial');
                     if ($lastEdu) {
@@ -392,7 +379,7 @@ if ($request->hasFile('pancard_doc')) {
                     } else {
                         $newEduSerial = 'edu_1';
                     }
-
+                    
                     $filePath = null;
                     if ($request->hasFile("education_document") && isset($request->file("education_document")[$key])) {
                         $file = $request->file("education_document")[$key];
@@ -401,7 +388,7 @@ if ($request->hasFile('pancard_doc')) {
                         $file->move($destinationPath, $filename);
                         $filePath = 'education_document/' . $filename;
                     }
-
+                    
                     Mst_education::create([
                         'login_id'           => $loginId,
                         'educational_level'  => $level,
@@ -414,14 +401,14 @@ if ($request->hasFile('pancard_doc')) {
                     ]);
                 }
             }
-
+            
             // process experience
             if ($request->has('work_level')) {
                 foreach ($request->work_level as $key => $company) {
                     if (empty($company) || empty($request->experience[$key]) || empty($request->designation[$key])) {
                         continue;
                     }
-
+                    
                     // compute exp_serial safely
                     $lastExp = Mst_experience::whereNotNull('exp_serial')->latest('id')->value('exp_serial');
                     if ($lastExp) {
@@ -430,7 +417,7 @@ if ($request->hasFile('pancard_doc')) {
                     } else {
                         $newExpSerial = 'exp_1';
                     }
-
+                    
                     $filePath = null;
                     if ($request->hasFile("work_document") && isset($request->file("work_document")[$key])) {
                         $file = $request->file("work_document")[$key];
@@ -439,7 +426,7 @@ if ($request->hasFile('pancard_doc')) {
                         $file->move($destinationPath, $filename);
                         $filePath = 'work_experience/' . $filename;
                     }
-
+                    
                     Mst_experience::create([
                         'login_id'        => $loginId,
                         'company_name'    => $company,
@@ -451,32 +438,33 @@ if ($request->hasFile('pancard_doc')) {
                     ]);
                 }
             }
-
+            
             // process photo
             if ($request->hasFile('upload_photo')) {
                 $photoPath = 'user_' . time() . '.' . $request->file('upload_photo')->getClientOriginalExtension();
                 $destinationPath = public_path('attached_documents');
                 $request->file('upload_photo')->move($destinationPath, $photoPath);
-
+                
                 TnelbApplicantPhoto::create([
                     'login_id'       => $loginId,
                     'application_id' => $applicationId,
                     'upload_path'    => 'attached_documents/' . $photoPath,
                 ]);
             }
-
-
+            
+            
             DB::commit();
-
+            
             return response()->json([
                 'status' => 'success',
                 'message' => 'Form and documents saved successfully!',
                 'application_id' => $applicationId,
                 'applicantName' => $form->applicant_name
             ]);
+            
         } catch (\Exception $e) {
             DB::rollBack();
-
+            
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to save form: ' . $e->getMessage()

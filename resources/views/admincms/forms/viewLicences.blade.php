@@ -225,8 +225,8 @@
                                                         >
                                                         <i class="fa fa-edit"></i>
                                                     </span>
-                                                    <span class="badge badge-primary bs-tooltip" id="openHistoryBtn" title="Previous History"
-                                                    data-id="{{ $form->license_name }}"
+                                                    <span class="badge badge-primary bs-tooltip openHistoryBtn" title="Previous History"
+                                                    data-id="{{ $form->licence_id }}"
                                                     ><i class="fa fa-refresh"></i></span>
                                                 </td>
                                             </tr>

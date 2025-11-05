@@ -2421,10 +2421,12 @@
         
         try {
             
+            
             let form_cost, form_name, licence, renewalAmoutStartson, latefee_amount, latefee_starts;
             
             const appl_type = $('#appl_type').val();
             const issued_licence = $('#license_number').val();
+            
             
             
             if(appl_type == 'R'){
@@ -2438,12 +2440,11 @@
                 
             }else{
                 form_cost = $('#amount').val();
+                console.log(form_cost);
             }
-
+            
             console.log(form_cost);
-            
-            
-            
+
             
             // 🔹 Now you can safely use form_cost everywhere below
             const modalEl = document.getElementById('competencyInstructionsModal');
@@ -2465,228 +2466,258 @@
             modal.show();
             
             // Remove old listeners
-        proceedBtn.replaceWith(proceedBtn.cloneNode(true));
-        
-        // Re-assign click listener
-        modalEl.querySelector('#proceedPayment').addEventListener('click', async function() {
-            if (!agreeCheckbox.checked) {
-                errorText.classList.remove('d-none');
-                return;
-            }
+            proceedBtn.replaceWith(proceedBtn.cloneNode(true));
             
-            modal.hide();
-            
-            let formData = new FormData($('#competency_form_ws')[0]);
-            let applicationId = $('#application_id').val();
-            let formUrl;
-            
-            if (applicationId) {
-                if (appl_type === 'R') {
-                    formUrl = "{{ route('form.draft_renewal_submit', ['appl_id' => '__APPL_ID__']) }}"
-                    .replace('__APPL_ID__', applicationId);
+            // Re-assign click listener
+            modalEl.querySelector('#proceedPayment').addEventListener('click', async function() {
+                if (!agreeCheckbox.checked) {
+                    errorText.classList.remove('d-none');
+                    return;
+                }
+                
+                modal.hide();
+                
+                let formData = new FormData($('#competency_form_ws')[0]);
+                let applicationId = $('#application_id').val();
+                let formUrl;
+                
+                if (applicationId) {
+                    if (appl_type === 'R') {
+                        formUrl = "{{ route('form.draft_renewal_submit', ['appl_id' => '__APPL_ID__']) }}"
+                        .replace('__APPL_ID__', applicationId);
+                    } else {
+                        formUrl = "{{ route('form.update', ['appl_id' => '__APPL_ID__']) }}"
+                        .replace('__APPL_ID__', applicationId);
+                    }
                 } else {
-                    formUrl = "{{ route('form.update', ['appl_id' => '__APPL_ID__']) }}"
-                    .replace('__APPL_ID__', applicationId);
+                    formUrl = "{{ route('form.store') }}";
                 }
-            } else {
-                formUrl = "{{ route('form.store') }}";
-            }
-
-            // 🔹 Submit form
-            let saveResponse = await $.ajax({
-                url: formUrl,
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            
-            if (saveResponse.status === "success") {
-
-                const login_id = window.login_id || "{{ auth()->user()->login_id ?? '' }}";
-                const application_id = saveResponse.application_id;
-                const transactionDate = new Date().toLocaleDateString('en-GB');
-                const applicantName = saveResponse.applicantName || 'N/A';
-                const form_name = saveResponse.form_name || 'N/A';
-                const type_apps = licence || 'N/A';
-                const amount = form_cost;
-                const serviceCharge = 10;
-                const total_charge = Number(amount) + Number(serviceCharge);
-                if (appl_type == 'R') {
-                    total_charge = Number(total_charge) + Number(lateFee);
-                }
-                const transactionId = "TRX" + Math.floor(100000 + Math.random() * 900000);
-                const payment_mode = 'UPI';
-
-                const safeLateFee = typeof lateFee !== "undefined" && lateFee !== null ? lateFee : 0;
-                // 🔹 Show payment popup
-                Swal.fire({
-                    title: "<span style='color:#0d6efd;'>Initiate Payment</span>",
-                    html: `
-                        <div class="text-start" style="font-size: 14px; padding: 10px 0;">
-                            <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
-                                <tbody>
-                                    <tr>
-                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Applicant Name</th>
-                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${applicantName}</td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Date</th>
-                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${transactionDate}</td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: left; padding: 10px; color: #333;">Amount</th>
-                                        <td style="text-align: right; padding: 10px; font-weight: bold; color: #0d6efd;">Rs. ${amount} /-</td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Type</th>
-                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${type_apps}</td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Late Fees(Within 3 Months)</th>
-                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${safeLateFee}</td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Service Charge</th>
-                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${serviceCharge}</td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Total</th>
-                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${total_charge}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    `,
-                    icon: "info",
-                    iconHtml: '<i class="swal2-icon" style="font-size: 1 em">ℹ️</i>',
-                    width: '450px',
-                    showCancelButton: true,
-                    confirmButtonText: '<span class="btn btn-primary px-4 pr-4 payment">Pay Now</span>',
-                    cancelButtonText: '<span class="btn btn-danger px-4">Cancel</span>',
-                    showCloseButton: true,
-                    customClass: {
-                        popup: 'swal2-border-radius',
-                        actions: 'd-flex justify-content-around mt-3',
-                    },
-                    buttonsStyling: false,
-                    preConfirm: async () => {
-                        try {
-
-                            const paymentResponse = await $.ajax({
-                                url: "{{ route('payment.updatePayment') }}",
-                                type: "POST",
-                                dataType: "json",
-                                data: {
-                                    login_id,
-                                    application_id,
-                                    transaction_id: transactionId,
-                                    transactionDate,
-                                    amount,
-                                    payment_mode,
-                                    form_name
-                                },
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                }
-                            });
-
-
-                            // ✅ Success condition
-                            if (paymentResponse.status === 200) {
-                                showPaymentSuccessPopup(
-                                    application_id,
-                                    transactionId,
-                                    transactionDate,
-                                    applicantName,
-                                    amount
-                                );
-                            } else {
-                                Swal.fire({
-                                    title: "Payment Failed",
-                                    text: paymentResponse.message || "Something went wrong!",
-                                    icon: "error",
-                                    timer: 3000,
-                                    showConfirmButton: false
-                                }).then(() => {
-                                    window.location.href = BASE_URL + "/dashboard";
+                try {
+                    // 🔹 Submit form
+                    let saveResponse = await $.ajax({
+                        url: formUrl,
+                        type: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        error: function (xhr) {
+                            console.error("❌ Uncaught AJAX Error:", xhr);
+                        }
+                    });
+                    
+                    if (saveResponse.status === "success") {
+                        
+                        const login_id = window.login_id || "{{ auth()->user()->login_id ?? '' }}";
+                        const application_id = saveResponse.application_id;
+                        const transactionDate = new Date().toLocaleDateString('en-GB');
+                        const applicantName = saveResponse.applicantName || 'N/A';
+                        const form_name = saveResponse.form_name || 'N/A';
+                        const type_apps = licence || 'N/A';
+                        const amount = form_cost;
+                        const serviceCharge = 10;
+                        const total_charge = Number(amount) + Number(serviceCharge);
+                        if (appl_type == 'R') {
+                            total_charge = Number(total_charge) + Number(lateFee);
+                        }
+                        const transactionId = "TRX" + Math.floor(100000 + Math.random() * 900000);
+                        const payment_mode = 'UPI';
+                        
+                        const safeLateFee = typeof lateFee !== "undefined" && lateFee !== null ? lateFee : 0;
+                        // 🔹 Show payment popup
+                        Swal.fire({
+                            title: "<span style='color:#0d6efd;'>Initiate Payment</span>",
+                            html: `
+                            <div class="text-start" style="font-size: 14px; padding: 10px 0;">
+                                <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+                                    <tbody>
+                                        <tr>
+                                            <th style="text-align: left; padding: 6px 10px; color: #555;">Applicant Name</th>
+                                            <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${applicantName}</td>
+                                            </tr>
+                                            <tr>
+                                                <th style="text-align: left; padding: 6px 10px; color: #555;">Date</th>
+                                                <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${transactionDate}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style="text-align: left; padding: 10px; color: #333;">Amount</th>
+                                                    <td style="text-align: right; padding: 10px; font-weight: bold; color: #0d6efd;">Rs. ${amount} /-</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Type</th>
+                                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${type_apps}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th style="text-align: left; padding: 6px 10px; color: #555;">Late Fees(Within 3 Months)</th>
+                                                            <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${safeLateFee}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th style="text-align: left; padding: 6px 10px; color: #555;">Service Charge</th>
+                                                                <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${serviceCharge}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th style="text-align: left; padding: 6px 10px; color: #555;">Total</th>
+                                                                    <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${total_charge}</td>
+                                                                    </tr>
+                                                                    </tbody>
+                                                                    </table>
+                                                                    </div>
+                                                                    `,
+                            icon: "info",
+                            iconHtml: '<i class="swal2-icon" style="font-size: 1 em">ℹ️</i>',
+                            width: '450px',
+                            showCancelButton: true,
+                            confirmButtonText: '<span class="btn btn-primary px-4 pr-4 payment">Pay Now</span>',
+                            cancelButtonText: '<span class="btn btn-danger px-4">Cancel</span>',
+                            showCloseButton: true,
+                            customClass: {
+                                popup: 'swal2-border-radius',
+                                actions: 'd-flex justify-content-around mt-3',
+                            },
+                            buttonsStyling: false,
+                            preConfirm: async () => {
+                                const paymentResponse = await $.ajax({
+                                    url: "{{ route('payment.updatePayment') }}",
+                                    type: "POST",
+                                    dataType: "json",
+                                    data: {
+                                        login_id,
+                                        application_id,
+                                        transaction_id: transactionId,
+                                        transactionDate,
+                                        amount,
+                                        payment_mode,
+                                        form_name
+                                    },
+                                    headers: {
+                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                    }
                                 });
+                                                            
+                                // ✅ Success condition
+                                if (paymentResponse.status === 200) {
+                                    showPaymentSuccessPopup(
+                                        application_id,
+                                        transactionId,
+                                        transactionDate,
+                                        applicantName,
+                                        amount
+                                    );
+                                } else {
+                                    Swal.fire({
+                                        title: "Payment Failed",
+                                        text: paymentResponse.message || "Something went wrong!",
+                                        icon: "error",
+                                        timer: 3000,
+                                        showConfirmButton: false
+                                    }).then(() => {
+                                        window.location.href = BASE_URL + "/dashboard";
+                                    });
+                                }
                             }
 
-                        } catch (xhr) {
-                            console.error("❌ AJAX Error:", xhr);
+                        });
+                    } else {
+                        Swal.fire("Form Submission Failed", "Application not submitted", "error");
+                    }   
+                } catch (xhr) {
+                    console.error("❌ Form Submit Error:", xhr);
 
-                            // Swal.fire({
-                            //     title: "Server Error",
-                            //     text: xhr.responseJSON?.message || "Unable to update payment status",
-                            //     icon: "error",
-                            //     timer: 3000,
-                            //     showConfirmButton: false
-                            // }).then(() => {
-                            //     window.location.href = BASE_URL + "/dashboard";
-                            // });
-                        }
+                    if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                        const errors = xhr.responseJSON.errors;
+
+                        // Remove any old error labels
+                        $('.server-error').remove();
+                        $('.is-invalid').removeClass('is-invalid');
+
+                        $.each(errors, function (field, messages) {
+                            // Find input by name (supports array names)
+                            const input = $('[name="' + field + '"]');
+                            if (input.length) {
+                                input.addClass('is-invalid');
+                                input.after('<span class="text-danger server-error">' + messages[0] + '</span>');
+                            }
+                        });
+
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Validation Error",
+                            text: "Please correct the highlighted fields."
+                        });
+                        return;
                     }
-                });
-            } else {
-                Swal.fire("Form Submission Failed", "Application not submitted", "error");
-            }
-        });
+                }
+                
+            });
+        } catch (err) {
+            console.error("Error fetching form cost or saving form:", err);
         
-    } catch (err) {
-        console.error("Error fetching form cost or saving form:", err);
-    }
-}
+            console.error("❌ Uncaught AJAX Error:", xhr);
 
+            // Check if Laravel validation failed (422)
+            // if (xhr.status === 422 && xhr.responseJSON?.errors) {
+            //     // You can show validation messages here
+            //     $.each(xhr.responseJSON.errors, function (key, msg) {
+            //         console.log(key, msg);
+            //     });
+            // } else {
+            //     Swal.fire({
+            //         icon: "error",
+            //         title: "Request Failed",
+            //         text: xhr.responseText || "Something went wrong. Please try again."
+            //     });
+            // }
+        }
+    }
+                                            
     function showPaymentSuccessPopup(loginId, transactionId, transactionDate, applicantName, amount) {
         Swal.fire({
             title: `<h3 style="color:#198754; font-size:1.5rem;">Payment Successful!</h3>`,
             html: `
-        <div style="font-size: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
-        <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 90%; margin: 0 auto;">
-            <div style="
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 7px 50px;
-            font-size: 14px;
-            max-width: 350px;
-            border-right:2px solid #0d6efd;
-            padding: 0px 15px;
-            ">
-            <div style="font-weight: bold;">Application ID:</div>
-            <div style="word-break: break-word;">${loginId}</div>
-
-            <div style="font-weight: bold;">Transaction ID:</div>
-            <div style="word-break: break-word;">${transactionId}</div>
-
-            <div style="font-weight: bold;">Transaction Date:</div>
-            <div>${transactionDate}</div>
-
-            <div style="font-weight: bold;">Applicant Name:</div>
-            <div>${applicantName}</div>
-
-            <div style="font-weight: bold;">Amount Paid:</div>
-            <div>${amount}</div>
-        </div>
-            <div style="min-width: 200px; text-align: center;">
-            <p><strong>Download Your Payment Receipt:</strong></p>
-            <button class="btn btn-info btn-sm mb-2" onclick="paymentreceipt('${loginId}')">
-                <i class="fa fa-file-pdf-o text-danger"></i> 
-                <i class="fa fa-download text-danger"></i>
-                Download Receipt
-            </button>
-            <p class="mt-2"><strong>Download Your Application PDF:</strong></p>
-            <button class="btn btn-primary btn-sm me-1" onclick="downloadPDF('english', '${loginId}')"><i class="fa fa-file-pdf-o text-danger"></i> 
-                 English</button>
-            <button class="btn btn-success btn-sm" onclick="downloadPDF('tamil', '${loginId}')"><i class="fa fa-file-pdf-o text-danger"></i> 
-                Tamil</button>
-            </div>
-        </div>
-        </div>
-        `,
+            <div style="font-size: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 90%; margin: 0 auto;">
+                    <div style="
+                    display: grid;
+                    grid-template-columns: auto 1fr;
+                    gap: 7px 50px;
+                    font-size: 14px;
+                    max-width: 350px;
+                    border-right:2px solid #0d6efd;
+                    padding: 0px 15px;
+                    ">
+                    <div style="font-weight: bold;">Application ID:</div>
+                    <div style="word-break: break-word;">${loginId}</div>
+                    
+                    <div style="font-weight: bold;">Transaction ID:</div>
+                    <div style="word-break: break-word;">${transactionId}</div>
+                    
+                    <div style="font-weight: bold;">Transaction Date:</div>
+                    <div>${transactionDate}</div>
+                    
+                    <div style="font-weight: bold;">Applicant Name:</div>
+                    <div>${applicantName}</div>
+                    
+                    <div style="font-weight: bold;">Amount Paid:</div>
+                    <div>${amount}</div>
+                    </div>
+                    <div style="min-width: 200px; text-align: center;">
+                        <p><strong>Download Your Payment Receipt:</strong></p>
+                        <button class="btn btn-info btn-sm mb-2" onclick="paymentreceipt('${loginId}')">
+                            <i class="fa fa-file-pdf-o text-danger"></i> 
+                            <i class="fa fa-download text-danger"></i>
+                            Download Receipt
+                            </button>
+                            <p class="mt-2"><strong>Download Your Application PDF:</strong></p>
+                            <button class="btn btn-primary btn-sm me-1" onclick="downloadPDF('english', '${loginId}')"><i class="fa fa-file-pdf-o text-danger"></i> 
+                                English</button>
+                                <button class="btn btn-success btn-sm" onclick="downloadPDF('tamil', '${loginId}')"><i class="fa fa-file-pdf-o text-danger"></i> 
+                                    Tamil</button>
+                                    </div>
+                                    </div>
+                                    </div>
+                                    `,
             // 🧹 removed: icon: "success",
             width: '50%',
             customClass: {
@@ -2702,13 +2733,13 @@
                 if (iconEl) {
                     iconEl.style.display = 'none'; // hide icon if still rendered
                 }
-
+                
                 const popup = document.querySelector('.swal2-popup');
                 if (popup) {
                     popup.style.marginTop = '10px';
                     popup.style.padding = '10px 20px';
                 }
-
+                
                 const container = document.querySelector('.swal2-container');
                 if (container) {
                     container.style.alignItems = 'flex-start';
@@ -2719,72 +2750,11 @@
                 window.location.href = BASE_URL + '/dashboard';
             }
         });
+        
     }
-
-
-
-    // function showPaymentSuccessPopup(loginId, transactionId, transactionDate, applicantName, amount) {
-    //     Swal.fire({
-    //         title: `<h3 style="color:#198754; font-size:1.5rem;">Payment Successful!</h3>`,
-    //         html: `
-    //     <div style="font-size: 14px; text-align: left; width: 100%; max-width: 100%;">
-    //     <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
-    //         <div style="
-    //         display: grid;
-    //         grid-template-columns: auto 1fr;
-    //         gap: 4px 12px;
-    //         font-size: 14px;
-    //         max-width: 400px;
-    //         border-right:2px solid #0d6efd;
-    //         padding: 0px 25px;
-    //         ">
-    //         <div style="font-weight: bold;">Application ID:</div>
-    //         <div style="word-break: break-word;">${loginId}</div>
-
-    //         <div style="font-weight: bold;">Transaction ID:</div>
-    //         <div style="word-break: break-word;">${transactionId}</div>
-
-    //         <div style="font-weight: bold;">Transaction Date:</div>
-    //         <div>${transactionDate}</div>
-
-    //         <div style="font-weight: bold;">Applicant Name:</div>
-    //         <div>${applicantName}</div>
-
-    //         <div style="font-weight: bold;">Amount Paid:</div>
-    //         <div>${amount}</div>
-    //     </div>
-    //         <div style="min-width: 220px;">
-    //         <p><strong>Download Your Payment Receipt:</strong></p>
-    //         <button class="btn btn-info btn-sm mb-2" onclick="paymentreceipt('${loginId}')">
-    //             <i class="fa fa-file-pdf-o text-danger"></i> 
-    //             <i class="fa fa-download text-danger"></i>
-    //             Download Receipt
-    //         </button>
-    //         <p class="mt-3"><strong>Download Your Application PDF:</strong></p>
-    //         <button class="btn btn-primary btn-sm me-1" onclick="downloadPDF('english', '${loginId}')">English PDF</button>
-    //         <button class="btn btn-success btn-sm" onclick="downloadPDF('tamil', '${loginId}')">Tamil PDF</button>
-    //         </div>
-    //     </div>
-    //     </div>
-    //     `,
-
-
-    //         icon: "success",
-    //         width: '50%', // adjust dynamically
-    //         customClass: {
-    //             popup: 'swal2-border-radius p-3'
-    //         },
-    //         confirmButtonText: "Go to Dashboard",
-    //         confirmButtonColor: "#0d6efd",
-    //         allowOutsideClick: true,
-    //         allowEscapeKey: true,
-    //         showCloseButton: true,
-    //         willClose: () => {
-    //             window.location.href = '/dashboard';maskAadhaarFullad
-    //         }
-    //     });
-    // }
-
+                                                                        
+                                                                        
+                                                                    
     // Open Payment Receipt in New Tab
     function paymentreceipt(loginId) {
         window.open(`/payment-receipt/${loginId}`, '_blank');

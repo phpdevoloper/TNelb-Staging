@@ -24,9 +24,11 @@ use Illuminate\Validation\Rule;
 class LicenceManagementController extends BaseController
 {
     protected $userId;
+    protected $today;
 
     public function __construct()
     {
+        
         // ✅ Ensure user must be logged in
         $this->middleware(function ($request, $next) {
             if (!Auth::check()) {
@@ -36,9 +38,12 @@ class LicenceManagementController extends BaseController
 
             // ✅ If logged in, store the user ID
             $this->userId = Auth::id();
-
+            
             return $next($request);
         });
+        
+        $this->today = Carbon::today()->toDateString();
+
     }
 
     public function index(){
@@ -55,21 +60,31 @@ class LicenceManagementController extends BaseController
         ->get();
 
 
-         $validity_periods = FeesValidity::leftJoin('mst_licences', 'mst_fees_validity.licence_id', '=', 'mst_licences.id')
-        // ->where('mst_fees_validity.status', 1)
-        ->orderBy('mst_fees_validity.created_at', 'desc')
-        ->select('mst_licences.licence_name','mst_licences.form_name', 'mst_fees_validity.*')
+        $validity_periods = FeesValidity::leftJoin('mst_licences', 'mst_fees_validity.licence_id', '=', 'mst_licences.id')
+        ->select('mst_licences.licence_name','mst_licences.form_name', 'mst_fees_validity.*',
+        DB::raw("CASE WHEN mst_fees_validity.validity_start_date >= '$this->today' THEN 'Active' ELSE 'Inactive' END AS status")
+        )
+        ->orderByRaw("CASE WHEN mst_fees_validity.validity_start_date >= '$this->today' THEN 1 ELSE 2 END") // Active first
+        ->orderBy('mst_fees_validity.created_at', 'desc') 
         ->get();
 
-        // print_r($validity_periods);die;
+        // print_r($validity_periods->);die;
 
-         $fees_details = TnelbFee::leftJoin('mst_licences', 'tnelb_fees.cert_licence_id', '=', 'mst_licences.id')
-        // ->where('tnelb_fees.fees_status', 1)
-        ->orderBy('tnelb_fees.created_at', 'desc')
-        ->select('mst_licences.licence_name','mst_licences.form_name', 'tnelb_fees.*')
+
+        $fees_details = TnelbFee::leftJoin('mst_licences', 'tnelb_fees.cert_licence_id', '=', 'mst_licences.id')
+        ->select(
+            'mst_licences.licence_name',
+            'mst_licences.form_name',
+            'tnelb_fees.*',
+            DB::raw("CASE WHEN tnelb_fees.start_date >= '$this->today' THEN 'Active' ELSE 'Inactive' END AS status")
+        )
+        ->orderByRaw("CASE WHEN tnelb_fees.start_date >= '$this->today' THEN 1 ELSE 2 END") // Active first
+        ->orderBy('tnelb_fees.created_at', 'desc') 
         ->get();
 
         
+
+
 
         // return view('admincms.forms.forms', compact('activeForms', 'all_licences'));
         return view('admincms.forms.feesvalidity', compact('activeForms', 'all_licences', 'fees_details', 'validity_periods'));
@@ -375,12 +390,6 @@ class LicenceManagementController extends BaseController
             'latefee_for_renewal' => 'required|numeric',
             'late_renewal_fees_on' => 'required|date',
             'late_renewal_fees_ends_on' => 'nullable|date',
-            // 'fresh_form_duration' => 'required|numeric',
-            // 'fresh_form_duration_on' => 'required|date',
-            // 'renewal_form_duration' => 'required|numeric',
-            // 'renewal_duration_on' => 'required|date',
-            // 'renewal_late_fee_duration' => 'required|numeric',
-            // 'renewal_late_fee_duration_on' => 'required|date',
             'form_status' => 'required',
         ]);
 
@@ -402,16 +411,8 @@ class LicenceManagementController extends BaseController
                 'latefee_amount'            => $request->latefee_for_renewal,
                 'latefee_starts'            => $request->late_renewal_fees_on,
                 'latefee_ends'              => $request->late_renewal_fees_ends_on,
-                // 'duration_freshfee'         => $request->fresh_form_duration,
-                // 'duration_renewalfee'       => $request->renewal_form_duration,
-                // 'duration_latefee'              => $request->renewal_late_fee_duration,
-                // 'duration_freshfee_starts'    => $request->fresh_form_duration_on,
-                // 'duration_renewalfee_starts'    => $request->renewal_duration_on,
-                // 'duration_latefee_starts'       => $request->renewal_late_fee_duration_on,
-                // 'duration_latefee_ends'         => $request->duration_latefee,
                 'status'                        => $request->form_status,
                 'created_by'                    => $this->userId,       
-                // 'category', 
             ]); 
 
             DB::commit();
@@ -432,12 +433,10 @@ class LicenceManagementController extends BaseController
     }
 
     public function updateForm(Request $request){
-        // var_dump($request->all());die;
 
         $request->validate([
             'cert_name' => 'required|string',
             'form_name' => 'required|string',
-            // 'license_name' => 'required|string',
             'fresh_fees'            => 'required|numeric',
             'fresh_fees_on'         => 'required|date',
             'fresh_fees_ends_on'    => 'nullable|date',
@@ -448,19 +447,6 @@ class LicenceManagementController extends BaseController
             'latefee_for_renewal'       => 'required|numeric',
             'late_renewal_fees_on'      => 'required|date',
             'late_renewal_fees_ends_on' => 'nullable|date',
-
-            // 'fresh_form_duration'           => 'required|numeric',
-            // 'fresh_form_duration_on'        => 'required|date',
-            // 'fresh_form_duration_ends_on'   => 'nullable|date',
-
-            // 'renewal_form_duration'     => 'required|numeric',
-            // 'renewal_duration_on'       => 'required|date',
-            // 'renewal_duration_ends_on'  => 'nullable|date',
-
-            // 'renewal_late_fee_duration'         => 'required|numeric',
-            // 'renewal_late_fee_duration_on'      => 'required|date',
-            // 'renewal_late_fee_duration_ends_on' => 'nullable|date',
-
             'form_status' => 'required',
         ]);
 
@@ -492,12 +478,6 @@ class LicenceManagementController extends BaseController
                 'latefee_amount'            => $request->latefee_for_renewal,
                 'latefee_starts'            => $request->late_renewal_fees_on,
                 'latefee_ends'            => $request->late_renewal_fees_ends_on,
-                // 'duration_freshfee'         => $request->fresh_form_duration,
-                // 'duration_renewalfee'       => $request->renewal_form_duration,
-                // 'duration_latefee'          => $request->renewal_late_fee_duration,
-                // 'duration_freshfee_starts'  => $request->fresh_form_duration_on,
-                // 'duration_renewalfee_starts'=> $request->renewal_duration_on,
-                // 'duration_latefee_starts'   => $request->renewal_late_fee_duration_on,
                 'status'                    => $request->form_status,
             ];
             
@@ -523,9 +503,6 @@ class LicenceManagementController extends BaseController
                 $checked_form->fresh_fee_ends = now(); 
                 $checked_form->renewalamount_ends = now(); 
                 $checked_form->latefee_ends = now(); 
-                // $checked_form->duration_freshfee_ends = now(); 
-                // $checked_form->duration_renewalfee_ends = now(); 
-                // $checked_form->duration_latefee_ends = now(); 
                 $checked_form->updated_by = $this->userId; 
                 $checked_form->updated_at = now(); 
                 $checked_form->save();
@@ -546,19 +523,6 @@ class LicenceManagementController extends BaseController
                 'latefee_amount'            => $request->latefee_for_renewal,
                 'latefee_starts'            => $request->late_renewal_fees_on,
                 'latefee_ends'              => $request->late_renewal_fees_ends_on,
-
-                // 'duration_freshfee'         => $request->fresh_form_duration,
-                // 'duration_renewalfee'       => $request->renewal_form_duration,
-                // 'duration_latefee'              => $request->renewal_late_fee_duration,
-
-                // 'duration_freshfee_starts'    => $request->fresh_form_duration_on,
-                // 'duration_freshfee_ends'    => $request->fresh_form_duration_ends_on,
-
-                // 'duration_renewalfee_starts'    => $request->renewal_duration_on,
-                // 'duration_renewalfee_ends'      => $request->renewal_duration_ends_on,
-
-                // 'duration_latefee_starts'       => $request->renewal_late_fee_duration_on,
-                // 'duration_latefee_ends'         => $request->renewal_late_fee_duration_ends_on,
 
                 'status'                        => $request->form_status,
                 'created_by'                    => $this->userId,       
@@ -600,10 +564,10 @@ class LicenceManagementController extends BaseController
         ->select('mst_licences.licence_name', 'tnelb_forms.*')
         ->get();
 
-        $validity_periods = FeesValidity::leftJoin('mst_licences', 'fees_validity.licence_id', '=', 'mst_licences.id')
-        ->where('fees_validity.status', 1)
-        ->orderBy('fees_validity.created_at', 'desc')
-        ->select('mst_licences.licence_name','mst_licences.form_name', 'fees_validity.*')
+        $validity_periods = FeesValidity::leftJoin('mst_licences', 'mst_fees_validity.licence_id', '=', 'mst_licences.id')
+        ->where('mst_fees_validity.status', 1)
+        ->orderBy('mst_fees_validity.created_at', 'desc')
+        ->select('mst_licences.licence_name','mst_licences.form_name', 'mst_fees_validity.*')
         ->get();
 
         
@@ -614,28 +578,23 @@ class LicenceManagementController extends BaseController
 
     public function updateValidity(Request $request)
     {
-        // var_dump($request->all());die;
 
         $formType = $request->input('form_type');
+        $recordId = $request->input('form_id');
 
         $rules = [
             'cert_id' => 'required|integer',
-            'form_type'  => 'required|in:N,R',
+            'form_type'  => 'required|in:N,R,L',
             'form_status'=> 'nullable|in:1,0,true,false,on',
         ];
 
         $nullable = [
             'fresh_form_duration'                => 'nullable|numeric|min:1',
             'fresh_form_duration_on'             => 'nullable|date',
-            'fresh_form_duration_ends_on'        => 'nullable|date|after_or_equal:fresh_form_duration_on',
-
             'renewal_form_duration'              => 'nullable|numeric|min:1',
             'renewal_duration_on'                => 'nullable|date',
-            'renewal_duration_ends_on'           => 'nullable|date|after_or_equal:renewal_duration_on',
-
             'renewal_late_fee_duration'          => 'nullable|numeric|min:1',
             'renewal_late_fee_duration_on'       => 'nullable|date',
-            'renewal_late_fee_duration_ends_on'  => 'nullable|date|after_or_equal:renewal_late_fee_duration_on',
         ];
 
         $rules = array_merge($rules, $nullable);
@@ -647,15 +606,10 @@ class LicenceManagementController extends BaseController
                 $rules = array_merge($rules, [
                     'fresh_form_duration' => 'required|numeric|min:1',
                     'fresh_form_duration_on' => 'required|date',
-                    'fresh_form_duration_ends_on' => 'date|after_or_equal:fresh_form_duration_on',
-
-                    // prevent mixing renewal fields when form_type = N (optional but strict)
                     'renewal_form_duration'              => 'prohibited',
                     'renewal_duration_on'                => 'prohibited',
-                    'renewal_duration_ends_on'           => 'prohibited',
                     'renewal_late_fee_duration'          => 'prohibited',
                     'renewal_late_fee_duration_on'       => 'prohibited',
-                    'renewal_late_fee_duration_ends_on'  => 'prohibited',
                 ]);
                 break;
 
@@ -663,15 +617,15 @@ class LicenceManagementController extends BaseController
                 $rules = array_merge($rules, [
                     'renewal_form_duration' => 'required|numeric|min:1',
                     'renewal_duration_on' => 'required|date',
-                    'renewal_duration_ends_on' => 'date|after_or_equal:renewal_duration_on',
-                    'renewal_late_fee_duration' => 'required|numeric|min:1',
-                    'renewal_late_fee_duration_on' => 'required|date',
-                    'renewal_late_fee_duration_ends_on' => 'date|after_or_equal:renewal_late_fee_duration_on',
-
-                    // prevent mixing fresh fields when form_type = R (optional but strict)
                     'fresh_form_duration'         => 'prohibited',
                     'fresh_form_duration_on'      => 'prohibited',
-                    'fresh_form_duration_ends_on' => 'prohibited',
+                ]);
+                break;
+
+            case 'L': // Renewal
+                $rules = array_merge($rules, [
+                    'renewal_late_fee_duration' => 'required|numeric|min:1',
+                    'renewal_late_fee_duration_on' => 'required|date',
                 ]);
                 break;
 
@@ -699,40 +653,46 @@ class LicenceManagementController extends BaseController
 
         $request->validate($rules, $messages);
 
-        // var_dump('dfgfd');die;
-
-        // $request->validate([
-        //     'cert_id' => 'required|int',
-        //     'form_type' => 'required|string',
-        //     // 'license_name' => 'required|string',
-            
-        //     'renewal_form_duration' => 'required|numeric',
-        //     'renewal_duration_on' => 'required|date',
-        //     'renewal_late_fee_duration' => 'required|numeric',
-        //     'renewal_late_fee_duration_on' => 'required|date',
-        //     'form_status' => 'required',
-        // ]);
-
         DB::beginTransaction(); 
         
         try {
 
-            $form = FeesValidity::create([
-                'licence_id'                => $request->cert_id,
-                'form_type'                 => $request->form_type,
-                'validity'         => $request->fresh_form_duration,
-                'vadity_start_date'    => $request->fresh_form_duration_on,
-                // 'validity_date_end'    => $request->fresh_form_duration_ends_on,
-                'status'                        => in_array($request->form_status, ['1', 1, 'true', true, 'on']) ? 1 : 0,
-                'created_by'                    => $this->userId,       
-                'created_at'                    => now(),       
-            ]); 
+            $data = [
+                'licence_id' => $request->cert_id,
+                'form_type' => $formType,
+                'created_by' => $this->userId,
+                'created_at' => now(),
+            ];
+
+             if ($formType === 'N') {
+                $data['validity'] = $request->fresh_form_duration;
+                $data['vadity_start_date'] = $request->fresh_form_duration_on;
+            } elseif ($formType === 'R') {
+                $data['validity'] = $request->renewal_form_duration;
+                $data['vadity_start_date'] = $request->renewal_duration_on;
+            } elseif ($formType === 'L') {
+                $data['validity'] = $request->renewal_late_fee_duration;
+                $data['vadity_start_date'] = $request->renewal_late_fee_duration_on;
+            }
+
+            if ($recordId) {
+                // Edit mode
+                $form = FeesValidity::findOrFail($recordId);
+                $form->update($data);
+                $message = 'Form updated successfully!';
+            } else {
+                // Add mode
+                $data['created_by'] = $this->userId;
+                $data['created_at'] = now();
+                FeesValidity::create($data);
+                $message = 'Form created successfully!';
+            }
 
             DB::commit();
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Form created successfully!',
+                'message' => $message,
             ]);
 
          } catch (Exception $e) {
@@ -747,9 +707,7 @@ class LicenceManagementController extends BaseController
 
     public function store(Request $request)
     {   
-        // var_dump($request->all());die;
         try {
-            // ✅ Validation rules
             $validator = Validator::make($request->all(), [
                 'cert_name' => 'required|integer',
                 'fees_type' => 'required|in:N,R,L',
