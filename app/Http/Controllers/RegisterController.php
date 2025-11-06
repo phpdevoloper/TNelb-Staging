@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin\TnelbFee;
 use App\Models\admin\TnelbForms;
 use App\Models\EA_Application_model;
 use App\Models\Mst_Form_s_w;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Register;
 
 use App\Models\TnelbApplicantPhoto;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -19,14 +21,21 @@ use function PHPUnit\Framework\isNull;
 
 class RegisterController extends BaseController
 {
+    protected $today;
+    public function __construct()
+    {
+        parent::__construct();   
+        $this->middleware('web');
+        $this->today = Carbon::today()->toDateString();
+    }
 
     public function register()
     {
         if (Auth::check()) {
-            return redirect()->route('dashboard'); // Redirect logged-in users to dashboard or any other page
+            return redirect()->route('dashboard');
         }
 
-        return view('register'); // Show register page for guests
+        return view('register');
     }
 
 
@@ -188,10 +197,10 @@ class RegisterController extends BaseController
             abort(504, 'Form Not Found..');
         }
         
-        $fees_details = TnelbForms::where('status', 1)
-        ->where('license_name', $current_form['id'])
-        ->whereDate('renewalamount_starts', '<=', today())
-        ->select('renewal_amount','renewalamount_starts')
+        $fees_details = TnelbFee::where('cert_licence_id', $current_form['id'])
+        ->whereDate('start_date', '<=', $this->today)
+        ->select('fees', 'start_date')
+        ->orderBy('start_date', 'desc')
         ->first();
 
         

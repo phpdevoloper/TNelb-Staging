@@ -401,7 +401,7 @@
     });
 
 
-    function getPaymentsService(licence_code,issued_licence, callback){
+    function getPaymentsService(licence_code,issued_licence,appl_type, callback){
         
         return new Promise((resolve, reject) => {
                 $.ajax({
@@ -410,17 +410,17 @@
                 data: {
                     licence_code: licence_code,
                     issued_licence: issued_licence,
+                    appl_type:appl_type,
                     _token: $('meta[name="csrf-token"]').attr(
                         'content')
                 },
                 success: function(response) {
-                    // console.log(response);
-                    // return false;
+                    
                     if (response.status == 'success') {
                         resolve(response.fees_details);
                     } else {
-                    Swal.fire("Error", response.messages, "danger");
-                    reject(response);
+                        Swal.fire("Error", response.message, "danger");
+                        reject(response);
                     }
                 },
                 error: function(xhr) {
@@ -2431,7 +2431,7 @@
             
             if(appl_type == 'R'){
                 
-                const data = await getPaymentsService(licence_code, issued_licence);
+                const data = await getPaymentsService(licence_code, issued_licence, appl_type);
                 
                 // form_name = data.form_name;
                 form_cost = data.renewalFee;
@@ -2598,13 +2598,7 @@
                                                             
                                 // ✅ Success condition
                                 if (paymentResponse.status === 200) {
-                                    showPaymentSuccessPopup(
-                                        application_id,
-                                        transactionId,
-                                        transactionDate,
-                                        applicantName,
-                                        amount
-                                    );
+                                    showPaymentSuccessPopup(application_id,transactionId,transactionDate,applicantName,amount);
                                 } else {
                                     Swal.fire({
                                         title: "Payment Failed",
@@ -2652,9 +2646,9 @@
                 
             });
         } catch (err) {
-            console.error("Error fetching form cost or saving form:", err);
+            // console.error("Error fetching form cost or saving form:", err);
         
-            console.error("❌ Uncaught AJAX Error:", xhr);
+            // console.error("❌ Uncaught AJAX Error:", xhr);
 
             // Check if Laravel validation failed (422)
             // if (xhr.status === 422 && xhr.responseJSON?.errors) {
