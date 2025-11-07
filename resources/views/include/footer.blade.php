@@ -2438,12 +2438,15 @@
                 lateFee  = data.lateFees || 'N/A';
                 licence  = data.certificate_name;
                 
+                
+                
             }else{
                 form_cost = $('#amount').val();
-                console.log(form_cost);
+                
             }
             
             console.log(form_cost);
+            // return false;
 
             
             // 🔹 Now you can safely use form_cost everywhere below
@@ -2504,7 +2507,7 @@
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         error: function (xhr) {
-                            console.error("❌ Uncaught AJAX Error:", xhr);
+                            console.error("Uncaught AJAX Error:", xhr);
                         }
                     });
                     
@@ -2518,10 +2521,16 @@
                         const type_apps = licence || 'N/A';
                         const amount = form_cost;
                         const serviceCharge = 10;
-                        const total_charge = Number(amount) + Number(serviceCharge);
+                        // let lateFee = typeof lateFee !== "undefined" ? lateFee : 0;
+                        let total_charge = Number(amount) + Number(serviceCharge);
                         if (appl_type == 'R') {
-                            total_charge = Number(total_charge) + Number(lateFee);
+                            let SLateFee = Number(lateFee) || 0;
+                            total_charge = Number(total_charge) + Number(SLateFee);
+                            console.log(total_charge);
                         }
+
+                        // return false;
+                        
                         const transactionId = "TRX" + Math.floor(100000 + Math.random() * 900000);
                         const payment_mode = 'UPI';
                         

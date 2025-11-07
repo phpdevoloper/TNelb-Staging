@@ -326,49 +326,58 @@ class LicenceManagementController extends BaseController
                 ->orderBy('f.start_date', 'desc')
                 ->first();
 
-            $LatefeeValidity = DB::table('mst_licences as l')
+            $freshfees = DB::table('mst_licences as l')
                 ->leftJoin('tnelb_fees as f', 'f.cert_licence_id', '=', 'l.id')
-                ->where('f.cert_licence_id', $licenceID)
+                ->where('f.cert_licence_id', 'N')
                 ->where('f.fees_type', $appl_type)
                 ->whereDate('f.start_date', '<=', $this->today)
                 ->select('f.*', 'l.*')
                 ->orderBy('f.start_date', 'desc')
                 ->first();
-            
-                
+
+            $Latefees = DB::table('mst_licences as l')
+                ->leftJoin('tnelb_fees as f', 'f.cert_licence_id', '=', 'l.id')
+                ->where('f.cert_licence_id', $licenceID)
+                ->where('f.fees_type', 'L')
+                ->whereDate('f.start_date', '<=', $this->today)
+                ->select('f.fees')
+                ->orderBy('f.start_date', 'desc')
+                ->first();
+
+
+            $LatefeeValidity = DB::table('mst_licences as l')
+                ->leftJoin('mst_fees_validity as f', 'f.licence_id', '=', 'l.id')
+                ->where('f.licence_id', $licenceID)
+                ->where('f.form_type', 'L')
+                ->whereDate('f.validity_start_date', '<=', $this->today)
+                ->select('f.*', 'l.*')
+                // ->orderBy('f.validity_start_date', 'desc')
+                ->first();
 
 
             $renewalFee = $fees->fees;
-
-            var_dump($renewalFee);die;
-            
-            
+            $freshFees = $freshfees->fees;
             $current = $this->today;
+            $expiry = Carbon::parse($expiry);
 
-            // Calculate the 3-period-before-expiry date (based on durationInDays)
-            $threePeriodsBeforeExpiry = (clone $expiry)->modify("-" . ($durationInDays * 3) . " days");
+            // Calculate the 3-period-before-expiry date (based on durationInMonths)
+            $threePeriodsBeforeExpiry = $expiry->copy()->subMonths(3);
+            
             $fees_details = [];
-            $lateFee = 0;
+            // $lateFee = 0;
 
             if ($current < $threePeriodsBeforeExpiry) {
-
-                
-
-
-
-
-                $lateFee;
+                $lateFee = $Latefees->fees;
             }
 
-            // if ($current > $expiry) {
-            //     // ✅ Case 1: After expiry
-            //     $diff = $expiry->diff($current);
-            //     $monthDiff = $diff->m + ($diff->y * 12);
-            //     $fees_details['renewalFee'] = $freshFee;
-            //     $fees_details['lateFees'] = $lateFee;
+            if ($current > $expiry) {
+                // ✅ Case 1: After expiry
+                $diff = $expiry->diff($current);
+                $monthDiff = $diff->m + ($diff->y * 12);
+                $fees_details['renewalFee'] = $freshFees;
+                $fees_details['lateFees'] = $lateFee;
 
-            // }else
-            
+            }else
             
             if ($current >= $threePeriodsBeforeExpiry && $current <= $expiry) {
                 // Case 2: Within the 3 months before expiry
@@ -377,24 +386,20 @@ class LicenceManagementController extends BaseController
                 $monthDiff = $diff->m + ($diff->y * 12);
 
                 // At least 1 month means late fee applies
-                $lateFee = $current_licence->latefee_amount * ($monthDiff + 1);
+                $lateFee = $Latefees->fees * ($monthDiff + 1);
                 $fees_details['renewalFee'] = $renewalFee;
-                $fees_details['lateFees'] = $lateFee;
+                $fees_details['lateFees'] = $Latefees->fees;
+            }else{
+                $fees_details['renewalFee'] = $renewalFee;
             }
 
-            $fees_details['certificate_name'] = $current_licence->licence_name;
+            $fees_details['certificate_name'] = $fees->licence_name;
 
-            if ($current_licence) {
-                return response()->json([
-                    'status' => 'success',
-                    'fees_details' => $fees_details,
-                ], 200);
-            } else {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'No matching licence found.',
-                ], 404);
-            }
+            return response()->json([
+                'status' => 'success',
+                'fees_details' => $fees_details,
+            ], 200);
+            
 
         } catch (Exception $e) {
              return response()->json([
