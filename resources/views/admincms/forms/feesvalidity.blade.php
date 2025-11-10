@@ -433,21 +433,6 @@
                         </div>
                     </div>
                 </div>
-                {{-- <div class="row custom-box g-3">
-                    <div class="box-head text-primary mb-3"><i class="fa fa-setting"></i> Status</div>
-                    <div class="col-md-6">
-                        <!-- Switch centered -->
-                        <div class="d-inline-block text-center">
-                            <div class="switch form-switch-custom switch-inline form-switch-success form-switch-custom dual-label-toggle">
-                                <label class="switch-label switch-label-left" for="form-custom-switch-dual-label">In Active</label>
-                                <div class="input-checkbox">
-                                    <input class="switch-input" type="checkbox" role="switch" name="form_status" checked>
-                                </div>
-                                <label class="switch-label switch-label-right" for="form-custom-switch-dual-label">Active</label>
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#addFees').trigger('reset');"><i class="flaticon-cancel-12"></i>Clear</button>
@@ -494,9 +479,6 @@
             const form_name = selectedOption.data("form_name");          // read its data-code attribute
             $("#form_name").val(form_name || "");                   // set or clear input value
         });
-
-
-
 
         $("#form_type").on("change", function () {
             const selectedOption = $(this).find(":selected");

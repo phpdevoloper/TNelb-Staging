@@ -68,8 +68,6 @@ class LicenceManagementController extends BaseController
         ->orderBy('mst_fees_validity.created_at', 'desc') 
         ->get();
 
-        // print_r($validity_periods->);die;
-
 
         $fees_details = TnelbFee::leftJoin('mst_licences', 'tnelb_fees.cert_licence_id', '=', 'mst_licences.id')
         ->select(
