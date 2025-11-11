@@ -307,7 +307,7 @@
                                 <label for="inputPassword4" class="form-label">Late Fees Validity<span class="text-danger">*</span></label><br>
                                 <div class="input-group">
                                     <input type="number" class="form-control" name="renewal_late_fee_duration" id="renewal_late_fee_duration"  min="0">
-                                    <span class="input-group-text">Days</span>
+                                    <span class="input-group-text">Months</span>
                                 </div>
                                 <small class="text-danger d-none error-latefee_validity">Please fill the Late Fees Validity</small>
                             </div>

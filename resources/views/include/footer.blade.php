@@ -2422,30 +2422,30 @@
         try {
             
             
-            let form_cost, form_name, licence, renewalAmoutStartson, latefee_amount, latefee_starts;
+            let total_fees,renewl_fees,lateFee,lateMonths,form_cost, form_name, licence, renewalAmoutStartson, latefee_amount, latefee_starts;
             
             const appl_type = $('#appl_type').val();
             const issued_licence = $('#license_number').val();
             
+            const data = await getPaymentsService(licence_code, issued_licence, appl_type);
             
-            
-            if(appl_type == 'R'){
-                
-                const data = await getPaymentsService(licence_code, issued_licence, appl_type);
-                
-                // form_name = data.form_name;
-                form_cost = data.renewalFee;
-                lateFee  = data.lateFees || 'N/A';
-                licence  = data.certificate_name;
-                
-                
-                
-            }else{
-                form_cost = $('#amount').val();
-                
+            if (data) {
+                // form_cost = data.renewalFee;
+                // lateFee  = data.lateFees || 'N/A';
+                // licence  = data.certificate_name;
+                if (data.lateFees < 0) {
+                    total_fees = data.total_fees;
+                    lateMonths = data.late_months;
+                }else{
+                    total_fees = data.total_fees;
+                    lateMonths = data.late_months;
+                    renewl_fees = data.renewalFees;
+                    lateFee = data.lateFees;
+                }
             }
+         
             
-            console.log(form_cost);
+            console.log(data);
             // return false;
 
             
@@ -2455,7 +2455,7 @@
             const errorText = modalEl.querySelector('#declaration-error-renew');
             const proceedBtn = modalEl.querySelector('#proceedPayment');
             
-            document.getElementById('form_fees').textContent = 'Rs.' + form_cost + '/-';
+            document.getElementById('form_fees').textContent = 'Rs.' + renewl_fees || total_fees + '/-';
             
             // Reset state
             agreeCheckbox.checked = false;
@@ -2519,22 +2519,27 @@
                         const applicantName = saveResponse.applicantName || 'N/A';
                         const form_name = saveResponse.form_name || 'N/A';
                         const type_apps = licence || 'N/A';
-                        const amount = form_cost;
+                        const amount = total_fees;
                         const serviceCharge = 10;
                         // let lateFee = typeof lateFee !== "undefined" ? lateFee : 0;
                         let total_charge = Number(amount) + Number(serviceCharge);
-                        if (appl_type == 'R') {
-                            let SLateFee = Number(lateFee) || 0;
-                            total_charge = Number(total_charge) + Number(SLateFee);
-                            console.log(total_charge);
+                        let lateFeeRow = "";
+                        if(lateFee > 0){
+                             lateFeeRow = `
+                                <tr>
+                                    <th style="text-align: left; padding: 6px 10px; color: #555;">Late Fees (${lateMonths} Months)</th>
+                                    <td style="text-align: right; padding: 6px 10px; font-weight: 500;">Rs. ${lateFee} /-</td>
+                                </tr>
+                            `;
                         }
+                        
 
                         // return false;
                         
                         const transactionId = "TRX" + Math.floor(100000 + Math.random() * 900000);
                         const payment_mode = 'UPI';
                         
-                        const safeLateFee = typeof lateFee !== "undefined" && lateFee !== null ? lateFee : 0;
+                        // const safeLateFee = typeof lateFee !== "undefined" && lateFee !== null ? lateFee : 0;
                         // 🔹 Show payment popup
                         Swal.fire({
                             title: "<span style='color:#0d6efd;'>Initiate Payment</span>",
@@ -2558,10 +2563,7 @@
                                                         <th style="text-align: left; padding: 6px 10px; color: #555;">Type</th>
                                                         <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${type_apps}</td>
                                                         </tr>
-                                                        <tr>
-                                                            <th style="text-align: left; padding: 6px 10px; color: #555;">Late Fees(Within 3 Months)</th>
-                                                            <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${safeLateFee}</td>
-                                                            </tr>
+                                                            ${lateFeeRow}
                                                             <tr>
                                                                 <th style="text-align: left; padding: 6px 10px; color: #555;">Service Charge</th>
                                                                 <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${serviceCharge}</td>

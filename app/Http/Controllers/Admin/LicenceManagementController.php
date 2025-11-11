@@ -293,105 +293,40 @@ class LicenceManagementController extends BaseController
             $issued_licence = $request->issued_licence;
             $appl_type = $request->appl_type;
 
-            $licence_details = TnelbLicense::where('license_number', $issued_licence)
-            ->select('*')
-            ->first();
-
-            $issuedAt   = $licence_details->issued_at->toDateString();
-            $expiry     = $licence_details->expires_at->toDateString();
-            // var_dump($issuedAt,$expiry);die;
-            
-
-            
             $licence = MstLicence::where('cert_licence_code',$licence_code)->first();
-
-            if ($licence) {
-                $licenceID = $licence->id; 
-            }else{
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Certificate / Licence not found!..Please try again Later..!',
+            
+            
+            // $paymentDetails = [];
+            
+            if ($appl_type === 'R') {
+                $paymentDetails = DB::select("
+                    SELECT * FROM calc_late_fee_dynamic(:appl_type, :licence_id, :issued_licence)
+                ", [
+                    'appl_type' => $appl_type,
+                    'licence_id' => $licence->id,
+                    'issued_licence' => $issued_licence,
+                ]);
+            } 
+            else {
+                $paymentDetails = DB::select("
+                    SELECT * FROM calc_late_fee_dynamic(:appl_type, :licence_id)
+                ", [
+                    'appl_type' => $appl_type,
+                    'licence_id' => $licence->id,
                 ]);
             }
-        
 
-            $fees = DB::table('mst_licences as l')
-                ->leftJoin('tnelb_fees as f', 'f.cert_licence_id', '=', 'l.id')
-                ->where('f.cert_licence_id', $licenceID)
-                ->where('f.fees_type', $appl_type)
-                ->whereDate('f.start_date', '<=', $this->today)
-                ->select('f.*', 'l.*')
-                ->orderBy('f.start_date', 'desc')
-                ->first();
+            // var_dump($paymentDetails[0]->base_fee);die;
 
-            $freshfees = DB::table('mst_licences as l')
-                ->leftJoin('tnelb_fees as f', 'f.cert_licence_id', '=', 'l.id')
-                ->where('f.cert_licence_id', 'N')
-                ->where('f.fees_type', $appl_type)
-                ->whereDate('f.start_date', '<=', $this->today)
-                ->select('f.*', 'l.*')
-                ->orderBy('f.start_date', 'desc')
-                ->first();
-
-            $Latefees = DB::table('mst_licences as l')
-                ->leftJoin('tnelb_fees as f', 'f.cert_licence_id', '=', 'l.id')
-                ->where('f.cert_licence_id', $licenceID)
-                ->where('f.fees_type', 'L')
-                ->whereDate('f.start_date', '<=', $this->today)
-                ->select('f.fees')
-                ->orderBy('f.start_date', 'desc')
-                ->first();
-
-
-            $LatefeeValidity = DB::table('mst_licences as l')
-                ->leftJoin('mst_fees_validity as f', 'f.licence_id', '=', 'l.id')
-                ->where('f.licence_id', $licenceID)
-                ->where('f.form_type', 'L')
-                ->whereDate('f.validity_start_date', '<=', $this->today)
-                ->select('f.*', 'l.*')
-                // ->orderBy('f.validity_start_date', 'desc')
-                ->first();
-
-
-            $renewalFee = $fees->fees;
-            $freshFees = $freshfees->fees;
-            $current = $this->today;
-            $expiry = Carbon::parse($expiry);
-
-            // Calculate the 3-period-before-expiry date (based on durationInMonths)
-            $threePeriodsBeforeExpiry = $expiry->copy()->subMonths(3);
-            
-            $fees_details = [];
-            // $lateFee = 0;
-
-            if ($current < $threePeriodsBeforeExpiry) {
-                $lateFee = $Latefees->fees;
+            if (!empty($paymentDetails)) {
+                $fees_details['total_fees'] = $paymentDetails[0]->total_fee;
+                $fees_details['lateFees'] = $paymentDetails[0]->late_fee;
+                $fees_details['late_months'] = $paymentDetails[0]->late_months;
+                $fees_details['renewalFees'] = $paymentDetails[0]->base_fee;
             }
-
-            if ($current > $expiry) {
-                // ✅ Case 1: After expiry
-                $diff = $expiry->diff($current);
-                $monthDiff = $diff->m + ($diff->y * 12);
-                $fees_details['renewalFee'] = $freshFees;
-                $fees_details['lateFees'] = $lateFee;
-
-            }else
             
-            if ($current >= $threePeriodsBeforeExpiry && $current <= $expiry) {
-                // Case 2: Within the 3 months before expiry
-                // How many months difference from the start of 3-month window
-                $diff = $threePeriodsBeforeExpiry->diff($current);
-                $monthDiff = $diff->m + ($diff->y * 12);
 
-                // At least 1 month means late fee applies
-                $lateFee = $Latefees->fees * ($monthDiff + 1);
-                $fees_details['renewalFee'] = $renewalFee;
-                $fees_details['lateFees'] = $Latefees->fees;
-            }else{
-                $fees_details['renewalFee'] = $renewalFee;
-            }
-
-            $fees_details['certificate_name'] = $fees->licence_name;
+            // $fees_details['certificate_name'] = $fees->licence_name;
 
             return response()->json([
                 'status' => 'success',
