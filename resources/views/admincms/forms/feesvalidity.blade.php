@@ -171,6 +171,9 @@
                                         </thead>
                                         <tbody>
                                             @foreach($validity_periods as $validity)
+                                            @php
+                                                // var_dump($validity);die;
+                                            @endphp
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $validity->licence_name.' / '. $validity->form_name}}</td>
@@ -184,7 +187,7 @@
                                                     @endif
                                                 </td>
                                                 <td>{{ $validity->validity }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($validity->vadity_start_date)->format('d-m-Y')??'-' }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($validity->validity_start_date)->format('d-m-Y')??'-' }}</td>
                                                  <td>
                                                     @if ($validity->status == 'Active')
                                                         <span class="badge outline-badge-success mb-2 me-4">Active</span>
@@ -249,7 +252,7 @@
                         <small class="text-danger d-none error-licence">Please fill the Category</small>
                     </div>
                     <div class="col-md-6">
-                        <label for="inputPassword4" class="form-label">Form Type <span class="text-danger">*</span></label>
+                        <label for="inputPassword4" class="form-label">Validity Type <span class="text-danger">*</span></label>
                         <select class="form-select shadow-sm border-primary-subtle rounded-3" name="form_type" id="form_type">
                             <option value="N">Fresh Fees</option>
                             <option value="R">Renewal Fees</option>
@@ -451,11 +454,14 @@
      $(document).ready(function () {
         
          // Get today's date in YYYY-MM-DD format
-        var today = new Date().toISOString().split('T')[0];
+        var today = new Date().toLocaleDateString('en-CA');
+
+        console.log(today);
 
         // Set min date for all <input type="date"> fields across all forms
         $('form input[type="date"]').each(function () {
-            $(this).attr('min', today);
+            const newDate = $(this).attr('min', today);
+            // console.log(newDate);
         });
 
         // Handle any "start" and "end" pairs (like As on → Ends on)

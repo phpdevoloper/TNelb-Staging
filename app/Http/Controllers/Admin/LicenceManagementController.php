@@ -42,7 +42,8 @@ class LicenceManagementController extends BaseController
             return $next($request);
         });
         
-        $this->today = Carbon::today()->toDateString();
+        $this->today = now()->toDateString();
+
 
     }
 
@@ -62,12 +63,11 @@ class LicenceManagementController extends BaseController
 
         $validity_periods = FeesValidity::leftJoin('mst_licences', 'mst_fees_validity.licence_id', '=', 'mst_licences.id')
         ->select('mst_licences.licence_name','mst_licences.form_name', 'mst_fees_validity.*',
-        DB::raw("CASE WHEN mst_fees_validity.validity_start_date >= '$this->today' THEN 'Active' ELSE 'Inactive' END AS status")
+        DB::raw("CASE WHEN mst_fees_validity.validity_start_date <= '$this->today' THEN 'Active' ELSE 'Inactive' END AS status")
         )
-        ->orderByRaw("CASE WHEN mst_fees_validity.validity_start_date >= '$this->today' THEN 1 ELSE 2 END") // Active first
+        ->orderByRaw("CASE WHEN mst_fees_validity.validity_start_date <= '$this->today' THEN 1 ELSE 2 END") // Active first
         ->orderBy('mst_fees_validity.created_at', 'desc') 
         ->get();
-
 
         $fees_details = TnelbFee::leftJoin('mst_licences', 'tnelb_fees.cert_licence_id', '=', 'mst_licences.id')
         ->select(
@@ -610,151 +610,307 @@ class LicenceManagementController extends BaseController
 
     }
 
+
+
     public function updateValidity(Request $request)
     {
-
         $formType = $request->input('form_type');
         $recordId = $request->input('form_id');
 
+        // 🧩 Step 1: Validation rules
         $rules = [
-            'cert_id' => 'required|integer',
-            'form_type'  => 'required|in:N,R,L',
-            'form_status'=> 'nullable|in:1,0,true,false,on',
+            'cert_id'     => 'required|integer',
+            'form_type'   => 'required|in:N,R,L',
+            'form_status' => 'nullable|in:1,0,true,false,on',
         ];
 
         $nullable = [
-            'fresh_form_duration'                => 'nullable|numeric|min:1',
-            'fresh_form_duration_on'             => 'nullable|date',
-            'renewal_form_duration'              => 'nullable|numeric|min:1',
-            'renewal_duration_on'                => 'nullable|date',
-            'renewal_late_fee_duration'          => 'nullable|numeric|min:1',
-            'renewal_late_fee_duration_on'       => 'nullable|date',
+            'fresh_form_duration'          => 'nullable|numeric|min:1',
+            'fresh_form_duration_on'       => 'nullable|date',
+            'renewal_form_duration'        => 'nullable|numeric|min:1',
+            'renewal_duration_on'          => 'nullable|date',
+            'renewal_late_fee_duration'    => 'nullable|numeric|min:1',
+            'renewal_late_fee_duration_on' => 'nullable|date',
         ];
 
         $rules = array_merge($rules, $nullable);
 
-        // var_dump($formType);die;
-
+        // 🧠 Type-specific validation
         switch ($formType) {
-            case 'N': // New Form
+            case 'N':
                 $rules = array_merge($rules, [
-                    'fresh_form_duration' => 'required|numeric|min:1',
-                    'fresh_form_duration_on' => 'required|date',
-                    'renewal_form_duration'              => 'prohibited',
-                    'renewal_duration_on'                => 'prohibited',
-                    'renewal_late_fee_duration'          => 'prohibited',
-                    'renewal_late_fee_duration_on'       => 'prohibited',
+                    'fresh_form_duration'          => 'required|numeric|min:1',
+                    'fresh_form_duration_on'       => 'required|date',
+                    'renewal_form_duration'        => 'prohibited',
+                    'renewal_duration_on'          => 'prohibited',
+                    'renewal_late_fee_duration'    => 'prohibited',
+                    'renewal_late_fee_duration_on' => 'prohibited',
                 ]);
                 break;
 
-            case 'R': // Renewal
+            case 'R':
                 $rules = array_merge($rules, [
-                    'renewal_form_duration' => 'required|numeric|min:1',
-                    'renewal_duration_on' => 'required|date',
-                    'fresh_form_duration'         => 'prohibited',
-                    'fresh_form_duration_on'      => 'prohibited',
+                    'renewal_form_duration'        => 'required|numeric|min:1',
+                    'renewal_duration_on'          => 'required|date',
+                    'fresh_form_duration'          => 'prohibited',
+                    'fresh_form_duration_on'       => 'prohibited',
                 ]);
                 break;
 
-            case 'L': // Renewal
+            case 'L':
                 $rules = array_merge($rules, [
-                    'renewal_late_fee_duration' => 'required|numeric|min:1',
+                    'renewal_late_fee_duration'    => 'required|numeric|min:1',
                     'renewal_late_fee_duration_on' => 'required|date',
                 ]);
                 break;
-
-                
         }
 
-                
         $messages = [
             'cert_id.required'          => 'Please choose the certificate / licence.',
-            'form_type.required'          => 'Please choose the form type.',
-            'form_status.required'          => 'Please choose the form status.',
-
+            'form_type.required'        => 'Please choose the form type.',
             'fresh_form_duration.required'          => 'Please enter the fresh form duration.',
             'fresh_form_duration_on.required'       => 'Please select the fresh form start date (As on).',
-
             'renewal_form_duration.required'        => 'Please enter the renewal form duration.',
             'renewal_duration_on.required'          => 'Please select the renewal start date (As on).',
-
             'renewal_late_fee_duration.required'    => 'Please enter the late fee duration.',
             'renewal_late_fee_duration_on.required' => 'Please select the late fee start date (As on).',
-
-            'renewal_*.*.prohibited'                => 'Renewal fields are not allowed for New Form.',
-            'fresh_*.*.prohibited'                  => 'Fresh fields are not allowed for Renewal Form.',
         ];
 
         $request->validate($rules, $messages);
 
-        DB::beginTransaction(); 
-        
+        DB::beginTransaction();
+
         try {
+            // 🧩 Step 2: Determine validity + start date based on type
+            $validity = null;
+            $validityStartDate = null;
 
-            $data = [
-                'licence_id' => $request->cert_id,
-                'form_type' => $formType,
-                'created_by' => $this->userId,
-                'created_at' => now(),
-            ];
+            
 
-             if ($formType === 'N') {
-                $data['validity'] = $request->fresh_form_duration;
-                $data['vadity_start_date'] = $request->fresh_form_duration_on;
+            if ($formType === 'N') {
+                $validity = $request->fresh_form_duration;
+                $validityStartDate = $request->fresh_form_duration_on;
             } elseif ($formType === 'R') {
-                $data['validity'] = $request->renewal_form_duration;
-                $data['vadity_start_date'] = $request->renewal_duration_on;
+                $validity = $request->renewal_form_duration;
+                $validityStartDate = $request->renewal_duration_on;
             } elseif ($formType === 'L') {
-                $data['validity'] = $request->renewal_late_fee_duration;
-                $data['vadity_start_date'] = $request->renewal_late_fee_duration_on;
+                $validity = $request->renewal_late_fee_duration;
+                $validityStartDate = $request->renewal_late_fee_duration_on;
             }
 
-            if ($recordId) {
-                // Edit mode
-                $form = FeesValidity::findOrFail($recordId);
-                $form->update($data);
-                $message = 'Form updated successfully!';
-            } else {
-                // Add mode
-                $data['created_by'] = $this->userId;
-                $data['created_at'] = now();
-                FeesValidity::create($data);
-                $message = 'Form created successfully!';
+            // var_dump($validityStartDate);die;
+
+            $existing = FeesValidity::where('licence_id', $request->cert_id)
+                ->where('form_type', $formType)
+                ->orderByDesc('id')
+                ->first();
+
+
+            // 🟢 Case 1: No record found → insert new
+            if (!$existing) {
+
+
+                FeesValidity::create([
+                    'licence_id'        => $request->cert_id,
+                    'form_type'         => $formType,
+                    'validity'          => $validity,
+                    'validity_start_date' => $validityStartDate,
+                    'status'            => $request->form_status ?? 1,
+                    'created_by'        => $this->userId,
+                    'created_at'        => now(),
+                    'ipaddress'       => $request->ip(),
+                ]);
+
+                DB::commit();
+
+                return response()->json([
+                    'status'  => 'success',
+                    'message' => 'Validity details added successfully!',
+                ]);
             }
 
-            DB::commit();
+            // ⚠️ Case 2: Existing record with same values → warning
+            if (
+                $existing->validity == $validity &&
+                $existing->validity_start_date == $validityStartDate
+            ) {
+                DB::rollBack();
+                return response()->json([
+                    'status'  => 'warning',
+                    'message' => 'Validity already exists with same duration and start date.',
+                ]);
+            }
+
+            // 🆕 Case 3: Data changed → insert new record (ignore old)
+            // FeesValidity::create([
+            //     'licence_id'        => $request->cert_id,
+            //     'form_type'         => $formType,
+            //     'validity'          => $validity,
+            //     'vadity_start_date' => $validityStartDate,
+            //     'status'            => $request->form_status ?? 1,
+            //     'created_by'        => $this->userId,
+            //     'created_at'        => now(),
+            //     'ipaddress'       => $request->ip(),
+            // ]);
+
+            // DB::commit();
+
+            // return response()->json([
+            //     'status'  => 'success',
+            //     'message' => strtoupper($formType) . ' validity updated successfully!',
+            // ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
 
             return response()->json([
-                'status' => 'success',
-                'message' => $message,
-            ]);
-
-         } catch (Exception $e) {
-            DB::rollBack(); 
-
-            return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Something went wrong. ' . $e->getMessage(),
             ], 500);
         }
     }
 
+    // public function updateValidity(Request $request)
+    // {
+
+    //     $formType = $request->input('form_type');
+    //     $recordId = $request->input('form_id');
+
+    //     $rules = [
+    //         'cert_id' => 'required|integer',
+    //         'form_type'  => 'required|in:N,R,L',
+    //         'form_status'=> 'nullable|in:1,0,true,false,on',
+    //     ];
+
+    //     $nullable = [
+    //         'fresh_form_duration'                => 'nullable|numeric|min:1',
+    //         'fresh_form_duration_on'             => 'nullable|date',
+    //         'renewal_form_duration'              => 'nullable|numeric|min:1',
+    //         'renewal_duration_on'                => 'nullable|date',
+    //         'renewal_late_fee_duration'          => 'nullable|numeric|min:1',
+    //         'renewal_late_fee_duration_on'       => 'nullable|date',
+    //     ];
+
+    //     $rules = array_merge($rules, $nullable);
+
+    //     // var_dump($formType);die;
+
+    //     switch ($formType) {
+    //         case 'N': // New Form
+    //             $rules = array_merge($rules, [
+    //                 'fresh_form_duration' => 'required|numeric|min:1',
+    //                 'fresh_form_duration_on' => 'required|date',
+    //                 'renewal_form_duration'              => 'prohibited',
+    //                 'renewal_duration_on'                => 'prohibited',
+    //                 'renewal_late_fee_duration'          => 'prohibited',
+    //                 'renewal_late_fee_duration_on'       => 'prohibited',
+    //             ]);
+    //             break;
+
+    //         case 'R': // Renewal
+    //             $rules = array_merge($rules, [
+    //                 'renewal_form_duration' => 'required|numeric|min:1',
+    //                 'renewal_duration_on' => 'required|date',
+    //                 'fresh_form_duration'         => 'prohibited',
+    //                 'fresh_form_duration_on'      => 'prohibited',
+    //             ]);
+    //             break;
+
+    //         case 'L': // Renewal
+    //             $rules = array_merge($rules, [
+    //                 'renewal_late_fee_duration' => 'required|numeric|min:1',
+    //                 'renewal_late_fee_duration_on' => 'required|date',
+    //             ]);
+    //             break;
+
+                
+    //     }
+
+                
+    //     $messages = [
+    //         'cert_id.required'          => 'Please choose the certificate / licence.',
+    //         'form_type.required'          => 'Please choose the form type.',
+    //         'form_status.required'          => 'Please choose the form status.',
+
+    //         'fresh_form_duration.required'          => 'Please enter the fresh form duration.',
+    //         'fresh_form_duration_on.required'       => 'Please select the fresh form start date (As on).',
+
+    //         'renewal_form_duration.required'        => 'Please enter the renewal form duration.',
+    //         'renewal_duration_on.required'          => 'Please select the renewal start date (As on).',
+
+    //         'renewal_late_fee_duration.required'    => 'Please enter the late fee duration.',
+    //         'renewal_late_fee_duration_on.required' => 'Please select the late fee start date (As on).',
+
+    //         'renewal_*.*.prohibited'                => 'Renewal fields are not allowed for New Form.',
+    //         'fresh_*.*.prohibited'                  => 'Fresh fields are not allowed for Renewal Form.',
+    //     ];
+
+    //     $request->validate($rules, $messages);
+
+    //     DB::beginTransaction(); 
+        
+    //     try {
+
+    //         $data = [
+    //             'licence_id' => $request->cert_id,
+    //             'form_type' => $formType,
+    //             'created_by' => $this->userId,
+    //             'created_at' => now(),
+    //         ];
+
+    //          if ($formType === 'N') {
+    //             $data['validity'] = $request->fresh_form_duration;
+    //             $data['vadity_start_date'] = $request->fresh_form_duration_on;
+    //         } elseif ($formType === 'R') {
+    //             $data['validity'] = $request->renewal_form_duration;
+    //             $data['vadity_start_date'] = $request->renewal_duration_on;
+    //         } elseif ($formType === 'L') {
+    //             $data['validity'] = $request->renewal_late_fee_duration;
+    //             $data['vadity_start_date'] = $request->renewal_late_fee_duration_on;
+    //         }
+
+    //         if ($recordId) {
+    //             // Edit mode
+    //             $form = FeesValidity::findOrFail($recordId);
+    //             $form->update($data);
+    //             $message = 'Form updated successfully!';
+    //         } else {
+    //             // Add mode
+    //             $data['created_by'] = $this->userId;
+    //             $data['created_at'] = now();
+    //             FeesValidity::create($data);
+    //             $message = 'Form created successfully!';
+    //         }
+
+    //         DB::commit();
+
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'message' => $message,
+    //         ]);
+
+    //      } catch (Exception $e) {
+    //         DB::rollBack(); 
+
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Something went wrong. ' . $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
     public function store(Request $request)
-    {   
+    {
         try {
             $validator = Validator::make($request->all(), [
                 'cert_name' => 'required|integer',
                 'fees_type' => 'required|in:N,R,L',
-
-                // Type-specific
-                'fresh_fees'            => 'nullable|numeric|min:0',
-                'fresh_fees_on'         => 'nullable|date',
-                'renewal_fees'          => 'nullable|numeric|min:0',
-                'renewal_fees_as_on'    => 'nullable|date',
-                'latefee_for_renewal'   => 'nullable|numeric|min:0',
-                'late_renewal_fees_on'  => 'nullable|date',
-                'late_fees'             => 'nullable|numeric|min:0',
-                'late_fees_on'          => 'nullable|date',
+                'fresh_fees'          => 'nullable|numeric|min:0',
+                'fresh_fees_on'       => 'nullable|date',
+                'renewal_fees'        => 'nullable|numeric|min:0',
+                'renewal_fees_as_on'  => 'nullable|date',
+                'late_fees'           => 'nullable|numeric|min:0',
+                'late_fees_on'        => 'nullable|date',
             ]);
 
             if ($validator->fails()) {
@@ -764,51 +920,187 @@ class LicenceManagementController extends BaseController
                 ]);
             }
 
-            // ✅ Dynamic values based on fees_type
             $type = trim($request->fees_type);
             $feeAmount = null;
-            // $startDate = null;
+            $startDate = null;
 
-            if ($type === 'N') {
-                $feeAmount = $request->fresh_fees;
-                $startDate = $request->fresh_fees_on;
-            } elseif ($type === 'R') {
-                $feeAmount = $request->renewal_fees;
-                $startDate = $request->renewal_fees_as_on;
-            } elseif ($type === 'L') {
-                $feeAmount = $request->late_fees;
-                $startDate = $request->late_fees_on;
+            // Determine amount and start date based on fees_type
+            switch ($type) {
+                case 'N':
+                    $feeAmount = $request->fresh_fees;
+                    $startDate = $request->fresh_fees_on;
+                    break;
+
+                case 'R':
+                    $feeAmount = $request->renewal_fees;
+                    $startDate = $request->renewal_fees_as_on;
+                    break;
+
+                case 'L':
+                    $feeAmount = $request->late_fees;
+                    $startDate = $request->late_fees_on;
+                    break;
             }
 
-
-            // Create record
-            TnelbFee::create([
-                'cert_licence_id' => $request->cert_name,
-                'fees_type'       => trim($type),
-                'fees'            => $feeAmount,
-                'start_date'      => $startDate,
-                'end_date'        => null, // can add later
-                'fees_status'     => $request->form_status ?? 1,
-                'created_by'      => Auth::id(),
-                'updated_by'      => Auth::id(),
-                'created_at'      => now(),
-                'ipaddress'       => $request->ip(),
-            ]);
+            if ($request->cert_name) {
+                // Check only within the same fees_type
+                $existingFee = TnelbFee::where('cert_licence_id', $request->cert_name)
+                    ->where('fees_type', $type)
+                    ->orderByDesc('id')
+                    ->first();
 
 
+                // 🟢 Case 1: No record for this type → insert new
+                if (!$existingFee) {
+                    TnelbFee::create([
+                        'cert_licence_id' => $request->cert_name,
+                        'fees_type'       => $type,
+                        'fees'            => $feeAmount,
+                        'start_date'      => $startDate,
+                        'end_date'        => null,
+                        'fees_status'     => $request->form_status ?? 1,
+                        'created_by'      => Auth::id(),
+                        'created_at'      => now(),
+                        'ipaddress'       => $request->ip(),
+                    ]);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Fees details added successfully!',
-            ]);
+                    return response()->json([
+                        'status'  => 'success',
+                        'message' => "New fees details added successfully!",
+                        'code'    => 'new_record'
+                    ]);
+                }
 
+                // var_dump($existingFee->fees == $feeAmount &&
+                // $existingFee->start_date == $startDate);die;
+
+                // ⚠️ Case 2: Same type exists with same fee and start date → skip
+                if (
+                    $existingFee->fees == $feeAmount &&
+                    $existingFee->start_date == $startDate
+                ) {
+                    return response()->json([
+                        'status'  => 'warning',
+                        'message' => 'Fees already exists with same amount and date.',
+                        'code'    => 'no_change'
+                    ]);
+                }
+
+                // 🆕 Case 3: Same type but fee or date changed → insert new (ignore old)
+                TnelbFee::create([
+                    'cert_licence_id' => $request->cert_name,
+                    'fees_type'       => $type,
+                    'fees'            => $feeAmount,
+                    'start_date'      => $startDate,
+                    'end_date'        => null,
+                    'fees_status'     => $request->form_status ?? 1,
+                    'created_by'      => Auth::id(),
+                    'created_at'      => now(),
+                    'ipaddress'       => $request->ip(),
+                ]);
+
+                return response()->json([
+                    'status'  => 'success',
+                    'message' => "Updated {$type} fee details successfully!",
+                    'code'    => 'updated_record'
+                ]);
+            }
         } catch (\Exception $e) {
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Something went wrong: ' . $e->getMessage(),
+                'code'    => 'exception'
             ]);
         }
     }
+
+    // public function store(Request $request)
+    // {   
+    //     try {
+    //         $validator = Validator::make($request->all(), [
+    //             'cert_name' => 'required|integer',
+    //             'fees_type' => 'required|in:N,R,L',
+
+    //             // Type-specific
+    //             'fresh_fees'            => 'nullable|numeric|min:0',
+    //             'fresh_fees_on'         => 'nullable|date',
+    //             'renewal_fees'          => 'nullable|numeric|min:0',
+    //             'renewal_fees_as_on'    => 'nullable|date',
+    //             'latefee_for_renewal'   => 'nullable|numeric|min:0',
+    //             'late_renewal_fees_on'  => 'nullable|date',
+    //             'late_fees'             => 'nullable|numeric|min:0',
+    //             'late_fees_on'          => 'nullable|date',
+    //         ]);
+
+    //         if ($validator->fails()) {
+    //             return response()->json([
+    //                 'status' => 'error',
+    //                 'message' => $validator->errors()->first(),
+    //             ]);
+    //         }
+
+    //         $type = trim($request->fees_type);
+    //         $feeAmount = null;
+
+    //         if ($type === 'N') {
+    //             $feeAmount = $request->fresh_fees;
+    //             $startDate = $request->fresh_fees_on;
+    //         } elseif ($type === 'R') {
+    //             $feeAmount = $request->renewal_fees;
+    //             $startDate = $request->renewal_fees_as_on;
+    //         } elseif ($type === 'L') {
+    //             $feeAmount = $request->late_fees;
+    //             $startDate = $request->late_fees_on;
+    //         }
+
+    //         $form_type = trim($type);
+
+    //         if($request->cert_name){
+    //             $get_form = TnelbFee::where('cert_licence_id', $request->cert_name)->first();
+                
+    //             if (!$get_form) {
+
+    //                 $insert = TnelbFee::create([
+    //                     'cert_licence_id' => $request->cert_name,
+    //                     'fees_type'       => trim($type),
+    //                     'fees'            => $feeAmount,
+    //                     'start_date'      => $startDate,
+    //                     'end_date'        => null, // can add later
+    //                     'fees_status'     => $request->form_status ?? 1,
+    //                     'created_by'      => Auth::id(),
+    //                     // 'updated_by'      => Auth::id(),
+    //                     'created_at'      => now(),
+    //                     'ipaddress'       => $request->ip(),
+    //                 ]);
+
+    //                 if ($insert) {
+    //                     return response()->json([
+    //                         'status' => 'success',
+    //                         'message' => 'Fees details added successfully!',
+    //                     ]);
+                        
+    //                 }else{
+    //                     return response()->json([
+    //                         'status' => 'error',
+    //                         'message' => 'Fees not updated!....',
+    //                     ]);
+    //                 }
+
+    //             } else {
+    //                 $get_form->fees_type = $type;
+    //                 $get_form->start_date = $startDate;
+    //                 $get_form->fees = $feeAmount;
+    //             }
+
+    //         }
+            
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Something went wrong: ' . $e->getMessage(),
+    //         ]);
+    //     }
+    // }
 
      public function update(Request $request, $id)
     {

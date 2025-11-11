@@ -56,10 +56,10 @@ class FeesValidity extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'vadity_start_date' => 'date',
-        'validity_date_end'   => 'date',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        // 'vadity_start_date' => 'date',
+        // 'validity_date_end'   => 'date',
+        // 'created_at' => 'datetime',
+        // 'updated_at' => 'datetime',
     ];
 
     /**

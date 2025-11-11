@@ -84,10 +84,6 @@
                     </table>
                 </div>
             </div>
-            {{-- <div class="modal-footer">
-                <button class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i> Discard</button>
-                <button type="button" class="btn btn-primary">Save</button>
-            </div> --}}
         </div>
     </div>
 </div>

@@ -951,7 +951,7 @@ $(document).ready(function() {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
             },
             success: function (response) {
-                if (response.status) {
+                if (response.status === "success") {
                     $('#addDurationModal').modal('hide');
                     Swal.fire({
                         icon: "success",
@@ -961,13 +961,23 @@ $(document).ready(function() {
                     }).then(() => {
                         location.reload();
                     });
-                    
+                
+                } else if (response.status === "warning") {
+                    $('#addDurationModal').modal('hide');
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Warning",
+                        text: response.message || "No changes detected!",
+                        confirmButtonText: "OK",
+                    });
+                
                 } else {
                     $('#addDurationModal').modal('hide');
                     Swal.fire({
                         icon: "error",
                         title: "Failed",
                         text: response.message || "Something went wrong!",
+                        confirmButtonText: "OK",
                     });
                 }
             },
@@ -1289,15 +1299,23 @@ $(document).ready(function() {
                 Swal.close();
                 if (res.status === "success") {
                     Swal.fire({
-                        // icon: "success",
+                        icon: "success",
                         title: res.message || "Saved successfully!",
                         showConfirmButton: false,
                         timer: 1500,
                     }).then(() => {
                         $("#addFormModal").modal("hide");
-                        // Optional: Refresh table
-                        location.reload();
+                        location.reload(); // optional refresh
                     });
+                
+                } else if (res.status === "warning") {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Warning",
+                        text: res.message || "No changes detected!",
+                        showConfirmButton: true,
+                    });
+                
                 } else {
                     Swal.fire({
                         icon: "error",

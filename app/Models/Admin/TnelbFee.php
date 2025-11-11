@@ -51,10 +51,10 @@ class TnelbFee extends Model
         'fees_status' => 'integer',
         'created_by'  => 'integer',
         'updated_by'  => 'integer',
-        'start_date'  => 'date',
-        'end_date'    => 'date',
-        'created_at'  => 'datetime',
-        'updated_at'  => 'datetime',
+        // 'start_date'  => 'date',
+        // 'end_date'    => 'date',
+        // 'created_at'  => 'datetime',
+        // 'updated_at'  => 'datetime',
     ];
 
     /**
