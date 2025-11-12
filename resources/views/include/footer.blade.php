@@ -2426,8 +2426,15 @@
             
             const appl_type = $('#appl_type').val();
             const issued_licence = $('#license_number').val();
+
+            // console.log(licence_code,issued_licence,appl_type);  
+            // return false;
             
             const data = await getPaymentsService(licence_code, issued_licence, appl_type);
+
+            // console.log(data);
+            // return false;
+            
             
             if (data) {
                 // form_cost = data.renewalFee;
@@ -2512,17 +2519,22 @@
                     });
                     
                     if (saveResponse.status === "success") {
+
+                        console.log(saveResponse.type_of_apps);
+                        // return false;
+                        
                         
                         const login_id = window.login_id || "{{ auth()->user()->login_id ?? '' }}";
                         const application_id = saveResponse.application_id;
                         const transactionDate = new Date().toLocaleDateString('en-GB');
                         const applicantName = saveResponse.applicantName || 'N/A';
-                        const form_name = saveResponse.form_name || 'N/A';
-                        const type_apps = licence || 'N/A';
+                        const form_name = 'FORM - '+ saveResponse.form_name || 'N/A';
+                        const type_apps = saveResponse.type_of_apps || 'N/A';
+                        const form_type = saveResponse.form_type || 'N/A';
                         const amount = total_fees;
-                        const serviceCharge = 10;
+                        // const serviceCharge = 10;
                         // let lateFee = typeof lateFee !== "undefined" ? lateFee : 0;
-                        let total_charge = Number(amount) + Number(serviceCharge);
+                        // let total_charge = Number(amount) + Number(serviceCharge);
                         let lateFeeRow = "";
                         if(lateFee > 0){
                              lateFeeRow = `
@@ -2552,6 +2564,14 @@
                                             <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${applicantName}</td>
                                             </tr>
                                             <tr>
+                                            <th style="text-align: left; padding: 6px 10px; color: #555;">Type of Application</th>
+                                            <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${type_apps}</td>
+                                            </tr>
+                                            <tr>
+                                            <th style="text-align: left; padding: 6px 10px; color: #555;">Type of Form</th>
+                                            <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${form_type}</td>
+                                            </tr>
+                                            <tr>
                                                 <th style="text-align: left; padding: 6px 10px; color: #555;">Date</th>
                                                 <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${transactionDate}</td>
                                                 </tr>
@@ -2559,18 +2579,10 @@
                                                     <th style="text-align: left; padding: 10px; color: #333;">Amount</th>
                                                     <td style="text-align: right; padding: 10px; font-weight: bold; color: #0d6efd;">Rs. ${amount} /-</td>
                                                     </tr>
-                                                    <tr>
-                                                        <th style="text-align: left; padding: 6px 10px; color: #555;">Type</th>
-                                                        <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${type_apps}</td>
-                                                        </tr>
                                                             ${lateFeeRow}
-                                                            <tr>
-                                                                <th style="text-align: left; padding: 6px 10px; color: #555;">Service Charge</th>
-                                                                <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${serviceCharge}</td>
-                                                                </tr>
                                                                 <tr>
                                                                     <th style="text-align: left; padding: 6px 10px; color: #555;">Total</th>
-                                                                    <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${total_charge}</td>
+                                                                    <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${amount}</td>
                                                                     </tr>
                                                                     </tbody>
                                                                     </table>
@@ -2618,7 +2630,7 @@
                                         timer: 3000,
                                         showConfirmButton: false
                                     }).then(() => {
-                                        window.location.href = BASE_URL + "/dashboard";
+                                        // window.location.href = BASE_URL + "/dashboard";
                                     });
                                 }
                             }

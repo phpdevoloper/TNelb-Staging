@@ -1787,7 +1787,9 @@ class FormController extends BaseController
             $category_type = collect($form_category)->firstWhere('id', $current_form['category_id']);
 
             $licence_details['licence_name'] = $current_form['licence_name'];
+            // var_dump($licence_details);die;
             $licence_details['category_name'] = $category_type['category_name'];
+            $licence_details['form_type'] = $renewal_form->appl_type;
 
 
 
@@ -1914,7 +1916,8 @@ class FormController extends BaseController
                 'applicantName' => $renewal_form->applicant_name,
                 'form_name' => $renewal_form->form_name,
                 'licence_name' => $licence_details['licence_name'],
-                'type_of_apps' => $licence_details['category_name']
+                'type_of_apps' => $licence_details['category_name'],
+                'form_type' => $licence_details['form_type'] == 'N'?'NEW':'RENEWAL'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

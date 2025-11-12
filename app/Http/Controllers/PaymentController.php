@@ -25,13 +25,15 @@ class PaymentController extends Controller
             'payment_mode'    => 'required',
         ]);
 
-        // var_dump($request->all());die;
-        if (in_array($request->form_name, ['S', 'W', 'WH'])) {
+        // var_dump($request->application_id);die;
+        if ($request->application_id) {
             $form = Mst_Form_s_w::where('application_id', $validated['application_id'])->first();
-        }else {
-            
-            $form = EA_Application_model::where('application_id', $validated['application_id'])->first();
         }
+        
+        // else {
+            
+        //     $form = EA_Application_model::where('application_id', $validated['application_id'])->first();
+        // }
 
         if (!$form) {
             return response()->json([

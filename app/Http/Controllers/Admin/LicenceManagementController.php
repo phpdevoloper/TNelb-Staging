@@ -74,9 +74,9 @@ class LicenceManagementController extends BaseController
             'mst_licences.licence_name',
             'mst_licences.form_name',
             'tnelb_fees.*',
-            DB::raw("CASE WHEN tnelb_fees.start_date >= '$this->today' THEN 'Active' ELSE 'Inactive' END AS status")
+            DB::raw("CASE WHEN tnelb_fees.start_date <= '$this->today' THEN 'Active' ELSE 'Inactive' END AS status")
         )
-        ->orderByRaw("CASE WHEN tnelb_fees.start_date >= '$this->today' THEN 1 ELSE 2 END") // Active first
+        ->orderByRaw("CASE WHEN tnelb_fees.start_date <= '$this->today' THEN 1 ELSE 2 END") // Active first
         ->orderBy('tnelb_fees.created_at', 'desc') 
         ->get();
 
@@ -288,6 +288,8 @@ class LicenceManagementController extends BaseController
 
         
         try {
+
+            // var_dump($request->all());die;
             
             $licence_code = $request->licence_code;
             $issued_licence = $request->issued_licence;
@@ -295,17 +297,19 @@ class LicenceManagementController extends BaseController
 
             $licence = MstLicence::where('cert_licence_code',$licence_code)->first();
             
-            
+            // var_dump($appl_type);die;
             // $paymentDetails = [];
             
             if ($appl_type === 'R') {
                 $paymentDetails = DB::select("
-                    SELECT * FROM calc_late_fee_dynamic(:appl_type, :licence_id, :issued_licence)
+                SELECT * FROM calc_late_fee_dynamic(:appl_type, :licence_id, :issued_licence)
                 ", [
                     'appl_type' => $appl_type,
                     'licence_id' => $licence->id,
                     'issued_licence' => $issued_licence,
                 ]);
+
+                // var_dump($paymentDetails);die;
             } 
             else {
                 $paymentDetails = DB::select("

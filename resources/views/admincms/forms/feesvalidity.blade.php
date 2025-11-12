@@ -453,31 +453,26 @@
 <script>
      $(document).ready(function () {
         
-         // Get today's date in YYYY-MM-DD format
-        var today = new Date().toLocaleDateString('en-CA');
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
 
-        console.log(today);
+        // Format as YYYY-MM-DD
+        const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
-        // Set min date for all <input type="date"> fields across all forms
-        $('form input[type="date"]').each(function () {
-            const newDate = $(this).attr('min', today);
-            // console.log(newDate);
-        });
+        $('form input[type="date"]').attr('min', tomorrowStr);
 
-        // Handle any "start" and "end" pairs (like As on → Ends on)
         $('form').each(function () {
-            var $form = $(this);
+            const $form = $(this);
 
-            // For every field ending with "_on", set corresponding "_till" field min date dynamically
             $form.find('input[name$="_on"]').on('change', function () {
-                var baseName = $(this).attr('name').replace('_on', '');
-                var newMinDate = $(this).val();
+                const baseName = $(this).attr('name').replace('_on', '');
+                const newMinDate = $(this).val();
 
-                $form.find('input[name="' + baseName + '_till"]').attr('min', newMinDate);
+                $form.find(`input[name="${baseName}_till"]`).attr('min', newMinDate);
             });
         });
 
-        // console.log('sdfasf1');
 
         // Dropdown form name autoselect (dependent)
         $("#cert_name").on("change", function () {

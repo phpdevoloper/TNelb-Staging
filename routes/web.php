@@ -230,6 +230,24 @@ Route::post('/update-license-expiry', function (Illuminate\Http\Request $request
 })->name('update-license-expiry');
 
 
+Route::post('/updateCurrentDate', function (Illuminate\Http\Request $request) {
+    $request->validate([
+        'current_date' => 'required|date',
+    ]);
+
+    $updated = DB::table('tnelb_license')
+        ->where('license_number', 'LCS000001')
+        ->update([
+            'sample_date' => $request->current_date,
+        ]);
+
+    if ($updated) {
+        return response()->json(['status' => 'success', 'message' => 'date changed successfully']);
+    }
+    return response()->json(['status' => 'error', 'message' => 'License not found'], 404);
+})->name('updateCurrentDate');
+
+
 
 
 // -----newsboarccontent---------------------------

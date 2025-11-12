@@ -148,15 +148,9 @@
                                                     <div class="row align-items-center">
                                                         <div class="col-12 col-md-3">
                                                             <label for="Name">Expiry Date </label>
-                                                           
                                                         </div>
-
                                                         <div class="col-12 col-md-8 pd-left-40">
-                                                 <input type="date" class="form-control"
-       name="expires_at" id="expiry">
-
-
-                                                      
+                                                            <input type="date" class="form-control" name="expires_at" id="expiry">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -181,6 +175,56 @@
             </div>
         </div>
     </div>
+
+    <div class="col-lg-12 col-12">
+                    <div class="apply-card apply-card-info" data-select2-id="14">
+                        <div class="apply-card-header" style="background-color: #70c6ef  !important;">
+                            <div class="row">
+                                <div class="col-6 col-lg-8">
+                                    <h5 class="card-title_apply text-black text-left"> Current Date Change </h5>
+                                </div>
+
+                              
+
+                            </div>
+
+                        </div>
+                        <div class="apply-card-body">
+
+                            <form id="current_date_change" enctype="multipart/form-data">
+                                <div class="row">
+
+                                    <div class="col-12 col-md-12">
+                                        <div class="form-group">
+                                            <div class="row align-items-center">
+                                                <div class="col-12 col-md-6">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-12 col-md-3">
+                                                            <label for="Name">Date </label>
+                                                        </div>
+                                                        <div class="col-12 col-md-8 pd-left-40">
+                                                            <input type="date" class="form-control" name="current_date" id="current_date">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            @csrf
+
+                                <div class="row mt-5">
+                                    <div class="offset-md-5 col-12 col-md-6">
+                                        <div class="form-group">
+                                         
+                                            <button type="submit" class="btn btn-success">
+                                                change Date
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
 </section>
 
 <div id="draftModal" class="overlay-bg" style="display: none;">
@@ -198,6 +242,21 @@
 @include('include.footer')
     <script>
 $(document).ready(function () {
+
+    $('#current_date_change').on('submit', function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: "{{ route('updateCurrentDate') }}",
+            type: "POST",
+            data: $(this).serialize(),
+            success: function (response) {
+                alert(response.message);
+            },
+            error: function (xhr) {
+                alert(xhr.responseJSON?.message || 'Something went wrong');
+            }
+        });
+    });
 
 
     // Submit form via AJAX
