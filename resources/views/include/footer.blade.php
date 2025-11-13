@@ -211,6 +211,77 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
 
+<style>
+  /* small visual polish */
+  .bg-gradient-primary { background: linear-gradient(90deg,#007bff 0%, #0056d6 100%); }
+  .icon-bg { width:44px; height:44px; background: rgba(255,255,255,0.12); }
+  .modal-sm .modal-content { border-radius:12px; }
+  /* subtle focus outline for keyboard users */
+  .btn:focus { box-shadow: 0 0 0 0.25rem rgba(0,123,255,0.18); }
+</style>
+
+
+<!-- Payment Initiation Modal --> 
+<div class="modal fade" id="paymentInfo" tabindex="-1" aria-labelledby="competencyInstructionsModalLabel"  data-backdrop="static" 
+     data-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-primary" style="background- color: white;">
+                <h5 class="modal-title text-white" id="competencyInstructionsModalLabel">Initiate Payment</h5>
+            </div>
+            <div class="modal-body">
+                <div class="payment-info">
+                    
+                    <div class="d-flex justify-content-between py-2">
+                        <span class="text-muted">Applicant Name</span>
+                        <span class="fw-semibold">Mr Arunachalam D</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between py-2">
+                        <span class="text-muted">Type of Application</span>
+                        <span class="fw-semibold">N/A</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between py-2">
+                        <span class="text-muted">Type of Form</span>
+                        <span class="fw-semibold">N/A</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between py-2">
+                        <span class="text-muted">Date</span>
+                        <span class="fw-semibold">13/11/2025</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between py-2">
+                        <span class="text-muted">Amount</span>
+                        <span class="fw-bold text-primary">₹ 2100 /-</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between py-2">
+                        <span class="text-muted">Late Fees (3 Months)</span>
+                        <span class="fw-bold">₹ 600 /-</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between py-2">
+                        <span class="fw-bold fs-5">Total</span>
+                        <span class="fw-bold fs-5 text-success">₹ 2700</span>
+                    </div>
+                    
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button class="btn btn-primary px-4 me-2">Pay Now</button>
+                    <button class="btn btn-danger px-4" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
 <!--
 <script>
     $('a[data-toggle="formtab"]').click(function(event) {
@@ -2426,20 +2497,11 @@
             
             const appl_type = $('#appl_type').val();
             const issued_licence = $('#license_number').val();
-
-            // console.log(licence_code,issued_licence,appl_type);  
-            // return false;
             
             const data = await getPaymentsService(licence_code, issued_licence, appl_type);
 
-            // console.log(data);
-            // return false;
-            
             
             if (data) {
-                // form_cost = data.renewalFee;
-                // lateFee  = data.lateFees || 'N/A';
-                // licence  = data.certificate_name;
                 if (data.lateFees < 0) {
                     total_fees = data.total_fees;
                     lateMonths = data.late_months;
@@ -2451,10 +2513,6 @@
                 }
             }
          
-            
-            console.log(data);
-            // return false;
-
             
             // 🔹 Now you can safely use form_cost everywhere below
             const modalEl = document.getElementById('competencyInstructionsModal');
@@ -2545,9 +2603,7 @@
                             `;
                         }
                         
-
-                        // return false;
-                        
+                       
                         const transactionId = "TRX" + Math.floor(100000 + Math.random() * 900000);
                         const payment_mode = 'UPI';
                         

@@ -6,9 +6,9 @@
 </style>
 <div id="content" class="main-content">
     <div class="layout-px-spacing">
-
         <div class="middle-content p-0">
             <div class="page-meta">
+                <h4>Certificates & Licences</h4>
                 <nav class="breadcrumb-style-one" aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="#">Licences Management</a></li>
@@ -96,8 +96,8 @@
                         </div> --}}
                         <div class="col-lg-12">
                             <div class="card">
-                                <div class="card-header ">
-                                    <h5>Certificates / Licences</h5>
+                                <div class="card-header d-flex justify-content-between">
+                                    <h5>Add New Certificates / Licences</h5>
                                     <button class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#addFormModal"><i class="fa fa-plus"></i> Add</button>
                                 </div>
                                 <div class="card-body">
@@ -106,11 +106,13 @@
                                             <tr>
                                                 <th class="checkbox-column dt-no-sorting"> S.No </th>
                                                 <th>Certificate / Licence Name</th>
+                                                <th>Certificate / Licence Code</th>
                                                 <th>Form Name</th>
+                                                <th>Form Code</th>
                                                 <th>Category</th>
                                                 <th class="text-center">Status</th>
                                                 <th class="text-center">Created At</th>
-                                                <th class="text-center dt-no-sorting">Action</th>
+                                                <th class="text-center dt-no-sorting">Instructions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -121,8 +123,10 @@
 
                                                     <!-- Category Name -->
                                                     <td>{{ $row->licence_name }}</td>
+                                                    <td>{{ $row->cert_licence_code }}</td>
 
                                                     <td>{{ $row->form_name }}</td>
+                                                    <td>{{ $row->form_code }}</td>
                                                     
                                                     <td>{{ $row->category_name }}</td>
 
@@ -139,7 +143,7 @@
 
                                                     <!-- Action -->
                                                     <td class="text-center">
-                                                        <a href="javascript:void(0);" class="bs-tooltip editForm" 
+                                                        {{-- <a href="javascript:void(0);" class="bs-tooltip editForm" 
                                                             data-bs-toggle="modal" data-bs-target="#editFormModal" title="Edit"
                                                             data-row_id="{{ $row->id }}"
                                                             data-form_name="{{ $row->form_name }}"
@@ -156,7 +160,7 @@
                                                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                                             </svg>
-                                                        </a>
+                                                        </a> --}}
                                                         <a href="javascript:void(0);" class="bs-tooltip editInstruction" data-bs-toggle="modal" data-bs-target="#editFormModal" title="Instructions">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                                                         </a>
@@ -223,7 +227,7 @@
             <form id="addForms" class="simple-example" novalidate>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-lg-6 mb-2">
+                        <div class="col-lg-6 mb-3">
                             <label for="inputEmail4" class="form-label">Category<span class="text-danger">*</span> </label>
                             <select class="form-select" name="form_cate" id="form_cate">
                                 <option value="">Please select category</option>
@@ -233,6 +237,8 @@
                             </select>
                             <small class="text-danger d-none error-form_cate">Please choose the category</small>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-lg-6 mb-2">
                             <label for="inputEmail4" class="form-label">Certificate / Licence Name <span class="text-danger">*</span> </label>
                             <input type="text" class="form-control" name="cert_name" id="cert_name">
@@ -262,10 +268,10 @@
                             <small class="text-danger d-none error-form_status">Please choose the Form status</small>
                         </div>
                         <div class="text-center mt-3">
-                            <button type="submit" class="btn btn-primary">Create</button>
-                            <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#addForms').trigger('reset');"><i class="flaticon-cancel-12"></i> Discard</button>
+                            <button type="submit" class="btn btn-primary">Add</button>
+                            <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#addForms').trigger('reset');"><i class="flaticon-cancel-12"></i> Cancel</button>
                         </div>
-                    </div>
+                    </div> 
                 </div>
             </form>
         </div>
@@ -333,7 +339,7 @@
                         <input type="hidden" name="cert_id" id="edit_cert_id">
                         <div class="text-center mt-3">
                             <button type="submit" class="btn btn-primary">Update</button>
-                            <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#feesForm').trigger('reset');"><i class="flaticon-cancel-12"></i> Discard</button>
+                            <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#feesForm').trigger('reset');"><i class="flaticon-cancel-12"></i> Cancel</button>
                         </div>
                     </div>
                 </div>

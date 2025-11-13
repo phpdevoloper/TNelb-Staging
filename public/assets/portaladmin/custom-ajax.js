@@ -157,7 +157,7 @@ $(document).ready(function() {
                 errorSelector: ".error-form_name",
                 validate: function (val) {
                     if (val === "") return "Please fill the Form Name";
-                    if (!/^[A-Z0-9]+$/.test(val)) return "Form Name should contain only uppercase letters and numbers";
+                    if (!/^[A-Za-z0-9 ]+$/.test(val)) return "Form Name should contain only letters,space and numbers";
                     return null;
                 },
             },

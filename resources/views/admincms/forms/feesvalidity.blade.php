@@ -47,7 +47,7 @@
 
         <div class="middle-content p-0">
             <div class="page-meta">
-                <h4>Licence Management</h4>
+                <h4>Fees & Validity Details</h4>
                 <nav class="breadcrumb-style-one" aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>

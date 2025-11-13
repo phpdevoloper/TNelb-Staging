@@ -231,9 +231,9 @@
                     </a>
                     <ul class="collapse submenu list-unstyled {{ in_array($currentRoute, $licence_routes) ? 'show' : '' }}" id="licences" data-bs-parent="#accordionExample">
 
-                        <li class="{{ $currentRoute == 'admin.licenceCategory' ? 'active' : '' }}">
+                        {{-- <li class="{{ $currentRoute == 'admin.licenceCategory' ? 'active' : '' }}">
                             <a href="{{route('admin.licenceCategory')}}">Category</a>
-                        </li>
+                        </li> --}}
                         <li class="{{ $currentRoute == 'admin.view_licences' ? 'active' : '' }}">
                            <a href="{{route('admin.view_licences')}}">Certificates / Licences</a>
                        </li>

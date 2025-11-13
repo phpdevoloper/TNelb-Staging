@@ -98,7 +98,7 @@ class LicenceManagementController extends BaseController
 
         $all_licences = MstLicence::leftJoin('mst_licence_category', 'mst_licences.category_id', '=', 'mst_licence_category.id')
         ->where('mst_licences.status', 1)
-        ->orderBy('mst_licences.created_at', 'desc')
+        ->orderBy('mst_licences.category_id', 'ASC')
         ->select('mst_licence_category.category_name', 'mst_licences.*')
         ->get();
 
@@ -110,26 +110,35 @@ class LicenceManagementController extends BaseController
         try {
             $isUpdate = !empty($request->cert_id);
             // 🔹 1. Validate input fields
-            $validated = $request->validate([
-                'form_cate'     => 'required|integer',
-                'cert_name'         => 'required|string|regex:/^[A-Za-z\s]+$/|min:3|max:100',
-                'cate_licence_code' => ['required','string','max:5',Rule::unique('mst_licences', 'cert_licence_code')->ignore($request->cert_id)],
-                'form_name'         => 'required|string|regex:/^[A-Za-z\s]+$/|min:2|max:100',
-                'form_code'         => ['required','string','max:5',Rule::unique('mst_licences', 'form_code')->ignore($request->cert_id)],
-                'form_status'       => 'required|in:1,2',
-            ], [
-                'form_cate.required'         => 'Please choose the category',
-                'cert_name.required'         => 'Please fill the Certificate / Licence Name',
-                'cert_name.regex'            => 'Certtificate / Licence Name should contain only letters and spaces',
-                'form_name.regex'            => 'Form Code should contain only letters and spaces',
-                'cate_licence_code.required' => 'Please fill the Certificate / Licence Code',
-                'cate_licence_code.unique'   => 'This Certificate / Licence Code already exists',
-                'form_name.required'         => 'Please fill the Form Name',
-                'form_name.regex'            => 'Form Name should contain only letters and spaces',
-                'form_code.required'         => 'Please fill the Form Code',
-                'form_code.unique'           => 'This Form Code already exists',
-                'form_status.required'       => 'Please choose the Status',
-            ]);
+            try {
+                //code...
+                $validated = $request->validate([
+                    'form_cate'     => 'required|integer',
+                    'cert_name'         => 'required|string|regex:/^[A-Za-z\s]+$/|min:3|max:100',
+                    'cate_licence_code' => ['required','string','max:5',Rule::unique('mst_licences', 'cert_licence_code')->ignore($request->cert_id)],
+                    'form_name'         => 'required|string|regex:/^[A-Za-z\s]+$/|min:2|max:100',
+                    'form_code'         => ['required','string','max:5',Rule::unique('mst_licences', 'form_code')->ignore($request->cert_id)],
+                    'form_status'       => 'required|in:1,2',
+                ], [
+                    'form_cate.required'         => 'Please choose the category',
+                    'cert_name.required'         => 'Please fill the Certificate / Licence Name',
+                    'cert_name.regex'            => 'Certtificate / Licence Name should contain only letters and spaces',
+                    'form_name.regex'            => 'Form Code should contain only letters and spaces',
+                    'cate_licence_code.required' => 'Please fill the Certificate / Licence Code',
+                    'cate_licence_code.unique'   => 'This Certificate / Licence Code already exists',
+                    'form_name.required'         => 'Please fill the Form Name',
+                    'form_name.regex'            => 'Form Name should contain only letters and spaces',
+                    'form_code.required'         => 'Please fill the Form Code',
+                    'form_code.unique'           => 'This Form Code already exists',
+                    'form_status.required'       => 'Please choose the Status',
+                ]);
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                dd($e->errors());
+            }
+
+           
+
+            exit;
 
             // 🔹 2. Insert into database (example table: mst_licences)
             $data = [
@@ -160,11 +169,11 @@ class LicenceManagementController extends BaseController
                 'message' => $message,
             ], 200);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'status'  => false,
-                'message' => $e->validator->errors()->first(),
-            ], 422);
+        // } catch (\Illuminate\Validation\ValidationException $e) {
+        //     return response()->json([
+        //         'status'  => false,
+        //         'message' => $e->validator->errors()->first(),
+        //     ], 422);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -289,7 +298,6 @@ class LicenceManagementController extends BaseController
         
         try {
 
-            // var_dump($request->all());die;
             
             $licence_code = $request->licence_code;
             $issued_licence = $request->issued_licence;
@@ -297,30 +305,25 @@ class LicenceManagementController extends BaseController
 
             $licence = MstLicence::where('cert_licence_code',$licence_code)->first();
             
-            // var_dump($appl_type);die;
-            // $paymentDetails = [];
-            
             if ($appl_type === 'R') {
                 $paymentDetails = DB::select("
-                SELECT * FROM calc_late_fee_dynamic(:appl_type, :licence_id, :issued_licence)
+                SELECT * FROM calc_fees(:appl_type, :licence_id, :issued_licence)
                 ", [
                     'appl_type' => $appl_type,
                     'licence_id' => $licence->id,
                     'issued_licence' => $issued_licence,
                 ]);
 
-                // var_dump($paymentDetails);die;
             } 
             else {
                 $paymentDetails = DB::select("
-                    SELECT * FROM calc_late_fee_dynamic(:appl_type, :licence_id)
+                    SELECT * FROM calc_fees(:appl_type, :licence_id)
                 ", [
                     'appl_type' => $appl_type,
                     'licence_id' => $licence->id,
                 ]);
             }
 
-            // var_dump($paymentDetails[0]->base_fee);die;
 
             if (!empty($paymentDetails)) {
                 $fees_details['total_fees'] = $paymentDetails[0]->total_fee;
