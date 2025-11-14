@@ -1571,8 +1571,7 @@ class FormController extends BaseController
                 }
             }
 
-            $dbNow  = DB::selectOne("SELECT TO_CHAR(NOW(), 'YYYY-MM-DD HH24:MI:SS') AS db_now")->db_now;
-
+            $dbNow  = DB::selectOne("SELECT TO_CHAR(NOW(), 'DD-MM-YYYY HH24:MI:SS') AS db_now")->db_now;
 
             DB::commit();
 
@@ -1917,6 +1916,10 @@ class FormController extends BaseController
                 );
             }
 
+            
+            $dbNow  = DB::selectOne("SELECT TO_CHAR(NOW(), 'DD-MM-YYYY HH24:MI:SS') AS db_now")->db_now;
+            
+
             // Process Payment for update
             DB::commit();
 
@@ -1928,7 +1931,8 @@ class FormController extends BaseController
                 'form_name' => $renewal_form->form_name,
                 'licence_name' => $licence_details['licence_name'],
                 'type_of_apps' => $licence_details['category_name'],
-                'form_type' => $licence_details['form_type'] == 'N'?'NEW':'RENEWAL'
+                'form_type' => $licence_details['form_type'] == 'N'?'FRESH':'RENEWAL',
+                'date_apps'      => $dbNow
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

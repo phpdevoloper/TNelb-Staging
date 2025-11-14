@@ -77,6 +77,10 @@
 <script src={{ asset("assets/admin/src/plugins/src/table/datatable/button-ext/dataTables.buttons.min.js") }}></script>
 <script src={{ asset("assets/admin/src/assets/js/apps/contact.js") }}></script>
 <script src={{ asset("assets/admin/src/assets/js/apps/invoice-list.js") }}></script>
+<script src={{ asset("assets/admin/src/plugins/src/editors/quill/highlight.min.js") }}></script>
+<script src={{ asset("assets/admin/src/plugins/src/editors/quill/quill.js") }}></script>
+<script src={{ asset("assets/admin/src/plugins/src/editors/quill/katex.min.js") }}></script>
+{{-- <script src={{ asset("assets/admin/src/plugins/src/editors/quill/custom-quill.js") }}></script> --}}
 
 {{-- <script src={{ asset("assets/admin/src/assets/js/forms/bootstrap_validation/bs_validation_script.js") }}></script> --}}
 
@@ -844,5 +848,6 @@
 
 <script src="{{ asset('assets/portaladmin/scriptmenu.js') }}"></script>
 <script src="{{ asset('assets/portaladmin/custom-ajax.js') }}"></script>
+<script src="{{ asset('assets/portaladmin/custom-two-ajax.js') }}"></script>
 
 <!-- END PAGE LEVEL SCRIPTS -->

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Mews\Purifier\Facades\Purifier;
 
 class LicenceManagementController extends BaseController
 {
@@ -317,10 +318,11 @@ class LicenceManagementController extends BaseController
             } 
             else {
                 $paymentDetails = DB::select("
-                    SELECT * FROM calc_fees(:appl_type, :licence_id)
+                    SELECT * FROM calc_fees(:appl_type, :licence_id, :issued_licence)
                 ", [
                     'appl_type' => $appl_type,
                     'licence_id' => $licence->id,
+                    'issued_licence' => null,
                 ]);
             }
 
@@ -329,7 +331,7 @@ class LicenceManagementController extends BaseController
                 $fees_details['total_fees'] = $paymentDetails[0]->total_fee;
                 $fees_details['lateFees'] = $paymentDetails[0]->late_fee;
                 $fees_details['late_months'] = $paymentDetails[0]->late_months;
-                $fees_details['renewalFees'] = $paymentDetails[0]->base_fee;
+                $fees_details['basic_fees'] = $paymentDetails[0]->base_fee;
             }
             
 
@@ -1109,6 +1111,74 @@ class LicenceManagementController extends BaseController
             ]);
         }
     }
+
+    public function updateInstruct(Request $request){
+        
+        
+        try {
+            
+            $request->validate([
+                'rec_id' => 'required|integer|exists:mst_licences,id',
+                'instructionData' => 'required|string',
+            ]);
+            
+            // Validate incoming request
+            // Find record
+            $licence = MstLicence::findOrFail($request->rec_id);
+            
+            // Save delta JSON directly into ONE field
+            $licence->instructions = $request->instructionData;
+            $licence->save();
+            
+            
+            // 4️⃣ Return success response
+            return response()->json([
+                'status'  => 200,
+                'message' => 'Instruction updated successfully!'
+            ]);
+            
+        } catch (\Exception $e) {
+            
+            // Return detailed error for debugging
+            return response()->json([
+                'status'  => 500,
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile(),
+            ], 500);
+        }
+        
+    }
+
+public function getInstruction(Request $request)
+{
+    try {
+
+
+        $request->validate([
+            'licence_id' => 'required|integer|exists:mst_licences,id',
+        ]);
+
+        // FIXED: Use licence_id, not rec_id
+        $licence = MstLicence::where('id',$request->licence_id)->first();
+
+
+        return response()->json([
+            'status' => 200,
+            'data'   => $licence->instructions ?? null
+        ]);
+
+    } catch (\Exception $e) {
+
+        return response()->json([
+            'status'  => 500,
+            'message' => $e->getMessage(),
+        ], 500);
+
+    }
+}
+
+        
 
 
 

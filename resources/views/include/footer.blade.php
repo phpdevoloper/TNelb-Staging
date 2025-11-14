@@ -2506,16 +2506,18 @@
             console.log(data);
             if (data) {
                 if (data.lateFees < 0) {
+                    actual_fees = data.basic_fees;
                     total_fees = data.total_fees;
                     lateMonths = data.late_months;
                 }else{
+                    actual_fees = data.basic_fees;
                     lateMonths = data.late_months;
-                    total_fees = data.renewalFees;
+                    total_fees = data.total_fees;
                     lateFee = data.lateFees;
                 }
             }
 
-            console.log(total_fees);
+            console.log(actual_fees);
          
             
             // 🔹 Now you can safely use form_cost everywhere below
@@ -2524,7 +2526,7 @@
             const errorText = modalEl.querySelector('#declaration-error-renew');
             const proceedBtn = modalEl.querySelector('#proceedPayment');
             
-            document.getElementById('form_fees').textContent = 'Rs.' + renewl_fees || total_fees + '/-';
+            document.getElementById('form_fees').textContent = 'Rs.' + actual_fees + '/-';
             
             // Reset state
             agreeCheckbox.checked = false;
@@ -2596,7 +2598,7 @@
                         const amount = total_fees;
                         const licence_name = saveResponse.licence_name || 'N/A';
 
-                        console.log(amount);
+                        console.log(form_type);
                         // const serviceCharge = 10;
                         // let lateFee = typeof lateFee !== "undefined" ? lateFee : 0;
                         // let total_charge = Number(amount) + Number(serviceCharge);
@@ -2614,7 +2616,6 @@
                         const transactionId = "TRX" + Math.floor(100000 + Math.random() * 900000);
                         const payment_mode = 'UPI';
                         
-                        // const safeLateFee = typeof lateFee !== "undefined" && lateFee !== null ? lateFee : 0;
                         // 🔹 Show payment popup
                         Swal.fire({
                             title: "<span style='color:#0d6efd;'>Initiate Payment</span>",
@@ -2640,7 +2641,7 @@
                                                 </tr>
                                                 <tr>
                                                     <th style="text-align: left; padding: 10px; color: #333;">Amount</th>
-                                                    <td style="text-align: right; padding: 10px; font-weight: bold; color: #0d6efd;">Rs. ${amount} /-</td>
+                                                    <td style="text-align: right; padding: 10px; font-weight: bold; color: #0d6efd;"> ${actual_fees} </td>
                                                     </tr>
                                                             ${lateFeeRow}
                                                                 <tr>
@@ -2663,6 +2664,7 @@
                                 actions: 'd-flex justify-content-around mt-3',
                             },
                             buttonsStyling: false,
+                            footer: '<div><span style="font-size: 13px;">Note: </span><span style="font-size: 13px;color: red;">Service charge of payment gateway as applicable</span>',
                             preConfirm: async () => {
                                 const paymentResponse = await $.ajax({
                                     url: "{{ route('payment.updatePayment') }}",

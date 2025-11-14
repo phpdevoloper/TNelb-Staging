@@ -12,6 +12,7 @@
         "laravel/sanctum": "^2.14",
         "laravel/tinker": "^2.7",
         "mews/captcha": "*",
+        "mews/purifier": "^3.4",
         "mpdf/mpdf": "^8.2",
         "setasign/fpdf": "^1.8",
         "stichoza/google-translate-php": "^5.2",

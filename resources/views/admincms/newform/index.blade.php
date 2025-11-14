@@ -630,14 +630,14 @@
 
                                         <td>
 
-                                            {{$form->renewalamount_starts ? $form->renewalamount_starts->format('d-m-Y') : '' }}
+                                            {{$form->renewalamount_starts }}
 
                                         </td>
                                         <td>{{ $form->latefee_amount }}</td>
 
 
                                         <td>
-                                            {{ $form->latefee_starts ? $form->latefee_starts->format('d-m-Y') : '' }}
+                                            {{ $form->latefee_starts }}
 
                                         </td>
 

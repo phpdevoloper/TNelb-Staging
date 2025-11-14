@@ -95,6 +95,10 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/src/plugins/src/glightbox/glightbox.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/src/assets/css/light/apps/contacts.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/src/assets/css/light/apps/invoice-list.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/src/plugins/css/light/editors/quill/quill.snow.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/src/plugins/css/light/editors/quill/atom-one-dark.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/src/plugins/css/light/editors/quill/katex.min.css') }}">
+    
    <!-- --portaladmin---------------- -->
     
 </head>
