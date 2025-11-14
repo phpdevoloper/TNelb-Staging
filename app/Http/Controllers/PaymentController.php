@@ -25,7 +25,7 @@ class PaymentController extends Controller
             'payment_mode'    => 'required',
         ]);
 
-        // var_dump($request->application_id);die;
+        
         if ($request->application_id) {
             $form = Mst_Form_s_w::where('application_id', $validated['application_id'])->first();
         }
@@ -34,6 +34,8 @@ class PaymentController extends Controller
             
         //     $form = EA_Application_model::where('application_id', $validated['application_id'])->first();
         // }
+
+        
 
         if (!$form) {
             return response()->json([
@@ -56,6 +58,8 @@ class PaymentController extends Controller
                 'payment_mode'    => $validated['payment_mode'],
             ]
         );
+
+        // var_dump($request->form_name);die;
 
         if ($payment) {
             if (in_array($request->form_name, ['S', 'W', 'WH'])) {

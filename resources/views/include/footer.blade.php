@@ -2497,21 +2497,25 @@
             
             const appl_type = $('#appl_type').val();
             const issued_licence = $('#license_number').val();
+
+            console.log(appl_type);
+            console.log(issued_licence);
             
             const data = await getPaymentsService(licence_code, issued_licence, appl_type);
 
-            
+            console.log(data);
             if (data) {
                 if (data.lateFees < 0) {
                     total_fees = data.total_fees;
                     lateMonths = data.late_months;
                 }else{
-                    total_fees = data.total_fees;
                     lateMonths = data.late_months;
-                    renewl_fees = data.renewalFees;
+                    total_fees = data.renewalFees;
                     lateFee = data.lateFees;
                 }
             }
+
+            console.log(total_fees);
          
             
             // 🔹 Now you can safely use form_cost everywhere below
@@ -2578,18 +2582,21 @@
                     
                     if (saveResponse.status === "success") {
 
-                        console.log(saveResponse.type_of_apps);
+                        console.log(saveResponse);
                         // return false;
                         
                         
                         const login_id = window.login_id || "{{ auth()->user()->login_id ?? '' }}";
                         const application_id = saveResponse.application_id;
-                        const transactionDate = new Date().toLocaleDateString('en-GB');
+                        const transactionDate = saveResponse.date_apps;
                         const applicantName = saveResponse.applicantName || 'N/A';
-                        const form_name = 'FORM - '+ saveResponse.form_name || 'N/A';
+                        const form_name = saveResponse.form_name || 'N/A';
                         const type_apps = saveResponse.type_of_apps || 'N/A';
                         const form_type = saveResponse.form_type || 'N/A';
                         const amount = total_fees;
+                        const licence_name = saveResponse.licence_name || 'N/A';
+
+                        console.log(amount);
                         // const serviceCharge = 10;
                         // let lateFee = typeof lateFee !== "undefined" ? lateFee : 0;
                         // let total_charge = Number(amount) + Number(serviceCharge);
@@ -2621,7 +2628,7 @@
                                             </tr>
                                             <tr>
                                             <th style="text-align: left; padding: 6px 10px; color: #555;">Type of Application</th>
-                                            <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${type_apps}</td>
+                                            <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${licence_name}</td>
                                             </tr>
                                             <tr>
                                             <th style="text-align: left; padding: 6px 10px; color: #555;">Type of Form</th>

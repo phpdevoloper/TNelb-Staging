@@ -1427,7 +1427,14 @@ class FormController extends BaseController
                 $form = Mst_Form_s_w::create($data); // brand-new renewal application entry ✅
             }
 
-            // var_dump($form->form_name);die;
+
+            $type_of_apps = MstLicence::where('form_code', $form->form_name)
+            ->select('licence_name')
+            ->first();
+
+
+
+            // var_dump($type_of_apps->licence_name);die;
 
             // -------------------------
             // ALWAYS-INSERT Education  ✅
@@ -1564,6 +1571,8 @@ class FormController extends BaseController
                 }
             }
 
+            $dbNow  = DB::selectOne("SELECT TO_CHAR(NOW(), 'YYYY-MM-DD HH24:MI:SS') AS db_now")->db_now;
+
 
             DB::commit();
 
@@ -1572,7 +1581,9 @@ class FormController extends BaseController
                 'message'        => $action === 'draft' ? 'Draft saved successfully!' : 'Form submitted successfully!',
                 'application_id' => $applicationId,
                 'applicantName'  => $form->applicant_name,
-                'form_name'      => $form->form_name
+                'form_name'      => $form->form_name,
+                'licence_name'   => $type_of_apps->licence_name,
+                'date_apps'      => $dbNow
             ]);
 
         } catch (\Exception $e) {
