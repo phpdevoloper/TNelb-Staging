@@ -62,7 +62,7 @@
             </a>
             <div class="collapse collapse-menu show" id="competencyMenu">
                 <ul class="nav flex-column">
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ route('forms.new_application',['form_code' => encrypt('S')]) }}">
                             <i class="fa fa-arrow-circle-o-right"></i> Apply for Certificate C [Form S]
                         </a>
@@ -82,7 +82,7 @@
 
                     <span>
                         New Applications
-                      </span>
+                      </span> --}}
         
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('apply-form-s') }}">

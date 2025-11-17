@@ -2,6 +2,26 @@
 @include('admincms.include.header')
 @include('admincms.include.navbar')
 
+<style>
+    /* #inputFormModaleditstaffs .form-check-input {
+    appearance: auto !important;
+    -webkit-appearance: auto !important;
+    opacity: 1 !important;
+    position: static !important;
+    background-color: #fff !important;
+}
+
+#inputFormModaleditstaffs .form-check-input:checked {
+    background-color: #4361ee !important;
+    border-color: #4361ee !important;
+}
+
+#inputFormModaleditstaffs .form-check-input:checked[type=checkbox] {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 11' width='13' height='11' fill='none'%3e%3cpath d='M11.0426 1.02893C11.3258 0.695792 11.8254 0.655283 12.1585 0.938451C12.4917 1.22162 12.5322 1.72124 12.249 2.05437L5.51985 9.97104C5.23224 10.3094 4.72261 10.3451 4.3907 10.05L0.828197 6.88335C0.50141 6.59288 0.471975 6.09249 0.762452 5.7657C1.05293 5.43891 1.55332 5.40948 1.88011 5.69995L4.83765 8.32889L11.0426 1.02893Z' fill='%23FFFFFF'/%3e%3c/svg%3e") !important;
+    background-size: 60% 60% !important;
+} */
+</style>
+
 
 <div id="content" class="main-content">
     <div class="layout-px-spacing">
@@ -182,7 +202,7 @@
                 </div>
                 <!-- --------------- -->
 
-                <div class="modal fade inputForm-modal" id="inputFormModaleditstaffs" tabindex="-1" role="dialog" aria-labelledby="inputFormModalLabel" aria-hidden="true">
+                <div class="modal fade" id="inputFormModaleditstaffs" tabindex="-1" role="dialog" aria-labelledby="inputFormModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                         <div class="modal-content">
                             <div class="modal-header" id="inputFormModalLabel">
@@ -219,31 +239,29 @@
                                             <label>Email </label>
                                             <input type="text" class="form-control" name="email">
                                         </div>
-                                        <div class="form-group pb-2 col-md-6">
-                                        <div class="form-group">
-                                                <label>Handling Forms of </label>
-                                                <div class="">
-                                                    <div class="row">
-                                                        @foreach ($forms as $form)
-                                                            <div class="col-md-6">
-                                                                <input type="checkbox" 
-                                                                    id="handle_forms_{{ $form->id }}" 
-                                                                    name="handle_forms[]" 
-                                                                    value="{{ $form->id }}">
-                                                                <label for="handle_forms_{{ $form->id }}">
-                                                                    Form {{ $form->form_name }}
-                                                                </label>
-                                                            </div>
-                                                        @endforeach
+                                        <div class="pb-2 col-md-6">
+                                            <label>Handling Forms of </label>
+                                            <div class="row">
+                                                
+                                                @foreach ($formlist as $form)
+                                                    <div class="col-md-6">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                                id="handle_forms_{{ $loop->index + 1 }}" 
+                                                                name="handle_forms[]" 
+                                                                value="{{ $form->id }}"
+                                                                {{ !empty($form->staff_id) ? 'checked' : '' }}>
+                                                            {{-- <label class="form-check-label" for="handle_forms_{{ $loop->index + 1 }}">
+                                                                {{ $form->form_name }}
+                                                            </label> --}}
+                                                        </div>
                                                     </div>
-                                                </div>
-
+                                                @endforeach
                                             </div>
                                         </div>
                                     </div>
                                
                                     <div class="row pt-1">
-                                        
                                         <div class="form-group pb-2 col-md-6">
                                             <label>Status <span>*</span></label>
                                             <select name="status" class="form-select" id="statusSelectEdit">
@@ -252,21 +270,7 @@
                                                 <option value="2">Inactive</option>
                                             </select>
                                         </div>
-                                        <!-- <div class="col-md-12 pt-2">
-                                            <div class="form-group">
-                                                <label>Instructions <span>*</span></label>
-                                                <div class="">
-
-                                                    <textarea class="form-control rich-editor" name="instructions" rows="6"></textarea>
-
-
-                                                </div>
-                                            </div>
-                                        </div> -->
                                     </div>
-
-
-
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-light-danger mt-2 mb-2" data-bs-dismiss="modal">Cancel</button>
                                         <button type="submit" class="btn btn-primary mt-2 mb-2">Update</button>
@@ -296,10 +300,10 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">S.No</th>
+                                    <th class="text-center">Staff Name</th>
                                     <!-- <th class="text-center">Date of Posted</th> -->
                                     <th class="text-center">Designation Name</th>
                                     <th class="text-center">Email</th>
-                                    <th class="text-center">Staff Name</th>
                                     <th class="text-center">Handling Forms</th>
 
                                     <th class="text-center">Status</th>
@@ -312,24 +316,9 @@
                                 <tr data-id="{{ $staff->id }}">
                                     <td class="text-center">{{ $loop->iteration }}</td>
 
-                                    <td>
-
-                                        {{ $staff->name }}
-
-                                    </td>
-
-                                    <td>
-                                        {{$staff->email}}
-
-                                    </td>
-
-                                    <td>
-                                        {{$staff->staff_name}}
-
-                                    </td>
-
-
-
+                                    <td>{{$staff->staff_name}}</td>
+                                    <td>{{ $staff->name }}</td>
+                                    <td>{{$staff->email}}</td>
                                     <td>
                                         @php
                                             $handledFormIds = json_decode($staff->handle_forms, true) ?? [];
@@ -352,29 +341,17 @@
                                             @endif
                                         </span>
                                     </td>
-
                                     <td>
-                                        <ul class="table-controls">
-                                            <li>
-
-                                            <a href="javascript:void(0);" class="editstaffdata"
-                                                    data-id="{{ $staff->id }}"
-                                                    data-name="{{ $staff->name }}"
-                                                    data-email="{{ $staff->email }}"
-                                                    data-staff_name="{{ $staff->staff_name }}"
-                                                    data-handle_forms='@json(json_decode($staff->handle_forms))'
-                                                    data-status="{{ $staff->status }}"
-                                                    data-bs-toggle="modal" data-bs-target="#inputFormModaleditstaffs">
-                                                    <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
-                                                </a>
-
-
-                                            </li>
-
-
-                                        </ul>
-
-
+                                        <a href="javascript:void(0);" class="editstaffdata"
+                                            data-id="{{ $staff->id }}"
+                                            data-name="{{ $staff->name }}"
+                                            data-email="{{ $staff->email }}"
+                                            data-staff_name="{{ $staff->staff_name }}"
+                                            data-handle_forms='@json(json_decode($staff->handle_forms))'
+                                            data-status="{{ $staff->status }}"
+                                            data-bs-toggle="modal" data-bs-target="#inputFormModaleditstaffs">
+                                            <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
+                                        </a>
                                     </td>
                                 </tr>
                                 @endforeach

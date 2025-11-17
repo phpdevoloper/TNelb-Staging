@@ -1,7 +1,15 @@
 var invoiceList = $('#invoice-list').DataTable({
-    "dom": "<'inv-list-top-section'<'row'<'col-sm-12 col-md-6 d-flex justify-content-md-start justify-content-center'l<'dt-action-buttons align-self-center'B>><'col-sm-12 col-md-6 d-flex justify-content-md-end justify-content-center mt-md-0 mt-3'f<'toolbar align-self-center'>>>>" +
-        "<'table-responsive'tr>" +
-        "<'inv-list-bottom-section d-sm-flex justify-content-sm-between text-center'<'inv-list-pages-count  mb-sm-0 mb-3'i><'inv-list-pagination'p>>",
+    dom: "<'inv-list-top-section' \
+            <'row mb-3' \
+                <'col-sm-12 col-md-6 d-flex justify-content-md-start justify-content-center align-items-center' l> \
+                <'col-sm-12 col-md-6 d-flex justify-content-md-end justify-content-center align-items-center gap-2' fB> \
+            > \
+        >" +
+        "<'table-responsive' tr>" +
+        "<'inv-list-bottom-section d-sm-flex justify-content-sm-between text-center' \
+            <'inv-list-pages-count mb-sm-0 mb-3' i> \
+            <'inv-list-pagination' p> \
+        >",
 
     // headerCallback:function(e, a, t, n, s) {
     //     e.getElementsByTagName("th")[0].innerHTML=`
@@ -21,9 +29,10 @@ var invoiceList = $('#invoice-list').DataTable({
             // </div>`
         },
     }],
+    // dom: '<"row mb-3"<"col-md-6 d-flex align-items-center"l><"col-md-6 d-flex justify-content-end align-items-center gap-2"fB>>tip',
     buttons: [
         {
-            text: 'Add New',
+            text: '<i class="fa fa-plus"></i>&nbsp;&nbsp;Add',
             className: 'btn btn-primary',
             attr: {
                 'data-bs-toggle': 'modal',
@@ -49,10 +58,17 @@ var invoiceList = $('#invoice-list').DataTable({
 
 
 var validity_list = $('#validity-list').DataTable({
-    "dom": "<'inv-list-top-section'<'row'<'col-sm-12 col-md-6 d-flex justify-content-md-start justify-content-center'l<'dt-action-buttons align-self-center'B>><'col-sm-12 col-md-6 d-flex justify-content-md-end justify-content-center mt-md-0 mt-3'f<'toolbar align-self-center'>>>>" +
-        "<'table-responsive'tr>" +
-        "<'inv-list-bottom-section d-sm-flex justify-content-sm-between text-center'<'inv-list-pages-count  mb-sm-0 mb-3'i><'inv-list-pagination'p>>",
-
+   dom: "<'inv-list-top-section' \
+            <'row mb-3' \
+                <'col-sm-12 col-md-6 d-flex justify-content-md-start justify-content-center align-items-center' l> \
+                <'col-sm-12 col-md-6 d-flex justify-content-md-end justify-content-center align-items-center gap-2' fB> \
+            > \
+        >" +
+        "<'table-responsive' tr>" +
+        "<'inv-list-bottom-section d-sm-flex justify-content-sm-between text-center' \
+            <'inv-list-pages-count mb-sm-0 mb-3' i> \
+            <'inv-list-pagination' p> \
+        >",
     // headerCallback:function(e, a, t, n, s) {
     //     e.getElementsByTagName("th")[0].innerHTML=`
     //     <div class="form-check form-check-primary d-block new-control">
@@ -73,7 +89,7 @@ var validity_list = $('#validity-list').DataTable({
     }],
     buttons: [
         {
-            text: 'Add New',
+            text: '<i class="fa fa-plus"></i>&nbsp;&nbsp;Add',
             className: 'btn btn-primary',
             attr: {
                 'data-bs-toggle': 'modal',

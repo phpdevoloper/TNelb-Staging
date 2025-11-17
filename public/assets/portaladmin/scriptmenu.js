@@ -2628,19 +2628,19 @@ $(document).ready(function () {
         $('#editstaffstbls select[name="status"]').val(status);
 
         // Reset all checkboxes first
-        $('#editstaffstbls input[name="handle_forms[]"]').prop('checked', false);
+        // $('#editstaffstbls input[name="handle_forms[]"]').prop('checked', false);
 
-        try {
-            let formsArray = typeof handle_forms === 'string' ? JSON.parse(handle_forms) : handle_forms;
+        // try {
+        //     let formsArray = typeof handle_forms === 'string' ? JSON.parse(handle_forms) : handle_forms;
 
-            if (Array.isArray(formsArray)) {
-                formsArray.forEach(function (formId) {
-                    $('#handle_forms_' + formId).prop('checked', true);
-                });
-            }
-        } catch (e) {
-            console.error("Invalid handle_forms data", e);
-        }
+        //     if (Array.isArray(formsArray)) {
+        //         formsArray.forEach(function (formId) {
+        //             $('#handle_forms_' + formId).prop('checked', true);
+        //         });
+        //     }
+        // } catch (e) {
+        //     console.error("Invalid handle_forms data", e);
+        // }
     });
 
     $("#editstaffstbls").on("submit", function (e) {

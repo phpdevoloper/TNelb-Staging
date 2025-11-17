@@ -76,7 +76,7 @@
 
                                                         <div class="col-12 col-md-7">
                                                             <input type="hidden" class="form-control text-box single-line" id="login_id_store" name="login_id" type="text" value="{{ Auth::user()->login_id }}">
-                                                            <input autocomplete="off" class="form-control text-box single-line" id="Applicant_Name" name="applicant_name" type="text" value="{{ Auth::user()->name}}" readonly>
+                                                            <input autocomplete="off" class="form-control text-box single-line" id="Applicant_Name" name="applicant_name" type="text" value="{{ $user['salutation'].' '.$user['applicant_name'] }}" readonly>
                                                         </div>
                                                     </div>
                                                 </div>

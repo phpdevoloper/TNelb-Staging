@@ -99,9 +99,9 @@ select.form-custom::-ms-expand {
   background-color: #bfc9d4;
 }
 
-.modal-content {
+/* .modal-content {
   background: #0e1726;
-}
+} */
 
 .code-section-container {
   margin-top: 20px;
@@ -632,7 +632,7 @@ input[type=search]::-ms-reveal {
 
 .form-check-input {
   background-color: #e0e6ed;
-  border-color: #6c6c6c;
+  /* border-color: #6c6c6c; */
   width: 17px;
   height: 17px;
   margin-top: 0.21em;

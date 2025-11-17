@@ -18,8 +18,9 @@ $(document).ready(function() {
             },
             success: function (response) {
                 if (response.status == 200) {
-                    console.log(response.data);
-                    quill.setContents(response.data);
+                    const editorText = JSON.parse(response.data);
+                    console.log(editorText);
+                    quill.setContents(editorText);
                 }else{
                     Swal.fire({
                         icon: 'error',

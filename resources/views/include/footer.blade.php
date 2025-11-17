@@ -2591,7 +2591,7 @@
                         const amount = total_fees;
                         const licence_name = saveResponse.licence_name || 'N/A';
 
-                        console.log(form_type);
+                        console.log(type_apps);
                         // const serviceCharge = 10;
                         // let lateFee = typeof lateFee !== "undefined" ? lateFee : 0;
                         // let total_charge = Number(amount) + Number(serviceCharge);
@@ -2672,7 +2672,7 @@
                                         amount,
                                         payment_mode,
                                         form_name,
-                                        form_type
+                                        form_type,
                                     },
                                     headers: {
                                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -2681,7 +2681,7 @@
                                                             
                                 // ✅ Success condition
                                 if (paymentResponse.status === 200) {
-                                    showPaymentSuccessPopup(application_id,transactionId,transactionDate,applicantName,amount,form_type);
+                                    showPaymentSuccessPopup(application_id,transactionId,transactionDate,applicantName,amount,form_type,licence_name);
                                 } else {
                                     Swal.fire({
                                         title: "Payment Failed",
@@ -2749,7 +2749,7 @@
         }
     }
                                             
-    function showPaymentSuccessPopup(loginId, transactionId, transactionDate, applicantName, amount,form_type) {
+    function showPaymentSuccessPopup(loginId, transactionId, transactionDate, applicantName, amount,form_type,licence_name) {
         Swal.fire({
             title: `<h3 style="color:#198754; font-size:1.5rem;">Payment Successful!</h3>`,
             html: `
@@ -2768,6 +2768,9 @@
                     <div>${applicantName}</div>
                     <div style="font-weight: bold;">Application ID:</div>
                     <div style="word-break: break-word;">${loginId}</div>
+
+                    <div style="font-weight: bold;">Type of Application:</div>
+                    <div style="word-break: break-word;">${licence_name}</div>
                     
                     <div style="font-weight: bold;">Transaction ID:</div>
                     <div style="word-break: break-word;">${transactionId}</div>

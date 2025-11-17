@@ -24,14 +24,13 @@ class StaffController extends Controller
     }
     public function index(){
 
-        $staffs = Mst_Staffs_Tbl::orderby('updated_at')->get();
+        $staffs = Mst_Staffs_Tbl::orderBy('roles_id','asc')->get();
 
-
-
-
-        $forms = TnelbForms::all();
+        $forms = MstLicence::all();
         
-        $formlist = MstLicence::where('status', 1)->get();
+        $formlist = MstLicence::where('status', 1)
+        ->orderBy('category_id', 'asc')
+        ->get();
 
         // var_dump($formlist);die;
             // where(function ($query) {
@@ -40,7 +39,7 @@ class StaffController extends Controller
         // })->get();
 
 
-        // var_dump($formlist);die;
+        // dd($formlist);die;
         
 
         return view('admincms.staffdetails.index', compact( 'staffs', 'forms', 'formlist'));
@@ -114,19 +113,18 @@ class StaffController extends Controller
     ]);
     
     // Reset old forms (optional logic to clear old assignments)
-    TnelbForms::where('staff_id', $staff->id)->update([
+    MstLicence::where('staff_id', $staff->id)->update([
         'staff_id' => null,
-        'Assigned' => null
     ]);
     
     // Assign selected forms
-    TnelbForms::whereIn('id', $request->handle_forms)->update([
+    $formNames = MstLicence::whereIn('id', $request->handle_forms)->update([
         'staff_id' => $staff->id,
-        'Assigned' => 'A'
+        // 'Assigned' => 'A'
     ]);
     
     // ✅ Get form names to return
-    $formNames = TnelbForms::whereIn('id', $request->handle_forms)->pluck('form_name')->toArray();
+    // $formNames = MstLicence::whereIn('id', $request->handle_forms)->pluck('form_name')->toArray();
     
     return response()->json([
         'status' => 'success',

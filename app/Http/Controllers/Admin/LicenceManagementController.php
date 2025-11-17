@@ -295,17 +295,17 @@ class LicenceManagementController extends BaseController
     }
 
     public function getPaymentDetails(Request $request){
-
-        
         try {
 
+            
             
             $licence_code = $request->licence_code;
             $issued_licence = $request->issued_licence;
             $appl_type = $request->appl_type;
-
+            
             $licence = MstLicence::where('cert_licence_code',$licence_code)->first();
             
+            // var_dump($licence);die;
             if ($appl_type === 'R') {
                 $paymentDetails = DB::select("
                 SELECT * FROM calc_fees(:appl_type, :licence_id, :issued_licence)

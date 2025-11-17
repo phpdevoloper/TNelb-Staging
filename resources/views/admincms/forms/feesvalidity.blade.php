@@ -99,6 +99,9 @@
                         <div class="tab-pane fade show active" id="animated-underline-home" role="tabpanel" aria-labelledby="animated-underline-home-tab">
                             <div class="row">
                                 <div class="col-xl-12 col-lg-12 col-md-12 layout-top-spacing layout-spacing">
+                                    {{-- <div class="widget-heading">
+                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLicenceModal"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add</button>
+                                    </div> --}}
                                     <div class="widget-content widget-content-area br-8">
                                         <table id="invoice-list" class="zero-config table dt-table-hover" style="width:100%">
                                             <thead>
@@ -322,8 +325,8 @@
                 <input type="hidden" name="form_id" id="edit_form_id">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#feesForm').trigger('reset');"><i class="flaticon-cancel-12"></i> Clear</button>
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#feesForm').trigger('reset');"><i class="flaticon-cancel-12"></i>Cancel</button>
+                <button type="submit" class="btn btn-primary">Add</button>
             </div>
             </form>
         </div>
@@ -438,8 +441,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#addFees').trigger('reset');"><i class="flaticon-cancel-12"></i>Clear</button>
-                <button type="submit" class="btn btn-primary">Update</button>
+                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal" onclick="$('#addFees').trigger('reset');"><i class="flaticon-cancel-12"></i>cancel</button>
+                <button type="submit" class="btn btn-primary">Add</button>
             </div>
             </form>
         </div>

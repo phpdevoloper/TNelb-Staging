@@ -64,10 +64,9 @@
     
 
     <!-- Main Styles -->
-    <link rel="stylesheet" href="{{ asset('assets/admin/main.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('assets/admin/main.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('assets/portaladmin/main.css') }}">
-
-    <link rel="stylesheet" href="{{ asset('assets/portaladmin/main.css') }}">
+    
 
     <link rel="stylesheet" href="{{ asset('assets/portaladmin/summernote-bs4.min.css') }}">
 

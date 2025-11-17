@@ -264,12 +264,12 @@ class RegisterController extends BaseController
         }
         $authUser = Auth::user();
 
-        // var_dump($authUser);die;
         $user = [
             'user_id' => $authUser->login_id,
-            'salutation' => $authUser->salutation.' '.$authUser->salutation,
+            'salutation' => $authUser->salutation,
             'applicant_name' => $authUser->first_name.' '.$authUser->last_name,
         ];
+        // var_dump($user);die;
         
         // $check_applications = Mst_Form_s_w::where('login_id', $user_id)
         //         ->where('form_name', 'S')
@@ -290,6 +290,13 @@ class RegisterController extends BaseController
         if (!Auth::check()) {
             return redirect()->route('logout');
         }
+        $authUser = Auth::user();
+
+        $user = [
+            'user_id' => $authUser->login_id,
+            'salutation' => $authUser->salutation,
+            'applicant_name' => $authUser->first_name.' '.$authUser->last_name,
+        ];
 
         // $user_id = Auth::user()->login_id;
         // $check_applications = Mst_Form_s_w::where('login_id', $user_id)
@@ -301,7 +308,7 @@ class RegisterController extends BaseController
         // }
 
 
-        return view('user_login.apply-form-w');
+        return view('user_login.apply-form-w', compact('user'));
     }
 
 
@@ -311,6 +318,13 @@ class RegisterController extends BaseController
         if (!Auth::check()) {
             return redirect()->route('logout');
         }
+        $authUser = Auth::user();
+
+        $user = [
+            'user_id' => $authUser->login_id,
+            'salutation' => $authUser->salutation,
+            'applicant_name' => $authUser->first_name.' '.$authUser->last_name,
+        ];
 
         // $user_id = Auth::user()->login_id;
         // $check_applications = Mst_Form_s_w::where('login_id', $user_id)
@@ -322,7 +336,7 @@ class RegisterController extends BaseController
         // }
 
 
-        return view('user_login.apply-form-wh');
+        return view('user_login.apply-form-wh', compact('user'));
     }
 
     public function apply_form_a()

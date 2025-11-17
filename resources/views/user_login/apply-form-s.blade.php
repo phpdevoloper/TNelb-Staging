@@ -95,17 +95,13 @@
                                                             <br>
                                                             <label for="tamil" class="tamil">விண்ணப்பதாரர் பெயர்</label>
                                                         </div>
-                                                        <div class="col-12 col-md-2">
-                                                            <select id="salutation" name ="salutation" class="form-control">
-                                                                <option value="Mr" {{ $user['applicant_name'] == "Mr"?'selected':'' }}> Mr</option>
-                                                                <option value="Ms" {{ $user['applicant_name'] == "Ms"?'selected':'' }}>Ms </option>
-                                                                <option value="Mrs" {{ $user['applicant_name'] == "Mrs"?'selected':'' }}>Mrs </option>
-                                                            </select>
+                                                        <div class="col-12 col-md-7">
+                                                            @php
+                                                                // var_dump($user['salutation']);die;
+                                                            @endphp
+                                                            <input autocomplete="off" class="form-control text-box single-line" id="Applicant_Name" name="applicant_name" type="text" value="{{ $user['salutation'].' '.$user['applicant_name'] }}" readonly>
                                                         </div>
-
-                                                        <div class="col-12 col-md-5">
-                                                            <input autocomplete="off" class="form-control text-box single-line" id="Applicant_Name" name="applicant_name" type="text" value="{{ $user['applicant_name'] }}" readonly>
-                                                        </div>
+                                
                                                     </div>
                                                 </div>
 
@@ -528,7 +524,7 @@
                                     <input type="hidden" id="form_name" name="form_name" value="S">
                                     <input type="hidden" id="license_name" name="license_name" value="C">
                                     <input type="hidden" id="form_id" name="form_id" value="1">
-                                    <input type="hidden" id="amount" name="amount" value="750">
+                                    {{-- <input type="hidden" id="amount" name="amount" value="750"> --}}
                                     <input type="hidden" id="appl_type" name="appl_type" value="N">
                                     <input type="hidden" id="form_action" name="form_action" value="draft">
                                     @csrf
