@@ -82,9 +82,6 @@
                             <div class="modal-body">
                                 <form class="mt-0" id="newstaffmaster">
                                     <!-- Page Type Selection -->
-
-
-
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -127,17 +124,17 @@
                                                 <label>Assigned     Forms of <span>*</span></label>
                                                 <div class="">
                                                     <div class="row">
-                                                        @foreach ($formlist as $form)
-                                                            <div class="col-md-6">
+                                                        <div class="col-md-12">
+                                                                @foreach ($formlist as $form)
                                                                 <input type="checkbox" 
                                                                     id="handle_forms_{{ $form->id }}" 
                                                                     name="handle_forms[]" 
                                                                     value="{{ $form->id }}">
                                                                 <label for="handle_forms_{{ $form->id }}">
-                                                                    Form {{ $form->form_name }}
+                                                                    {{ $form->form_name }}
                                                                 </label>
+                                                                @endforeach
                                                             </div>
-                                                        @endforeach
                                                     </div>
                                                 </div>
 
@@ -340,8 +337,7 @@
                                         @endphp
                                         {{ implode(', ', $matchedFormNames) }}
                                     </td>
-                                 
-
+                                
                                     <td>
                                         <span class="badge 
                                         {{ $staff->status == '1' ? 'badge-success' : 

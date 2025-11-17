@@ -79,8 +79,17 @@
                             <i class="fa fa-arrow-circle-o-right"></i> Apply For Certificate WH [Form WH]
                         </a>
                     </li>
+
+                    <span>
+                        New Applications
+                      </span>
         
-                    {{-- <li class="nav-item">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('apply-form-s') }}">
+                            <i class="fa fa-arrow-circle-o-right"></i> Apply For License C [Form S]
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ route('apply-form-w') }}">
                             <i class="fa fa-arrow-circle-o-right"></i> Apply For License B [Form W]
                         </a>
@@ -90,7 +99,7 @@
                         <a class="nav-link" href="{{ route('apply-form-wh') }}">
                             <i class="fa fa-arrow-circle-o-right"></i> Apply For License WH [Form WH]
                         </a>
-                    </li> --}}
+                    </li>
                 </ul>
             </div>
         </li>

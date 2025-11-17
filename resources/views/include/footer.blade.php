@@ -1075,7 +1075,6 @@
             let nameRegex = /^[A-Za-z\s]+$/;
 
             if (!nameRegex.test(fathersName)) {
-
                 if (!firstErrorField) firstErrorField = $(this);
                 isValid = false;
             }
@@ -1101,7 +1100,6 @@
         });
 
 
-       
 
 
 
@@ -2486,12 +2484,9 @@
 
     }
 
-
-    
     async function showDeclarationPopup(licence_code) {   
         
         try {
-            
             
             let total_fees,renewl_fees,lateFee,lateMonths,form_cost, form_name, licence, renewalAmoutStartson, latefee_amount, latefee_starts;
             
@@ -2583,18 +2578,16 @@
                     });
                     
                     if (saveResponse.status === "success") {
-
-                        console.log(saveResponse);
-                        // return false;
+                        
+                        let form_type = appl_type === 'R' ? 'Renewal' : 'Fresh';
                         
                         
                         const login_id = window.login_id || "{{ auth()->user()->login_id ?? '' }}";
                         const application_id = saveResponse.application_id;
                         const transactionDate = saveResponse.date_apps;
                         const applicantName = saveResponse.applicantName || 'N/A';
-                        const form_name = saveResponse.form_name || 'N/A';
                         const type_apps = saveResponse.type_of_apps || 'N/A';
-                        const form_type = saveResponse.form_type || 'N/A';
+                        const form_name = saveResponse.form_name || 'N/A';
                         const amount = total_fees;
                         const licence_name = saveResponse.licence_name || 'N/A';
 
@@ -2673,11 +2666,13 @@
                                     data: {
                                         login_id,
                                         application_id,
+                                        applicantName,
                                         transaction_id: transactionId,
                                         transactionDate,
                                         amount,
                                         payment_mode,
-                                        form_name
+                                        form_name,
+                                        form_type
                                     },
                                     headers: {
                                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -2686,7 +2681,7 @@
                                                             
                                 // ✅ Success condition
                                 if (paymentResponse.status === 200) {
-                                    showPaymentSuccessPopup(application_id,transactionId,transactionDate,applicantName,amount);
+                                    showPaymentSuccessPopup(application_id,transactionId,transactionDate,applicantName,amount,form_type);
                                 } else {
                                     Swal.fire({
                                         title: "Payment Failed",
@@ -2754,7 +2749,7 @@
         }
     }
                                             
-    function showPaymentSuccessPopup(loginId, transactionId, transactionDate, applicantName, amount) {
+    function showPaymentSuccessPopup(loginId, transactionId, transactionDate, applicantName, amount,form_type) {
         Swal.fire({
             title: `<h3 style="color:#198754; font-size:1.5rem;">Payment Successful!</h3>`,
             html: `
@@ -2769,6 +2764,8 @@
                     border-right:2px solid #0d6efd;
                     padding: 0px 15px;
                     ">
+                    <div style="font-weight: bold;">Applicant Name:</div>
+                    <div>${applicantName}</div>
                     <div style="font-weight: bold;">Application ID:</div>
                     <div style="word-break: break-word;">${loginId}</div>
                     
@@ -2778,8 +2775,6 @@
                     <div style="font-weight: bold;">Transaction Date:</div>
                     <div>${transactionDate}</div>
                     
-                    <div style="font-weight: bold;">Applicant Name:</div>
-                    <div>${applicantName}</div>
                     
                     <div style="font-weight: bold;">Amount Paid:</div>
                     <div>${amount}</div>

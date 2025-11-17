@@ -3116,14 +3116,14 @@ fieldset:disabled .btn {
 .table thead tr.table-row-hidden {
   border: none;
 }
-.table:not(.dataTable) thead tr th:first-child {
+/* .table:not(.dataTable) thead tr th:first-child {
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
 }
 .table:not(.dataTable) thead tr th:last-child {
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
-}
+} */
 .table:not(.dataTable) thead tr th.checkbox-area {
   width: 5%;
 }

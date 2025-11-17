@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Mst_Staffs_Tbl;
 use App\Models\Admin\TnelbForms;
+use App\Models\MstLicence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,14 +26,21 @@ class StaffController extends Controller
 
         $staffs = Mst_Staffs_Tbl::orderby('updated_at')->get();
 
+
+
+
         $forms = TnelbForms::all();
         
+        $formlist = MstLicence::where('status', 1)->get();
 
-        $formlist = TnelbForms::where(function ($query) {
-            $query->whereNull('Assigned')
-                    ->WhereNull('old_id');
-                //   ->orWhere('Assigned', '');
-        })->get();
+        // var_dump($formlist);die;
+            // where(function ($query) {
+            // $query->whereNull('Assigned')
+                    // ->WhereNull('old_id');
+        // })->get();
+
+
+        // var_dump($formlist);die;
         
 
         return view('admincms.staffdetails.index', compact( 'staffs', 'forms', 'formlist'));
