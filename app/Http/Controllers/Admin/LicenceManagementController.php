@@ -1150,33 +1150,64 @@ class LicenceManagementController extends BaseController
         
     }
 
-public function getInstruction(Request $request)
-{
-    try {
+    public function getInstruction(Request $request)
+    {
+        try {
 
 
-        $request->validate([
-            'licence_id' => 'required|integer|exists:mst_licences,id',
-        ]);
+            $request->validate([
+                'licence_id' => 'required|integer|exists:mst_licences,id',
+            ]);
 
-        // FIXED: Use licence_id, not rec_id
-        $licence = MstLicence::where('id',$request->licence_id)->first();
+            // FIXED: Use licence_id, not rec_id
+            $licence = MstLicence::where('id',$request->licence_id)->first();
 
 
-        return response()->json([
-            'status' => 200,
-            'data'   => $licence->instructions ?? null
-        ]);
+            return response()->json([
+                'status' => 200,
+                'data'   => $licence->instructions ?? null
+            ]);
 
-    } catch (\Exception $e) {
+        } catch (\Exception $e) {
 
-        return response()->json([
-            'status'  => 500,
-            'message' => $e->getMessage(),
-        ], 500);
+            return response()->json([
+                'status'  => 500,
+                'message' => $e->getMessage(),
+            ], 500);
 
+        }
     }
-}
+
+    public function getFormInstruction(Request $request)
+    {
+        try {
+
+            
+            $request->validate([
+                'appl_type' => 'required|string|in:N,R',
+                'licence_code' => 'required|string',
+            ]);
+
+            // FIXED: Use licence_id, not rec_id
+            
+            $licence = MstLicence::where('form_code', $request->licence_code)
+            ->select('instructions')
+            ->first();
+
+            return response()->json([
+                'status' => 200,
+                'data'   => $licence->instructions ?? null
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status'  => 500,
+                'message' => $e->getMessage(),
+            ], 500);
+
+        }
+    }
 
         
 

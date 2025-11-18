@@ -364,6 +364,24 @@ class FormController extends BaseController
             
             $applicationId = $form->application_id;
             $loginId = $form->login_id;
+
+
+            $form_details = MstLicence::where('status', 1)
+            ->select('*')
+            ->get()
+            ->toArray();
+            $form_category = LicenceCategory::where('status', 1)
+            ->select('*')
+            ->get()
+            ->toArray();
+       
+            $current_form = collect($form_details)->firstWhere('cert_licence_code', $form->license_name);
+            $category_type = collect($form_category)->firstWhere('id', $current_form['category_id']);
+
+            $licence_details['licence_name'] = $current_form['licence_name'];
+            // var_dump($licence_details);die;
+            $licence_details['category_name'] = $category_type['category_name'];
+            $licence_details['form_type'] = $form->appl_type;
             
             // process education
             if ($request->has('educational_level')) {
@@ -452,14 +470,27 @@ class FormController extends BaseController
                 ]);
             }
             
+            $dbNow  = DB::selectOne("SELECT TO_CHAR(NOW(), 'DD-MM-YYYY HH24:MI:SS') AS db_now")->db_now;
             
             DB::commit();
             
+            // return response()->json([
+            //     'status' => 'success',
+            //     'message' => 'Form and documents saved successfully!',
+            //     'application_id' => $applicationId,
+            //     'applicantName' => $form->applicant_name
+            // ]);
+
             return response()->json([
                 'status' => 'success',
-                'message' => 'Form and documents saved successfully!',
+                'message' => 'Form submitted successfully!',
                 'application_id' => $applicationId,
-                'applicantName' => $form->applicant_name
+                'applicantName' => $form->applicant_name,
+                'form_name' => $form->form_name,
+                'licence_name' => $licence_details['licence_name'],
+                'type_of_apps' => $licence_details['category_name'],
+                'form_type' => $licence_details['form_type'] == 'N'?'FRESH':'RENEWAL',
+                'date_apps'      => $dbNow
             ]);
             
         } catch (\Exception $e) {
@@ -1680,6 +1711,8 @@ class FormController extends BaseController
         DB::beginTransaction();
 
         try {
+
+            
             $appl_type = $request->appl_type ?? '';
             $form = Mst_Form_s_w::where('application_id', $id)
             ->where('appl_type', $appl_type)
@@ -1790,6 +1823,7 @@ class FormController extends BaseController
             ->select('*')
             ->get()
             ->toArray();
+            // var_dump($renewal_form->license_name);die;
 
             // var_dump($form_details);
             // var_dump($renewal_form->license_name);die;
@@ -1800,6 +1834,9 @@ class FormController extends BaseController
             // var_dump($licence_details);die;
             $licence_details['category_name'] = $category_type['category_name'];
             $licence_details['form_type'] = $renewal_form->appl_type;
+
+
+            // var_dump($licence_details);die;
 
 
 

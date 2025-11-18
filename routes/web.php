@@ -106,7 +106,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('forms/new_application/{form_code}', [FormController::class, 'new_application'])->name('forms.new_application');
     
     Route::post('licences/getPaymentDetails', [LicenceManagementController::class, 'getPaymentDetails'])->name('licences.getPaymentDetails');
-
+    Route::post('/licences/getFormInstruction', [LicenceManagementController::class, 'getFormInstruction'])->name('licences.getFormInstruction');
 
     
 });

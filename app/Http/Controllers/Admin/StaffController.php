@@ -24,8 +24,8 @@ class StaffController extends Controller
     }
     public function index(){
 
-        // $staffs = Mst_Staffs_Tbl::orderBy('roles_id','asc')->get();
-        $staff = Mst_Staffs_Tbl::with('assignedForms')->with('assignedForms')->find($id);
+        $staffs = Mst_Staffs_Tbl::orderBy('roles_id','asc')->get();
+        // $staff = Mst_Staffs_Tbl::with('assignedForms')->with('assignedForms')->find($id);
         // var_dump($staff);die;
 
 

@@ -443,7 +443,7 @@
                                         </div>
                                     </div>
                                     <input type="hidden" id="form_name" name="form_name" value="WH">
-                                    <input type="hidden" id="license_name" name="license_name" value="WH">
+                                    <input type="hidden" id="license_name" name="license_name" value="H">
                                     <input type="hidden" id="amount" name="amount" value="250">
                                     <input type="hidden" id="form_id" name="form_id" value="3">
                                     <input type="hidden" id="appl_type" name="appl_type" value="N">

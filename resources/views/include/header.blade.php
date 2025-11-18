@@ -88,8 +88,8 @@ use Illuminate\Support\Facades\Auth;
             <p style="font-size: 17px; font-weight: 600; margin-bottom: 20px;">
               📋 Please read and confirm the following carefully:
             </p>
-          
-            <ol class="instruct" style="margin-left: 20px; padding-left: 10px;">
+
+            {{-- <ol class="instruct" style="margin-left: 20px; padding-left: 10px;">
               <li>
                 Fees for the issue of <span style=" font-weight: 600;">‘EA’ Contractor licence</span> from 
                 <span>01.01.2024</span> onwards is 
@@ -133,7 +133,7 @@ use Illuminate\Support\Facades\Auth;
                 <span style=" font-weight: 600;">Financial Status:</span> The applicant shall produce a <span style=" font-weight: 600;">Bank Solvency Certificate</span> for 
                 <span style="color: #dc3545; font-weight: 600;">Rs.50,000/-</span> in <strong>Form ‘G’</strong>…
               </li>
-            </ol>
+            </ol> --}}
           
             <div class="form-check mt-4">
               <input type="checkbox" class="form-check-input" id="declaration-agree">
@@ -164,8 +164,8 @@ use Illuminate\Support\Facades\Auth;
           <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close">X</button>
         </div>
         <div class="modal-body" style="padding: 30px; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.8; color: #333;">
-          
-          <ol class="instruct" style="margin-left: 20px; padding-left: 10px;">
+          <div id="instructionContent"></div>
+          {{-- <ol class="instruct" style="margin-left: 20px; padding-left: 10px;">
             <li>
               <span style="font-weight: 600;">Fees:</span> 
               <ol type="i" style="margin-left: 20px; margin-top: 5px;">
@@ -210,7 +210,7 @@ use Illuminate\Support\Facades\Auth;
             <li>
               Application should be in the prescribed form only.
             </li>
-          </ol>
+          </ol> --}}
   
           <div class="form-check mt-4">
             <input type="checkbox" class="form-check-input" id="declaration-agree-renew">

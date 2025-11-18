@@ -183,7 +183,7 @@
 <script src="{{ url('assets/js/parallax-scroll.js') }}"></script>
 <script src="{{ url('assets/admin/src/plugins/src/flatpickr/flatpickr.js') }}"></script>
 {{-- <script src="{{ url('assets/admin/src/plugins/src/flatpickr/custom-flatpickr.js') }}"></script> --}}
-
+<script src={{ asset("assets/admin/src/plugins/src/editors/quill/QuillDeltaToHtmlConverter.bundle.js") }}></script>
 <script src="{{ url('assets/js/script.js') }}"></script>
 <script src="{{ url('assets/js/custom.js') }}"></script>
 
@@ -2488,17 +2488,50 @@
         
         try {
             
-            let total_fees,renewl_fees,lateFee,lateMonths,form_cost, form_name, licence, renewalAmoutStartson, latefee_amount, latefee_starts;
+            let total_fees,renewl_fees,lateFee,lateMonths,form_cost, form_name, licence, renewalAmoutStartson, latefee_amount, latefee_starts,form_instruct;
             
             const appl_type = $('#appl_type').val();
             const issued_licence = $('#license_number').val();
+
+                $.ajax({
+                    url: "{{ route('licences.getFormInstruction') }}",
+                    type: "POST",
+                    data: {
+                        appl_type,
+                        licence_code,
+                        _token: $('meta[name="csrf-token"]').attr(
+                            'content')
+                    },
+
+                    success: function(response) {
+                        if (response.status == 200) {
+                           form_instruct =  response.data;
+                        } else {
+                            Swal.fire("Error", 'Instruction not available', "danger");
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.responseJSON && xhr.responseJSON
+                            .errors) {
+                            let messages = Object.values(xhr
+                                    .responseJSON.errors).flat()
+                                .join("\n");
+                            // alert("Validation errors:\n" + messages);
+                            Swal.fire("Error", messages, "danger");
+                        } else {
+                            alert("An error occurred: " + xhr
+                                .responseText);
+                        }
+                    }
+                });
+
+
 
             console.log(appl_type);
             console.log(issued_licence);
             
             const data = await getPaymentsService(licence_code, issued_licence, appl_type);
 
-            console.log(data);
             if (data) {
                 if (data.lateFees < 0) {
                     actual_fees = data.basic_fees;
@@ -2512,8 +2545,6 @@
                 }
             }
 
-            console.log(actual_fees);
-         
             
             // 🔹 Now you can safely use form_cost everywhere below
             const modalEl = document.getElementById('competencyInstructionsModal');
@@ -2521,13 +2552,25 @@
             const errorText = modalEl.querySelector('#declaration-error-renew');
             const proceedBtn = modalEl.querySelector('#proceedPayment');
             
-            document.getElementById('form_fees').textContent = 'Rs.' + actual_fees + '/-';
+            // document.getElementById('form_fees').textContent = 'Rs.' + actual_fees + '/-';
             
             // Reset state
             agreeCheckbox.checked = false;
             errorText.classList.add('d-none');
             
             // Show modal
+            // const modalBody = modalEl.querySelector('#instructionContent');
+            // console.log(modalBody);
+
+            // const delta = JSON.parse(form_instruct);
+            // const converter = new QuillDeltaToHtmlConverter(delta.ops, {});
+            // const html = converter.convert();
+
+            // console.log(html);
+            
+            
+            // modalBody.innerHTML = html;
+
             const modal = new bootstrap.Modal(modalEl, {
                 backdrop: 'static',
                 keyboard: false
@@ -2580,8 +2623,7 @@
                     if (saveResponse.status === "success") {
                         
                         let form_type = appl_type === 'R' ? 'Renewal' : 'Fresh';
-                        
-                        
+
                         const login_id = window.login_id || "{{ auth()->user()->login_id ?? '' }}";
                         const application_id = saveResponse.application_id;
                         const transactionDate = saveResponse.date_apps;
@@ -2647,7 +2689,7 @@
                                                                     `,
                             icon: "info",
                             iconHtml: '<i class="swal2-icon" style="font-size: 1 em">ℹ️</i>',
-                            width: '450px',
+                            width: '515px',
                             showCancelButton: true,
                             confirmButtonText: '<span class="btn btn-primary px-4 pr-4 payment">Pay Now</span>',
                             cancelButtonText: '<span class="btn btn-danger px-4">Cancel</span>',
