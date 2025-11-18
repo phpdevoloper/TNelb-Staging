@@ -242,7 +242,6 @@
                                         <div class="pb-2 col-md-6">
                                             <label>Handling Forms of </label>
                                             <div class="row">
-                                                
                                                 @foreach ($formlist as $form)
                                                     <div class="col-md-6">
                                                         <div class="form-check">
@@ -251,9 +250,9 @@
                                                                 name="handle_forms[]" 
                                                                 value="{{ $form->id }}"
                                                                 {{ !empty($form->staff_id) ? 'checked' : '' }}>
-                                                            {{-- <label class="form-check-label" for="handle_forms_{{ $loop->index + 1 }}">
+                                                            <label class="form-check-label" for="handle_forms_{{ $loop->index + 1 }}">
                                                                 {{ $form->form_name }}
-                                                            </label> --}}
+                                                            </label>
                                                         </div>
                                                     </div>
                                                 @endforeach
