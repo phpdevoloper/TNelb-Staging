@@ -1064,7 +1064,7 @@ $(document).ready(function() {
         ];
     }
 
-    $(document).on("submit", "#addForms, #editForms", function (e) {
+    $(document).on("submit", "#editForms", function (e) {
         e.preventDefault();
         const form = $(this);
         const isEdit = form.attr("id") === "editForms";

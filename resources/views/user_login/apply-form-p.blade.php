@@ -49,13 +49,20 @@
     .swal2-popup li ul{
         margin-left: 15px;
     }
+    .form-header-logo {
+        margin-right: 10px
+    }
+    .form-title{
+        color: #227e37;
+        font-weight: 700;
+    }
 </style>
 
 <section class="">
     <div class="container">
         <ul id="breadcrumb">
             <li><a href="{{ route('dashboard')}}"><span class="fa fa-home"> </span> Dashboard</a></li>
-            <li><a href="#"><span class=" fa fa-info-circle"> </span> Form S</a></li>
+            <li><a href="#"><span class=" fa fa-info-circle"> </span> Form P</a></li>
 
         </ul>
     </div>
@@ -66,20 +73,37 @@
             <div class="row">
                 <div class="col-lg-12 col-12">
                     <div class="apply-card apply-card-info" data-select2-id="14">
-                        <div class="apply-card-header" style="background-color: #70c6ef  !important;">
-                            <div class="row">
-                                <div class="col-6 col-lg-8">
-                                    <h5 class="card-title_apply text-black text-left"> New Registration Form <span style="font-weight: 600;">[ Form S - License 'C' ] </span></h5>
+                           <div class="apply-card-header" style="background-color: rgb(0 184 255 / 22%); padding: 15px;">
+                                <div class="text-center">
+                                    {{-- <h5 class="card-title_apply text-black mb-1">GOVERNMENT OF TAMILNADU</h5>
+                                    <h5 class="card-title_apply text-black mb-1">THE ELECTRICAL LICENSING BOARD</h5> --}}
+                                    <h5 class="card-title_apply text-black">
+                                        Application for Power Generating Station Operation & Maintenance
+                                        Competency Certificate
+                                    </h5>
+                                    <h6 class="card-title_apply text-black mb-1 form-title">FORM - P</h4>
+                                    <span style="color: red">(Read the instructions overleaf before filling you the form)</span>
+                                    <span target="_blank">Click here <i class="fa fa-file-pdf-o" style="color: red;"></i> (7.1 KB)</span>
+                                  English | <a href="{{url('assets/pdf/form_a_notes.pdf')}}" class="text-success" target="_blank">தமிழ்</a>
                                 </div>
-
-                                <div class="col-6 col-lg-4 text-md-right">
-                                    <span class="text-dark" target="_blank"><i class="fa fa-file-pdf-o" style="color: red;"></i>  Important Notes (7.1 KB)</span>
-                                      English | <a href="{{url('assets/pdf/form_a_notes.pdf')}}" class="text-dark" target="_blank">தமிழ்</a>
+                            </div>
+                                               
+                        {{-- <div class="row">
+                            <div class="col-6 col-lg-8">
+                                <div>
+                                    <h5 class="card-title_apply text-black text-left">GOVERNMENT OF TAMILNADU</h5>
+                                    <h5 class="card-title_apply text-black text-left">THE ELECTRICAL LICENSING BOARD</h5>
+                                    <h5 class="card-title_apply text-black text-left"> Application for Power Generating Station Operation & Maintenance Competency Certificate</h5>
                                 </div>
-
                             </div>
 
-                        </div>
+                            <div class="col-6 col-lg-4 text-md-right">
+                                <span class="text-dark" target="_blank"><i class="fa fa-file-pdf-o" style="color: red;"></i>  Important Notes (7.1 KB)</span>
+                                  English | <a href="{{url('assets/pdf/form_a_notes.pdf')}}" class="text-dark" target="_blank">தமிழ்</a>
+                            </div>
+
+                        </div> --}}
+                        
                         <div class="apply-card-body">
 
                             <form id="competency_form_ws" enctype="multipart/form-data">
@@ -91,7 +115,7 @@
                                                 <div class="col-12 col-md-6 ">
                                                     <div class="row align-items-center">
                                                         <div class="col-12 col-md-5">
-                                                            <label for="Name">1. Applicant's Name <span style="color: red;">*</span></label>
+                                                            <label for="Name">1. Name of the applicant <span style="color: red;">*</span></label>
                                                             <br>
                                                             <label for="tamil" class="tamil">விண்ணப்பதாரர் பெயர்</label>
                                                         </div>
@@ -128,7 +152,7 @@
                                                 <div class="col-12 col-md-6 ">
                                                     <div class="row align-items-center">
                                                         <div class="col-12 col-md-5 ">
-                                                            <label for="Name">3. Applicant Address <span style="color: red;">*</span><br><span class="text-label">(To be clear)</span>
+                                                            <label for="Name">3. Address of the applicant<span style="color: red;">*</span><br><span class="text-label">(To be clear)</span>
                                                             </label>
                                                             <br>
                                                             <label for="tamil" class="tamil">விண்ணப்பதாரர் முகவரி
@@ -147,7 +171,7 @@
                                                         <div class="col-12 col-lg-7">
                                                             <div class="row align-items-center">
                                                                 <div class="col-12 col-md-6">
-                                                                    <label for="Name">4. (i) D.O.B <span style="color: red;">*</span></label><br>
+                                                                    <label for="Name">4. (i) Date of Birth <span style="color: red;">*</span></label><br>
                                                                     <label for="tamil" class="tamil">பிறந்த நாள், மாதம், வருடம்</label>
                                                                 </div>
                                                                 <div class="col-12 col-md-6">
@@ -161,7 +185,7 @@
                                                         <div class="col-12 col-lg-5">
                                                             <div class="row align-items-center">
                                                                 <div class="col-12 col-md-5">
-                                                                    <label for="Name">4. (ii) Age <span style="color: red;">*</span></label><br>
+                                                                    <label for="Name">(ii) Age <span style="color: red;">*</span></label><br>
                                                                     <label for="tamil" class="tamil"> வயது</label>
                                                                 </div>
                                                                 <div class="col-12 col-md-7">
@@ -178,7 +202,7 @@
                                             <hr>
                                             <div class="row align-items-center head_label">
                                                 <div class="col-12 col-md-12 ">
-                                                    <label> 5. Applicant's Educational / Technical Qualification and pass details <span style="color: red;">*</span> <span class="text-label"> (Upload the documents) </span></label>
+                                                    <label> 5. (i).Details of Technical Qualification passed by the applicant <span style="color: red;">*</span> <span class="text-label"> (Upload the documents) </span></label>
                                                     <br>
                                                     <label for="tamil" class="tamil">விண்ணப்பதாரரின் தொழில்நுட்ப 
                                                         தேர்ச்சி மற்றும் தேர்ச்சி பற்றிய விவரங்கள் <span class="text-label">(ஆவணங்களை பதிவேற்ற வேண்டும்)</span></label>
@@ -245,7 +269,7 @@
                                         <hr>
                                         <div class="row align-items-center head_label">
                                             <div class="col-12 col-md-12 ">
-                                                <label>6. Details of Previous and Current Work experiences <span style="color: red;">*</span> <span class="text-label">(Upload the documents)</span></label>
+                                                <label>(ii). Details of Previous and Current Work experiences <span style="color: red;">*</span> <span class="text-label">(Upload the documents)</span></label>
                                                 <br>
                                                 <label for="tamil" class="tamil">பெற்றுள்ள
                                                     முந்தைய மற்றும் தற்போதைய அனுபவங்களின் விவரங்கள் <span style="color: red;">*</span>

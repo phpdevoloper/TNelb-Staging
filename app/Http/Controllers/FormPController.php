@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class FormPController extends Controller
+class FormPController extends BaseController
 {
     public function __construct()
     {
+        parent::__construct();
         $this->middleware('web');
     }
 

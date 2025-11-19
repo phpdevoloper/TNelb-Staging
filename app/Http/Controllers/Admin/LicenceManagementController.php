@@ -109,38 +109,31 @@ class LicenceManagementController extends BaseController
     public function add_licence(Request $request)
     {
         try {
+            
             $isUpdate = !empty($request->cert_id);
             // 🔹 1. Validate input fields
-            try {
-                //code...
-                $validated = $request->validate([
-                    'form_cate'     => 'required|integer',
-                    'cert_name'         => 'required|string|regex:/^[A-Za-z\s]+$/|min:3|max:100',
-                    'cate_licence_code' => ['required','string','max:5',Rule::unique('mst_licences', 'cert_licence_code')->ignore($request->cert_id)],
-                    'form_name'         => 'required|string|regex:/^[A-Za-z\s]+$/|min:2|max:100',
-                    'form_code'         => ['required','string','max:5',Rule::unique('mst_licences', 'form_code')->ignore($request->cert_id)],
-                    'form_status'       => 'required|in:1,2',
-                ], [
-                    'form_cate.required'         => 'Please choose the category',
-                    'cert_name.required'         => 'Please fill the Certificate / Licence Name',
-                    'cert_name.regex'            => 'Certtificate / Licence Name should contain only letters and spaces',
-                    'form_name.regex'            => 'Form Code should contain only letters and spaces',
-                    'cate_licence_code.required' => 'Please fill the Certificate / Licence Code',
-                    'cate_licence_code.unique'   => 'This Certificate / Licence Code already exists',
-                    'form_name.required'         => 'Please fill the Form Name',
-                    'form_name.regex'            => 'Form Name should contain only letters and spaces',
-                    'form_code.required'         => 'Please fill the Form Code',
-                    'form_code.unique'           => 'This Form Code already exists',
-                    'form_status.required'       => 'Please choose the Status',
-                ]);
-            } catch (\Illuminate\Validation\ValidationException $e) {
-                dd($e->errors());
-            }
-
+            $validated = $request->validate([
+                'form_cate'     => 'required|integer',
+                'cert_name'         => 'required|string|regex:/^[A-Za-z\s]+$/|min:3|max:100',
+                'cate_licence_code' => ['required','string','max:5',Rule::unique('mst_licences', 'cert_licence_code')->ignore($request->cert_id)],
+                'form_name'         => 'required|string|regex:/^[A-Za-z\s]+$/|min:2|max:100',
+                'form_code'         => ['required','string','max:5',Rule::unique('mst_licences', 'form_code')->ignore($request->cert_id)],
+                'form_status'       => 'required|in:1,2',
+            ], [
+                'form_cate.required'         => 'Please choose the category',
+                'cert_name.required'         => 'Please fill the Certificate / Licence Name',
+                'cert_name.regex'            => 'Certtificate / Licence Name should contain only letters and spaces',
+                'form_name.regex'            => 'Form Code should contain only letters and spaces',
+                'cate_licence_code.required' => 'Please fill the Certificate / Licence Code',
+                'cate_licence_code.unique'   => 'This Certificate / Licence Code already exists',
+                'form_name.required'         => 'Please fill the Form Name',
+                'form_name.regex'            => 'Form Name should contain only letters and spaces',
+                'form_code.required'         => 'Please fill the Form Code',
+                'form_code.unique'           => 'This Form Code already exists',
+                'form_status.required'       => 'Please choose the Status',
+            ]);
+            
            
-
-            exit;
-
             // 🔹 2. Insert into database (example table: mst_licences)
             $data = [
                 'category_id'       => $request->form_cate,
@@ -170,12 +163,7 @@ class LicenceManagementController extends BaseController
                 'message' => $message,
             ], 200);
 
-        // } catch (\Illuminate\Validation\ValidationException $e) {
-        //     return response()->json([
-        //         'status'  => false,
-        //         'message' => $e->validator->errors()->first(),
-        //     ], 422);
-
+     
         } catch (\Exception $e) {
             return response()->json([
                 'status'  => false,
