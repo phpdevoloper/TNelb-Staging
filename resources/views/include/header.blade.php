@@ -65,6 +65,33 @@ use Illuminate\Support\Facades\Auth;
         h2#swal2-title {
             padding: 0.3em 1em 0;
         }
+
+
+        #instructionContent ol {
+    list-style-type: decimal !important;
+    list-style-position: outside !important;
+    margin-left: 20px !important;
+    padding-left: 20px !important;
+}
+
+  #instructionContent ul {
+      list-style-type: disc !important;
+      list-style-position: outside !important;
+      margin-left: 20px !important;
+      padding-left: 20px !important;
+  }
+
+  /* This is the magic fix */
+  #instructionContent ol li {
+      list-style-type: decimal !important;
+      display: list-item !important;
+  }
+
+  #instructionContent ul li {
+      list-style-type: disc !important;
+      display: list-item !important;
+  }
+
     </style>
 </head>
 <script>
@@ -164,7 +191,7 @@ use Illuminate\Support\Facades\Auth;
           <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close">X</button>
         </div>
         <div class="modal-body" style="padding: 30px; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.8; color: #333;">
-          <div id="instructionContent"></div>
+          <div id="instructionContent" class="show-list-numbers"></div>
           {{-- <ol class="instruct" style="margin-left: 20px; padding-left: 10px;">
             <li>
               <span style="font-weight: 600;">Fees:</span> 
@@ -521,6 +548,7 @@ use Illuminate\Support\Facades\Auth;
                                                     <li><a href="{{ route('apply-form-wh')}}">Form WH</a></li>
                                                     <li><a href="{{ route('apply-form-w')}}">Form W</a></li>
                                                     <li><a href="{{ route('apply-form-s')}}">Form S</a></li>
+                                                    {{-- <li><a href="{{ route('apply-form-p')}}">Form S</a></li> --}}
                                                     <li><a href="#">Form P</a></li>
                                                     <li><a href="#">Form H TO B</a></li>
                                                     <li><a href="#">Form EB</a></li>

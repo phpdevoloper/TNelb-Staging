@@ -86,18 +86,23 @@
         
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('apply-form-s') }}">
-                            <i class="fa fa-arrow-circle-o-right"></i> Apply For License C [Form S]
+                            <i class="fa fa-arrow-circle-o-right"></i> Apply For Certificate C [Form S]
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('apply-form-w') }}">
-                            <i class="fa fa-arrow-circle-o-right"></i> Apply For License B [Form W]
+                            <i class="fa fa-arrow-circle-o-right"></i> Apply For Certificate B [Form W]
                         </a>
                     </li>
         
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('apply-form-wh') }}">
-                            <i class="fa fa-arrow-circle-o-right"></i> Apply For License WH [Form WH]
+                            <i class="fa fa-arrow-circle-o-right"></i> Apply For Certificate WH [Form WH]
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('apply_form_p') }}">
+                            <i class="fa fa-arrow-circle-o-right"></i> Apply For Certificate P [Form P]
                         </a>
                     </li>
                 </ul>

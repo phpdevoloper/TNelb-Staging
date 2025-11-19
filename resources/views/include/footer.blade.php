@@ -2493,42 +2493,22 @@
             const appl_type = $('#appl_type').val();
             const issued_licence = $('#license_number').val();
 
-                $.ajax({
-                    url: "{{ route('licences.getFormInstruction') }}",
-                    type: "POST",
-                    data: {
-                        appl_type,
-                        licence_code,
-                        _token: $('meta[name="csrf-token"]').attr(
-                            'content')
-                    },
+            const formResponse = await $.ajax({
+                url: "{{ route('licences.getFormInstruction') }}",
+                type: "POST",
+                data: {
+                    appl_type,
+                    licence_code,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
-                    success: function(response) {
-                        if (response.status == 200) {
-                           form_instruct =  response.data;
-                        } else {
-                            Swal.fire("Error", 'Instruction not available', "danger");
-                        }
-                    },
-                    error: function(xhr) {
-                        if (xhr.responseJSON && xhr.responseJSON
-                            .errors) {
-                            let messages = Object.values(xhr
-                                    .responseJSON.errors).flat()
-                                .join("\n");
-                            // alert("Validation errors:\n" + messages);
-                            Swal.fire("Error", messages, "danger");
-                        } else {
-                            alert("An error occurred: " + xhr
-                                .responseText);
-                        }
-                    }
-                });
-
-
-
-            console.log(appl_type);
-            console.log(issued_licence);
+            if (formResponse.status == 200) {
+                form_instruct = formResponse.data;
+            } else {
+                Swal.fire("Error", "Instruction not available", "error");
+                return;
+            }
             
             const data = await getPaymentsService(licence_code, issued_licence, appl_type);
 
@@ -2559,17 +2539,27 @@
             errorText.classList.add('d-none');
             
             // Show modal
-            // const modalBody = modalEl.querySelector('#instructionContent');
-            // console.log(modalBody);
+            const modalBody = modalEl.querySelector('#instructionContent');
+            
 
-            // const delta = JSON.parse(form_instruct);
-            // const converter = new QuillDeltaToHtmlConverter(delta.ops, {});
-            // const html = converter.convert();
+            const delta = JSON.parse(form_instruct);
+            
+            const converter = new QuillDeltaToHtmlConverter(delta.ops, {
+                multiLineParagraph: false,
+                listItemTag: "li",
+                paragraphTag: "p"
+            });
 
+            const html = converter.convert();
             // console.log(html);
             
             
-            // modalBody.innerHTML = html;
+            
+            
+            modalBody.innerHTML = html;
+            const el = document.querySelector("#instructionContent");
+            console.log("innerHTML:", el.innerHTML);
+            console.log("textContent:", el.textContent);
 
             const modal = new bootstrap.Modal(modalEl, {
                 backdrop: 'static',

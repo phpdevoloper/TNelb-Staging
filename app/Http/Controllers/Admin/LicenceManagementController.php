@@ -1189,8 +1189,10 @@ class LicenceManagementController extends BaseController
             ]);
 
             // FIXED: Use licence_id, not rec_id
+
+            // var_dump($request->licence_code);die;
             
-            $licence = MstLicence::where('form_code', $request->licence_code)
+            $licence = MstLicence::where('cert_licence_code', $request->licence_code)
             ->select('instructions')
             ->first();
 

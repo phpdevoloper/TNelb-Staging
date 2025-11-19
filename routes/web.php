@@ -7,6 +7,7 @@ use App\Http\Controllers\CaptchaController;
 use App\Http\Controllers\EA_RenewalController;
 use App\Http\Controllers\FormAController;
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\FormPController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\LicenseController;
@@ -83,6 +84,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/apply-form-s', [RegisterController::class, 'apply_form_s'])->name('apply-form-s');
     Route::get('/apply-form-w', [RegisterController::class, 'apply_form_w'])->name('apply-form-w');
     Route::get('/apply-form-wh', [RegisterController::class, 'apply_form_wh'])->name('apply-form-wh');
+    Route::get('/apply_form_p', [FormPController::class, 'apply_form_p'])->name('apply_form_p');
     Route::get('/apply-form-a', [RegisterController::class, 'apply_form_a'])->name('apply-form-a');
     Route::get('/successpage', [RegisterController::class, 'successpage'])->name('successpage');
     Route::get('/editApplication/{application_id}', [FormController::class, 'editApplication'])->name('edit-application');
