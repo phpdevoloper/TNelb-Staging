@@ -463,9 +463,9 @@ body.gu-unselectable .media.el-drag-ex-1 i {
   color: #eff1f3 !important;
 }
 
-.portaladmin td {
+/* .portaladmin td {
   border: 1px solid #00000021 !important;
-}
+} */
 
 .portaladmin .defaultGlightbox img {
   max-width: 105px;

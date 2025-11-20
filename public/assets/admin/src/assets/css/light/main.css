@@ -3218,14 +3218,14 @@ fieldset:disabled .btn {
   color: #3b3f5c;
   background-color: #f1f2f3;
 }
-.table-striped:not(.dataTable) > tbody > tr:nth-of-type(odd) td:first-child {
+/* .table-striped:not(.dataTable) > tbody > tr:nth-of-type(odd) td:first-child {
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
-}
-.table-striped:not(.dataTable) > tbody > tr:nth-of-type(odd) td:last-child {
+} */
+/* .table-striped:not(.dataTable) > tbody > tr:nth-of-type(odd) td:last-child {
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
-}
+} */
 
 /* 
 

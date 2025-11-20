@@ -205,8 +205,8 @@
 .inputForm-modal .modal-content .modal-body .form-group input {
   border-left: none;
   background: transparent;
-  border-top-right-radius: 15px;
-  border-bottom-right-radius: 15px;
+  /* border-top-right-radius: 15px; */
+  /* border-bottom-right-radius: 15px; */
 }
 .inputForm-modal .modal-content .modal-body .form-group input:focus {
   border-color: #bfc9d4;

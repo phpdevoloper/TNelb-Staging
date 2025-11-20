@@ -56,14 +56,11 @@ class StaffController extends Controller
             'email'        => 'required|email|unique:mst__staffs__tbls,email',
             'handle_forms'  => 'required|array',
             'status'        => 'required|in:0,1,2',
-            // 'created_by'    => 'required|string',
-            // 'updated_by'    => 'required|string',
         ]);
     
-        // Step 1: Create staff record
         $staff = Mst_Staffs_Tbl::create([
             'staff_name'    => $request->staff_name,
-            'name'   => $request->name,
+            'name'          => $request->name,
             'email'         => $request->email,
             'handle_forms'  => json_encode($request->handle_forms),
             'status'        => $request->status,
