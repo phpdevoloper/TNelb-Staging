@@ -2510,7 +2510,10 @@
                 return;
             }
             
-            const data = await getPaymentsService(licence_code, issued_licence, appl_type);
+            const data = await  getPaymentsService(licence_code, issued_licence, appl_type);
+
+            console.log(data);
+            
 
             if (data) {
                 if (data.lateFees < 0) {
@@ -2623,7 +2626,7 @@
                         const amount = total_fees;
                         const licence_name = saveResponse.licence_name || 'N/A';
 
-                        console.log(type_apps);
+                        console.log(amount);
                         // const serviceCharge = 10;
                         // let lateFee = typeof lateFee !== "undefined" ? lateFee : 0;
                         // let total_charge = Number(amount) + Number(serviceCharge);
@@ -2632,7 +2635,7 @@
                              lateFeeRow = `
                                 <tr>
                                     <th style="text-align: left; padding: 6px 10px; color: #555;">Late Fees (${lateMonths} Months)</th>
-                                    <td style="text-align: right; padding: 6px 10px; font-weight: 500;">Rs. ${lateFee} /-</td>
+                                    <td style="text-align: right; padding: 6px 10px; font-weight: 500;">Rs. ${lateFee} </td>
                                 </tr>
                             `;
                         }
@@ -2666,12 +2669,12 @@
                                                 </tr>
                                                 <tr>
                                                     <th style="text-align: left; padding: 10px; color: #333;">Amount</th>
-                                                    <td style="text-align: right; padding: 10px; font-weight: bold; color: #0d6efd;"> ${actual_fees} </td>
+                                                    <td style="text-align: right; padding: 10px; font-weight: bold; color: #0d6efd;">Rs. ${actual_fees} </td>
                                                     </tr>
                                                             ${lateFeeRow}
                                                                 <tr>
                                                                     <th style="text-align: left; padding: 6px 10px; color: #555;">Total</th>
-                                                                    <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${amount}</td>
+                                                                    <td style="text-align: right; padding: 6px 10px; font-weight: 500;">Rs. ${amount}</td>
                                                                     </tr>
                                                                     </tbody>
                                                                     </table>

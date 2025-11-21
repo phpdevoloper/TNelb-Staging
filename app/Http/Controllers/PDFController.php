@@ -801,47 +801,125 @@ $certificateText = match ($form->form_name) {
 
 
         $html = '
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <style>
-            body { font-family: Arial, sans-serif; font-size: 14px; }
-            h2 { text-align: center; margin-bottom: 20px; }
-            table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-            th, td { border: 1px solid #000; padding: 8px; text-align: center; }
-            .section-title { margin-top: 30px; font-size: 16px; font-weight: bold; }
-        </style>
-    </head>
-    <body>
-        <h2>Payment Receipt</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            font-size: 14px; 
+            margin: 25px;
+            color: #000;
+        }
 
-        <p><strong>Application Reference Number:</strong> ' . $newApplicationId . '</p>
+        .header-box {
+            text-align: center;
+            border: 2px solid #000;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
 
-        <p class="section-title">Payment Details</p>
+        .header-box h3 {
+            margin: 5px 0;
+            font-size: 20px;
+            letter-spacing: 0.5px;
+        }
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Bank Name</th>
-                    <th>Mode of Payment</th>
-                    <th>Payment Date</th>
-                    <th>Transaction ID</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>State Bank of India</td>
-                    <td>UPI</td>
-                    <td>25-02-2025</td>
-                    <td>' . ($payment->transaction_id ?? 'N/A') . '</td>
-                    <td>₹' . ($payment->amount ?? 'N/A') . '</td>
-                </tr>
-            </tbody>
-        </table>
-    </body>
-    </html>
-    ';
+        .receipt-title {
+            text-align: center;
+            margin: 0;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        .info-block {
+            margin: 10px 0 18px 0;
+            font-size: 15px;
+        }
+
+        .info-block strong {
+            display: inline-block;
+            width: 250px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid #000;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f5f5f5;
+            font-weight: bold;
+            border: 1px solid #000;
+            padding: 10px;
+        }
+
+        td {
+            border: 1px solid #000;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .footer-note {
+            margin-top: 28px;
+            font-size: 13px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-box">
+        <h3>GOVERNMENT OF TAMIL NADU</h3>
+        <h3>THE ELECTRICAL LICENSING BOARD</h3>
+        <small>Thiru.Vi.Ka.Indl.Estate, Guindy, Chennai–600 032.</small>
+    </div>
+
+    <p class="receipt-title">PAYMENT RECEIPT</p>
+
+    <p class="info-block">
+        <strong>Application Reference Number:</strong> ' . $newApplicationId . '
+    </p>
+
+    <p class="section-title">Payment Details</p>
+
+    <table>
+        <tr>
+            <th>Bank Name</th>
+            <th>Mode of Payment</th>
+            <th>Payment Date</th>
+            <th>Transaction ID</th>
+            <th>Amount</th>
+        </tr>
+        <tr>
+            <td>State Bank of India</td>
+            <td>UPI</td>
+            <td>25-02-2025</td>
+            <td>' . ($payment->transaction_id ?? "N/A") . '</td>
+            <td>₹' . ($payment->amount ?? "N/A") . '</td>
+        </tr>
+    </table>
+
+    <p class="footer-note">
+        *This is a system generated receipt and does not require a physical signature.
+    </p>
+
+</body>
+</html>
+';
 
         $mpdf->WriteHTML($html);
         return response($mpdf->Output('', 'S'), 200)
