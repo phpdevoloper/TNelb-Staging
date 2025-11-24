@@ -2646,14 +2646,18 @@
                         
                         // 🔹 Show payment popup
                         Swal.fire({
-                            title: "<span style='color:#0d6efd;'>Initiate Payment</span>",
+                            title: "<span style='color:#0d6efd;'>Payment Details</span>",
                             html: `
                             <div class="text-start" style="font-size: 14px; padding: 10px 0;">
                                 <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
                                     <tbody>
-                                        <tr>
+                                            <tr>
                                             <th style="text-align: left; padding: 6px 10px; color: #555;">Applicant Name</th>
                                             <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${applicantName}</td>
+                                            </tr>
+                                            <tr>
+                                            <th style="text-align: left; padding: 6px 10px; color: #555;">Application ID</th>
+                                            <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${application_id}</td>
                                             </tr>
                                             <tr>
                                             <th style="text-align: left; padding: 6px 10px; color: #555;">Type of Application</th>
@@ -2668,7 +2672,7 @@
                                                 <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${transactionDate}</td>
                                                 </tr>
                                                 <tr>
-                                                    <th style="text-align: left; padding: 10px; color: #333;">Amount</th>
+                                                    <th style="text-align: left; padding: 10px; color: #333;">Application Fees</th>
                                                     <td style="text-align: right; padding: 10px; font-weight: bold; color: #0d6efd;">Rs. ${actual_fees} </td>
                                                     </tr>
                                                             ${lateFeeRow}
@@ -2686,13 +2690,15 @@
                             showCancelButton: true,
                             confirmButtonText: '<span class="btn btn-primary px-4 pr-4 payment">Pay Now</span>',
                             cancelButtonText: '<span class="btn btn-danger px-4">Cancel</span>',
-                            showCloseButton: true,
+                            showCloseButton: false,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
                             customClass: {
                                 popup: 'swal2-border-radius',
                                 actions: 'd-flex justify-content-around mt-3',
                             },
                             buttonsStyling: false,
-                            footer: '<div><span style="font-size: 13px;">Note: </span><span style="font-size: 13px;color: red;">Service charge of payment gateway as applicable</span>',
+                            footer: '<div><span style="font-size: 13px;">Note: </span><span style="font-size: 13px;color: red;">Total Amount will be including service charges of payment gateway as applicable</span>',
                             preConfirm: async () => {
                                 const paymentResponse = await $.ajax({
                                     url: "{{ route('payment.updatePayment') }}",
@@ -2730,6 +2736,10 @@
                                 }
                             }
 
+                        }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.cancel) {
+                                window.location.href = "/dashboard"; // your redirect URL
+                            }
                         });
                     } else {
                         Swal.fire("Form Submission Failed", "Application not submitted", "error");

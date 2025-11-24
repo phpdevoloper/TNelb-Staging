@@ -267,7 +267,7 @@
                                         <hr>
                                         <div class="row align-items-center head_label">
                                             <div class="col-12 col-md-12 ">
-                                                <label>(ii). Details of Previous and Current Work experiences <span style="color: red;">*</span> <span class="text-label">(Upload the documents)</span></label>
+                                                <label>(ii). Institute in which the applicant has undergone the training and the period<span style="color: red;">*</span> <span class="text-label">(Upload the documents)</span></label>
                                                 <br>
                                                 <label for="tamil" class="tamil">பெற்றுள்ள
                                                     முந்தைய மற்றும் தற்போதைய அனுபவங்களின் விவரங்கள் <span style="color: red;">*</span>
