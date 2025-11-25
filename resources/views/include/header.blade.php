@@ -67,30 +67,30 @@ use Illuminate\Support\Facades\Auth;
         }
 
 
-        #instructionContent ol {
-    list-style-type: decimal !important;
-    list-style-position: outside !important;
-    margin-left: 20px !important;
-    padding-left: 20px !important;
-}
+        .show-list-numbers ol {
+            list-style-type: decimal !important;
+            list-style-position: outside !important;
+            margin-left: 20px !important;
+            padding-left: 20px !important;
+        }
 
-  #instructionContent ul {
-      list-style-type: disc !important;
-      list-style-position: outside !important;
-      margin-left: 20px !important;
-      padding-left: 20px !important;
-  }
+        .show-list-numbers ul {
+            list-style-type: disc !important;
+            list-style-position: outside !important;
+            margin-left: 20px !important;
+            padding-left: 20px !important;
+        }
 
-  /* This is the magic fix */
-  #instructionContent ol li {
-      list-style-type: decimal !important;
-      display: list-item !important;
-  }
+        /* This is the magic fix */
+        .show-list-numbers ol li {
+            list-style-type: decimal !important;
+            display: list-item !important;
+        }
 
-  #instructionContent ul li {
-      list-style-type: disc !important;
-      display: list-item !important;
-  }
+        .show-list-numbers ul li {
+            list-style-type: disc !important;
+            display: list-item !important;
+        }
 
     </style>
 </head>
@@ -191,6 +191,11 @@ use Illuminate\Support\Facades\Auth;
           <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close">X</button>
         </div>
         <div class="modal-body" style="padding: 30px; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.8; color: #333;">
+          <div class="show-list-numbers">
+            <ul>
+              <li>Fees Issue for <span id="certificate_name"></span> from <span id="fees_starts_from"></span> onwards is <span id="form_fees" style="color:#1f6920; font-weight:600;"></span>.</li>
+            </ul>
+          </div>
           <div id="instructionContent" class="show-list-numbers"></div>
           {{-- <ol class="instruct" style="margin-left: 20px; padding-left: 10px;">
             <li>

@@ -118,6 +118,7 @@ class LicenceManagementController extends BaseController
                 'cate_licence_code' => ['required','string','max:5',Rule::unique('mst_licences', 'cert_licence_code')->ignore($request->cert_id)],
                 'form_name'         => 'required|string|regex:/^[A-Za-z\s]+$/|min:2|max:100',
                 'form_code'         => ['required','string','max:5',Rule::unique('mst_licences', 'form_code')->ignore($request->cert_id)],
+                'renewal_apply'       => 'nullable|numeric',
                 'form_status'       => 'required|in:1,2',
             ], [
                 'form_cate.required'         => 'Please choose the category',
@@ -142,6 +143,7 @@ class LicenceManagementController extends BaseController
                 'form_name'         => trim($request->form_name),
                 'form_code'         => strtoupper(trim($request->form_code)),
                 'status'            => $request->form_status,
+                'renewal_apply_start'         => $request->renewal_apply,
             ];
 
             // var_dump($data);die;
@@ -320,6 +322,8 @@ class LicenceManagementController extends BaseController
                 $fees_details['lateFees'] = $paymentDetails[0]->late_fee;
                 $fees_details['late_months'] = $paymentDetails[0]->late_months;
                 $fees_details['basic_fees'] = $paymentDetails[0]->base_fee;
+                $fees_details['certificate_name'] = $paymentDetails[0]->certificate_name;
+                $fees_details['fees_start_date'] = date("d-m-Y", strtotime($paymentDetails[0]->fees_start_date));
             }
             
 
@@ -933,7 +937,7 @@ class LicenceManagementController extends BaseController
 
                 return response()->json([
                     'status'  => 'success',
-                    'message' => "Updated {$type} fee details successfully!",
+                    'message' => "fees details added successfully!",
                     'code'    => 'updated_record'
                 ]);
             }

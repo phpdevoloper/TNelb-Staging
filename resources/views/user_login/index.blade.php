@@ -82,12 +82,13 @@
                                         <div class="row" style="border: none;">
                                             <div class="col-6 col-lg-4">
                                                 @php
-                                                    $licenses = ['C', 'B', 'W', 'WH'];
+                                                    // var_dump($workflow);die;
+                                                    $licenses = ['C', 'B', 'W', 'H'];
                                                     $category = in_array($workflow->license_name, $licenses)
                                                         ? 'Competency Certificate'
                                                         : 'Contractor License';
                                                 @endphp
-                                                <p><strong>License:</strong> {{ $workflow->license_name ?? 'NA' }}
+                                                <p><strong>License:</strong> {{ $workflow->license_number ?? 'NA' }}
                                                     ({{ $category }})</p>
                                             </div>
                                             <div class="col-6 col-lg-3">
@@ -338,7 +339,8 @@
                                 <tbody>
                                         @foreach ($workflows_present as $index => $workflow)
                                             <tr>
-                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ $index + 1 }}
+                                                </td>
                                                 <td>Form {{ strtoupper($workflow->form_name ?? 'NA') }}</td>
                                                 <td>{{ $workflow->application_id ?? 'NA' }}</td>
                                                 <td>{{ isset($workflow->created_at) ? \Carbon\Carbon::parse($workflow->created_at)->format('d/m/Y') : 'NA' }}
@@ -472,7 +474,6 @@
                                                         class="text-success">
                                                         {{ $workflow->renewal_application_id }}
                                                         </a>
-
                                                     @else
                                                         <p class="text-primary">NA</p>
                                                     @endif

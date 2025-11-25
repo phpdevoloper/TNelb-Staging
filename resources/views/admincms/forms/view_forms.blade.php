@@ -314,6 +314,14 @@
                             <input type="text" class="form-control" name="form_code" id="form_code" maxlength="5" placeholder="eg.S,W">
                             <small class="text-danger d-none error-form_code">Please choose the Form Code</small>
                         </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="inputEmail4" class="form-label">Apply for Renewal Starts<span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="renewal_apply" min="0">
+                                <span class="input-group-text">Months</span>
+                            </div>
+                            <small class="text-danger d-none error-renewal_apply">Please select the Renewal Fees start date</small>
+                        </div>
                         <div class="col-lg-6 mb-2">
                             <label for="inputEmail4" class="form-label">Status<span class="text-danger">*</span> </label>
                             <select class="form-select" name="form_status" id="form_status">

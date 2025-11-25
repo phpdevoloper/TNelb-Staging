@@ -170,6 +170,15 @@ $(document).ready(function() {
                     return null;
                 },
             },
+            {
+                name: "renewal_apply",
+                selector: "input[name='renewal_apply']",
+                errorSelector: ".error-renewal_apply",
+                validate: function (val) {
+                    if (val === "") return "Please set the Renewal apply start";
+                    return null;
+                },
+            },
         ];
     
         $(".error").addClass("d-none").text("");
@@ -219,14 +228,19 @@ $(document).ready(function() {
             },
             success: function (response) {
                 if (response.status) {
+                    $('#addFormModal').modal('hide');
                     Swal.fire({
                         icon: "success",
                         title: response.message || "Form created successfully!",
                         showConfirmButton: false,
                         timer: 1500,
+                    }).then(() => {
+                        // Refresh the page after the alert closes
+                        location.reload();
                     });
                     $("#addForms")[0].reset();
                 } else {
+                    $('#addFormModal').modal('hide');
                     Swal.fire({
                         icon: "error",
                         title: "Failed",

@@ -2488,7 +2488,7 @@
         
         try {
             
-            let total_fees,renewl_fees,lateFee,lateMonths,form_cost, form_name, licence, renewalAmoutStartson, latefee_amount, latefee_starts,form_instruct;
+            let total_fees,renewl_fees,lateFee,lateMonths,form_cost, form_name, licence, renewalAmoutStartson, latefee_amount, latefee_starts,form_instruct,fees_date;
             
             const appl_type = $('#appl_type').val();
             const issued_licence = $('#license_number').val();
@@ -2528,6 +2528,12 @@
                 }
             }
 
+            fees_date = data.fees_start_date
+            certificate_name = data.certificate_name
+
+            console.log(certificate_name);
+            
+
             
             // 🔹 Now you can safely use form_cost everywhere below
             const modalEl = document.getElementById('competencyInstructionsModal');
@@ -2535,7 +2541,9 @@
             const errorText = modalEl.querySelector('#declaration-error-renew');
             const proceedBtn = modalEl.querySelector('#proceedPayment');
             
-            // document.getElementById('form_fees').textContent = 'Rs.' + actual_fees + '/-';
+            document.getElementById('certificate_name').textContent = certificate_name;
+            document.getElementById('fees_starts_from').textContent = fees_date;
+            document.getElementById('form_fees').textContent = 'Rs.' + actual_fees + '/-';
             
             // Reset state
             agreeCheckbox.checked = false;
@@ -2614,11 +2622,13 @@
                     });
                     
                     if (saveResponse.status === "success") {
+
                         
                         let form_type = appl_type === 'R' ? 'Renewal' : 'Fresh';
 
                         const login_id = window.login_id || "{{ auth()->user()->login_id ?? '' }}";
                         const application_id = saveResponse.application_id;
+
                         const transactionDate = saveResponse.date_apps;
                         const applicantName = saveResponse.applicantName || 'N/A';
                         const type_apps = saveResponse.type_of_apps || 'N/A';
@@ -2626,7 +2636,7 @@
                         const amount = total_fees;
                         const licence_name = saveResponse.licence_name || 'N/A';
 
-                        console.log(amount);
+                        console.log(application_id);
                         // const serviceCharge = 10;
                         // let lateFee = typeof lateFee !== "undefined" ? lateFee : 0;
                         // let total_charge = Number(amount) + Number(serviceCharge);
@@ -2646,18 +2656,18 @@
                         
                         // 🔹 Show payment popup
                         Swal.fire({
-                            title: "<span style='color:#0d6efd;'>Payment Details</span>",
+                            title: "<span style='color:#0d6efd;'>₹ Payment Details</span>",
                             html: `
                             <div class="text-start" style="font-size: 14px; padding: 10px 0;">
                                 <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
                                     <tbody>
                                             <tr>
-                                            <th style="text-align: left; padding: 6px 10px; color: #555;">Applicant Name</th>
-                                            <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${applicantName}</td>
-                                            </tr>
-                                            <tr>
                                             <th style="text-align: left; padding: 6px 10px; color: #555;">Application ID</th>
                                             <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${application_id}</td>
+                                            </tr>
+                                            <tr>
+                                            <th style="text-align: left; padding: 6px 10px; color: #555;">Applicant Name</th>
+                                            <td style="text-align: right; padding: 6px 10px; font-weight: 500;">${applicantName}</td>
                                             </tr>
                                             <tr>
                                             <th style="text-align: left; padding: 6px 10px; color: #555;">Type of Application</th>
@@ -2684,8 +2694,6 @@
                                                                     </table>
                                                                     </div>
                                                                     `,
-                            icon: "info",
-                            iconHtml: '<i class="swal2-icon" style="font-size: 1 em">ℹ️</i>',
                             width: '515px',
                             showCancelButton: true,
                             confirmButtonText: '<span class="btn btn-primary px-4 pr-4 payment">Pay Now</span>',

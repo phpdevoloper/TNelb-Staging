@@ -133,38 +133,38 @@ class LoginController extends BaseController
 
 
         // Fetch workflows
- $workflows_cl = DB::table('tnelb_ea_applications as af')
-    ->leftJoin('tnelb_license as l', 'af.application_id', '=', 'l.application_id')
-    ->leftJoin('tnelb_renewal_license as rl', 'af.application_id', '=', 'rl.application_id')
-    ->where('af.login_id', $loginId)
-    ->orderBy('af.updated_at', 'desc')
-    ->select(
-        'af.*',
-        'l.expires_at as original_expires_at',
-        'rl.expires_at as renewal_expires_at',
-        DB::raw("
-            CASE 
-                WHEN af.appl_type = 'N' THEN l.license_number 
-                ELSE rl.license_number 
-            END as license_number
-        "),
-        DB::raw("
-            CASE 
-                WHEN af.appl_type = 'N' THEN l.expires_at 
-                ELSE rl.expires_at 
-            END as expires_at
-        "),
-        DB::raw("(
-            SELECT t2.application_id
-            FROM tnelb_ea_applications t2
-            WHERE t2.login_id = af.login_id
-            AND t2.id > af.id
-            AND t2.form_name = af.form_name
-            ORDER BY t2.id ASC
-            LIMIT 1
-        ) AS next_application_id")
-    )
-    ->get();
+        $workflows_cl = DB::table('tnelb_ea_applications as af')
+            ->leftJoin('tnelb_license as l', 'af.application_id', '=', 'l.application_id')
+            ->leftJoin('tnelb_renewal_license as rl', 'af.application_id', '=', 'rl.application_id')
+            ->where('af.login_id', $loginId)
+            ->orderBy('af.updated_at', 'desc')
+            ->select(
+                'af.*',
+                'l.expires_at as original_expires_at',
+                'rl.expires_at as renewal_expires_at',
+                DB::raw("
+                    CASE 
+                        WHEN af.appl_type = 'N' THEN l.license_number 
+                        ELSE rl.license_number 
+                    END as license_number
+                "),
+                DB::raw("
+                    CASE 
+                        WHEN af.appl_type = 'N' THEN l.expires_at 
+                        ELSE rl.expires_at 
+                    END as expires_at
+                "),
+                DB::raw("(
+                    SELECT t2.application_id
+                    FROM tnelb_ea_applications t2
+                    WHERE t2.login_id = af.login_id
+                    AND t2.id > af.id
+                    AND t2.form_name = af.form_name
+                    ORDER BY t2.id ASC
+                    LIMIT 1
+                ) AS next_application_id")
+            )
+            ->get();
 
 
 
@@ -225,80 +225,62 @@ class LoginController extends BaseController
         });
 
 
-            // dd($workflows_present->toArray());
+        $renewal_applications = DB::table('tnelb_application_tbl as ta')
+        ->leftJoin('tnelb_license as l', 'ta.application_id', '=', 'l.application_id')
+        ->where('ta.login_id', $loginId)
+        ->where('ta.appl_type', 'R')
+        ->select(
+            'ta.*',
+            'l.license_number',
+            'l.expires_at',
+            DB::raw("(
+                SELECT t2.application_id
+                FROM tnelb_application_tbl t2
+                WHERE t2.login_id = ta.login_id
+                    AND t2.id > ta.id
+                    AND t2.form_name = ta.form_name
+                ORDER BY t2.id ASC
+                LIMIT 1
+            ) AS next_application_id")
+        )
+        ->orderBy('ta.created_at', 'desc')
+        ->get();
 
 
-
-            $renewal_applications = DB::table('tnelb_application_tbl as ta')
-            ->leftJoin('tnelb_license as l', 'ta.application_id', '=', 'l.application_id')
-            ->where('ta.login_id', $loginId)
-            ->where('ta.appl_type', 'R')
-            ->select(
-                'ta.*',
-                'l.license_number',
-                'l.expires_at',
-                DB::raw("(
-                    SELECT t2.application_id
-                    FROM tnelb_application_tbl t2
-                    WHERE t2.login_id = ta.login_id
-                      AND t2.id > ta.id
-                      AND t2.form_name = ta.form_name
-                    ORDER BY t2.id ASC
-                    LIMIT 1
-                ) AS next_application_id")
-            )
-            ->orderBy('ta.created_at', 'desc')
-            ->get();
-
-
-            // var_dump($renewal_applications);die;
-        
-
-            
-            // $present_license = DB::table('tnelb_application_tbl as ta')
-            // ->join('tnelb_license as l', 'ta.application_id', '=', 'l.application_id')
-            // ->where('ta.login_id', $loginId)
-            // ->select(
-            //     'ta.*',
-            //     'l.*'
-            // )
-            // ->get();
-
-
-            $present_license = DB::table(function ($query) use ($loginId) {
-                // First-time license
-                $query->select(
-                        'l.license_number',
-                        'l.expires_at',
-                        'l.issued_at',
-                        'ta.application_id',
+        $present_license = DB::table(function ($query) use ($loginId) {
+            // First-time license
+            $query->select(
+                    'l.license_number',
+                    'l.expires_at',
+                    'l.issued_at',
+                    'ta.application_id',
+                    'ta.form_name',
+                    'ta.license_name',
+                    DB::raw("'N' as license_type")
+                )
+                ->from('tnelb_license as l')
+                ->join('tnelb_application_tbl as ta', 'ta.application_id', '=', 'l.application_id')
+                ->where('ta.login_id', $loginId)
+    
+            ->unionAll(
+                // Renewal licenses
+                DB::table('tnelb_renewal_license as rl')
+                    ->join('tnelb_application_tbl as ta', 'ta.application_id', '=', 'rl.application_id')
+                    ->select(
+                        'rl.license_number',
+                        'rl.expires_at',
+                        'rl.issued_at',
+                        'rl.application_id',
                         'ta.form_name',
                         'ta.license_name',
-                        DB::raw("'N' as license_type")
+                        DB::raw("'R' as license_type")
                     )
-                    ->from('tnelb_license as l')
-                    ->join('tnelb_application_tbl as ta', 'ta.application_id', '=', 'l.application_id')
-                    ->where('ta.login_id', $loginId)
-        
-                ->unionAll(
-                    // Renewal licenses
-                    DB::table('tnelb_renewal_license as rl')
-                        ->join('tnelb_application_tbl as ta', 'ta.application_id', '=', 'rl.application_id')
-                        ->select(
-                            'rl.license_number',
-                            'rl.expires_at',
-                            'rl.issued_at',
-                            'rl.application_id',
-                            'ta.form_name',
-                            'ta.license_name',
-                            DB::raw("'R' as license_type")
-                        )
-                        ->where('rl.login_id', $loginId)
-                );
-            }, 'licenses')
-            ->whereDate('licenses.expires_at', '>=', now())
-            ->orderBy('licenses.expires_at', 'desc')
-            ->get();
+                    ->where('rl.login_id', $loginId)
+            );
+        }, 'licenses')
+        // ->whereDate('licenses.expires_at', '>=', now())
+        ->orderBy('licenses.expires_at', 'desc')
+        ->get();
 
 
             $present_license_ea = DB::table('tnelb_ea_applications as ta')
