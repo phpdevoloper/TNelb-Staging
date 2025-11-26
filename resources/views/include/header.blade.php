@@ -92,6 +92,34 @@ use Illuminate\Support\Facades\Auth;
             display: list-item !important;
         }
 
+        .info-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 8px 20px;
+            font-size: 14px;
+        }
+
+        .info-grid .label {
+            font-weight: bold;
+        }
+
+        .stylish-divider {
+            position: relative;
+            padding-right: 20px;
+        }
+
+        .stylish-divider::after {
+            content: "";
+            position: absolute;
+            top: 20px;
+            bottom: 20px;
+            right: 0;
+            width: 3px;
+            background-color: #0d6efd;
+            box-shadow: 0 0 6px rgba(13,110,253,0.5);
+            border-radius: 10px;
+        }
+
     </style>
 </head>
 <script>
@@ -296,6 +324,75 @@ use Illuminate\Support\Facades\Auth;
       </div>
     </div>
   </div>
+
+  
+<!-- Payment Success Modal -->
+<div class="modal fade" id="paymentSuccessModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content p-3">
+
+          <div class="modal-header border-0">
+              <h4 class="text-success w-100 text-center m-0">
+                  Payment Successful!
+              </h4>
+          </div>
+
+          <div class="modal-body">
+              <div class="row">
+
+                  <!-- LEFT INFO PANEL -->
+                  <div class="col-md-6 stylish-divider">
+                      <div class="info-grid">
+                          <div class="label">Applicant Name:</div>
+                          <div class="value" id="ps_applicantName"></div>
+
+                          <div class="label">Application ID:</div>
+                          <div class="value" id="ps_applicationId"></div>
+
+                          <div class="label">Type of Application:</div>
+                          <div class="value" id="ps_licenceName"></div>
+
+                          <div class="label">Transaction ID:</div>
+                          <div class="value" id="ps_transactionId"></div>
+
+                          <div class="label">Transaction Date:</div>
+                          <div class="value" id="ps_transactionDate"></div>
+
+                          <div class="label">Amount Paid:</div>
+                          <div class="value" id="ps_amount"></div>
+                      </div>
+                  </div>
+
+                  <!-- RIGHT DOWNLOAD PANEL -->
+                  <div class="col-md-6 text-center">
+
+                      <p class="fw-bold">Download Your Payment Receipt:</p>
+                      <button class="btn btn-info btn-sm mb-2" onclick="paymentreceipt()">
+                          <i class="fa fa-file-pdf-o text-danger"></i>
+                          Download Receipt
+                      </button>
+
+                      <p class="fw-bold mt-3">Download Your Application PDF:</p>
+
+                      <button class="btn btn-primary btn-sm me-2" onclick="downloadPDF('english')">
+                          <i class="fa fa-file-pdf-o text-danger"></i> English
+                      </button>
+
+                      <button class="btn btn-success btn-sm" onclick="downloadPDF('tamil')">
+                          <i class="fa fa-file-pdf-o text-danger"></i> Tamil
+                      </button>
+
+                  </div>
+              </div>
+          </div>
+
+          <div class="modal-footer border-0 justify-content-center">
+              <a href="/dashboard" class="btn btn-primary">Go to Dashboard</a>
+          </div>
+
+      </div>
+  </div>
+</div>
 
   <!-- --------------------------------------------- -->
 

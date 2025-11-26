@@ -119,7 +119,7 @@
 
                                                     <!-- <input type="hidden" name="created_by" value="{{Auth::user()->name}}"> -->
 
-                                                    <input type="text" class="form-control" name="staff_name" id="name">
+                                                    <input type="text" class="form-control" name="staff_name" id="staff_name">
                                                 </div>
                                             </div>
                                         </div>
@@ -127,10 +127,15 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Designation Name <span>*</span></label>
-                                                <div class="input-group mb-3">
-
+                                                <select class="form-select" name="role_id" id="role_id">
+                                                    <option value="">Please select the user role</option>
+                                                    @foreach ($userRoles as $item)
+                                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                {{-- <div class="input-group mb-3">
                                                     <input type="text" class="form-control" name="name" id="name">
-                                                </div>
+                                                </div> --}}
                                             </div>
                                         </div>
                                     </div>

@@ -1,3 +1,4 @@
+
 <style>
     .popup-overlay_pdf {
         display: none;
@@ -62,6 +63,8 @@
         max-width: 95vw !important;
         overflow-x: hidden !important;
     }
+
+   
 </style>
 
 <div id="pdfPopup" class="popup-overlay_pdf">
@@ -2565,8 +2568,6 @@
             // console.log(html);
             
             
-            
-            
             modalBody.innerHTML = html;
             const el = document.querySelector("#instructionContent");
             console.log("innerHTML:", el.innerHTML);
@@ -2803,86 +2804,105 @@
     }
                                             
     function showPaymentSuccessPopup(loginId, transactionId, transactionDate, applicantName, amount,form_type,licence_name) {
-        Swal.fire({
-            title: `<h3 style="color:#198754; font-size:1.5rem;">Payment Successful!</h3>`,
-            html: `
-            <div style="font-size: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
-                <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 90%; margin: 0 auto;">
-                    <div style="
-                    display: grid;
-                    grid-template-columns: auto 1fr;
-                    gap: 7px 50px;
-                    font-size: 14px;
-                    max-width: 350px;
-                    border-right:2px solid #0d6efd;
-                    padding: 0px 15px;
-                    ">
-                    <div style="font-weight: bold;">Applicant Name:</div>
-                    <div>${applicantName}</div>
-                    <div style="font-weight: bold;">Application ID:</div>
-                    <div style="word-break: break-word;">${loginId}</div>
+        $("#ps_applicantName").text(applicantName);
+        $("#ps_applicationId").text(loginId);
+        $("#ps_licenceName").text(licence_name);
+        $("#ps_transactionId").text(transactionId);
+        $("#ps_transactionDate").text(transactionDate);
+        $("#ps_amount").text(amount);
 
-                    <div style="font-weight: bold;">Type of Application:</div>
-                    <div style="word-break: break-word;">${licence_name}</div>
-                    
-                    <div style="font-weight: bold;">Transaction ID:</div>
-                    <div style="word-break: break-word;">${transactionId}</div>
-                    
-                    <div style="font-weight: bold;">Transaction Date:</div>
-                    <div>${transactionDate}</div>
-                    
-                    
-                    <div style="font-weight: bold;">Amount Paid:</div>
-                    <div>${amount}</div>
-                    </div>
-                    <div style="min-width: 200px; text-align: center;">
-                        <p><strong>Download Your Payment Receipt:</strong></p>
-                        <button class="btn btn-info btn-sm mb-2" onclick="paymentreceipt('${loginId}')">
-                            <i class="fa fa-file-pdf-o text-danger"></i> 
-                            <i class="fa fa-download text-danger"></i>
-                            Download Receipt
-                            </button>
-                            <p class="mt-2"><strong>Download Your Application PDF:</strong></p>
-                            <button class="btn btn-primary btn-sm me-1" onclick="downloadPDF('english', '${loginId}')"><i class="fa fa-file-pdf-o text-danger"></i> 
-                                English</button>
-                                <button class="btn btn-success btn-sm" onclick="downloadPDF('tamil', '${loginId}')"><i class="fa fa-file-pdf-o text-danger"></i> 
-                                    Tamil</button>
-                                    </div>
-                                    </div>
-                                    </div>
-                                    `,
-            // 🧹 removed: icon: "success",
-            width: '50%',
-            customClass: {
-                popup: 'swal2-border-radius p-3'
-            },
-            confirmButtonText: "Go to Dashboard",
-            confirmButtonColor: "#0d6efd",
-            allowOutsideClick: true,
-            allowEscapeKey: true,
-            showCloseButton: true,
-            didOpen: () => {
-                const iconEl = document.querySelector('.swal2-icon');
-                if (iconEl) {
-                    iconEl.style.display = 'none'; // hide icon if still rendered
-                }
-                
-                const popup = document.querySelector('.swal2-popup');
-                if (popup) {
-                    popup.style.marginTop = '10px';
-                    popup.style.padding = '10px 20px';
-                }
-                
-                const container = document.querySelector('.swal2-container');
-                if (container) {
-                    container.style.alignItems = 'flex-start';
-                    container.style.paddingTop = '20px';
-                }
-            },
-            willClose: () => {
-                window.location.href = BASE_URL + '/dashboard';
-            }
+        // store ID globally for download actions
+        window.paymentAppId = loginId;
+        window.paymentFormType = form_type;
+        $("#paymentSuccessModal").modal({
+            backdrop: 'static',   
+            keyboard: false     
         });
+
+        // Show bootstrap modal
+        $("#paymentSuccessModal").modal("show");
+       
+       
+        // Swal.fire({
+        //     title: `<h3 style="color:#198754; font-size:1.5rem;">Payment Successful!</h3>`,
+        //     html: `
+        //     <div style="font-size: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
+        //         <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 90%; margin: 0 auto;">
+        //             <div style="
+        //             display: grid;
+        //             grid-template-columns: auto 1fr;
+        //             gap: 7px 50px;
+        //             font-size: 14px;
+        //             max-width: 350px;
+        //             border-right:2px solid #0d6efd;
+        //             padding: 0px 15px;
+        //             ">
+        //             <div style="font-weight: bold;">Applicant Name:</div>
+        //             <div>${applicantName}</div>
+        //             <div style="font-weight: bold;">Application ID:</div>
+        //             <div style="word-break: break-word;">${loginId}</div>
+
+        //             <div style="font-weight: bold;">Type of Application:</div>
+        //             <div style="word-break: break-word;">${licence_name}</div>
+                    
+        //             <div style="font-weight: bold;">Transaction ID:</div>
+        //             <div style="word-break: break-word;">${transactionId}</div>
+                    
+        //             <div style="font-weight: bold;">Transaction Date:</div>
+        //             <div>${transactionDate}</div>
+                    
+                    
+        //             <div style="font-weight: bold;">Amount Paid:</div>
+        //             <div>${amount}</div>
+        //             </div>
+        //             <div style="min-width: 200px; text-align: center;">
+        //                 <p><strong>Download Your Payment Receipt:</strong></p>
+        //                 <button class="btn btn-info btn-sm mb-2" onclick="paymentreceipt('${loginId}')">
+        //                     <i class="fa fa-file-pdf-o text-danger"></i> 
+        //                     <i class="fa fa-download text-danger"></i>
+        //                     Download Receipt
+        //                     </button>
+        //                     <p class="mt-2"><strong>Download Your Application PDF:</strong></p>
+        //                     <button class="btn btn-primary btn-sm me-1" onclick="downloadPDF('english', '${loginId}')"><i class="fa fa-file-pdf-o text-danger"></i> 
+        //                         English</button>
+        //                         <button class="btn btn-success btn-sm" onclick="downloadPDF('tamil', '${loginId}')"><i class="fa fa-file-pdf-o text-danger"></i> 
+        //                             Tamil</button>
+        //                             </div>
+        //                             </div>
+        //                             </div>
+        //                             `,
+        //     // 🧹 removed: icon: "success",
+        //     width: '50%',
+        //     customClass: {
+        //         popup: 'swal2-border-radius p-3'
+        //     },
+        //     confirmButtonText: "Go to Dashboard",
+        //     confirmButtonColor: "#0d6efd",
+        //     allowOutsideClick: false,
+        //     allowEscapeKey: false,
+        //     showCloseButton: false,
+        //     didOpen: () => {
+        //         const iconEl = document.querySelector('.swal2-icon');
+        //         if (iconEl) {
+        //             iconEl.style.display = 'none'; // hide icon if still rendered
+        //         }
+                
+        //         const popup = document.querySelector('.swal2-popup');
+        //         if (popup) {
+        //             popup.style.marginTop = '10px';
+        //             popup.style.padding = '10px 20px';
+        //         }
+                
+        //         const container = document.querySelector('.swal2-container');
+        //         if (container) {
+        //             container.style.alignItems = 'flex-start';
+        //             container.style.paddingTop = '20px';
+        //         }
+        //     },
+        //     willClose: () => {
+        //         window.location.href = BASE_URL + '/dashboard';
+        //     }
+        // });
         
     }
                                                                         
