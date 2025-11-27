@@ -837,12 +837,12 @@ $(document).ready(function() {
                 errorSelector: ".error-licence",
                 validate: (val) => (!val ? "Please choose the Certificate / Licence" : null),
             },
-            // {
-            //     name: "form_status",
-            //     selector: "input[name='form_status']",
-            //     errorSelector: ".error-form_status",
-            //     validate: (val) => (val === "" ? "Please choose the status" : null),
-            // },
+            {
+                name: "form_type",
+                selector: "select[name='form_type']",
+                errorSelector: ".error-form_type",
+                validate: (val) => (val === "" ? "Please choose the validity period type" : null),
+            },
         ];
 
         // Fields specific to New form (N)
@@ -893,11 +893,26 @@ $(document).ready(function() {
                 errorSelector: ".error-latefee_fee_date",
                 validate: (val) => (!val ? "Please choose the Late Fee from date" : null),
             },
+        ];
+        const renewalEnableFields = [
+            {
+                name: "enableRenewal",
+                selector: "input[name='enableRenewal']",
+                errorSelector: ".error-enableRenewal",
+                validate: (val) => (!val ? "Please fill the Enable Renewal Period" : null),
+            },
+            {
+                name: "enableRenewalStarts",
+                selector: "input[name='enableRenewalStarts']",
+                errorSelector: ".error-enableRenewalStarts",
+                validate: (val) => (!val ? "Please choose the Renewal Enable from date" : null),
+            },
         ]
 
         if (formType === "N") return [...baseFields, ...newFields];
         if (formType === "R") return [...baseFields, ...renewalFields];
         if (formType === "L") return [...baseFields, ...LateFeeFields];
+        if (formType === "A") return [...baseFields, ...renewalEnableFields];
         return baseFields; // default fallback
     }
 

@@ -120,6 +120,10 @@ use Illuminate\Support\Facades\Auth;
             border-radius: 10px;
         }
 
+        .swal2-timer-progress-bar {
+            background-color: #035ab3 !important; /* Red */
+        }
+
     </style>
 </head>
 <script>

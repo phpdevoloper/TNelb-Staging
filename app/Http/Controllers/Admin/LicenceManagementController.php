@@ -288,7 +288,6 @@ class LicenceManagementController extends BaseController
         try {
 
             
-            
             $licence_code = $request->licence_code;
             $issued_licence = $request->issued_licence;
             $appl_type = $request->appl_type;
@@ -556,7 +555,7 @@ class LicenceManagementController extends BaseController
         // 🧩 Step 1: Validation rules
         $rules = [
             'cert_id'     => 'required|integer',
-            'form_type'   => 'required|in:N,R,L',
+            'form_type'   => 'required|in:N,R,L,A',
             'form_status' => 'nullable|in:1,0,true,false,on',
         ];
 
@@ -567,6 +566,8 @@ class LicenceManagementController extends BaseController
             'renewal_duration_on'          => 'nullable|date',
             'renewal_late_fee_duration'    => 'nullable|numeric|min:1',
             'renewal_late_fee_duration_on' => 'nullable|date',
+            'enableRenewal'                => 'nullable|numeric|min:1',
+            'enableRenewalStarts'          => 'nullable|date',
         ];
 
         $rules = array_merge($rules, $nullable);
@@ -599,6 +600,13 @@ class LicenceManagementController extends BaseController
                     'renewal_late_fee_duration_on' => 'required|date',
                 ]);
                 break;
+
+            case 'A':
+                $rules = array_merge($rules, [
+                    'enableRenewal'    => 'required|numeric|min:1',
+                    'enableRenewalStarts' => 'required|date',
+                ]);
+                break;
         }
 
         $messages = [
@@ -610,6 +618,8 @@ class LicenceManagementController extends BaseController
             'renewal_duration_on.required'          => 'Please select the renewal start date (As on).',
             'renewal_late_fee_duration.required'    => 'Please enter the late fee duration.',
             'renewal_late_fee_duration_on.required' => 'Please select the late fee start date (As on).',
+            'enableRenewal.required' => 'enter the renewal enable period.',
+            'enableRenewalStarts.required' => 'Please select the renewal enable start date.',
         ];
 
         $request->validate($rules, $messages);
@@ -632,6 +642,9 @@ class LicenceManagementController extends BaseController
             } elseif ($formType === 'L') {
                 $validity = $request->renewal_late_fee_duration;
                 $validityStartDate = $request->renewal_late_fee_duration_on;
+            } elseif ($formType === 'A'){
+                $validity = $request->enableRenewal;
+                $validityStartDate = $request->enableRenewalStarts;
             }
 
             // var_dump($validityStartDate);die;

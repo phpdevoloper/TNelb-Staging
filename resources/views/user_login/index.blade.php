@@ -469,11 +469,7 @@
                                                     @elseif (!empty($workflow->renewal_application_id))
                                                         <strong>Renewal Application</strong><br>
                                                         ID :
-                                                        <a href="{{ route('generate.pdf', ['login_id' => $workflow->renewal_application_id]) }}" 
-                                                        target="_blank" 
-                                                        class="text-success">
-                                                        {{ $workflow->renewal_application_id }}
-                                                        </a>
+                                                        <span class="text-success">{{ $workflow->renewal_application_id }}</span>
                                                     @else
                                                         <p class="text-primary">NA</p>
                                                     @endif
@@ -802,8 +798,6 @@ exit;
         </div>
     </div>
 </section>
-
-
 
 <footer class="main-footer">
     @include('include.footer')

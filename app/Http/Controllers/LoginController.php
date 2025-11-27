@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\admin\Tnelb_Newsboard;
 use Carbon\Carbon;
 use App\Models\Login_Logs;
+use App\Models\MstLicence;
 use App\Models\Register;
 // use App\Models\Tnelb_Newsboard;
 use Illuminate\Http\Request;

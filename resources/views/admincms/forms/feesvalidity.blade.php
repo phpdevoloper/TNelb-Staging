@@ -182,11 +182,13 @@
                                                 <td>{{ $validity->licence_name.' / '. $validity->form_name}}</td>
                                                 <td>
                                                     @if(trim($validity->form_type) == "N")
-                                                     Fresh Fees
+                                                     Fresh period
                                                     @elseif(trim($validity->form_type) == "R") 
-                                                     Renewal Fees
+                                                     Renewal period
                                                     @elseif(trim($validity->form_type) == "L") 
-                                                     Late Fees
+                                                     Late period
+                                                    @elseif(trim($validity->form_type) == "A")
+                                                     Enable Renewal - Validity Period
                                                     @endif
                                                 </td>
                                                 <td>{{ $validity->validity }}</td>
@@ -257,17 +259,20 @@
                     <div class="col-md-6">
                         <label for="inputPassword4" class="form-label">Validity Type <span class="text-danger">*</span></label>
                         <select class="form-select shadow-sm border-primary-subtle rounded-3" name="form_type" id="form_type">
-                            <option value="N">Fresh Fees</option>
-                            <option value="R">Renewal Fees</option>
-                            <option value="L">Late Fees</option>
+                            <option value="" selected>-- Please select type of period --</option>
+                            <option value="N">Fresh - Validity Period</option>
+                            <option value="R">Renewal - Validity Period</option>
+                            <option value="L">Late - Validity Period</option>
+                            <option value="A">Enable Renewal - Validity Period</option>
                         </select>
+                        <small class="text-danger d-none error-form_type">Please choose the type of period</small>
                     </div>
                 </div>
                 
                 <hr style="border-top: 1px solid #4361ee;">
                 
-                <div class="row g-3 mb-3">
-                    <div class="col-md-12 custom-box mb-3" id="newFormDuration">
+                <div class="row g-3">
+                    <div class="col-md-12 custom-box" id="newFormDuration">
                         <div class="box-head text-primary mb-3"><i class="fa fa-clock-o"></i> Durations for New Form</div>
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -285,7 +290,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12 custom-box mb-3" id="renewalDuration" style="display: none">
+                    <div class="col-md-12 custom-box" id="renewalDuration" style="display: none">
                         <div class="box-head text-primary mb-3"><i class="fa fa-clock-o"></i> Durations for Renewal</div>
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -303,7 +308,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12 custom-box mb-3" id="LateDuration" style="display: none">
+                    <div class="col-md-12 custom-box" id="LateDuration" style="display: none">
                         <div class="box-head text-primary mb-3"><i class="fa fa-clock-o"></i> Durations for Late</div>
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -318,6 +323,24 @@
                                 <label for="inputEmail4" class="form-label">Start Date<span class="text-danger">*</span></label>
                                 <input type="date" name="renewal_late_fee_duration_on" id="renewal_late_fee_duration_on" class="form-control">
                                 <small class="text-danger d-none error-latefee_fee_date">Please Enter the Start Date</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 custom-box" id="enableDuration" style="display: none">
+                        <div class="box-head text-primary mb-3"><i class="fa fa-clock-o"></i> Renewal Enable Period</div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="inputPassword4" class="form-label">Enable - Renewal Period<span class="text-danger">*</span></label><br>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="enableRenewal" id="enableRenewal"  min="0">
+                                    <span class="input-group-text">Months</span>
+                                </div>
+                                <small class="text-danger d-none error-enableRenewal">Please fill the Renewal Enable Period</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputEmail4" class="form-label">Start Date<span class="text-danger">*</span></label>
+                                <input type="date" name="enableRenewalStarts" id="enableRenewalStarts" class="form-control">
+                                <small class="text-danger d-none error-enableRenewalStarts">Please Enter the Renewal Enable Start Date</small>
                             </div>
                         </div>
                     </div>
@@ -490,15 +513,23 @@
             if (selectedValue == 'N') {
                 $('#renewalDuration').hide();
                 $('#LateDuration').hide();
+                $('#enableDuration').hide();
                 $('#newFormDuration').show();
             }else if(selectedValue == "R") {
                 $('#newFormDuration').hide();
                 $('#LateDuration').hide();
+                $('#enableDuration').hide();
                 $('#renewalDuration').show();
             }else if(selectedValue == "L") {
                 $('#newFormDuration').hide();
                 $('#renewalDuration').hide();
+                $('#enableDuration').hide();
                 $('#LateDuration').show();
+            }else if(selectedValue == 'A'){
+                $('#newFormDuration').hide();
+                $('#renewalDuration').hide();
+                $('#LateDuration').hide();
+                $('#enableDuration').show();
             }
         });
 

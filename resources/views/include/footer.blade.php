@@ -2747,7 +2747,15 @@
 
                         }).then((result) => {
                             if (result.dismiss === Swal.DismissReason.cancel) {
-                                window.location.href = "/dashboard"; // your redirect URL
+                                Swal.fire({
+                                    title: "Payment Failed!",
+                                    text: "Application Saved as Draft",
+                                    icon: "error",
+                                    timer: 3000, // Auto close in 3 seconds
+                                    timerProgressBar: true
+                                }).then(() => {
+                                    window.location.href = "/dashboard";
+                                }); // your redirect URL
                             }
                         });
                     } else {
