@@ -16,6 +16,8 @@ class Payment extends Model
         'amount', 
         'form_name', 
         'license_name', 
-       
+        'late_fees',
+        'late_months',
+        'transaction_date'
     ];
 }

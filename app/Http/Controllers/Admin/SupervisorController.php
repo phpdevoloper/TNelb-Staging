@@ -13,7 +13,7 @@ use App\Models\Mst_Form_s_w;
 use App\Models\EA_Application_model;
 
 use App\Models\Admin\WorkflowA;
-
+use App\Models\MstLicence;
 use Carbon\Carbon;
 
 use function PHPUnit\Framework\isNull;
@@ -642,7 +642,9 @@ try {
         }
 
         // Get form type
-        $formType = DB::table('tnelb_forms')->where('id', $application->form_id)->first();
+        $formType = MstLicence::where('form_code', $application->form_name)->first();
+
+        // var_dump($formType->form_code);die;
 
 
         // if (in_array($formType->form_name, ['FORM S'])) {
@@ -708,7 +710,7 @@ try {
                         ]);
                 } else {
                     // Generate new license number with the new format
-                    $prefix = $formType->license_name;
+                    $prefix = $formType->form_code;
 
                     $yearMonth = date('Ym'); // Get current year and month (YYYYMM)
 

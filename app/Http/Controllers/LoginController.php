@@ -21,6 +21,7 @@ class LoginController extends BaseController
 
     public function __construct()
     {
+        parent::__construct();
         $this->today = now()->toDateString();
     }
 
@@ -177,14 +178,25 @@ class LoginController extends BaseController
 
 
 
-          $workflows_present = DB::table('tnelb_application_tbl as ta')
-        ->where('ta.login_id', $loginId)
-        ->orderBy('ta.created_at', 'desc')
-        ->get()
-        ->map(function ($workflow) {
-            $licenseNumber = null;
-            $expiry = null;
-            $renewalApplicationId = null;
+        $workflows_present = DB::table('tnelb_application_tbl as ta')
+            ->where('ta.login_id', $loginId)
+            ->orderBy('ta.created_at', 'desc')
+            ->get()
+            ->map(function ($workflow) {
+
+                $licenseNumber = null;
+                $expiry = null;
+                $renewalApplicationId = null;
+                $isValid = false;
+                $validityMonth = null;
+
+                $licenceID = null;
+
+
+                $licenceID = MstLicence::where('cert_licence_code', $workflow->license_name)->value('id');
+                
+                // var_dump($licenceID);
+                
 
             if ($workflow->appl_type === 'N') {
                 // Fresh license
@@ -226,12 +238,39 @@ class LoginController extends BaseController
             }
 
             // assign back
+
+            if ($expiry) {
+                
+                $validityMonths = FeesValidity::where('licence_id', $licenceID)
+                ->where('form_type', 'A')
+                ->where('validity_start_date', '<=', $this->today)
+                ->value('validity');
+                
+                $expiryDate = Carbon::parse($expiry);
+                $validFromDate = $expiryDate->copy()->subMonths((int)$validityMonths);
+                $today = Carbon::today();
+
+                // var_dump($validFromDate->toDateString(), $expiryDate->toDateString().'<br>');
+
+                $isValid = $today->between($validFromDate, $expiryDate);
+
+
+            }else {
+                // No expiry means license not issued yet -> can't renew
+                $isValid = false;
+            }
+
             $workflow->license_number = $licenseNumber;
             $workflow->expires_at = $expiry;
             $workflow->renewal_application_id = $renewalApplicationId;
+            $workflow->is_under_validity_period = $isValid;
 
             return $workflow;
+
         });
+
+        
+        // var_dump($workflows_present);die;
 
 
         $renewal_applications = DB::table('tnelb_application_tbl as ta')

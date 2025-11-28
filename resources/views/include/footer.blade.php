@@ -2723,6 +2723,9 @@
                                         payment_mode,
                                         form_name,
                                         form_type,
+                                        lateFee,
+                                        lateMonths
+
                                     },
                                     headers: {
                                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

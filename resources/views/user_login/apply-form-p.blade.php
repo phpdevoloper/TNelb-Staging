@@ -105,7 +105,6 @@
                         </div> --}}
                         
                         <div class="apply-card-body">
-
                             <form id="competency_form_ws" enctype="multipart/form-data">
                                 <div class="row">
 
@@ -672,8 +671,8 @@
                 </td>
                 `;
 
-                            container.appendChild(newRow);
-        }
+                container.appendChild(newRow);
+            }
 
             // Remove row functionality
             if (e.target.closest(".remove-work")) {

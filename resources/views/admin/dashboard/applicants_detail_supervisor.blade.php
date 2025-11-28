@@ -432,37 +432,79 @@
                                     </div>
                                     <?php //var_dump($workflows);die; ?>
                                     <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
+                                        <div class="row text-center fw-bold border-bottom pb-2 mb-3 mt-3">
+                                            <div class="col-lg-6 text-primary">
+                                                Payment Details
+                                            </div>
+                                            <div class="col-lg-6 text-primary">
+                                                Transaction Details
+                                            </div>
+                                        </div>
                                         <div class="row mt-3">
                                             <div class="col-lg-6">
-                                                <p><strong> Payment Status</strong></p>
+                                                <div class="row mt-3">
+                                                    <div class="col-lg-6">
+                                                        <p><strong>Application Type</strong></p>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <p>{{ $applicant->appl_type == 'R'?'Renewal Application':'New Application' }}</p>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <p><strong>Application Fees</strong></p>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <p>{{ $applicant->amount }}.00</p>
+                                                    </div>
+                                                    @if (!empty($applicant->late_fees))
+                                                        <div class="col-lg-6">
+                                                            <p><strong>Late Fees({{ $applicant->late_months }} Months)</strong></p>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                            <p>Rs.{{ $applicant->late_fees }}.00</p>
+                                                        </div>
+                                                    @endif
+                                                    <div class="col-lg-6">
+                                                        <p><strong> Date of application</strong></p>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <p>{{ format_date($applicant->transaction_date) }}</p>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="col-lg-6">
-                                                <p class="badge badge-success">{{ strtoupper($applicant->payment_status) }}</p>
-                                            </div>
+                                                <div class="row mt-3">
+                                                    <div class="col-lg-6">
+                                                        <p><strong> Payment Status</strong></p>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <p class="badge badge-success">{{ strtoupper($applicant->payment_status) }}</p>
+                                                    </div>
 
-                                            <div class="col-lg-6">
-                                                <p><strong> Transaction Id</strong></p>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <p>{{ $applicant->transaction_id }}</p>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <p><strong>Amount</strong></p>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <p>{{ $applicant->amount }}.00</p>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <p><strong>Payment mode:</strong></p>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <P>{{ $applicant->payment_mode??'UPI' }}</P>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <p><strong> Payment Time</strong></p>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <p>{{ format_date_other($applicant->created_at) }}</p>
+                                                    <div class="col-lg-6">
+                                                        <p><strong> Transaction Id</strong></p>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <p>{{ $applicant->transaction_id }}</p>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <p><strong>Amount</strong></p>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <p>{{ $applicant->amount }}.00</p>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <p><strong>Payment mode:</strong></p>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <P>{{ $applicant->payment_mode??'UPI' }}</P>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <p><strong> Payment Time</strong></p>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <p>{{ format_date($applicant->transaction_date) }}</p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

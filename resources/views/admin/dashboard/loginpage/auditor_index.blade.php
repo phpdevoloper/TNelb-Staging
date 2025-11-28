@@ -42,9 +42,12 @@
             <h4 class="dashboard_title layout-top-spacing">Competency Certificate</h4>
             <div class="row layout-top-spacing">
                 @foreach($auditor_pendings as $form)
+                @php
+                    // var_dump($form);die;
+                @endphp
                 @if($form->form_name!= 'EA')
                 <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
-                    <div class="widget widget-card-five {{ $formColors[$form->license_name] ?? 'bg-default' }} color_forms">
+                    <div class="widget widget-card-five {{ $formColors[$form->color_code] ?? 'bg-default' }} color_forms">
                         <div class="widget-content">
                             <div class="account-box">
                                 <div class="info-box">
@@ -57,7 +60,7 @@
                                         <div class="col-lg-9 col-9">
                                             <div class="balance-info">
                                                 <h6>{{ $form->form_name }}</h6>
-                                                <h5>License {{ $form->license_name }}</h5>
+                                                <h5>License {{ $form->licence_name }}</h5>
                                             </div>
                                         </div>
 

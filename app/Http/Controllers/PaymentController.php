@@ -17,12 +17,16 @@ class PaymentController extends Controller
 
     public function updatePayment(Request $request)
     {
+        
         $validated = $request->validate([
             'login_id'        => 'required',
             'application_id'  => 'required',
             'transaction_id'  => 'required',
             'amount'          => 'required',
             'payment_mode'    => 'required',
+            'lateFee'         => 'nullable|int',
+            'lateMonths'      => 'nullable|int',
+            'transactionDate'  => 'required|date',
         ]);
 
         
@@ -50,12 +54,15 @@ class PaymentController extends Controller
                 'application_id'  => $validated['application_id'],
             ],
             [
-                'transaction_id'  => $validated['transaction_id'],
-                'payment_status'  => 'success',
-                'amount'          => $validated['amount'],
-                'form_name'       => $form->form_name,
-                'license_name'    => $form->license_name,
-                'payment_mode'    => $validated['payment_mode'],
+                'transaction_id'    => $validated['transaction_id'],
+                'payment_status'    => 'success',
+                'amount'            => $validated['amount'],
+                'form_name'         => $form->form_name,
+                'license_name'      => $form->license_name,
+                'payment_mode'      => $validated['payment_mode'],
+                'late_fees'         => $validated['lateFee'],
+                'late_months'       => $validated['lateMonths'],
+                'transaction_date'  => $validated['transactionDate'] 
             ]
         );
 

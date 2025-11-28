@@ -347,11 +347,11 @@ use Illuminate\Support\Facades\Auth;
                   <!-- LEFT INFO PANEL -->
                   <div class="col-md-6 stylish-divider">
                       <div class="info-grid">
-                          <div class="label">Applicant Name:</div>
-                          <div class="value" id="ps_applicantName"></div>
-
                           <div class="label">Application ID:</div>
                           <div class="value" id="ps_applicationId"></div>
+
+                          <div class="label">Applicant Name:</div>
+                          <div class="value" id="ps_applicantName"></div>
 
                           <div class="label">Type of Application:</div>
                           <div class="value" id="ps_licenceName"></div>
@@ -363,7 +363,9 @@ use Illuminate\Support\Facades\Auth;
                           <div class="value" id="ps_transactionDate"></div>
 
                           <div class="label">Amount Paid:</div>
-                          <div class="value" id="ps_amount"></div>
+                          <div><span>Rs.</span>
+                              <span class="value" id="ps_amount"></span>
+                          </div>
                       </div>
                   </div>
 
@@ -562,6 +564,9 @@ use Illuminate\Support\Facades\Auth;
                                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                                 @csrf
                                             </form>
+                                            @php
+                                                // var_dump($menu);die;
+                                            @endphp
                                             @foreach($menu as $main)
                                             @php
                                             $page = $main->menuPage;

@@ -449,23 +449,23 @@
                                                             <br>
                                                         @endif
 
-                                                        @if (!empty($workflow->expires_at) && \Carbon\Carbon::parse($workflow->expires_at)->lt(\Carbon\Carbon::now()))
-                                                            @if (!empty($workflow->renewal_application_id))
-                                                                <strong>Renewal Application</strong><br>
-                                                                ID :
-                                                                <a href="{{ route('generate.pdf', ['login_id' => $workflow->renewal_application_id]) }}" 
-                                                                target="_blank" 
-                                                                class="text-success">
-                                                                {{ $workflow->renewal_application_id }}
-                                                                </a>
-                                                            @else
+                                                        
+                                                         @if (!empty($workflow->renewal_application_id))
+                                                            <strong>Renewal Application</strong><br>
+                                                            ID :
+                                                            <a href="{{ route('generate.pdf', ['login_id' => $workflow->renewal_application_id]) }}" 
+                                                            target="_blank" 
+                                                            class="text-success">
+                                                            {{ $workflow->renewal_application_id }}
+                                                            </a>
+                                                        @else
+                                                            @if ($workflow->is_under_validity_period)
                                                                 <a href="{{ route('renew_form', ['application_id' => $workflow->application_id]) }}"
                                                                 class="text-primary">
                                                                 (Apply for renewal)
                                                                 </a>
                                                             @endif
                                                         @endif
-
                                                     @elseif (!empty($workflow->renewal_application_id))
                                                         <strong>Renewal Application</strong><br>
                                                         ID :
@@ -599,8 +599,6 @@
                                             @else
                                                 <span class="text-primary">NA</span>
                                             @endif
-dd($workflow->license_number);
-exit;
                                             @if (empty($license_details))
                                                 @if (isset($workflow->license_number) && \Carbon\Carbon::parse($workflow->expires_at)->lt(\Carbon\Carbon::now()))
                                                     <br>

@@ -264,21 +264,23 @@ class LoginController extends Controller
 
         $rejected_appls             = ApplicationModel::getRejectCount($assignedFormID);
 
-        $president = DB::table('tnelb_forms as f')
+        $president = DB::table('mst_licences as f')
 
-            ->leftJoin('tnelb_application_tbl as ta', 'ta.form_id', '=', 'f.id')
+            ->leftJoin('tnelb_application_tbl as ta', 'ta.form_name', '=', 'f.form_code')
+            ->where('f.category_id', 2)
             ->where('f.status', 1)
             ->select(
                 'f.id',
                 'f.form_name',
-                'f.license_name',
+                'f.licence_name',
+                'f.cert_licence_code as color_code',
                 DB::raw("COUNT(CASE WHEN ta.status = 'F' AND ta.processed_by = 'SE' THEN 1 END) as pending_count"),
                 DB::raw("COUNT(CASE WHEN ta.status = 'A' AND ta.processed_by = 'PR' THEN 1 END) as completed_count"),
                 DB::raw("COUNT(CASE WHEN ta.status = 'RJ' THEN 1 END) as rejected_count")
             )
 
-            ->groupBy('f.id', 'f.form_name', 'f.license_name')
-            
+            ->groupBy('f.id', 'f.form_name', 'f.licence_name')
+            ->orderBy('f.id','asc')
             ->get();
         // var_dump($president);die;
 
@@ -293,8 +295,8 @@ class LoginController extends Controller
         $formColors = [
             'C'  => 'bg-yellow',
             'B'  => 'bg-red',
-            'WH' => 'bg-H',
-            'PG' => 'bg-green',
+            'H' => 'bg-H',
+            'P' => 'bg-green',
         ];
 
         // Determine the view based on role
