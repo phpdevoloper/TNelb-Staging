@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin\FeesValidity;
 use App\Models\admin\Tnelb_Newsboard;
 use Carbon\Carbon;
 use App\Models\Login_Logs;
@@ -16,8 +17,15 @@ use Illuminate\Support\Facades\Session;
 class LoginController extends BaseController
 {
 
-    public function login()
+    protected $today;
+
+    public function __construct()
     {
+        $this->today = now()->toDateString();
+    }
+
+    public function login()
+    { 
         return view('login');
     }
     public function check(Request $request)
