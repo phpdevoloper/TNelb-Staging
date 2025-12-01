@@ -82,9 +82,6 @@
                                         Competency Certificate
                                     </h5>
                                     <h6 class="card-title_apply text-black mb-1 form-title">FORM - P</h4>
-                                    <span style="color: red">(Please read the instructions carefully in the declaration popup before proceeding with the payment.</span>
-                                    <span target="_blank">or click here <i class="fa fa-file-pdf-o" style="color: red;"></i> (7.1 KB)</span>
-                                  English | <a href="{{url('assets/pdf/form_a_notes.pdf')}}" class="text-success" target="_blank">தமிழ்</a><span style="color:red">).</span>
                                 </div>
                             </div>
                                                
@@ -553,6 +550,12 @@
                                 </div>
 
                                 <div class="row mt-5">
+                                     <div class="text-center mb-2">
+                                        <span style="color: red">(Please read the instructions carefully in the declaration popup before proceeding with the payment.</span>
+                                        <span target="_blank">or click here <i class="fa fa-file-pdf-o" style="color: red;"></i> (7.1 KB)</span>
+                                        English | <a href="{{url('assets/pdf/form_a_notes.pdf')}}" class="text-success" target="_blank">தமிழ்</a>
+                                        <span style="color:red">).</span>
+                                    </div>
                                     <div class="offset-md-5 col-12 col-md-6">
                                         <div class="form-group">
                                             @if(! isset($application))
