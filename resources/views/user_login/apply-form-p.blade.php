@@ -228,9 +228,10 @@
                                                         <tr class="education-fields">
                                                             <td> <select class="form-control" name="educational_level[]">
                                                                     <option selected disabled>Select Education</option>
-                                                                    <option value="PG">PG</option>
-                                                                    <option value="UG">UG</option>
-                                                                    <option value="Diploma">Diploma</option>
+                                                                    <option value="UG">B.E(Mechanical)</option>
+                                                                    <option value="UG">B.E(Electrical)</option>
+                                                                    <option value="Diploma">Diploma(Mechanical)</option>
+                                                                    <option value="Diploma">Diploma(Electrical)</option>
                                                                 </select></td>
                                                             <td><input type="text" class="form-control" name="institute_name[]"></td>
                                                             <td>
@@ -266,17 +267,70 @@
                                                 <label>(ii). Institute in which the applicant has undergone the training and the period<span style="color: red;">*</span> <span class="text-label">(Upload the documents)</span></label>
                                                 <br>
                                                 <label for="tamil" class="tamil">பெற்றுள்ள
-                                                    முந்தைய மற்றும் தற்போதைய அனுபவங்களின் விவரங்கள் <span style="color: red;">*</span>
+                                                    விண்ணப்பதாரர் பயிற்சி பெற்ற நிறுவனம் மற்றும் பயிற்சி பெற்ற காலம்<span style="color: red;">*</span>
                                                     <span class="text-label">(ஆவணங்களை பதிவேற்ற வேண்டும்)</span></label>
                                             </div>
-
                                         </div>
-
                                         <div class="table-responsive">
                                             <table class="table table-bordered" id="work-table">
                                                 <thead>
                                                     <tr>
-                                                        <th>Company Name / Contractor</th>
+                                                        <th>Institute Name</th>
+                                                        <th>Address</th>
+                                                        <th>Duration</th>
+                                                        <th>From date</th>
+                                                        <th>To date</th>
+                                                        <th class="text-center">Upload Document (Experience Certificate)
+                                                            <br><span class="file-limit"> File type: PDF,PNG (Max 200 KB)</span>
+                                                        </th>
+                                                        <th>
+                                                            <button type="button" class="btn btn-primary add-more-work">
+                                                                <i class="fa fa-plus"></i>
+                                                            </button>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="work-container">
+                                                    <tr class="work-fields">
+                                                        <td>
+                                                            <input autocomplete="off" class="form-control" name="institute_name[]" type="text">
+                                                        </td>
+                                                        <td>
+                                                            <textarea autocomplete="off" class="form-control" name="ins_address" id="ins_address" cols="5" rows="3"></textarea>
+                                                        </td>
+                                                        <td>
+                                                            <input autocomplete="off" class="form-control" name="duration[]" type="text">
+                                                        </td>
+                                                        <td>
+                                                            <input autocomplete="off" class="form-control" name="from_date[]" type="date">
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control" name="work_document[]" type="file" accept=".pdf,application/pdf">
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-danger remove-work">
+                                                                <i class="fa fa-trash-o"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <hr>
+                                        <div class="row align-items-center head_label">
+                                            <div class="col-12 col-md-12 ">
+                                                <label>(iii). Power Station to which he is aattached at present<span style="color: red;">*</span> <span class="text-label">(Upload the documents)</span></label>
+                                                <br>
+                                                <label for="tamil" class="tamil">பெற்றுள்ள
+                                                    விண்ணப்பதாரர் பயிற்சி பெற்ற நிறுவனம் மற்றும் பயிற்சி பெற்ற காலம்<span style="color: red;">*</span>
+                                                    <span class="text-label">(ஆவணங்களை பதிவேற்ற வேண்டும்)</span></label>
+                                            </div>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered" id="work-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Power Station</th>
                                                         <th>Years of Experience</th>
                                                         <th>Designation</th>
 
@@ -315,11 +369,23 @@
                                             </table>
                                         </div>
                                         <hr>
+                                        <div class="row align-items-center head_label">
+                                            <div class="col-12 col-md-6">
+                                                <label>(iv). Name of the employer<span style="color: red;">*</span> <span class="text-label">(Upload the documents)</span></label>
+                                                <br>
+                                                <label for="tamil" class="tamil">தொழில் வழங்குநரின் பெயர்<span style="color: red;">*</span>
+                                                    <span class="text-label">(ஆவணங்களை பதிவேற்ற வேண்டும்)</span></label>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <textarea class="form-control" name="" id="" cols="5" rows="3"></textarea>
+                                            </div>
+                                        </div>
+                                        <hr>
                                         <div class="row align-items-center">
                                             <div class="col-12 col-md-12 ">
                                                 <div class="row align-items-center">
                                                     <div class="col-12 col-md-9 ">
-                                                        <label for="Name">7. Have previously applied for Electrical Assistant Qualification Certificate and if yes then mention its number and date
+                                                        <label for="Name">6. Have previously applied for Electrical Assistant Qualification Certificate and if yes then mention its number and date
                                                         </label>
                                                         <br>
                                                         <label for="tamil" class="tamil">இதற்கு முன்னாள் விண்ணப்பம் செய்துள்ளீர்களா ? ஆம் என்றால் அதன் குறிப்பு எண் மற்றும் தேதியை குறிப்பிடுக
@@ -370,70 +436,9 @@
                                             </div>
                                         </div>
                                         <hr>
-
-                                        <div class="row align-items-center">
-                                            <div class="col-12 col-md-12 ">
-                                                <div class="row align-items-center">
-                                                    <div class="col-12 col-md-9 ">
-                                                        <label for="Name">8. Do you possess Wireman Competency Certificate / Supervisor Competency Certificate issued by this Board? If so furnish the details and surrender the same.
-                                                        </label>
-                                                        <br>
-                                                        <label for="tamil" class="tamil">இந்த வாரியம் வழங்கிய கம்பி இணைப்பாளர் திறன் சான்றிதழ் / மேற்பார்வையாளர் திறன் சான்றிதழ் உங்களிடம் உள்ளதா? இருந்தால், அதன் விவரங்களை வழங்கி, அதனை ஒப்படைக்கவும்.
-                                                        </label>
-                                                    </div>
-
-                                                    <!-- <div class="col-md-1">
-                                                        <input name="previous_exp" type="radio" value="1">
-                                                        <label for="Yes">Yes</label>
-                                                    </div>
-                                                    <div class="col-md-1">
-                                                        <input name="previous_exp" type="radio" value="0">
-                                                        <label for="No">No</label>
-                                                    </div> -->
-
-                                                    <div class="col-md-3">
-                                                        <div class="form-check form-check-inline">
-                                                            <input class="form-check-input toggle-details" type="radio" name="previous_certificate" id="yesOption" data-target="#wireman_details" value="yes">
-                                                            <label class="form-check-label" for="yesOption">Yes</label>
-                                                        </div>
-                                                          
-                                                        <div class="form-check form-check-inline">
-                                                            <input class="form-check-input toggle-details" type="radio" name="previous_certificate" id="noOption" data-target="#wireman_details" value="no" checked>
-                                                            <label class="form-check-label" for="noOption">No</label>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <div class="row mt-3" id="wireman_details" style="display: none;">
-                                                    <div class="col-12 col-md-4 text-md-right">
-                                                        <label>Wireman / Supervisor  Competency Certificate Number <span style="color: red;">*</span></label>
-
-                                                    </div>
-                                                    <div class="col-12 col-md-3">
-                                                        <input class="form-control text-box single-line verify-input" id="certificate_no" name="certificate_no" type="text" data-type="supervisor" data-error="#certError" data-msg="#license_message" placeholder="Certificate No" maxlength="12">
-                                                        <input type="hidden" id="cert_verify" name="cert_verify" value="0">
-                                                        <span id="licenseError" class="text-danger"></span>
-                                                        <span id="license_message" class="mt-1"></span>
-                                                        <span id="certError" class="text-danger"></span>
-                                                    </div>
-                                                    <div class="col-12 col-md-1 text-md-right">
-                                                        <label>Date <span style="color: red;">*</span></label>
-                                                    </div>
-                                                    <div class="col-12 col-md-3">
-                                                        <input class="form-control text-box single-line verify-date" id="certificate_date" name="certificate_date" data-error="#certDateError" type="date">
-                                                        <span id="certDateError" class="text-danger"></span>
-                                                    </div>
-                                                    <div>
-                                                        <button type="button" class="btn btn-primary verify-btn" data-type="certificate" data-url="{{ route('verifylicense') }}" style="margin-left: 10px;">Verify</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <hr>
                                         <div class="row align-items-center head_label mt-2">
                                             <div class="col-12 col-md-12">
-                                                <label>9. Upload Documents <span style="color: red;">*</span></label>
+                                                <label>7. Upload Documents <span style="color: red;">*</span></label>
                                                 <br>
                                                 <label for="tamil" class="tamil">ஆவணங்களைப் பதிவேற்றவும்
                                                 </label>
@@ -549,13 +554,13 @@
 
                                 </div>
 
+                                <div class="text-center mb-2">
+                                   <span style="color: red">(Please read the instructions carefully in the declaration popup before proceeding with the payment.</span>
+                                   <span target="_blank">or click here <i class="fa fa-file-pdf-o" style="color: red;"></i> (7.1 KB)</span>
+                                   English | <a href="{{url('assets/pdf/form_a_notes.pdf')}}" class="text-success" target="_blank">தமிழ்</a>
+                                   <span style="color:red">).</span>
+                               </div>
                                 <div class="row mt-5">
-                                     <div class="text-center mb-2">
-                                        <span style="color: red">(Please read the instructions carefully in the declaration popup before proceeding with the payment.</span>
-                                        <span target="_blank">or click here <i class="fa fa-file-pdf-o" style="color: red;"></i> (7.1 KB)</span>
-                                        English | <a href="{{url('assets/pdf/form_a_notes.pdf')}}" class="text-success" target="_blank">தமிழ்</a>
-                                        <span style="color:red">).</span>
-                                    </div>
                                     <div class="offset-md-5 col-12 col-md-6">
                                         <div class="form-group">
                                             @if(! isset($application))

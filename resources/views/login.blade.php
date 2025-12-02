@@ -120,7 +120,7 @@
 
                             <button type="submit">Submit</button>
                         </form>
-                        <p class="text-md-right register_title mt-3"> <a href="{{route('register')}}" style="text-decoration: underline;"> Click to Register </a></p>
+                        <p class="text-md-right register_title mt-3"> <a href="{{route('register')}}" style="text-decoration: underline;"> Click here to Register </a></p>
                     </div>
                 </div>
             </div>
