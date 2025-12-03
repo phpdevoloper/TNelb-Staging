@@ -195,7 +195,7 @@ class LoginController extends BaseController
 
                 $licenceID = MstLicence::where('cert_licence_code', $workflow->license_name)->value('id');
                 
-                // var_dump($licenceID);
+                // var_dump($workflow->appl_type);
                 
 
             if ($workflow->appl_type === 'N') {
@@ -239,8 +239,10 @@ class LoginController extends BaseController
 
             // assign back
 
+            
+
             if ($expiry) {
-                
+                // var_dump('sdf');
                 $validityMonths = FeesValidity::where('licence_id', $licenceID)
                 ->where('form_type', 'A')
                 ->where('validity_start_date', '<=', $this->today)
@@ -250,15 +252,23 @@ class LoginController extends BaseController
                 $validFromDate = $expiryDate->copy()->subMonths((int)$validityMonths);
                 $today = Carbon::today();
 
-                // var_dump($validFromDate->toDateString(), $expiryDate->toDateString().'<br>');
+                $oneYearAfterExpiry = $expiryDate->copy()->addYear();
 
-                $isValid = $today->between($validFromDate, $expiryDate);
+                $isValid = $isValid = ($today->greaterThanOrEqualTo($validFromDate)
+             && $today->lessThanOrEqualTo($oneYearAfterExpiry));
+
+                // var_dump($today->greaterThanOrEqualTo($expiryDate->copy()->addYear()));
+                
+               
 
 
             }else {
                 // No expiry means license not issued yet -> can't renew
                 $isValid = false;
             }
+
+            // var_dump($expiry,$isValid.'<br>');
+            
 
             $workflow->license_number = $licenseNumber;
             $workflow->expires_at = $expiry;
@@ -268,6 +278,8 @@ class LoginController extends BaseController
             return $workflow;
 
         });
+
+        // die;
 
         
         // var_dump($workflows_present);die;

@@ -189,6 +189,7 @@
 <script src={{ asset("assets/admin/src/plugins/src/editors/quill/QuillDeltaToHtmlConverter.bundle.js") }}></script>
 <script src="{{ url('assets/js/script.js') }}"></script>
 <script src="{{ url('assets/js/custom.js') }}"></script>
+<script src="{{ url('assets/js/form_p_script.js') }}"></script>
 
 <script src="{{ url('assets/js/forma.js') }}"></script>
 <!-- --------------------------------------------------------------- -->

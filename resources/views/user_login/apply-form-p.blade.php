@@ -102,7 +102,7 @@
                         </div> --}}
                         
                         <div class="apply-card-body">
-                            <form id="competency_form_ws" enctype="multipart/form-data">
+                            <form id="competency_form_p" enctype="multipart/form-data">
                                 <div class="row">
 
                                     <div class="col-12 col-md-12">
@@ -272,11 +272,10 @@
                                             </div>
                                         </div>
                                         <div class="table-responsive">
-                                            <table class="table table-bordered" id="work-table">
+                                            <table class="table table-bordered" id="institute-table">
                                                 <thead>
                                                     <tr>
-                                                        <th>Institute Name</th>
-                                                        <th>Address</th>
+                                                        <th style="width:20%">Institute Name & Address</th>
                                                         <th>Duration</th>
                                                         <th>From date</th>
                                                         <th>To date</th>
@@ -284,19 +283,19 @@
                                                             <br><span class="file-limit"> File type: PDF,PNG (Max 200 KB)</span>
                                                         </th>
                                                         <th>
-                                                            <button type="button" class="btn btn-primary add-more-work">
+                                                            <button type="button" class="btn btn-primary add-more-institute">
                                                                 <i class="fa fa-plus"></i>
                                                             </button>
                                                         </th>
                                                     </tr>
                                                 </thead>
-                                                <tbody id="work-container">
-                                                    <tr class="work-fields">
-                                                        <td>
+                                                <tbody id="institute-container">
+                                                    <tr class="institute-fields">
+                                                        {{-- <td>
                                                             <input autocomplete="off" class="form-control" name="institute_name[]" type="text">
-                                                        </td>
+                                                        </td> --}}
                                                         <td>
-                                                            <textarea autocomplete="off" class="form-control" name="ins_address" id="ins_address" cols="5" rows="3"></textarea>
+                                                            <textarea autocomplete="off" class="form-control" name="institute_name_address[]" id="institute_name_address[]" cols="5" rows="3"></textarea>
                                                         </td>
                                                         <td>
                                                             <input autocomplete="off" class="form-control" name="duration[]" type="text">
@@ -305,10 +304,13 @@
                                                             <input autocomplete="off" class="form-control" name="from_date[]" type="date">
                                                         </td>
                                                         <td>
-                                                            <input class="form-control" name="work_document[]" type="file" accept=".pdf,application/pdf">
+                                                            <input autocomplete="off" class="form-control" name="to_date[]" type="date">
                                                         </td>
                                                         <td>
-                                                            <button type="button" class="btn btn-danger remove-work">
+                                                            <input class="form-control" name="institute_document[]" type="file" accept=".pdf,application/pdf">
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-danger remove-institute">
                                                                 <i class="fa fa-trash-o"></i>
                                                             </button>
                                                         </td>
@@ -377,7 +379,7 @@
                                                     <span class="text-label">(ஆவணங்களை பதிவேற்ற வேண்டும்)</span></label>
                                             </div>
                                             <div class="col-12 col-md-6">
-                                                <textarea class="form-control" name="" id="" cols="5" rows="3"></textarea>
+                                                <textarea class="form-control" name="employer_name" id="employer_name" cols="5" rows="3"></textarea>
                                             </div>
                                         </div>
                                         <hr>
@@ -385,8 +387,7 @@
                                             <div class="col-12 col-md-12 ">
                                                 <div class="row align-items-center">
                                                     <div class="col-12 col-md-9 ">
-                                                        <label for="Name">6. Have previously applied for Electrical Assistant Qualification Certificate and if yes then mention its number and date
-                                                        </label>
+                                                        <label for="Name">6. Have you made any previousapplication? If so, State reference No. and date </label>
                                                         <br>
                                                         <label for="tamil" class="tamil">இதற்கு முன்னாள் விண்ணப்பம் செய்துள்ளீர்களா ? ஆம் என்றால் அதன் குறிப்பு எண் மற்றும் தேதியை குறிப்பிடுக
                                                         </label>
@@ -406,29 +407,23 @@
                                                 </div>
                                                 <div class="row" id="previously_details" style="display: none;">
                                                     <div class="col-12 col-md-2 text-md-right">
-                                                        <label> License Number <span style="color: red;">*</span></label>
+                                                        <label> Application Number <span style="color: red;">*</span></label>
 
                                                     </div>
                                                     <div class="col-12 col-md-2">
-                                                        <input autocomplete="off" class="form-control text-box single-line verify-input" id="previously_number" name="previously_number" type="text" data-type="license" data-error="#licenseError" data-msg="#license_messagdfde" placeholder="License Number" value="">
-                                                        <input type="hidden" id="l_verify" name="l_verify" value="0">
+                                                        <input autocomplete="off" class="form-control text-box single-line" id="previously_number" name="previously_number" type="text" data-type="license" placeholder="Application Number" value="">
                                                         <span id="licenseError" class="text-danger"></span>
-                                                        <span id="verify_result"></span>
-                                                        <span id="license_messagdfde" class="mt-1"></span>
                                                     </div>
                                                     <div class="col-12 col-md-1 text-md-right">
                                                         <label> Date <span style="color: red;">*</span></label>
+                                                        <span id="licenseError" class="text-danger"></span>
 
                                                     </div>
-                                                    <div class="col-12 col-md-7 d-flex">
+                                                    <div class="col-12 col-md-7">
                                                         <div class="row">
                                                             <div class="col-12 col-md-7">
                                                                 <input autocomplete="off" class="form-control text-box single-line verify-date" id="previously_date" name="previously_date" type="date" data-error="#dateError" value="">
                                                                 <span id="dateError" class="text-danger"></span>
-                                                            </div>
-                                                            <div class="col-12 col-md-1 d-flex">
-                                                                <button type="button" class="btn btn-primary verify-btn" data-type="license" data-url="{{ route('verifylicense') }}" style="margin-left: 10px;">  Verify
-                                                                </button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -533,8 +528,12 @@
 
                                                     <span class="checkmark"></span>
                                                     <div>
-                                                        I hereby declare that all the details mentioned above are correct and true to the best of my knowledge. I request you to issue me the qualification certificate.<span style="color: red;">*</span><br>
-                                                        <span class="tamil">என் அறிவுக்கு எட்டியவரை மேலே குறிப்பிட்டுள்ள விவரங்கள் யாவும் சரியானவை எனவும் உண்மையானவை எனவும் உறுதி கூறுகிறேன். தகுதி சான்றிதழ் எனக்கு வழங்குமாறு வேண்டுகிறேன்.</span>
+                                                        I hereby declare that the particulars stated above are correct and true to the best of
+                                                        my knowledge.<span style="color: red;">*</span><br> I request that I may be granted a Power Generating Station Operation and
+                                                        maintenance Competency Certificate.<br>
+                                                        <span class="tamil">என் அறிவின் படி மேலே குறிப்பிட்டுள்ள விவரங்கள் அனைத்தும் சரியானதும் உண்மையானதுமாக இருப்பதாக நான் இங்கே அறிவிக்கிறேன்.</span>
+                                                        <br>
+                                                        <span class="tamil">மின்சாரம் உற்பத்தி நிலையத்தின் செயல்பாடு மற்றும் பராமரிப்பு திறன் சான்றிதழை எனக்கு வழங்குமாறு நான் கேட்டுக்கொள்கிறேன்.</span>
                                                     </div>
 
                                                 </div>
@@ -544,9 +543,8 @@
                                     </div>
                                     <input type="hidden" class="form-control text-box single-line" id="login_id_store" name="login_id" type="text" value="{{ $user['user_id'] }}">
                                     <input type="hidden" id="application_id" name="application_id" value="{{ $application->id ?? '' }}">
-                                    <input type="hidden" id="form_name" name="form_name" value="S">
-                                    <input type="hidden" id="license_name" name="license_name" value="C">
-                                    <input type="hidden" id="form_id" name="form_id" value="1">
+                                    <input type="hidden" id="form_name" name="form_name" value="P">
+                                    <input type="hidden" id="license_name" name="license_name" value="P">
                                     {{-- <input type="hidden" id="amount" name="amount" value="750"> --}}
                                     <input type="hidden" id="appl_type" name="appl_type" value="N">
                                     <input type="hidden" id="form_action" name="form_action" value="draft">
@@ -568,7 +566,7 @@
                                                 Save As Draft
                                             </button>
                                             @endif
-                                            <button type="submit" class="btn btn-success btn-social" id="submitPaymentBtn">
+                                            <button type="submit" class="btn btn-success btn-social" id="ProceedtoPayment">
                                                 Save and Proceed for Payment
                                             </button>
                                         </div>
@@ -684,6 +682,46 @@
 
             // Remove row functionality
             if (e.target.closest(".remove-work")) {
+                if (workRows.length <= 1) {
+                    alert("You must have at least one work experience entry.");
+                    return;
+                }
+                e.target.closest("tr").remove();
+        }
+    });
+
+    
+    document.addEventListener("click", function(e) {
+        let container = document.getElementById("institute-container");
+        let workRows = container.querySelectorAll(".institute-fields");
+
+        // Prevent adding more than 3 entries
+        if (e.target.closest(".add-more-institute")) {
+            if (workRows.length >= 3) {
+                alert("You can add a maximum of 3 work experience entries.");
+                return;
+            }
+
+            let newRow = document.createElement("tr");
+            newRow.classList.add("institute-fields");
+
+            newRow.innerHTML = `
+            <td><input autocomplete="off" class="form-control" name="work_level[]" type="text"></td>
+                <td><input autocomplete="off" class="form-control" name="experience[]" type="number"></td>
+                <td><input autocomplete="off" class="form-control" name="designation[]" type="text"></td>
+                <td><input class="form-control" name="work_document[]" type="file"></td>
+                <td>
+                <button type="button" class="btn btn-danger remove-institute">
+                <i class="fa fa-trash-o"></i>
+                </button>
+                </td>
+                `;
+
+                container.appendChild(newRow);
+            }
+
+            // Remove row functionality
+            if (e.target.closest(".remove-institute")) {
                 if (workRows.length <= 1) {
                     alert("You must have at least one work experience entry.");
                     return;
