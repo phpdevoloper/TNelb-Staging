@@ -324,9 +324,6 @@ class LicenceManagementController extends BaseController
                 $fees_details['certificate_name'] = $paymentDetails[0]->certificate_name;
                 $fees_details['fees_start_date'] = date("d-m-Y", strtotime($paymentDetails[0]->fees_start_date));
             }
-            
-
-            // $fees_details['certificate_name'] = $fees->licence_name;
 
             return response()->json([
                 'status' => 'success',
@@ -337,7 +334,7 @@ class LicenceManagementController extends BaseController
         } catch (Exception $e) {
              return response()->json([
                 'status' => 'error',
-                'message' => 'Something went wrong. ' . $e->getMessage(),
+                'message' => 'Something went wrong.',
             ], 500);
         }    
     }

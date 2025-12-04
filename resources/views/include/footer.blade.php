@@ -477,7 +477,8 @@
 
 
     function getPaymentsService(licence_code,issued_licence,appl_type, callback){
-        
+        console.log('received');
+
         return new Promise((resolve, reject) => {
                 $.ajax({
                 url: "{{ route('licences.getPaymentDetails') }}",
@@ -494,7 +495,7 @@
                     if (response.status == 'success') {
                         resolve(response.fees_details);
                     } else {
-                        Swal.fire("Error", response.message, "danger");
+                        Swal.fire("Error",'Something went wrong!..', "danger");
                         reject(response);
                     }
                 },
@@ -503,7 +504,8 @@
                         let messages = Object.values(xhr.responseJSON.errors).flat().join("\n");
                         Swal.fire("Error", messages, "danger");
                     } else {
-                        Swal.fire("An error occurred: " + xhr.responseText);
+                        // console.log(xhr.responseJSON.message);
+                        Swal.fire("Error", xhr.responseJSON.message, "danger");
                     }
                     reject(xhr);
                 }
@@ -2489,7 +2491,6 @@
     }
 
     async function showDeclarationPopup(licence_code) {   
-        
         try {
             
             let total_fees,renewl_fees,lateFee,lateMonths,form_cost, form_name, licence, renewalAmoutStartson, latefee_amount, latefee_starts,form_instruct,fees_date;

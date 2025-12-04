@@ -265,5 +265,9 @@ Route::get('/noticeboardcontent/{news_id}', [LoginController::class, 'noticeboar
 Route::get('/form/get-form-cost', [FormController::class, 'getFormCost'])->name('getFormCost');
 
 
+//Form P submit Routes
+Route::post('/form_p/store', [FormPController::class, 'store'])->name('form_p.store');
+
+
 
 

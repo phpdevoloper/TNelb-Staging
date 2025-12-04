@@ -8,6 +8,7 @@ use App\Models\Mst_education;
 use App\Models\Mst_experience;
 use App\Models\MstLicence;
 use App\Models\TnelbApplicantPhoto;
+use App\Models\TnelbAppsInstitute;
 use App\Models\TnelbFormP;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -45,6 +46,7 @@ class FormPController extends BaseController
 
 	public function store(Request $request)
 	{
+		// var_dump($request->all());die;
 		$request->merge([
 			'aadhaar' => preg_replace('/\D/', '', $request->aadhaar)
 		]);
@@ -66,7 +68,7 @@ class FormPController extends BaseController
 			'pancard'              => 'required|string|size:10',
 			'form_name'            => 'required|string|max:2',
 			'license_name'         => 'required|string|max:2',
-			'form_id'              => 'required|integer',
+			// 'form_id'              => 'required|integer',
 			// 'amount'               => 'required|numeric|min:0',
 			'certificate_no'            => 'nullable|string',
 			'certificate_date'              => 'nullable|date',
@@ -385,11 +387,28 @@ class FormPController extends BaseController
 
 			if ($request->has('institute_name_address')) {
 				foreach ($request->institute_name_address as $key => $institute) {
-					if (empty($institute) || empty($request->duration[$key]) || empty($request->from_date[$key]) || empty($request->from_date[$key])) {
+					if (empty($institute) || empty($request->duration[$key]) || empty($request->from_date[$key]) || empty($request->to_date[$key])) {
 						continue;
 					}
 
-					$lastExp = Mst_experience::whereNotNull('exp_serial')->latest('id')->value('exp_serial');
+					$filePath = null;
+					if ($request->hasFile("institute_document") && isset($request->file("institute_document")[$key])) {
+						$file = $request->file("institute_document")[$key];
+						$filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+						$destinationPath = public_path('institute_document');
+						$file->move($destinationPath, $filename);
+						$filePath = 'institute_document/' . $filename;
+					}
+
+					TnelbAppsInstitute::create([
+						'login_id'        			=> $loginId,
+						'application_id'  			=> $newApplicationId,
+						'institute_name_address'    => $institute,
+						'duration'      			=> $request->duration[$key],
+						'from_date'     			=> $request->from_date[$key],
+						'to_date'     				=> $request->to_date[$key],
+						'upload_doc' 				=> $filePath,
+					]);
 				}
 			}
 
