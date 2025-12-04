@@ -483,6 +483,12 @@ $(document).ready(function () {
         $(this).closest('.file-section').replaceWith(fileInput);
     });
 
+    $(document).on('click', '.remove-institute', function () {
+        let fileInput = '<input type="file" class="form-control" name="institute_document[]" accept=".pdf,application/pdf"><input type="hidden" name="removed_document_inst[]" value="1">';
+
+        $(this).closest('.file-section').replaceWith(fileInput);
+    });
+
 
     $(document).on('click', '.remove_edu', function() {
         let edu_id = $(this).data('edu_id'); 
@@ -520,6 +526,28 @@ $(document).ready(function () {
             type: "POST",
             data: {
                 exp_id : exp_id,
+                _token: $('meta[name="csrf-token"]').attr("content") // CSRF token
+            },
+            success: function (response) {
+             
+            },
+            error: function () {
+                Swal.fire("Error!", "Something went wrong. Try again!", "error");
+            }
+        });
+    });
+
+
+    $(document).on('click', '.remove-institute', function() {
+        let inst_id = $(this).data('inst_id'); 
+
+        let url = $(this).data('url');
+
+        $.ajax({
+            url:  url, // Laravel route
+            type: "POST",
+            data: {
+                inst_id : inst_id,
                 _token: $('meta[name="csrf-token"]').attr("content") // CSRF token
             },
             success: function (response) {

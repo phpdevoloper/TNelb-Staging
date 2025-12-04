@@ -477,7 +477,7 @@
 
 
     function getPaymentsService(licence_code,issued_licence,appl_type, callback){
-        console.log('received');
+        
 
         return new Promise((resolve, reject) => {
                 $.ajax({
@@ -797,6 +797,7 @@
                 }
             });
 
+
             $('#work-container .work-fields').each(function () {
                 let workLevel = $(this).find('input[name="work_level[]"]');
                 let experience = $(this).find('input[name="experience[]"]');
@@ -821,6 +822,8 @@
                     isValid = false;
                 }
 
+
+
                 if (workDocument.length && workDocument.val().trim() === "") {
                     workDocument.after('<span class="error-message text-danger d-block mt-1">Experience certificate upload is required.</span>');
                     if (!firstErrorField) firstErrorField = workDocument;
@@ -844,6 +847,8 @@
                     }
                 }
             });
+
+            // return false;
 
             let aadhaarInput = document.getElementById("aadhaar");
             let aadhaarError = document.getElementById("aadhaar-error");
@@ -2516,9 +2521,6 @@
             }
             
             const data = await  getPaymentsService(licence_code, issued_licence, appl_type);
-
-            console.log(data);
-            
 
             if (data) {
                 if (data.lateFees < 0) {

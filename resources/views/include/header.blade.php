@@ -146,53 +146,7 @@ use Illuminate\Support\Facades\Auth;
         <div class="modal-body" style="padding: 30px; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.8; color: #333;">
             <p style="font-size: 17px; font-weight: 600; margin-bottom: 20px;">
               📋 Please read and confirm the following carefully:
-            </p>
-
-            {{-- <ol class="instruct" style="margin-left: 20px; padding-left: 10px;">
-              <li>
-                Fees for the issue of <span style=" font-weight: 600;">‘EA’ Contractor licence</span> from 
-                <span>01.01.2024</span> onwards is 
-                <span id="ea_fees" style="color: #dc3545; font-weight: 600;">Rs.30,000/-</span>.
-                <br>
-                <ol type="i" style="margin-left: 20px; margin-top: 5px;">
-                  <li>
-                    <span style=" font-weight: 600;">Mode of Payment:</span> Fees should be sent in favour of the <strong>Secretary, Electrical Licensing Board, Chennai</strong> by Bank Demand Draft obtained from any <span style="">Scheduled Bank</span> or <span style="">Co-operative Bank</span> payable at Chennai. 
-                    <em style="color: #6c757d;">Remittance of fees by any other method will not be accepted.</em>
-                  </li>
-                </ol>
-              </li>
-          
-              <li>
-                The <span style=" font-weight: 600;">Proprietor</span> or the <span style=" font-weight: 600;">Managing Partner/Director</span> must be at least 
-                <span style="color: #198754; font-weight: 600;">25 years old</span> and should have passed a minimum educational qualification of 
-                <span style="color: #198754; font-weight: 600;">VIII Standard</span>.
-              </li>
-          
-              <li>
-                <span style=" font-weight: 600;">Establishment:</span> The applicant shall employ the following minimum staff on a full-time basis solely for the purpose of contract works:
-                <div style="margin-left: 20px;">
-                  One <span style=" font-weight: 600;">Supervisor</span> holding <span style="">Supervisor Competency Certificate</span> granted by the Board with a minimum Technical Educational qualification of a <span style="color: #198754; font-weight: 600;">Diploma in Electrical Engineering</span>…
-                </div>
-              </li>
-          
-              <li>
-                <span style=" font-weight: 600;">Instruments:</span> The applicant must possess the following instruments:
-                <ul style="margin-left: 20px; list-style-type: disc;">
-                  <li>Earth Resistance Tester</li>
-                  <li>500 Volts Insulation Tester</li>
-                  <li>1000 Volts Insulation Tester</li>
-                  <li>Phase Sequence Indicator</li>
-                  <li>Tong Type Ammeter</li>
-                  <li>Live Line Tester</li>
-                  <li>Portable Voltmeter (Hand Operated)</li>
-                </ul>
-              </li>
-          
-              <li>
-                <span style=" font-weight: 600;">Financial Status:</span> The applicant shall produce a <span style=" font-weight: 600;">Bank Solvency Certificate</span> for 
-                <span style="color: #dc3545; font-weight: 600;">Rs.50,000/-</span> in <strong>Form ‘G’</strong>…
-              </li>
-            </ol> --}}
+            </p>          
           
             <div class="form-check mt-4">
               <input type="checkbox" class="form-check-input" id="declaration-agree">
@@ -229,52 +183,6 @@ use Illuminate\Support\Facades\Auth;
             </ul>
           </div>
           <div id="instructionContent" class="show-list-numbers"></div>
-          {{-- <ol class="instruct" style="margin-left: 20px; padding-left: 10px;">
-            <li>
-              <span style="font-weight: 600;">Fees:</span> 
-              <ol type="i" style="margin-left: 20px; margin-top: 5px;">
-                <li>Fees Issue for Supervisor Competency Certificate from <span>01.01.2024</span> onwards is <span id="form_fees" style="color:#1f6920; font-weight:600;"></span>.</li>
-                <li>The fee must be paid by Demand Draft from any <span>Scheduled Bank</span> or <span">Co-operative Bank</span>, in favour of Secretary, Electrical Licensing Board, Chennai – 600 032, payable at Chennai. Other methods of payment will not be accepted.</li>
-              </ol>
-            </li>
-  
-            <li>
-              The <span style="font-weight:600;">applicant’s signature</span> and <span style="font-weight:600;">photo</span> affixed in the application must be attested by a <span>Gazetted Officer</span>. Out of three photos, one should be affixed in the application and attested.
-            </li>
-  
-            <li>
-              <span style="font-weight:600;">With Experience:</span>
-              <ul style="margin-left: 20px; list-style-type: disc;">
-                <li>Two years experience in erection or operation and maintenance in High Voltage installation.</li>
-                    <span class="font-size: 10px;">(OR)</span>
-                <li>The applicant should hold a Supervisor Competency Certificate from the Department of Technical Education, Chennai.</li>
-              </ul>
-            </li>
-  
-            <li>
-              The applicant should possess a <span>Diploma</span> or <span style="font-weight:600;">Degree</span> in Electrical Engineering or an <span style="font-weight:600;">A.M.I.E.</span> Certificate (Part A & B).
-            </li>
-  
-            <li>
-              <span style="font-weight:600;">Photographs:</span> Three passport-size photographs (6cm x 4cm), taken within the last three months, must be provided.
-            </li>
-  
-            <li>
-              <span style="font-weight:600;">Signature:</span> Applicant’s signature in triplicate on a separate sheet of paper must be provided.
-            </li>
-  
-            <li>
-              <span style="font-weight:600;">Proof of Age:</span> Original and photocopy of age proof document must be submitted.
-            </li>
-  
-            <li>
-              <span style="font-weight:600;">Application Form:</span> All columns must be filled clearly in words and figures. No column should be left blank.
-            </li>
-  
-            <li>
-              Application should be in the prescribed form only.
-            </li>
-          </ol> --}}
   
           <div class="form-check mt-4">
             <input type="checkbox" class="form-check-input" id="declaration-agree-renew">
@@ -286,10 +194,42 @@ use Illuminate\Support\Facades\Auth;
             </div>
           </div>
         </div>
-  
         <div class="modal-footer" style="justify-content: center;">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-primary" id="proceedPayment">Proceed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="competencyInstructionsModalP" tabindex="-1" aria-labelledby="competencyInstructionsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header" style="background- color: white;">
+          <h5 class="modal-title" id="competencyInstructionsModalLabel">📋 Instructions & Declaration</h5>
+          <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close">X</button>
+        </div>
+        <div class="modal-body" style="padding: 30px; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.8; color: #333;">
+          <div class="show-list-numbers">
+            <ul>
+              <li>Fees Issue for <span id="p_certificate_name"></span> from <span id="p_fees_starts_from"></span> onwards is <span id="p_form_fees" style="color:#1f6920; font-weight:600;"></span>.</li>
+            </ul>
+          </div>
+          <div id="instructionContent" class="show-list-numbers"></div>
+  
+          <div class="form-check mt-4">
+            <input type="checkbox" class="form-check-input" id="declaration-agree-renew">
+            <label for="declaration-agree-renew" class="form-check-label" style="font-weight: 600;">
+              I have read and agree to the above instructions.
+            </label>
+            <div class="text-danger mt-2 d-none" id="declaration-error-renew">
+              Please agree the above instructions.
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="justify-content: center;">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="proceedtoPayment">Proceed</button>
         </div>
       </div>
     </div>

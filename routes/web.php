@@ -88,11 +88,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/apply-form-a', [RegisterController::class, 'apply_form_a'])->name('apply-form-a');
     Route::get('/successpage', [RegisterController::class, 'successpage'])->name('successpage');
     Route::get('/editApplication/{application_id}', [FormController::class, 'editApplication'])->name('edit-application');
+    Route::get('/editApplication_p/{application_id}', [FormPController::class, 'editApplication'])->name('edit-application_p');
     Route::get('/renew_form/{application_id}', [RegisterController::class, 'renew_form'])->name('renew_form');
     Route::get('/renew-form_ea/{application_id}', [EA_RenewalController::class, 'renew_form_ea'])->name('renew-form_ea');
     Route::get('/document/{type}/{filename}', [FormController::class, 'showEncryptedDocument'])->name('document.show');
     Route::post('/delete_education', [FormController::class, 'delete_education'])->name('delete_education');
     Route::post('/delete_experience', [FormController::class, 'delete_experience'])->name('delete_experience');
+    Route::post('/delete_institute', [FormPController::class, 'delete_institute'])->name('delete_institute');
     
     // ------------------------------------form A------------
     // Route::get('/renew_form/{application_id}', [EA_RenewalController::class, 'renew_form'])->name('renew_form');
@@ -122,6 +124,7 @@ Route::post('/form/draft_renewal_submit/{appl_id}', [FormController::class, 'dra
     ->name('form.draft_renewal_submit');
 
 Route::post('/form/update/{appl_id}', [FormController::class, 'update'])->name('form.update');
+Route::post('/form_p/update', [FormPController::class, 'update'])->name('form_p.update');
 Route::post('/forma/store', [FormAController::class, 'store'])->name('forma.store');
 
 
@@ -161,6 +164,7 @@ Route::get('/generaterenewalTamilPDF/{login_id}', [PDFRenewalController::class, 
 // ----------------------Payment------------------------
 
 Route::post('/payment/updatePayment', [PaymentController::class, 'updatePayment'])->name('payment.updatePayment');
+Route::post('/payment/updatePaymentFormP', [PaymentController::class, 'updatePaymentFormP'])->name('payment.updatePaymentFormP');
 
 //Testing Pages 
 

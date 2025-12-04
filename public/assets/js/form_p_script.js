@@ -1,4 +1,4 @@
-async function showInstructPopup(licence_code) {
+async function showInstructPopup(licence_code,login_id) {
 
     try {
 
@@ -7,8 +7,10 @@ async function showInstructPopup(licence_code) {
         const appl_type = $('#appl_type').val();
         const issued_licence = $('#license_number').val();
 
+        
+
         const formResponse = await $.ajax({
-            url: "licences/getFormInstruction",
+            url: BASE_URL + "/licences/getFormInstruction",
             type: "POST",
             data: {
                 appl_type,
@@ -21,10 +23,6 @@ async function showInstructPopup(licence_code) {
             form_instruct = formResponse.data;
         } 
         
-        // else {
-        //     Swal.fire("Error", "Instruction not available", "error");
-        // }
-
         const data = await getPaymentsService(licence_code, issued_licence, appl_type);
 
         if (data) {
@@ -40,18 +38,23 @@ async function showInstructPopup(licence_code) {
             }
         }
 
+        // console.log(data);
+        
+
         fees_date = data.fees_start_date
         certificate_name = data.certificate_name
 
+
+
         // 🔹 Now you can safely use form_cost everywhere below
-        const modalEl = document.getElementById('competencyInstructionsModal');
+        const modalEl = document.getElementById('competencyInstructionsModalP');
         const agreeCheckbox = modalEl.querySelector('#declaration-agree-renew');
         const errorText = modalEl.querySelector('#declaration-error-renew');
-        const proceedBtn = modalEl.querySelector('#proceedPayment');
+        const proceedBtn = modalEl.querySelector('#proceedtoPayment');
 
-        document.getElementById('certificate_name').textContent = certificate_name;
-        document.getElementById('fees_starts_from').textContent = fees_date;
-        document.getElementById('form_fees').textContent = 'Rs.' + actual_fees + '/-';
+        document.getElementById('p_certificate_name').textContent = certificate_name;
+        document.getElementById('p_fees_starts_from').textContent = fees_date;
+        document.getElementById('p_form_fees').textContent = 'Rs.' + actual_fees + '/-';
 
         // Reset state
         agreeCheckbox.checked = false;
@@ -61,7 +64,6 @@ async function showInstructPopup(licence_code) {
         const modalBody = modalEl.querySelector('#instructionContent');
 
         let html = '<p class="mt-3 text-center" style="color:#0069d9">*** No instructions available. ***</p>';
-        console.log("Instruct:", form_instruct);
         if (form_instruct) {
             try {
                 const delta = JSON.parse(form_instruct);
@@ -84,7 +86,6 @@ async function showInstructPopup(licence_code) {
             console.warn('form_instruct is null or empty:', form_instruct);
         }
 
-        console.log("Delta:", html);
 
         modalBody.innerHTML = html;
         const el = document.querySelector("#instructionContent");
@@ -95,6 +96,7 @@ async function showInstructPopup(licence_code) {
         });
         modal.show();
 
+        
         // Remove old listeners
         const newProceedBtn = proceedBtn.cloneNode(true);
         proceedBtn.replaceWith(newProceedBtn);
@@ -105,8 +107,6 @@ async function showInstructPopup(licence_code) {
                 return;
             }
             modal.hide();
-        });
-
             let formData = new FormData($('#competency_form_p')[0]);
             let applicationId = $('#application_id').val();
             let formUrl;
@@ -116,18 +116,24 @@ async function showInstructPopup(licence_code) {
                 //     formUrl = "{{ route('form.draft_renewal_submit', ['appl_id' => '__APPL_ID__']) }}"
                 //         .replace('__APPL_ID__', applicationId);
                 // } else {
-                //     formUrl = "{{ route('form.update', ['appl_id' => '__APPL_ID__']) }}"
-                //         .replace('__APPL_ID__', applicationId);
-                // }
+                formUrl = BASE_URL + "/form_p/update";
+                    // }
             } else {
-                formUrl = "form_p/store";
+                formUrl = BASE_URL + "/form_p/store";
             }
+
+
+            console.log(formUrl);
+            
+            
             try {
+
                 // 🔹 Submit form
                 let saveResponse = await $.ajax({
                     url: formUrl,
                     type: "POST",
                     data: formData,
+                    dataType: "json",
                     processData: false,
                     contentType: false,
                     headers: {
@@ -140,12 +146,8 @@ async function showInstructPopup(licence_code) {
 
                 if (saveResponse.status === "success") {
 
-
                     let form_type = appl_type === 'R' ? 'Renewal' : 'Fresh';
-
-                    const login_id = window.login_id || "{{ auth()->user()->login_id ?? '' }}";
                     const application_id = saveResponse.application_id;
-
                     const transactionDate = saveResponse.date_apps;
                     const applicantName = saveResponse.applicantName || 'N/A';
                     const type_apps = saveResponse.type_of_apps || 'N/A';
@@ -153,18 +155,14 @@ async function showInstructPopup(licence_code) {
                     const amount = total_fees;
                     const licence_name = saveResponse.licence_name || 'N/A';
 
-                    console.log(application_id);
-                    // const serviceCharge = 10;
-                    // let lateFee = typeof lateFee !== "undefined" ? lateFee : 0;
-                    // let total_charge = Number(amount) + Number(serviceCharge);
+                
                     let lateFeeRow = "";
                     if (lateFee > 0) {
                         lateFeeRow = `
                                 <tr>
                                     <th style="text-align: left; padding: 6px 10px; color: #555;">Late Fees (${lateMonths} Months)</th>
                                     <td style="text-align: right; padding: 6px 10px; font-weight: 500;">Rs. ${lateFee} </td>
-                                </tr>
-                            `;
+                                </tr>`;
                     }
 
 
@@ -226,7 +224,7 @@ async function showInstructPopup(licence_code) {
                         footer: '<div><span style="font-size: 13px;">Note: </span><span style="font-size: 13px;color: red;">Total Amount will be including service charges of payment gateway as applicable</span>',
                         preConfirm: async () => {
                             const paymentResponse = await $.ajax({
-                                url: 'payment.updatePayment',
+                                url: BASE_URL + '/payment/updatePaymentFormP',
                                 type: "POST",
                                 dataType: "json",
                                 data: {
@@ -306,8 +304,7 @@ async function showInstructPopup(licence_code) {
                     return;
                 }
             }
-
-        
+        });     
     } catch (err) {
         console.error("Error fetching form cost or saving form:", err);
 
@@ -328,6 +325,8 @@ async function showInstructPopup(licence_code) {
         }
     }
 }
+
+// Proceed for Payment
 $(document).ready(function () {
     $('#ProceedtoPayment').on('click', function (e) {
         e.preventDefault();
@@ -484,7 +483,7 @@ $(document).ready(function () {
 
 
         if ($('#institute-container .institute-fields').length === 0) {
-            $('#institute-table').after('<span class="error-message text-danger d-block mt-1">At least one educational qualification is required.</span>');
+            $('#institute-table').after('<span class="error-message text-danger d-block mt-1">At least one institute entry is required.</span>');
             if (!firstErrorField) firstErrorField = $('#institute-table');
             isValid = false;
         }
@@ -520,8 +519,9 @@ $(document).ready(function () {
                 isValid = false;
             }
 
-            if (instituteDocument.length && instituteDocument.val().trim() === "") {
-                instituteDocument.after('<span class="error-message text-danger d-block mt-1">Institute certificate upload is required.</span>');
+            // 🔹 File validation (supports edit + new upload)
+             if (instituteDocument.length && instituteDocument.val().trim() === "") {
+                instituteDocument.after('<span class="error-message text-danger d-block mt-1">Institute upload is required.</span>');
                 if (!firstErrorField) firstErrorField = instituteDocument;
                 isValid = false;
             } else if (instituteDocument.length && instituteDocument[0].files.length > 0) {
@@ -532,7 +532,7 @@ $(document).ready(function () {
                     const maxSize = 250 * 1024; // 250 KB
 
                     if (file.type !== allowedType) {
-                        instituteDocument.after('<span class="error-message text-danger d-block mt-1">Only PDF files are allowed for Institute certificate.</span>');
+                        instituteDocument.after('<span class="error-message text-danger d-block mt-1">Only PDF files are allowed for Institute upload.</span>');
                         if (!firstErrorField) firstErrorField = instituteDocument;
                         isValid = false;
                     } else if (file.size < minSize || file.size > maxSize) {
@@ -542,6 +542,7 @@ $(document).ready(function () {
                     }
                 }
             }
+            
         });
 
 
@@ -555,12 +556,6 @@ $(document).ready(function () {
             if (!firstErrorField) firstErrorField = employer_name;
             isValid = false;
         }
-
-
-
-
-
-
 
         let aadhaarInput = document.getElementById("aadhaar");
         let aadhaarError = document.getElementById("aadhaar-error");
@@ -642,7 +637,6 @@ $(document).ready(function () {
         }
 
 
-
         if (!$('#declarationCheckbox').is(':checked')) {
             $('#checkboxError').show();
             if (!firstErrorField) firstErrorField = $('#checkboxError');
@@ -684,7 +678,8 @@ $(document).ready(function () {
         }
 
         let license_name = $("#license_name").val();
-        showInstructPopup(license_name);
+        let login_id = $("#login_id_store").val();
+        showInstructPopup(license_name,login_id);
     });
 
 
@@ -840,6 +835,322 @@ $(document).ready(function () {
         $('#pdfPopup').fadeOut(function () {
             window.location.href = "{{ route('dashboard') }}";
         });
+    });
+
+
+    // Save As Draft
+
+    $('#DraftBtn').on('click', function(e) {
+        e.preventDefault(); 
+
+        $('.error-message').remove(); 
+        let isValid = true;
+        let firstErrorField = null; 
+
+        let nameRegex = /^[A-Za-z\s]+$/;
+        let dob = $('#d_o_b').val();
+
+        // Validate Father's Name
+        let fathersName = $('#Fathers_Name').val().trim();
+        if (fathersName === "") {
+            let errorMsg = $(
+                '<span class="error-message text-danger d-block mt-1">Father\'s Name is required.</span>'
+            );
+            $('#Fathers_Name').after(errorMsg);
+            if (!firstErrorField) firstErrorField = $('#Fathers_Name');
+            isValid = false;
+        } else if (!nameRegex.test(fathersName)) {
+            let errorMsg = $(
+                '<span class="error-message text-danger d-block mt-1">Only alphabets and spaces are allowed.</span>'
+            );
+            $('#Fathers_Name').after(errorMsg);
+            if (!firstErrorField) firstErrorField = $('#Fathers_Name');
+            isValid = false;
+        }
+
+
+        if (dob === "") {
+            let errorMsg = $(
+                '<span class="error-message text-danger d-block mt-1">Date of Birth is required.</span>'
+            );
+            $('#d_o_b').after(errorMsg);
+            if (!firstErrorField) firstErrorField = errorMsg;
+            isValid = false;
+        }
+
+        $('#education-container .education-fields').each(function () {
+
+            let educationUpload = $(this).find('input[type="file"][name^="education_document["]');
+
+            if (educationUpload.length && educationUpload[0].files.length > 0) {
+                const file = educationUpload[0].files[0]; // ✅ use raw DOM element
+                if (file) {
+                    const allowedType = 'application/pdf';
+                    const minSize = 5 * 1024;   // 5 KB
+                    const maxSize = 250 * 1024; // 250 KB
+
+                    if (file.type !== allowedType) {
+                        educationUpload.after('<span class="error-message text-danger d-block mt-1">Only PDF files are allowed for Education upload.</span>');
+                        if (!firstErrorField) firstErrorField = educationUpload;
+                        isValid = false;
+                    } else if (file.size < minSize || file.size > maxSize) {
+                        educationUpload.after('<span class="error-message text-danger d-block mt-1">File size permitted only 5 KB to 200 KB.</span>');
+                        if (!firstErrorField) firstErrorField = educationUpload;
+                        isValid = false;
+                    }
+                }
+            }
+        });
+
+        $('#work-container .work-fields').each(function () {
+            let workDocument = $(this).find('input[type="file"][name^="work_document["]');
+
+           if (workDocument.length && workDocument[0].files.length > 0) {
+                const file = workDocument[0].files[0]; // ✅ use raw DOM element
+                if (file) {
+                    const allowedType = 'application/pdf';
+                    const minSize = 5 * 1024;   // 5 KB
+                    const maxSize = 250 * 1024; // 250 KB
+
+                    if (file.type !== allowedType) {
+                        workDocument.after('<span class="error-message text-danger d-block mt-1">Only PDF files are allowed for Experience certificate.</span>');
+                        if (!firstErrorField) firstErrorField = workDocument;
+                        isValid = false;
+                    } else if (file.size < minSize || file.size > maxSize) {
+                        workDocument.after('<span class="error-message text-danger d-block mt-1">File size permitted only 5 KB to 200 KB.</span>');
+                        if (!firstErrorField) firstErrorField = workDocument;
+                        isValid = false;
+                    }
+                }
+            }
+        });
+        
+
+        let licenseError = document.getElementById("licenseError");
+        let dateError = document.getElementById("dateError");
+
+        licenseError.textContent = '';
+        dateError.textContent = '';
+
+        $("#pancard-error").text("");
+        $("#checkboxError").text("");
+
+
+        // Validate Date of Birth
+
+        const aadhaarInput = document.getElementById("aadhaar");
+        const aadhaarError = document.getElementById("aadhaar-error");
+
+        // get value, remove spaces, and trim
+        const aadhaar = aadhaarInput.value.replace(/\s+/g, '').trim();
+
+        const aadhaarRegex = /^[2-9]{1}[0-9]{11}$/;
+
+        if (aadhaar !== '' && !aadhaarRegex.test(aadhaar)) {
+            aadhaarError.textContent =
+                "Please enter a valid 12-digit Aadhaar number (should not start with 0 or 1).";
+            if (!firstErrorField) firstErrorField = aadhaar;
+            isValid = false;
+        } else {
+            aadhaarError.textContent = "";
+        }
+
+        let aadhaarFileInput = $('#aadhaar_doc')[0];
+        if (aadhaarFileInput) {
+            if (aadhaarFileInput.files.length !== 0) {
+                const file = aadhaarFileInput.files[0];
+                const allowedType = 'application/pdf';
+                const maxSize = 250 * 1024; // 250 KB
+
+                if (file.type !== allowedType) {
+                    let errorMsg = $(
+                        '<span class="error-message text-danger d-block mt-1">Only PDF files are allowed for Aadhaar document.</span>'
+                    );
+                    $('#aadhaar_doc').after(errorMsg);
+                    if (!firstErrorField) firstErrorField = $('#aadhaar_doc');
+                    isValid = false;
+                } else if (file.size > maxSize) {
+                    let errorMsg = $(
+                        '<span class="error-message text-danger d-block mt-1">File size permitted only 5 KB to 250 KB.</span>'
+                    );
+                    $('#aadhaar_doc').after(errorMsg);
+                    if (!firstErrorField) firstErrorField = $('#aadhaar_doc');
+                    isValid = false;
+                }
+            }
+        }
+
+        const pancardInput = document.getElementById("pancard");
+        const pancardError = document.getElementById("pancard-error");
+        const pancardValue = pancardInput.value.trim();
+        const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+
+
+        const pancardDocInput = document.getElementById("pancard_doc");
+        
+        if (pancardDocInput && pancardDocInput.files.length > 0) {
+            const file = pancardDocInput.files[0];
+            if (file) {
+                const allowedType = 'application/pdf';
+                const maxSize = 250 * 1024;
+                if (file.type !== allowedType) {
+                    $('#pancard_doc').after('<span class="error-message text-danger d-block mt-1">Only PDF files are allowed for PAN document.</span>');
+                    if (!firstErrorField) firstErrorField = $('#pancard_doc');
+                    isValid = false;
+                } else if (file.size > maxSize) {
+                    $('#pancard_doc').after('<span class="error-message text-danger d-block mt-1">File size permitted only 5 KB to 250 KB.</span>');
+                    if (!firstErrorField) firstErrorField = $('#pancard_doc');
+                    isValid = false;
+                }
+            }
+        }
+
+
+
+        // PAN document validation if PAN number is entered
+        $("#pancard").on("keyup", function() {
+            let value = $(this).val().toUpperCase();
+
+            // Limit to 10 characters
+            if (value.length > 10) {
+                value = value.slice(0, 10);
+            }
+
+            $(this).val(value); // Force uppercase and max length
+
+            if (/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value)) {
+                $("#pancard-error").text(""); // valid
+            } else {
+                $("#pancard-error").text("Enter valid 10-character PAN (e.g., ABCDE1234F).");
+            }
+        });
+
+
+
+        let photoInput = document.getElementById("upload_photo");
+        
+        if (photoInput && photoInput.files.length > 0) {
+            const file = photoInput.files[0];
+            if (file) {
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                const maxSize = 50 * 1024;
+                if (!allowedTypes.includes(file.type)) {
+                    $('#upload_photo').after('<span class="error-message text-danger d-block mt-1">Only JPG, JPEG, or PNG images are allowed for photo upload.</span>');
+                    if (!firstErrorField) firstErrorField = $('#upload_photo');
+                    isValid = false;
+                } else if (file.size > maxSize) {
+                    $('#upload_photo').after('<span class="error-message text-danger d-block mt-1">File size permitted only 5 KB to 50 KB.</span>');
+                    if (!firstErrorField) firstErrorField = $('#upload_photo');
+                    isValid = false;
+                }
+            }
+        }
+
+        if (!isValid) {
+
+            $('html, body').animate({
+                scrollTop: firstErrorField.offset().top - 100
+            }, 500);
+
+            return; 
+
+        } else {
+            let applicationId = $('#application_id').val();
+
+            let applType = $('#appl_type').val();
+            let formData = new FormData($('#competency_form_ws')[0]);
+
+            formData.append('form_action', 'draft');
+
+            
+
+            if (applType === "R") {
+                // Renewal draft submit route
+                url = BASE_URL + "/form/draft_renewal_submit";
+            } else {
+                // New application draft submit route
+                url = BASE_URL + "/form/draft_submit";
+            } 
+
+            // let url = $(this).data("url");
+
+            if (applicationId) {
+                url += "/" + applicationId;
+            }
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.status == 'success') {
+
+                        Swal.fire({
+                            title: 'Application Saved As Draft!',
+                            html: 'Your Application ID: <strong>' + response.application_id + '</strong>',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = BASE_URL +'/dashboard'; // change as needed
+                        });
+
+                    }else{
+                        Swal.fire("Failed", "Application not saved as draft", "error");
+                    }
+
+                },
+                error: function(xhr) {
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+
+                        // First clear previous errors
+                        $('.text-danger.server-error').remove();
+                        $('.is-invalid').removeClass('is-invalid');
+
+                        // Loop through errors  
+
+                        $.each(xhr.responseJSON.errors, function (fieldName, messages) {
+
+                            console.log(fieldName);
+                            console.log(messages);
+                            // Support dot notation (like education_document.0)
+                            let fieldSelector = fieldName.replace(/\./g, '\\.'); // escape dot for jQuery
+
+                            // Try to find the input by name
+                            let field = $(`[name="${fieldName}"]`);
+                            if (field.length === 0) {
+                                // If not found directly, try fallback (use name starts with for array fields)
+                                field = $(`[name^="${fieldName.split('.')[0]}"]`).eq(parseInt(fieldName.split('.')[1]));
+                            }
+
+                            // Add error message if input found
+                            if (field.length) {
+                                field.addClass('is-invalid');
+
+                                // Append the error message after the input
+                                field.after(`<span class="text-danger server-error">${messages[0]}</span>`);
+                            }
+                        });
+
+                        let firstInvalid = $('.is-invalid').first();
+                        if (firstInvalid.length) {
+                            $('html, body').animate({
+                                scrollTop: firstInvalid.offset().top - 100 // Adjust offset as needed
+                            }, 500);
+                        }
+                    
+
+                    } else {
+                        Swal.fire("Error", xhr.responseText || "An unexpected error occurred.", "error");
+                    }
+                }
+            });
+
+        }
     });
 
 

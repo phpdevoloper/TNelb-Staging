@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\RoleHelper;
+use App\Models\Admin\FeesValidity;
 use App\Models\Mst_Form_s_w;
 
 use App\Models\EA_Application_model;
@@ -643,8 +644,13 @@ try {
 
         // Get form type
         $formType = MstLicence::where('form_code', $application->form_name)->first();
-
-        // var_dump($formType->form_code);die;
+        
+        $get_period = FeesValidity::where('licence_id', $formType->id)
+        ->where('form_type', $application->appl_type)
+        ->where('validity_start_date','<=', now())
+        ->first();
+        
+        // var_dump($get_period->validity);die;
 
 
         // if (in_array($formType->form_name, ['FORM S'])) {
@@ -732,7 +738,7 @@ try {
 
                     $issuedAt = now()->format('Y-m-d H:i:s');
 
-                    $expiresAt = now()->addYear(4)->format('Y-m-d H:i:s');
+                    $expiresAt = now()->addMonths($get_period->validity)->format('Y-m-d H:i:s');
 
                     // Insert new license record
                     DB::table('tnelb_license')->insert([

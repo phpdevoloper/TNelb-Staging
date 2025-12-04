@@ -228,10 +228,10 @@
                                                         <tr class="education-fields">
                                                             <td> <select class="form-control" name="educational_level[]">
                                                                     <option selected disabled>Select Education</option>
-                                                                    <option value="UG">B.E(Mechanical)</option>
-                                                                    <option value="UG">B.E(Electrical)</option>
-                                                                    <option value="Diploma">Diploma(Mechanical)</option>
-                                                                    <option value="Diploma">Diploma(Electrical)</option>
+                                                                    <option value="BEM">B.E(Mechanical)</option>
+                                                                    <option value="BEM">B.E(Electrical)</option>
+                                                                    <option value="DiplomaM">Diploma(Mechanical)</option>
+                                                                    <option value="DiplomaE">Diploma(Electrical)</option>
                                                                 </select></td>
                                                             <td><input type="text" class="form-control" name="institute_name[]"></td>
                                                             <td>
@@ -323,9 +323,9 @@
                                             <div class="col-12 col-md-12 ">
                                                 <label>(iii). Power Station to which he is aattached at present<span style="color: red;">*</span> <span class="text-label">(Upload the documents)</span></label>
                                                 <br>
-                                                <label for="tamil" class="tamil">பெற்றுள்ள
-                                                    விண்ணப்பதாரர் பயிற்சி பெற்ற நிறுவனம் மற்றும் பயிற்சி பெற்ற காலம்<span style="color: red;">*</span>
-                                                    <span class="text-label">(ஆவணங்களை பதிவேற்ற வேண்டும்)</span></label>
+                                                <label for="tamil" class="tamil">பெற்றுள்ள விண்ணப்பதாரர் பயிற்சி பெற்ற நிறுவனம் மற்றும் பயிற்சி பெற்ற காலம்<span style="color: red;">*</span>
+                                                    <span class="text-label">(ஆவணங்களை பதிவேற்ற வேண்டும்)</span>
+                                                </label>
                                             </div>
                                         </div>
                                         <div class="table-responsive">
@@ -387,7 +387,7 @@
                                             <div class="col-12 col-md-12 ">
                                                 <div class="row align-items-center">
                                                     <div class="col-12 col-md-9 ">
-                                                        <label for="Name">6. Have you made any previousapplication? If so, State reference No. and date </label>
+                                                        <label for="Name">6. Have you made any previous application? If so, State reference No. and date </label>
                                                         <br>
                                                         <label for="tamil" class="tamil">இதற்கு முன்னாள் விண்ணப்பம் செய்துள்ளீர்களா ? ஆம் என்றால் அதன் குறிப்பு எண் மற்றும் தேதியை குறிப்பிடுக
                                                         </label>

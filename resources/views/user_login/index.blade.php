@@ -477,6 +477,7 @@
                                             </tr>
                                         @endforeach
 
+                                        {{-- Form P --}}
                                         @foreach ($all_form_p as $index => $workflow)
                                             <tr>
                                                 <td>{{ $index + 1 }}
@@ -494,7 +495,7 @@
                                                                 isset($workflow->appl_type) &&
                                                                 $workflow->appl_type == 'R'
                                                                     ? 'renew_form'
-                                                                    : 'edit-application';
+                                                                    : 'edit-application_p';
 
                                                         @endphp
                                                         <a
@@ -505,21 +506,21 @@
                                                         </a>
                                                     @else
                                                         @if ($workflow->appl_type == 'R')
-                                                            @if ($workflow->status == 'P')
+                                                            @if ($workflow->app_status == 'P')
                                                                 <span class="btn btn-sm btn-primary">Submitted</span>
-                                                            @elseif($workflow->status == 'F')
+                                                            @elseif($workflow->app_status == 'F')
                                                                 <span class="btn btn-warning">In Progress</span>
-                                                             @elseif($workflow->status == 'RJ')
+                                                             @elseif($workflow->app_status == 'RJ')
                                                                 <span class="btn btn-danger">Rejected</span>
                                                             @else
                                                                 <span class="btn btn-sm btn-success">Completed</span>
                                                             @endif
                                                         @else
-                                                            @if ($workflow->status == 'P')
+                                                            @if ($workflow->app_status == 'P')
                                                                 <span class="btn btn-sm btn-primary">Submitted</span>
-                                                            @elseif($workflow->status == 'F')
+                                                            @elseif($workflow->app_status == 'F')
                                                                 <span class="btn btn-danger">In Progress</span>
-                                                            @elseif($workflow->status == 'RJ')
+                                                            @elseif($workflow->app_status == 'RJ')
                                                                 <span class="btn btn-danger">Rejected</span>
                                                             @else
                                                                 <span class="btn btn-sm btn-success">Completed</span>
