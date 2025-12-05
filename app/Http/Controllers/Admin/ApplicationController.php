@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Mst_Form_s_w;
 
 use App\Models\Admin\WorkflowA;
-
+use App\Models\MstLicence;
 
 class ApplicationController extends Controller
 {
@@ -68,6 +68,39 @@ class ApplicationController extends Controller
         // var_dump($renewal);die;
     
         return view('admin.supervisor.view', compact('new_applications','renewal','forms'));
+    }
+
+
+    public function get_applications_p()
+    {
+        $userRole = Auth::user()->roles_id; // Supervisor Role ID
+        // $licence_id = MstLicence::where('form_code', 'P')->value('');
+        $assignedFormID = Auth::user()->form_id;
+        $forms = self::getForms($assignedFormID);
+    
+        $new_applications = DB::table('tnelb_form_p')
+        ->where('form_name', 'P') // Filter by Form S
+        ->where('appl_type', 'N') // Filter by Form S
+        ->where('payment_status', 'payment') // Filter by Form S
+        ->whereIn('app_status', ['P','RE']) // Only show new applications
+        ->select('*')
+        ->orderByDesc('id')
+        ->get();
+
+
+
+
+        $renewal = DB::table('tnelb_form_p')
+        ->where('form_name', 'P') // Filter by Form S
+        ->where('appl_type', 'R') // Filter by Form S
+        ->whereIn('app_status', ['P','RE']) // Only show new applications
+        ->select('*')
+        ->orderByDesc('id')
+        ->get();
+
+        // var_dump($renewal);die;
+    
+        return view('admin.supervisor.view_form_p', compact('new_applications','renewal','forms'));
     }
 
     public function view_application(){

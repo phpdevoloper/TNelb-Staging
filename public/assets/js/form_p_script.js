@@ -553,9 +553,13 @@ $(document).ready(function () {
                 '<span class="error-message text-danger d-block mt-1">Employer Name is required.</span>'
             );
 
-            if (!firstErrorField) firstErrorField = employer_name;
+            if (!firstErrorField) firstErrorField = $(employer_name);
             isValid = false;
         }
+
+        console.log(isValid);
+
+        
 
         let aadhaarInput = document.getElementById("aadhaar");
         let aadhaarError = document.getElementById("aadhaar-error");
@@ -670,6 +674,8 @@ $(document).ready(function () {
             }
         }
 
+
+    
 
 
         if (!isValid && firstErrorField) {

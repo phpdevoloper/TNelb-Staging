@@ -59,7 +59,7 @@
                                         <div class="col-lg-9 col-9">
                                             <div class="balance-info">
                                                 <h6>Form S</h6>
-                                                <p class="text-white">License C</p>
+                                                <p class="text-white">Certificate C</p>
                                             </div>
                                         </div>
                                     </div>
@@ -73,6 +73,44 @@
                                     <div style="text-align: end;">
                                         <h4 onclick="window.location.href='{{ route('admin.get_completed') }}'" style="cursor: pointer"> Completed <span class="badge badge-success">{{ $completed }}</span></h4>
                                         <h4 onclick="window.location.href='{{ route('admin.get_applications') }}'" style="cursor: pointer"> Pending <span class="badge badge-warning">{{ $pendings }}</span></h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12  layout-spacing">
+                    <div class="widget widget-card-five bg-green color_forms">
+                        <div class="widget-content">
+                            <div class="account-box">
+                                <div class="info-box">
+                                    <div class="row">
+                                        <div class="col-lg-3 col-3">
+                                            <div class="icon bg-H">
+                                                <span>
+                                                    <i class="fa fa-file-text"></i>
+                                                    <!-- <img src="{{url ('assets/images/icon/doc-icon.png') }}" alt="money-bag"> -->
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-9 col-9">
+                                            <div class="balance-info">
+                                                <h6>Form P</h6>
+                                                <p class="text-white">Certificate P</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-bottom-section">
+                                    {{-- <a href="{{ route('view_applications') }}">View More</a> --}}
+                                    <div style="text-align: start;">
+                                        <h4 onclick="window.location.href='{{ route('admin.get_applications') }}'" style="cursor: pointer"> On hold <span class="badge badge-dark">0</span></h4>
+                                        <h4 onclick="window.location.href='{{ route('admin.get_rejected') }}'" style="cursor: pointer"> Rejected <span class="badge badge-danger">{{ $rejected_appls }}</span></h4>
+                                    </div>
+                                    <div style="text-align: end;">
+                                        <h4 onclick="window.location.href='{{ route('admin.get_completed') }}'" style="cursor: pointer"> Completed <span class="badge badge-success">{{ $completed }}</span></h4>
+                                        <h4 onclick="window.location.href='{{ route('admin.get_applications_p') }}'" style="cursor: pointer"> Pending <span class="badge badge-warning">{{ $form_p_pending }}</span></h4>
                                     </div>
                                 </div>
                             </div>

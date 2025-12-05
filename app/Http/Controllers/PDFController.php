@@ -8,7 +8,10 @@ use App\Models\Mst_Form_s_w;
 use App\Models\Mst_education;
 use App\Models\Mst_experience;
 use App\Models\Mst_documents;
+use App\Models\MstLicence;
 use App\Models\TnelbApplicantPhoto;
+use App\Models\TnelbAppsInstitute;
+use App\Models\TnelbFormP;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use TCPDF;
@@ -1018,5 +1021,226 @@ $certificateText = match ($form->form_name) {
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'inline; filename="license.pdf"');
 
+    }
+
+    public function generatePDFFormP($newApplicationId)
+    {
+
+        $form = TnelbFormP::where('application_id', $newApplicationId)->first();
+
+        $licences = MstLicence::where('form_code', $form->form_name)->first();
+
+        // var_dump($licences->licence_name);die;
+        
+        $education = Mst_education::where('application_id', $newApplicationId)->get();
+        $experience = Mst_experience::where('application_id', $newApplicationId)->get();
+        $institutes = TnelbAppsInstitute::where('application_id', $newApplicationId)->get();
+        $applicant_photo = TnelbApplicantPhoto::where('application_id', $newApplicationId)->first();
+
+
+        $decryptedaadhar = Crypt::decryptString($form->aadhaar);
+        $decryptedpan = Crypt::decryptString($form->pancard);
+        $masked = strlen($decryptedaadhar) === 12 ? str_repeat('X', 8) . substr($decryptedaadhar, -4) : 'Invalid Aadhaar';
+        $maskedPan = strlen($decryptedpan) === 10 ? str_repeat('X', 6) . substr($decryptedpan, -4) : 'Invalid PAN';
+
+        if (!$form) {
+            return redirect()->back()->with('error', 'No records found!');
+        }
+
+        // $wrap = function ($text, $length = 20) {
+        //     return wordwrap($text, $length, '<br>', true);
+        // };
+
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'default_font_size' => 10,
+            'default_font' => 'helvetica',
+        ]);
+    
+        $mpdf->WriteHTML('
+        <style>
+            body { font-family: helvetica, sans-serif; font-size: 10pt; line-height: 1.4; }
+            h3, h4, p { margin: 4px 0; }
+            table { border-collapse: collapse; width: 100%; margin-top: 6px; }
+            td, th { padding: 4px; vertical-align: top; }
+            .label { width: 35%; text-align: left; font-weight: bold; }
+            .value { width: 40%; text-align: left; }
+            .tbl-bordered td, .tbl-bordered th { border: 1px solid #000; text-align: center; }
+            .tbl-no-border td { border: none; padding-bottom: 12px; } /* ⬅ spacing between rows */
+            .photo-cell { text-align:center; }
+        </style>', \Mpdf\HTMLParserMode::HEADER_CSS);
+    
+        
+        $certificateText = 'Application for '.$licences->licence_name;
+    
+        $html = '
+        <h3 style="text-align:center;">GOVERNMENT OF TAMILNADU</h3>
+        <h4 style="text-align:center;">THE ELECTRICAL LICENSING BOARD</h4>
+        <p style="text-align:center;">Thiru.Vi.Ka.Indl.Estate, Guindy, Chennai – 600032.</p>
+        <p style="text-align:center;">' . $certificateText . '</p>
+        <h4 style="text-align:center;">Form "' . $form->form_name . ($form->appl_type == 'R' ? '" - Renewal' : '"') . '</h4>
+        <h4 style="text-align:center;">Application Number: <strong>' . $form->application_id . '</strong></h4>';
+    
+        $html .= '<table class="tbl-no-border">
+        <tr>
+            <td class="label">1. Name of the Applicant</td>
+            <td class="value">: ' . $form->applicant_name . '</td>
+            <td rowspan="5" class="photo-cell">';
+    
+        if ($applicant_photo && file_exists(public_path($applicant_photo->upload_path))) {
+            $html .= '<img src="' . public_path($applicant_photo->upload_path) . '" style="width:120px; height:150px; border:1px solid;">';
+        } else {
+            $html .= '<p>No Photo</p>';
+        }
+     
+        $html .= '</td></tr>
+        <tr>
+            <td class="label">2. Father\'s Name</td>
+            <td class="value">: ' . $form->fathers_name . '</td>
+        </tr>
+        <tr>
+            <td class="label">3. Address of the Applicant (in block letters)</td>
+                <td class="value" colspan="2">
+                <table style="border: none; width: 100%;">
+                    <tr>
+                        <td style="width: 10px;">:</td>
+                        <td style="text-align: left;">
+                            ' . $this->formatAddressToThreeLines($form->applicants_address) . '
+                        </td>
+                    </tr>
+                </table>
+             </td>
+        </tr>
+        <tr>
+            <td class="label">4. Date of birth and age along with evidence</td>
+            <td class="value">: ' . $form->d_o_b . ' (' . $form->age . ' years)</td>
+        </tr>
+        </table>';
+    
+        // Education
+        $html .= '<h4>5.(i). Details of Technical Qualification passed by the applicant</h4>
+        <table class="tbl-bordered">
+        <tr>
+        <th>S.No</th><th>Education Level</th><th>Institution</th><th>Year of Passing</th><th>Percentage</th>
+        </tr>';
+        foreach ($education as $i => $edu) {
+            $html .= '<tr>
+                <td>' . ($i + 1) . '</td>
+                <td>' . $edu->educational_level . '</td>
+                <td>' . $edu->institute_name . '</td>
+                <td>' . $edu->year_of_passing . '</td>
+                <td>' . $edu->percentage . '%</td>
+            </tr>';
+        }
+        $html .= '</table>';
+    
+        // Experience
+        $html .= '<h4>ii. Institute in which the applicant undergone
+        the training and the period</h4>
+        <table class="tbl-bordered">
+        <tr>
+        <th>S.No</th>
+        <th>Institute Name</th>
+        <th>Duration(Years)</th>
+        <th>Form Date</th>
+        <th>To Date</th>
+        </tr>';
+        foreach ($institutes as $i => $ins) {
+            $html .= '<tr>
+                <td>' . ($i + 1) . '</td>
+                <td>' . $ins->institute_name_address . '</td>
+                <td>' . $ins->duration . '</td>
+                <td>' . format_date($ins->from_date) . '</td>
+                <td>' . format_date($ins->to_date) . '</td>
+            </tr>';
+        }
+        $html .= '</table>';
+
+        $html .= '<h4>iii. Power Station to which he is aattached at
+        present.</h4><table class="tbl-bordered">
+        <tr>
+        <th>S.No</th>
+        <th>Power Station</th>
+        <th>Experience(Years)</th>
+        <th>designation</th>
+        </tr>';
+        foreach ($experience as $i => $exp) {
+            $html .= '<tr>
+                <td>' . ($i + 1) . '</td>
+                <td>' . $exp->company_name . '</td>
+                <td>' . $exp->experience . '</td>
+                <td>' . $exp->designation . '</td>
+            </tr>';
+        }
+        $html .= '</table>';
+
+        $html .= '<p><strong>(iv). Name of the employer :</strong> '.$form->employer_detail.'</p>';
+
+        
+    
+        // Aadhaar, PAN and others
+        $previously = ($form->previously_number && $form->previously_date) ? $form->previously_number . ', ' . $form->previously_date : 'No';
+        $wireman_details = $form->wireman_details ?: 'No';
+
+        if (empty($form->previously_number) || empty($form->previously_date)) {
+            $value = 'No';
+        } else {
+            $value = 'Yes, '.($form->previously_number ?: '') . ' , ' . (!empty($form->previously_date) ? format_date($form->previously_date) : '');
+        }
+
+        if (empty($form->certificate_no) || empty($form->certificate_date)) {
+            $certno = 'No';
+        } else {
+            $certno = 'Yes, '.($form->certificate_no ?: '') . ', ' . (!empty($form->certificate_date) ? format_date($form->certificate_date) : '');
+        }
+
+
+
+        
+        // $html .= '<tr>
+        // <td width="70%"><strong>7. Have you made any previous application? If so, state Reference Number and Date</strong></td>
+        // <td>: ' . $value . '</td>
+        // </tr>';
+    
+        $html .= '<table width="100%" cellpadding="5" cellspacing="0" style="margin-top:10px;">';
+
+        if ($form->form_name == 'S') {
+            $html .= '<tr><td width="70%"><strong>7. Have previously applied for Electrical Assistant Qualification Certificate and if yes then mention its number and date</strong></td><td>: ' . $value . '</td></tr>';
+        }
+
+
+
+        if ($form->form_name == 'S') {
+            $no = '8';
+            $html .= '<tr><td><strong>'.$no.'. Do you possess Wireman Competency Certificate / Supervisor Competency Certificate issued by this Board? If so furnish the details and surrender the same.</strong></td><td>: ' . ($form->form_name == 'S' ? $certno : $value) . '</td></tr>';
+
+            $html .= '<tr><td><strong>9. Aadhaar Number</strong></td><td>: ' . $masked . '</td></tr>';
+
+            $html .= '<tr><td><strong>10. PAN Number</strong></td><td>: ' . $maskedPan . '</td></tr>';
+        }else{
+            $no = '7';
+            if($form->form_name == 'WH'){
+                $html .= '<tr><td><strong>'.$no.'. Do you possess Wireman Helper Competency Certificate issued by this Board? If so furnish the details and surrender the same.</strong></td><td>: ' . ($form->form_name == 'WH' ? $certno : $value) . '</td></tr>';
+            }else{
+                $html .= '<tr><td><strong>'.$no.'. Do you possess Wireman Competency Certificate / Wireman Helper Competency Certificate issued by this Board? If so furnish the details and surrender the same.</strong></td><td>: ' . $certno . '</td></tr>';
+            }
+            $html .= '<tr><td><strong>8. Aadhaar Number</strong></td><td>: ' . $masked . '</td></tr>';
+
+            $html .= '<tr><td><strong>9. PAN Number</strong></td><td>: ' . $maskedPan . '</td></tr>';
+        }
+
+
+       
+        $html .= '</table>';
+    
+        $html .= '<p class="mt-2">I hereby declare that all details mentioned above are correct and true to the best of my knowledge. I request that I may be granted a Supervisor Competency Certificate.</p>
+        <br><br><br>
+        <p><strong>Place:</strong> Chennai</p>
+        <p><strong>Date:</strong> ' . date('d-m-Y') . '</p>
+        <p style="text-align:right;"><strong>Signature of the Candidate</strong></p>';
+    
+        $mpdf->WriteHTML($html);
+        return response($mpdf->Output('Application_Details.pdf', 'I'))->header('Content-Type', 'application/pdf');
     }
 }

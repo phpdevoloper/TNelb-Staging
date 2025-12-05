@@ -19,6 +19,7 @@ use App\Models\Admin\Portaladmin_menu;
 use App\Models\Admin\Tnelb_homeslider_tbl;
 use App\Models\Admin\Tnelb_Mst_Media;
 use App\Models\Admin\Tnelb_submenus;
+use App\Models\TnelbFormP;
 use Illuminate\Support\Facades\Storage;
 
 class LoginController extends Controller
@@ -292,6 +293,12 @@ class LoginController extends Controller
             )
             ->first();
 
+
+        $form_p_pending = TnelbFormP::where('form_name', 'P')
+        ->whereIn('app_status', ['P','RE'])
+        ->where('payment_status', 'payment')
+        ->count();
+
         $formColors = [
             'C'  => 'bg-yellow',
             'B'  => 'bg-red',
@@ -346,7 +353,8 @@ class LoginController extends Controller
             'form_wh_pending',
             'form_wh_completed',
             'rejected_appls',
-            'form_wh_rejected'
+            'form_wh_rejected',
+            'form_p_pending'
         ));
     }
 
@@ -627,6 +635,243 @@ class LoginController extends Controller
 
 
         return view($view, compact('applicant', 'educationalQualifications', 'workExperience', 'uploadedPhoto', 'documents', 'nextForwardUser', 'returnForwardUser', 'workflows', 'queries', 'user_entry','staff'));
+    }
+
+    public function showFormPDetails($applicant_id)
+    {
+
+        // $roles = DB::table('tnelb_registers')
+        //     ->select('*')
+        //         ->get();
+
+        
+        $returnForwardUser = null;
+        // Fetch applicant details
+        $applicant = DB::table('tnelb_form_p')
+        ->join('payments', 'tnelb_form_p.application_id', '=', 'payments.application_id')
+        ->where('tnelb_form_p.application_id', $applicant_id)
+        ->select('tnelb_form_p.*', 'payments.*')
+        ->first();
+
+        
+
+        
+        if (!$applicant) {
+            return abort(403, 'Applicant not found');
+        }
+
+
+        // var_dump($applicant->form_id);die;
+        
+        if($applicant->appl_type == "R"){
+            
+            // $ids = [$applicant->old_application, $applicant_id];
+            
+            // Fetch educational qualifications
+            $educationalQualifications = DB::table('tnelb_applicants_edu')
+            ->where('application_id', $applicant_id)
+                ->get();
+                
+                // Fetch work experience
+                $workExperience = DB::table('tnelb_applicants_exp')
+                ->where('application_id', $applicant_id)
+                ->get();
+                
+            // Fetch documents
+            $documents = DB::table('tnelb_applicants_doc')
+            ->where('application_id', $applicant_id)
+            ->get();
+            
+            // Get the last uploaded photo (if available)
+            $uploadedPhoto = TnelbApplicantPhoto::where('application_id', $applicant_id)
+            ->whereNotNull('upload_path')
+            ->orderByDesc('id')
+            ->first();
+
+            // var_dump($workExperience);die;
+                
+        }else{
+            
+            // Fetch educational qualifications
+            $educationalQualifications = DB::table('tnelb_applicants_edu')
+            ->where('application_id', $applicant_id)
+            ->orderBy('year_of_passing', 'desc')
+            ->get();
+            
+                // Fetch work experience
+            $workExperience = DB::table('tnelb_applicants_exp')
+                ->where('application_id', $applicant_id)
+                ->get();
+
+            // Fetch documents
+            $documents = DB::table('tnelb_applicants_doc')
+                ->where('application_id', $applicant_id)
+                ->get();
+                
+            // Get the last uploaded photo (if available)
+            $uploadedPhoto = TnelbApplicantPhoto::where('application_id', $applicant_id)
+            ->whereNotNull('upload_path')
+            ->orderByDesc('id')
+            ->first();
+
+        }
+
+       
+        
+
+        // Get the current user's role ID
+        $staff = Auth::user();
+
+
+
+        if (!$staff || !$staff->roles_id) {
+            return abort(403, 'Unauthorized');
+        }
+
+        // Fetch next role dynamically from the roles table
+        if (in_array($staff->name, ["Supervisor","Supervisor2"])) {
+
+            if ($applicant->app_status == 'RE') {
+
+                // $processed_by = match ($applicant->processed_by) {
+                //     'PR'  => 'President',
+                //     'SE'  => 'Secretary',
+                //     'S'  => 'Supervisor',
+                //     'A'  => 'Accountant'
+                // };
+                
+                // $nextForwardUser = DB::table('mst__staffs__tbls')
+                //     ->where('name', $processed_by)
+                //     ->select('name', 'roles_id')
+                //     ->first(); 
+
+                $nextForwardUser = DB::table('mst__staffs__tbls')
+                    ->where('name', 'Secretary')
+                    ->select('name', 'roles_id')
+                    ->first();
+
+
+
+            } else {
+                $nextForwardUser = DB::table('mst__staffs__tbls')
+                    ->where('name', 'Accountant')
+                    ->select('name', 'roles_id')
+                    ->first();
+            }
+        }
+
+
+
+        // if ($staff->name === "Supervisor2") {
+        //     $nextForwardUser = DB::table('mst__staffs__tbls')
+        //         ->where('name', 'Accountant')
+        //         ->select('name', 'roles_id')
+        //         ->first();
+        // }
+
+
+        if ($staff->name === "Accountant") {
+            $nextForwardUser = DB::table('mst__staffs__tbls')
+                ->where('name', 'Secretary')
+                ->select('name', 'roles_id')
+                ->first();
+        }
+        if ($staff->name === "Secretary") {
+
+            if ($applicant->form_id == 1) {
+
+                $nextForwardUser = DB::table('mst__staffs__tbls')
+                    ->where('name', 'President')
+                    ->select('name', 'roles_id')
+                    ->first();
+
+                $returnForwardUser = DB::table('mst__staffs__tbls')
+                    ->where('name', 'Supervisor')
+                    ->select('name', 'roles_id')
+                    ->first();
+            } else {
+
+                $nextForwardUser = DB::table('mst__staffs__tbls')
+                    ->where('name', 'Secretary')
+                    ->select('name', 'roles_id')
+                    ->first();
+
+                $returnForwardUser = DB::table('mst__staffs__tbls')
+                    ->where('name', 'Supervisor')
+                    ->select('name', 'roles_id')
+                    ->first();
+            }
+        }
+
+        if ($staff->name === "President") {
+
+            $nextForwardUser = DB::table('mst__staffs__tbls')
+                ->where('name', 'President')
+                ->select('roles_id','name')
+                ->first();
+
+            $returnForwardUser = DB::table('mst__staffs__tbls')
+                ->where('name', 'Supervisor')
+                ->select('name', 'roles_id')
+                ->first();
+        }
+
+        
+
+
+        $user_entry = DB::table('tnelb_application_tbl')
+            ->where('application_id', $applicant_id) // Filter by specific application
+            ->select('*')
+            ->first();
+
+
+        
+        // $workflows = DB::table('tnelb_workflow')
+        //     ->leftjoin('tnelb_application_tbl', 'tnelb_workflow.application_id', '=', 'tnelb_application_tbl.application_id')
+        //     ->leftjoin('mst__roles', 'tnelb_workflow.forwarded_to', '=', 'mst__roles.id')
+        //     ->where('tnelb_workflow.application_id', $applicant_id) // Filter by specific application
+        //     ->select('tnelb_workflow.*', 'mst__roles.name', 'tnelb_application_tbl.form_name', 'tnelb_application_tbl.license_name')
+        //     ->orderBy('tnelb_workflow.id', 'desc')
+        //     ->get();
+
+        $workflows = DB::table('tnelb_workflow')
+            ->leftjoin('tnelb_application_tbl', 'tnelb_workflow.application_id', '=', 'tnelb_application_tbl.application_id')
+            ->leftjoin('mst__roles', 'tnelb_workflow.forwarded_to', '=', 'mst__roles.id')
+            ->where('tnelb_workflow.application_id', $applicant_id) // Filter by specific application
+            ->select('tnelb_workflow.*', 'mst__roles.name', 'tnelb_application_tbl.form_name', 'tnelb_application_tbl.license_name')
+            ->orderBy('tnelb_workflow.id', 'desc')
+            ->get();
+
+             $workflows1 = DB::table('mst__roles')
+             ->select('*')
+             ->get();
+
+
+
+        $queries = DB::table('tnelb_query_applicable as qa')
+        ->leftJoin('tnelb_application_tbl as ta', 'qa.application_id', '=', 'ta.application_id')
+        ->where('qa.application_id', $applicant_id)
+        ->where('qa.query_status', 'P')
+        ->select('qa.*')
+        ->orderByDesc('qa.id')
+        ->get();
+    
+
+
+
+
+        // Determine view based on user role
+        // $view = match ($staff->name) {
+        //     'Secretary'  => 'admin.dashboard.applicants_detail_supervisor',
+        //     'Supervisor' => 'admin.dashboard.applicants_detail_form_p',
+        //     'Supervisor2' => 'admin.dashboard.applicants_detail_supervisor',
+        //     'Accountant'    => 'admin.dashboard.applicants_detail_auditor',
+
+        //     default      => abort(403, 'Unauthorized'),
+        // };
+
+
+        return view('admin.dashboard.applicants_detail_form_p', compact('applicant', 'educationalQualifications', 'workExperience', 'uploadedPhoto', 'documents', 'nextForwardUser', 'returnForwardUser', 'workflows', 'queries', 'user_entry','staff'));
     }
 
     public function presidentDashboard()

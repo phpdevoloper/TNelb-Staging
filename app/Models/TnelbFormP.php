@@ -20,7 +20,7 @@ class TnelbFormP extends Model
         'age',
         'previously_number',
         'previously_date',
-        'wireman_details',
+        'employer_detail',
         'form_name',
         'license_name',
         'app_status',

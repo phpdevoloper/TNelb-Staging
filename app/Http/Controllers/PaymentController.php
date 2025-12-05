@@ -124,7 +124,6 @@ class PaymentController extends Controller
             ]);
         }
 
-        var_dump($validated['login_id']);die;
 
         $payment = Payment::updateOrCreate(
             [

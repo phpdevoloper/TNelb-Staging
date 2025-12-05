@@ -66,6 +66,7 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
             Route::get('/get-applicant-details', [LoginController::class, 'getApplicantDetails'])->name('get.applicant.details');
             Route::post('/profile', [LoginController::class, 'profile'])->name('profile');
             Route::get('/applicants_detail/{applicant_id}', [LoginController::class, 'showApplicantDetails'])->name('applicants_detail');
+            Route::get('/applicants_detail_form_p/{applicant_id}', [LoginController::class, 'showFormPDetails'])->name('app_detail_form_p');
 
         // Secretary
             Route::get('/secretary_table', [LoginController::class, 'secretary_table'])->name('secretary_table');
@@ -84,6 +85,7 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 
         // Application Controller
             Route::get('/get_applications', [ApplicationController::class, 'get_applications'])->name('get_applications');
+            Route::get('/get_applications_p', [ApplicationController::class, 'get_applications_p'])->name('get_applications_p');
             Route::get('/get_wh_apps', [ApplicationController::class, 'get_wh_apps'])->name('get_wh_apps');
             Route::get('/view', [AuditorController::class, 'view'])->name('view');
             Route::get('/view_completed', [AuditorController::class, 'view_completed'])->name('view_completed');

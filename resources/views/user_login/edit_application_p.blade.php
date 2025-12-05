@@ -393,7 +393,7 @@
                                                             </button>
                                                         </td>
                                                          <input type="hidden" name="institute_id[]" value="{{ $institute->id ?? '' }}">
-                                                        <input type="hidden" name="institute_document[]" value="{{ $institute->upload_doc ?? '' }}">
+                                                        <input type="hidden" name="exist_institute_document[]" value="{{ $institute->upload_doc ?? '' }}">
                                                     </tr>
                                                     @endforeach
                                                     @else
