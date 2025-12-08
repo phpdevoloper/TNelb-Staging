@@ -224,11 +224,10 @@
                                                             <td>
                                                                 <select class="form-control" name="educational_level[]">
                                                                     <option disabled {{ empty($edu_details->educational_level) ? 'selected' : '' }}>Select Education</option>
-                                                                    <option value="PG" {{ $edu_details->educational_level == 'PG' ? 'selected' : '' }}>PG</option>
-                                                                    <option value="UG" {{ $edu_details->educational_level == 'UG' ? 'selected' : '' }}>UG</option>
-                                                                    <option value="Diploma" {{ $edu_details->educational_level == 'Diploma' ? 'selected' : '' }}>Diploma</option>
-                                                                    <option value="+2" {{ $edu_details->educational_level == '+2' ? 'selected' : '' }}>+2</option>
-                                                                    <option value="10" {{ $edu_details->educational_level == '10' ? 'selected' : '' }}>10</option>
+                                                                    <option value="BEM" {{ $edu_details->educational_level == 'BEM' ? 'selected' : '' }}>B.E(Mechanical)</option>
+                                                                    <option value="BEE" {{ $edu_details->educational_level == 'BEE' ? 'selected' : '' }}>B.E(Electrical)</option>
+                                                                    <option value="DME" {{ $edu_details->educational_level == 'DME' ? 'selected' : '' }}>Diploma(Mechanical)</option>
+                                                                    <option value="DEE" {{ $edu_details->educational_level == 'DEE' ? 'selected' : '' }}>Diploma(Electrical)</option>
                                                                 </select>
                                                             </td>
                                                             <td><input type="text" class="form-control" name="institute_name[]" value="{{ isset($edu_details->institute_name) ? $edu_details->institute_name : '' }}"></td>
@@ -281,14 +280,15 @@
                                                         @else
                                                         <tr class="education-fields text-center">
                                                             <td>1</td>
-                                                            <td> <select class="form-control" name="educational_level[]">
+                                                            <td> 
+                                                                <select class="form-control" name="educational_level[]">
                                                                     <option selected disabled>Select Education</option>
-                                                                    <option selected disabled>Select Education</option>
-                                                                    <option value="UG">B.E(Mechanical)</option>
-                                                                    <option value="UG">B.E(Electrical)</option>
-                                                                    <option value="Diploma">Diploma(Mechanical)</option>
-                                                                    <option value="Diploma">Diploma(Electrical)</option>
-                                                                </select></td>
+                                                                    <option value="BEM">B.E(Mechanical)</option>
+                                                                    <option value="BEE">B.E(Electrical)</option>
+                                                                    <option value="DME">Diploma(Mechanical)</option>
+                                                                    <option value="DEE">Diploma(Electrical)</option>
+                                                                </select>
+                                                            </td>
                                                             <td><input type="text" class="form-control" name="institute_name[]"></td>
                                                             <td>
                                                                 <select name="year_of_passing[]" class="form-control">

@@ -1064,7 +1064,7 @@ $(document).ready(function () {
             let applicationId = $('#application_id').val();
 
             let applType = $('#appl_type').val();
-            let formData = new FormData($('#competency_form_ws')[0]);
+            let formData = new FormData($('#competency_form_p')[0]);
 
             formData.append('form_action', 'draft');
 
@@ -1075,14 +1075,16 @@ $(document).ready(function () {
                 url = BASE_URL + "/form/draft_renewal_submit";
             } else {
                 // New application draft submit route
-                url = BASE_URL + "/form/draft_submit";
+                url = BASE_URL + "/form_p/saveDraft";
             } 
 
             // let url = $(this).data("url");
 
-            if (applicationId) {
-                url += "/" + applicationId;
-            }
+            // if (applicationId) {
+            //     url += "/" + applicationId;
+            // }
+
+            formData.append('application_id', applicationId);
 
             $.ajax({
                 url: url,

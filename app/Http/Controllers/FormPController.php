@@ -911,8 +911,6 @@ class FormPController extends BaseController
 
         $institutes = TnelbAppsInstitute::where('application_id', $appl_id)->get();
 
-        // var_dump($institutes);die;
-
         $applicationid = $appl_id;
 
 
@@ -931,15 +929,26 @@ class FormPController extends BaseController
     }
 
     // Save As Draft function
-    public function draft_submit(Request $request, $id = null)
+    public function saveDraft(Request $request)
     {
-
         $request->merge([
             'aadhaar' => preg_replace('/\D/', '', $request->aadhaar)
         ]);
 
+        $request->validate([
+            'application_id' => 'required|string|max:50',
+            'aadhaar'              => 'required|numeric|digits:12'
+            // 'pancard'              => 'required|string|size:10',
+            
+        ]);
+        
+        var_dump($request->aadhaar);die;
+        
+
+
 
         $applicationId = $id;
+
         $existingForm = TnelbFormP::where('application_id', $applicationId)->first();
 
         $existingPhoto = TnelbApplicantPhoto::where('application_id', $applicationId)->first();
