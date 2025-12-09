@@ -23,7 +23,10 @@ class FormPController extends BaseController
     public function __construct()
     {
         parent::__construct();
-        $this->middleware('web');
+        $this->middleware('auth');
+        // if (!Auth::check()) {
+        //     return redirect()->route('logout');
+        // }
         $this->today = Carbon::today()->toDateString();
         $this->dbNow  = DB::selectOne("SELECT TO_CHAR(NOW(), 'DD-MM-YYYY') AS db_now")->db_now;
     }
@@ -644,10 +647,6 @@ class FormPController extends BaseController
                 ->select('*')
                 ->get()
                 ->toArray();
-            // var_dump($renewal_form->license_name);die;
-
-            // var_dump($form_details);
-            // var_dump($renewal_form->license_name);die;
             $current_form = collect($form_details)->firstWhere('cert_licence_code', $renewal_form->license_name);
             $category_type = collect($form_category)->firstWhere('id', $current_form['category_id']);
 
@@ -851,31 +850,33 @@ class FormPController extends BaseController
     public function editApplication($appl_id)
     {
 
-
-        if (!Auth::check()) {
-            return redirect()->route('logout');
-        }
-
         if (!$appl_id) {
             return redirect()->route('dashboard')->with('error', 'Application ID is required.');
         }
-
 
         $application_details = TnelbFormP::where('application_id', $appl_id)
             ->select('*')
             ->first();
 
+        if (!$application_details) {
+            return redirect()->route('dashboard')->with('error', 'Application not found.');
+        }
 
-        $form_details = MstLicence::where('status', 1)
-            ->select('*')
-            ->get()
-            ->toArray();
 
-        $current_form = collect($form_details)->firstWhere('form_code', $application_details->form_name);
+        // $form_details = MstLicence::where('status', 1)
+        //     ->select('*')
+        //     ->get()
+        //     ->toArray();
+
+        // $current_form = collect($form_details)->firstWhere('form_code', $application_details->form_name);
+
+        $current_form = MstLicence::where('status', 1)
+        ->where('form_code', $application_details->form_name)
+        ->first();
 
 
         if (!$current_form) {
-            abort(504, 'Form Not Found..');
+            abort(404, 'Form Not Found..');
         }
 
         if (!$application_details) {
@@ -909,7 +910,9 @@ class FormPController extends BaseController
 
         $proof_doc = Mst_documents::where('application_id', $appl_id)->first();
 
-        $institutes = TnelbAppsInstitute::where('application_id', $appl_id)->get();
+        $institutes = TnelbAppsInstitute::where('application_id', $appl_id)
+        ->where('institute_status', 1)
+        ->get();
 
         $applicationid = $appl_id;
 
@@ -936,16 +939,14 @@ class FormPController extends BaseController
         ]);
 
         $request->validate([
-            'application_id' => 'required|string|max:50',
-            'aadhaar'              => 'required|numeric|digits:12'
+            'application_id' => 'nullable|string|max:50',
             // 'pancard'              => 'required|string|size:10',
             
         ]);
         
-        var_dump($request->aadhaar);die;
-        
+        // var_dump($request->application_id);die;
 
-
+        $id = $request->application_id;
 
         $applicationId = $id;
 
@@ -1311,9 +1312,12 @@ class FormPController extends BaseController
                     $instituteId = $request->institute_id[$key] ?? null;
                     $institutes = $instituteId ? TnelbAppsInstitute::find($instituteId) : null;
 
+                    
+
                     // ✅ File Handling
                     $filePath = null;
-                    $isFileRemoved = isset($request->removed_document_institute[$key]) && $request->removed_document_institute[$key] == '1';
+                    $isFileRemoved = isset($request->removed_document_inst[$key]) && $request->removed_document_inst[$key] == '1';
+                    
 
                     if (!$isFileRemoved && isset($request->file("institute_document")[$key])) {
                         $file = $request->file("institute_document")[$key];
@@ -1327,9 +1331,12 @@ class FormPController extends BaseController
                     }
 
 
+
+
                     if ($institutes) {
+                        
                         // 🔹 UPDATE existing record
-                        $work->update([
+                        $institutes->update([
                             'institute_name_address'    => $institute ?? null,
                             'duration'      => $request->duration[$key] ?? null,
                             'from_date'     => $request->from_date[$key] ?? null,
@@ -1388,8 +1395,6 @@ class FormPController extends BaseController
     }
 
 
-
-
     public function delete_institute(Request $request)
     {
         try {
@@ -1397,7 +1402,7 @@ class FormPController extends BaseController
             $id = $request->input('inst_id');
 
             $experience = TnelbAppsInstitute::find($id);
-
+            
             if (!$experience) {
                 return response()->json([
                     'status' => 'error',
@@ -1405,15 +1410,11 @@ class FormPController extends BaseController
                 ], 404);
             }
 
-            // Delete uploaded file if it exists
-            if (!empty($experience->upload_document)) {
-                $filePath = public_path($experience->upload_document);
-                if (file_exists($filePath)) {
-                    unlink($filePath);
-                }
-            }
+             $experience->update([
+                'institute_status' => 2,
+            ]);
 
-            $experience->delete();
+            // $experience->delete();
 
             return response()->json([
                 'status' => 'success',

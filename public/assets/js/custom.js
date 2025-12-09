@@ -483,12 +483,12 @@ $(document).ready(function () {
         $(this).closest('.file-section').replaceWith(fileInput);
     });
 
-    $(document).on('click', '.remove-institute', function () {
+    $(document).on('click', '.remove-inst', function () {
+        
         let fileInput = '<input type="file" class="form-control" name="institute_document[]" accept=".pdf,application/pdf"><input type="hidden" name="removed_document_inst[]" value="1">';
 
         $(this).closest('.file-section').replaceWith(fileInput);
     });
-
 
     $(document).on('click', '.remove_edu', function() {
         let edu_id = $(this).data('edu_id'); 

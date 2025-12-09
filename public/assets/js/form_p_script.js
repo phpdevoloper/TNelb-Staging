@@ -557,8 +557,6 @@ $(document).ready(function () {
             isValid = false;
         }
 
-        console.log(isValid);
-
         
 
         let aadhaarInput = document.getElementById("aadhaar");

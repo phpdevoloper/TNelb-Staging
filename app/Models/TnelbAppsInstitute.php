@@ -17,6 +17,7 @@ class TnelbAppsInstitute extends Model
         'duration',
         'from_date',
         'to_date',
-        'upload_doc'
+        'upload_doc',
+        'institute_status'
     ];
 }

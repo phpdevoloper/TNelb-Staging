@@ -362,7 +362,7 @@
                                                             <textarea autocomplete="off" class="form-control" name="institute_name_address[]" id="institute_name_address[]" cols="5" rows="3">{{ $institute->institute_name_address??'' }}</textarea>
                                                         </td>
                                                         <td>
-                                                            <input autocomplete="off" class="form-control" name="duration[]" type="text" value="{{ $institute->duration??'' }}">
+                                                            <input autocomplete="off" class="form-control" name="duration[]" type="number" value="{{ $institute->duration??'' }}">
                                                         </td>
                                                         <td>
                                                             <input autocomplete="off" class="form-control" name="from_date[]" type="date" value="{{ $institute->from_date??'' }}">
@@ -377,18 +377,18 @@
                                                             @if (!empty($institute->upload_doc))
                                                                 <div class="d-flex align-items-center file-section">
                                                                     <div>
-                                                                        <a class="text-primary" href="{{ url('public/'.$institute->upload_doc) }}" target="_blank">
+                                                                        <a class="text-primary" href="{{ url($institute->upload_doc) }}" target="_blank">
                                                                             <i class="fa fa-file-pdf-o" style="color: red"></i> View
                                                                         </a>
                                                                     </div>
-                                                                    <button class="btn btn-sm btn-danger ml-3 remove-doc_institute">Remove</button>
+                                                                    <button class="btn btn-sm btn-danger ml-3 remove-inst">Remove</button>
                                                                 </div>
                                                             @else
                                                                 <input class="form-control" name="institute_document[]" type="file" accept=".pdf,application/pdf">
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            <button type="button" class="btn btn-danger remove-institute" data-inst_id = "{{ $institute->id }}" data-url= "{{ route('delete_institute') }}">
+                                                            <button type="button" class="btn btn-danger remove-institute remove-inst-row" data-inst_id = "{{ $institute->id }}" data-url= "{{ route('delete_institute') }}">
                                                                 <i class="fa fa-minus"></i>
                                                             </button>
                                                         </td>
@@ -403,7 +403,7 @@
                                                                <textarea autocomplete="off" class="form-control" name="institute_name_address[]" id="institute_name_address[]" cols="5" rows="3">{{ $institute->institute_name_address??'' }}</textarea>
                                                            </td>
                                                            <td>
-                                                               <input autocomplete="off" class="form-control" name="duration[]" type="text" value="{{ $institute->duration??'' }}">
+                                                               <input autocomplete="off" class="form-control" name="duration[]" type="number" value="{{ $institute->duration??'' }}" min="1" max="50">
                                                            </td>
                                                            <td>
                                                                <input autocomplete="off" class="form-control" name="from_date[]" type="date" value="{{ $institute->from_date??'' }}">
@@ -534,6 +534,18 @@
                                                         @endif
                                                     </tbody>
                                                 </table>
+                                            </div>
+                                            <hr>
+                                            <div class="row align-items-center head_label">
+                                                <div class="col-12 col-md-6">
+                                                    <label>(iv). Name of the employer<span style="color: red;">*</span> <span class="text-label">(Upload the documents)</span></label>
+                                                    <br>
+                                                    <label for="tamil" class="tamil">தொழில் வழங்குநரின் பெயர்<span style="color: red;">*</span>
+                                                        <span class="text-label">(ஆவணங்களை பதிவேற்ற வேண்டும்)</span></label>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <textarea class="form-control" name="employer_name" id="employer_name" cols="5" rows="3">{{ isset($exp_details->company_name) && !empty($exp_details->company_name) ? $exp_details->company_name : '' }}</textarea>
+                                                </div>
                                             </div>
                                             <hr>
                                             <div class="row align-items-center" style=" {{ isset($application_details->form_name) && $application_details->form_name == 'S' ? 'display: flex;' : 'display: none;' }}">
@@ -1127,13 +1139,13 @@
                         <td>${serialNo}</td>
                         <td><textarea autocomplete="off" class="form-control" name="institute_name_address[]" id="institute_name_address[]" cols="5" rows="3"></textarea></td>
                         <td><input type="number" step="0.1" class="form-control" name="duration[]" min="0" max="50"></td>
-                        <td><input type="text" class="form-control" name="from_date[]"></td>
-                        <td><input type="text" class="form-control" name="to_date[]"></td>
+                        <td><input type="date" class="form-control" name="from_date[]"></td>
+                        <td><input type="date" class="form-control" name="to_date[]"></td>
                         <td class="text-center">
                             <input type="file" class="form-control" name="institute_document[${newRowIndex}]" accept=".pdf,.png,.jpg,.jpeg">
                         </td>
                         <td class="text-center">
-                            <button type="button" class="btn btn-danger remove-empty_institute">
+                            <button type="button" class="btn btn-danger remove-inst-row">
                                 <i class="fa fa-minus"></i>
                             </button>
                         </td>
@@ -1148,10 +1160,10 @@
             });
         }
 
-            if (e.target.closest(".remove-empty_institute")) {
-                e.target.closest("tr").remove();
+        if (e.target.closest(".remove-inst-row")) {
+            e.target.closest("tr").remove();
 
-            }
+        }
 
 
 

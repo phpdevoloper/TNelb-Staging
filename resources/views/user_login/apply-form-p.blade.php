@@ -562,7 +562,7 @@
                                     <div class="offset-md-5 col-12 col-md-6">
                                         <div class="form-group">
                                             @if(! isset($application))
-                                            <button type="button" class="btn btn-primary btn-social" id="saveDraftBtn" data-url="{{ route('form.draft_submit') }}" data-id="{{ $application_details->application_id ?? '' }}">
+                                            <button type="button" class="btn btn-primary btn-social" id="DraftBtn" data-url="{{ route('form.draft_submit') }}" data-id="{{ $application_details->application_id ?? '' }}">
                                                 Save As Draft
                                             </button>
                                             @endif
@@ -603,7 +603,15 @@
         // ✅ Prevent adding more than 5 entries
         if (e.target.closest(".add-more")) {
             if (educationRows.length >= 5) {
-                alert("You can add a maximum of 5 education entries.");
+                $('#education-table').next('.education-error').remove();
+
+                $('<div class="text-danger mt-2 education-error">You can add a maximum of 5 education entries.</div>')
+                .insertAfter('#education-table');
+
+                setTimeout(() => {
+                    $('.education-error').fadeOut();
+                }, 7000);
+                // alert("You can add a maximum of 5 education entries.");
                 return;
             }
 
@@ -642,11 +650,19 @@
         /* Remove row functionality */
         if (e.target.closest(".remove-education")) {
             if (educationRows.length <= 1) {
-                alert("You must have at least one education entry.");
-                return;
+                    $('#education-table').next('.education-error').remove();
+
+                    $('<div class="text-danger mt-2 education-error">You must have at least one education entry.</div>')
+                    .insertAfter('#education-table');
+
+                    setTimeout(() => {
+                        $('.education-error').fadeOut();
+                    }, 7000);
+                
+                }else{
+                    e.target.closest("tr").remove();
+                }
             }
-            e.target.closest("tr").remove();
-        }
     });
 </script>
 <script>
@@ -658,7 +674,14 @@
         // Prevent adding more than 3 entries
         if (e.target.closest(".add-more-work")) {
             if (workRows.length >= 3) {
-                alert("You can add a maximum of 3 work experience entries.");
+                 $('#work-table').next('.work-error').remove();
+
+                $('<div class="text-danger mt-2 work-error">You can add a maximum of 3 work experience entries.</div>')
+                .insertAfter('#work-table');
+
+                setTimeout(() => {
+                    $('.work-error').fadeOut();
+                }, 7000);
                 return;
             }
 
@@ -683,7 +706,14 @@
             // Remove row functionality
             if (e.target.closest(".remove-work")) {
                 if (workRows.length <= 1) {
-                    alert("You must have at least one work experience entry.");
+                    $('#work-table').next('.work-error').remove();
+
+                    $('<div class="text-danger mt-2 work-error">You must have at least one work experience entry.</div>')
+                    .insertAfter('#work-table');
+
+                    setTimeout(() => {
+                        $('.work-error').fadeOut();
+                    }, 7000);
                     return;
                 }
                 e.target.closest("tr").remove();
@@ -706,12 +736,15 @@
             newRow.classList.add("institute-fields");
 
             newRow.innerHTML = `
-            <td><input autocomplete="off" class="form-control" name="work_level[]" type="text"></td>
-                <td><input autocomplete="off" class="form-control" name="experience[]" type="number"></td>
-                <td><input autocomplete="off" class="form-control" name="designation[]" type="text"></td>
-                <td><input class="form-control" name="work_document[]" type="file"></td>
+            <td><textarea autocomplete="off" class="form-control" name="institute_name_address[]" id="institute_name_address[]" cols="5" rows="3"></textarea></td>
+            <td><input type="number" step="0.1" class="form-control" name="duration[]" min="0" max="50"></td>    
+            <td><input type="date" class="form-control" name="from_date[]"></td>
+                <td><input type="date" class="form-control" name="to_date[]"></td>
+                <td class="text-center">
+                    <input type="file" class="form-control" name="institute_document[]" accept=".pdf,.png,.jpg,.jpeg">
+                </td>
                 <td>
-                <button type="button" class="btn btn-danger remove-institute">
+                <button type="button" class="btn btn-danger remove-inst-row">
                 <i class="fa fa-trash-o"></i>
                 </button>
                 </td>
@@ -721,7 +754,7 @@
             }
 
             // Remove row functionality
-            if (e.target.closest(".remove-institute")) {
+            if (e.target.closest(".remove-inst-row")) {
                 if (workRows.length <= 1) {
                     alert("You must have at least one work experience entry.");
                     return;
