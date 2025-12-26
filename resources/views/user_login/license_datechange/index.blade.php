@@ -72,171 +72,143 @@
 </style>
 
 <section class="">
-    <div class="container">
-        <ul id="breadcrumb">
-            <li><a href="{{ route('dashboard')}}"><span class="fa fa-home"> </span> Dashboard</a></li>
-            <li><a href="#"><span class=" fa fa-info-circle"> </span> License Date Change</a></li>
-
-        </ul>
-    </div>
+   <div class="container">
+      <ul id="breadcrumb">
+         <li><a href="{{ route('dashboard')}}"><span class="fa fa-home"> </span> Dashboard</a></li>
+         <li><a href="#"><span class=" fa fa-info-circle"> </span> License Date Change</a></li>
+      </ul>
+   </div>
 </section>
 <section class="apply-form">
-    <div class="auto-container">
-        <div class="wrapper-box">
+   <div class="auto-container">
+   <div class="wrapper-box">
+   <div class="row">
+   <div class="col-lg-12 col-12">
+      <div class="apply-card apply-card-info" data-select2-id="14">
+         <div class="apply-card-header" style="background-color: #70c6ef  !important;">
             <div class="row">
-                <div class="col-lg-12 col-12">
-                    <div class="apply-card apply-card-info" data-select2-id="14">
-                        <div class="apply-card-header" style="background-color: #70c6ef  !important;">
-                            <div class="row">
-                                <div class="col-6 col-lg-8">
-                                    <h5 class="card-title_apply text-black text-left"> License Date Change </h5>
-                                </div>
-
-                              
-
-                            </div>
-
+               <div class="col-6 col-lg-8">
+                  <h5 class="card-title_apply text-black text-left"> License Date Change </h5>
+               </div>
+            </div>
+         </div>
+         <div class="apply-card-body">
+            <form id="license_date_change" enctype="multipart/form-data">
+               <div class="row">
+                  <div class="col-12 col-md-12">
+                     <div class="form-group">
+                        <div class="row pb-4 justify-content-center" style="display:none;">
+                           <div class="col-12 col-md-4 ">
+                              <div class="row align-items-center">
+                                 <div class="col-12 col-md-5 ">
+                                    <label for="Name">Select Table </label>
+                                 </div>
+                                 <div class="col-12 col-md-7">
+                                    <select class="form-control" name="table">
+                                       <option value="cc">Competency </option>
+                                    </select>
+                                 </div>
+                              </div>
+                           </div>
                         </div>
-                        <div class="apply-card-body">
-
-                            <form id="license_date_change" enctype="multipart/form-data">
-                                <div class="row">
-
-                                    <div class="col-12 col-md-12">
-                                        <div class="form-group">
-                                            <div class="row pb-4 justify-content-center" style="display:none;">
-                                                <div class="col-12 col-md-4 ">      
-                                                    <div class="row align-items-center">
-                                                        <div class="col-12 col-md-5 ">
-                                                            <label for="Name">Select Table </label>
-                                                           
-                                                        </div>
-
-                                                        <div class="col-12 col-md-7">
-                                                           <select class="form-control" name="table">
-                                                                <option value="cc">Competency </option>
-                                                           </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row align-items-center">
-                                                
-                                                <div class="col-12 col-md-6 ">
-                                                    <div class="row align-items-center">
-                                                        <div class="col-12 col-md-5 ">
-                                                            <label for="Name">License Number </label>
-                                                           
-                                                        </div>
-
-                                                        <div class="col-12 col-md-7">
-                                                             <select class="form-control" name="license_number" id="license_number">
-                                                                  <option value="0">
-                                                                           Select License
-                                                                        </option>
-                                                                   @foreach($licensedates as $license)
-                                                                        <option value="{{ $license->license_number }}">
-                                                                            {{ $license->license_number }}
-                                                                        </option>
-                                                                    @endforeach
-                                                           </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-12 col-md-6">
-                                                    <div class="row align-items-center">
-                                                        <div class="col-12 col-md-3">
-                                                            <label for="Name">Expiry Date </label>
-                                                        </div>
-                                                        <div class="col-12 col-md-8 pd-left-40">
-                                                            <input type="date" class="form-control" name="expires_at" id="expiry">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            @csrf
-
-                                <div class="row mt-5">
-                                    <div class="offset-md-5 col-12 col-md-6">
-                                        <div class="form-group">
-                                         
-                                            <button type="submit" class="btn btn-success btn-social">
-                                                Save Expiry Date
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
+                        <div class="row align-items-center">
+                           <div class="col-12 col-md-6 ">
+                              <div class="row align-items-center">
+                                 <div class="col-12 col-md-5 ">
+                                    <label for="Name">License Number </label>
+                                 </div>
+                                 <div class="col-12 col-md-7">
+                                    <select class="form-control" name="license_number" id="license_number">
+                                       <option value="0">
+                                          Select License
+                                       </option>
+                                       @foreach($licensedates as $license)
+                                       <option value="{{ $license->license_number }}">
+                                          {{ $license->license_number }}
+                                       </option>
+                                       @endforeach
+                                    </select>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="col-12 col-md-6">
+                              <div class="row align-items-center">
+                                 <div class="col-12 col-md-3">
+                                    <label for="Name">Expiry Date </label>
+                                 </div>
+                                 <div class="col-12 col-md-8 pd-left-40">
+                                    <input type="date" class="form-control" name="expires_at" id="expiry">
+                                 </div>
+                              </div>
+                           </div>
                         </div>
+                        @csrf
+                        <div class="row mt-5">
+                           <div class="offset-md-5 col-12 col-md-6">
+                              <div class="form-group">
+                                 <button type="submit" class="btn btn-success btn-social">
+                                 Save Expiry Date
+                                 </button>
+                              </div>
+                           </div>
+                        </div>
+            </form>
+            </div>
+            </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="col-lg-12 col-12">
+       <div class="apply-card apply-card-info" data-select2-id="14">
+           <div class="apply-card-header" style="background-color: #70c6ef  !important;">
+               <div class="row">
+                   <div class="col-6 col-lg-8">
+                       <h5 class="card-title_apply text-black text-left"> Current Date Change </h5>
                     </div>
                 </div>
             </div>
-        </div>
+   <div class="apply-card-body">
+      <form id="current_date_change" enctype="multipart/form-data">
+         <div class="row">
+            <div class="col-12 col-md-12">
+               <div class="form-group">
+                  <div class="row align-items-center">
+                     <div class="col-12 col-md-6">
+                        <div class="row align-items-center">
+                           <div class="col-12 col-md-3">
+                              <label for="Name">Date </label>
+                           </div>
+                           <div class="col-12 col-md-8 pd-left-40">
+                              <input type="date" class="form-control" name="current_date" id="current_date">
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  @csrf
+                  <div class="row mt-5">
+                     <div class="offset-md-5 col-12 col-md-6">
+                        <div class="form-group">
+                           <button type="submit" class="btn btn-success">
+                           change Date
+                           </button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+        </form>
     </div>
-
-    <div class="col-lg-12 col-12">
-                    <div class="apply-card apply-card-info" data-select2-id="14">
-                        <div class="apply-card-header" style="background-color: #70c6ef  !important;">
-                            <div class="row">
-                                <div class="col-6 col-lg-8">
-                                    <h5 class="card-title_apply text-black text-left"> Current Date Change </h5>
-                                </div>
-
-                              
-
-                            </div>
-
-                        </div>
-                        <div class="apply-card-body">
-
-                            <form id="current_date_change" enctype="multipart/form-data">
-                                <div class="row">
-
-                                    <div class="col-12 col-md-12">
-                                        <div class="form-group">
-                                            <div class="row align-items-center">
-                                                <div class="col-12 col-md-6">
-                                                    <div class="row align-items-center">
-                                                        <div class="col-12 col-md-3">
-                                                            <label for="Name">Date </label>
-                                                        </div>
-                                                        <div class="col-12 col-md-8 pd-left-40">
-                                                            <input type="date" class="form-control" name="current_date" id="current_date">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            @csrf
-
-                                <div class="row mt-5">
-                                    <div class="offset-md-5 col-12 col-md-6">
-                                        <div class="form-group">
-                                         
-                                            <button type="submit" class="btn btn-success">
-                                                change Date
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
 </section>
-
 <div id="draftModal" class="overlay-bg" style="display: none;">
-    <div class="otp-modal">
-        <h5>Your Application Details Saved Successfully</h5>
-        <br>
-        <button onclick="closeDraftModal()">OK</button>
-    </div>
+<div class="otp-modal">
+<h5>Your Application Details Saved Successfully</h5>
+<br>
+<button onclick="closeDraftModal()">OK</button>
 </div>
-
 </div>
-
+</div>
 <footer class="main-footer">
 
 @include('include.footer')

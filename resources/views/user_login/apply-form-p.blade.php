@@ -620,11 +620,10 @@
             newRow.innerHTML = `
                 <td><select class="form-control" name="educational_level[]" required>
                         <option selected disabled>Select Education</option>
-                        <option value="PG">PG</option>
-                        <option value="UG">UG</option>
-                        <option value="Diploma">Diploma</option>
-                        <option value="+2">+2</option>
-                        <option value="10">10</option>
+                        <option value="BEM">B.E(Mechanical)</option>
+                        <option value="BEM">B.E(Electrical)</option>
+                        <option value="DiplomaM">Diploma(Mechanical)</option>
+                        <option value="DiplomaE">Diploma(Electrical)</option>
                     </select></td>
                 <td><input type="text" class="form-control" name="institute_name[]" required></td>
                 <td>

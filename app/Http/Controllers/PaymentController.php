@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 
+use Carbon\Carbon;
+
+
 class PaymentController extends Controller
 {
 
@@ -48,6 +51,9 @@ class PaymentController extends Controller
                 'message' => 'Form details not found!',
             ]);
         }
+
+        $transaction_date = \Carbon\Carbon::createFromFormat('d-m-Y', $request->transactionDate)
+                       ->format('Y-m-d');
 
         $payment = Payment::updateOrCreate(
             [
