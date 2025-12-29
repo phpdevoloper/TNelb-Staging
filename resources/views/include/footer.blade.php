@@ -2304,10 +2304,10 @@
     }
 
 
-    function downloadPDF(language, loginId) {
-        let url = (language === 'tamil') ? `/generateTamilPDF/${loginId}` : `/generate-pdf/${loginId}`;
-        window.open(url, '_blank'); // Open in a new tab
-    }
+    // function downloadPDF(language, loginId) {
+    //     let url = (language === 'tamil') ? `/generateTamilPDF/${loginId}` : `/generate-pdf/${loginId}`;
+    //     window.open(url, '_blank'); // Open in a new tab
+    // }
 
 
 

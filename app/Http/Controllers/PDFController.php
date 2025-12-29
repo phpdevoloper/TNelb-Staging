@@ -21,24 +21,199 @@ use Stichoza\GoogleTranslate\GoogleTranslate;
 class PDFController extends Controller
 {
 
-    public function formatAddressToThreeLines($address) {
-        // Normalize white spaces and line breaks
-        $address = preg_replace("/\r\n|\r|\n/", ' ', $address); // remove line breaks
-        $address = preg_replace('/\s+/', ' ', $address); // reduce multiple spaces
+    public function formatAddressToThreeLines($address, $maxCharsPerLine = 45) {
+       $address = preg_replace("/\r\n|\r|\n/", ' ', $address);
+        $address = preg_replace('/\s+/', ' ', $address);
         $address = trim($address);
-    
-        // Break into ~3 equal parts by character count
-        $lineLength = ceil(strlen($address) / 3);
-    
-        $line1 = substr($address, 0, $lineLength);
-        $line2 = substr($address, $lineLength, $lineLength);
-        $line3 = substr($address, $lineLength * 2);
-    
-        // Optional: trim each line to avoid space padding
-        return nl2br(htmlentities(trim($line1) . "\n" . trim($line2) . "\n" . trim($line3)));
+
+        $words = explode(' ', $address);
+
+        $lines = [];
+        $currentLine = '';
+
+        foreach ($words as $word) {
+            if (strlen($currentLine . ' ' . $word) <= $maxCharsPerLine) {
+                $currentLine .= ($currentLine ? ' ' : '') . $word;
+            } else {
+                $lines[] = $currentLine;
+                $currentLine = $word;
+            }
+        }
+
+        if ($currentLine) {
+            $lines[] = $currentLine;
+        }
+
+        // Ensure max 3 lines
+        $lines = array_slice($lines, 0, 3);
+
+        return nl2br(e($lines[0] ?? '') . "\n" . e($lines[1] ?? '') . "\n" . e($lines[2] ?? ''));
     }
 
     
+    public function generateFormPPDF($newApplicationId)
+    {
+
+        $form = TnelbFormP::where('application_id', $newApplicationId)->first();
+
+        // var_dump(format_date($form->previously_number));die;
+        $education = Mst_education::where('application_id', $newApplicationId)->get();
+        $experience = Mst_experience::where('application_id', $newApplicationId)->get();
+        $institutes = TnelbAppsInstitute::where('application_id', $newApplicationId)->get();
+        $applicant_photo = TnelbApplicantPhoto::where('application_id', $newApplicationId)->first();
+
+
+        $decryptedaadhar = Crypt::decryptString($form->aadhaar);
+        $decryptedpan = Crypt::decryptString($form->pancard);
+        $masked = strlen($decryptedaadhar) === 12 ? str_repeat('X', 8) . substr($decryptedaadhar, -4) : 'Invalid Aadhaar';
+        $maskedPan = strlen($decryptedpan) === 10 ? str_repeat('X', 6) . substr($decryptedpan, -4) : 'Invalid PAN';
+
+        if (!$form) {
+            return redirect()->back()->with('error', 'No records found!');
+        }
+
+        // $wrap = function ($text, $length = 20) {
+        //     return wordwrap($text, $length, '<br>', true);
+        // };
+
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'default_font_size' => 10,
+            'default_font' => 'helvetica',
+        ]);
+    
+        $mpdf->WriteHTML('
+        <style>
+            body { font-family: helvetica, sans-serif; font-size: 10pt; line-height: 1.4; }
+            h3, h4, p { margin: 4px 0; }
+            table { border-collapse: collapse; width: 100%; margin-top: 6px; }
+            td, th { padding: 4px; vertical-align: top; }
+            .label { width: 35%; text-align: left; font-weight: bold; }
+            .value { width: 40%; text-align: left; }
+            .tbl-bordered td, .tbl-bordered th { border: 1px solid #000; text-align: center; }
+            .tbl-no-border td { border: none; padding-bottom: 12px; } /* ⬅ spacing between rows */
+            .photo-cell { text-align:center; }
+            .employer { display:flex }
+            .value {
+                line-height: 1.6;
+            }
+            
+        </style>', \Mpdf\HTMLParserMode::HEADER_CSS);
+    
+        $certificateText = match ($form->form_name) {
+            'S' => 'Application for Competency Certificate for Supervisor',
+            'W' => 'Application for Competency Certificate for Wireman',
+            'WH' => 'Application for Competency Certificate for Wireman Helper',
+            default => 'Application for Competency Certificate',
+        };
+    
+        $html = '
+        <h3 style="text-align:center;">GOVERNMENT OF TAMILNADU</h3>
+        <h4 style="text-align:center;">THE ELECTRICAL LICENSING BOARD</h4>
+        <p style="text-align:center;">Thiru.Vi.Ka.Indl.Estate, Guindy, Chennai – 600032.</p>
+        <h4 style="text-align:center;">Form "' . $form->form_name . ($form->appl_type == 'R' ? '" - Renewal' : '"') . '</h4>
+        <p style="text-align:center;">' . $certificateText . '</p>
+        <h4 style="text-align:center;">Application Number: <strong>' . $form->application_id . '</strong></h4>';
+    
+        $html .= '<table class="tbl-no-border">
+        <tr>
+            <td class="label">1. Name of the Applicant</td>
+            <td class="value">: ' . $form->applicant_name . '</td>
+            <td rowspan="5" class="photo-cell">';
+    
+        if ($applicant_photo && file_exists(public_path($applicant_photo->upload_path))) {
+            $html .= '<img src="' . public_path($applicant_photo->upload_path) . '" style="width:120px; height:150px; border:1px solid;">';
+        } else {
+            $html .= '<p>No Photo</p>';
+        }
+     
+        $html .= '</td></tr>
+        <tr>
+            <td class="label">2. Father\'s Name</td>
+            <td class="value">: ' . $form->fathers_name . '</td>
+        </tr>
+        <tr>
+            <td class="label">3. Address of the Applicant (in block letters)</td>
+            <td class="value" colspan="2">:
+                <br>' .
+                $this->formatAddressToThreeLines($form->applicants_address)
+                . '</td>
+        </tr>
+        <tr>
+            <td class="label">4. Date of birth and age</td>
+            <td class="value">: ' . $form->d_o_b . ' (' . $form->age . ' years)</td>
+        </tr>
+        </table>';
+    
+        // Education
+        $html .= '<h4>5. (i).Details of Technical Qualification passed by the applicant</h4>
+        <table class="tbl-bordered">
+        <tr>
+        <th>S.No</th><th>Education Level</th><th>Institution</th><th>Year of Passing</th><th>Percentage</th>
+        </tr>';
+        foreach ($education as $i => $edu) {
+            $html .= '<tr>
+                <td>' . ($i + 1) . '</td>
+                <td>' . $edu->educational_level . '</td>
+                <td>' . $edu->institute_name . '</td>
+                <td>' . $edu->year_of_passing . '</td>
+                <td>' . $edu->percentage . '%</td>
+            </tr>';
+        }
+        $html .= '</table>';
+    
+        // Experience
+        $html .= '<h4>(ii). Institute in which the applicant has undergone the training and the period</h4>
+        <table class="tbl-bordered">
+        <tr>
+        <th>S.No</th><th>Institute Name & address</th><th>Duration (Years)</th><th>Form Date</th><th>To Date</th>
+        </tr>';
+        foreach ($institutes as $i => $inst) {
+            $html .= '<tr>
+                <td>' . ($i + 1) . '</td>
+                <td>' . $inst->institute_name_address . '</td>
+                <td>' . $inst->duration . ' Years </td>
+                <td>' . format_date($inst->from_date) . '</td>
+                <td>' . format_date($inst->to_date) . '</td>
+            </tr>';
+        }
+        $html .= '</table>';
+
+
+        $html .= '<h4>(iii). Power Station to which he is aattached at present</h4>
+        <table class="tbl-bordered">
+        <tr>
+        <th>S.No</th><th>Power Station Name</th><th>Experience(Years)</th><th>Designation</th>
+        </tr>';
+        foreach ($experience as $i => $exp) {
+            $html .= '<tr>
+                <td>' . ($i + 1) . '</td>
+                <td>' . $exp->company_name . '</td>
+                <td>' . $exp->experience . ' Years </td>
+                <td>' . $exp->designation . '</td>
+            </tr>';
+        }
+        $html .= '</table>';
+
+        $html .= '<div class="employer"><span class="label">(iv). Name of the employer :</span> ' . $form->employer_detail . '</div>';
+
+
+        $html .='<h4>6. Have you made any previous application? If so, State reference No. and date</h4>'; 
+
+        $html .= '<p class="mt-2">I hereby declare that the particulars stated above are correct and true to the best of
+my knowledge</p>
+        <br>
+        <p>I request that I may be granted a Power Generating Station Operation and
+maintenance Competency Certificate.</p>
+        <br><br>
+        <p><strong>Place:</strong> Chennai</p>
+        <p><strong>Date:</strong> ' . date('d-m-Y') . '</p>
+        <p style="text-align:right;"><strong>Signature of the Candidate</strong></p>';
+    
+        $mpdf->WriteHTML($html);
+        return response($mpdf->Output('Application_Details.pdf', 'I'))->header('Content-Type', 'application/pdf');
+    }
     public function generatePDF($newApplicationId)
     {
 
@@ -775,17 +950,18 @@ $certificateText = match ($form->form_name) {
         return response($mpdf->Output('Application_Tamil.pdf', 'I'))
             ->header('Content-Type', 'application/pdf');
     }
-
-
-
-
-
-
-
+    
     public function downloadPaymentReceipt($newApplicationId)
     {
-        
-        $form = Mst_Form_s_w::where('application_id', $newApplicationId)->first();
+        $form= Mst_Form_s_w::where('application_id', $newApplicationId)->first() ?? 
+               TnelbFormP::where('application_id', $newApplicationId)->first();
+
+
+        // dd($form->form_name);
+        //     exit;
+
+        $license_name= DB::table('mst_licences')->where('form_code', $form->form_name)->first();
+    
         $education = Mst_education::where('application_id', $newApplicationId)->get();
         $experience = Mst_experience::where('application_id', $newApplicationId)->get();
         $documents = Mst_documents::where('application_id', $newApplicationId)->first();
@@ -793,142 +969,244 @@ $certificateText = match ($form->form_name) {
 
 
         if (!$payment) {
+            // dd('111');
+            // exit;
             return redirect()->back()->with('error', 'Payment not found!');
         }
 
         $mpdf = new Mpdf(['default_font_size' => 10]);
-        $mpdf->SetFont('helvetica', '', 10);
+        $mpdf->SetFont('arial', '', 10);
 
         $mpdf->SetTitle('TNELB Payment Receipt ' . $newApplicationId);
 
-
-
+        $applType = strtoupper(trim($form->appl_type));
+        $typeOfForm = ($applType === 'N') ? 'New Application' : 'Renewal Application';
+        // $mpdf->SetTitle('TNELB Application License '. $form->license_name .' Form ' . $form->form_name);
         $html = '
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            font-size: 14px; 
-            margin: 25px;
-            color: #000;
-        }
+            <style>
+                .no_space {
+                    margin: 3px;
+                    line-height: 1.3;
+                }
+                .table-border td, 
+                .table-border th {
+                    
+                    padding: 6px;
+                    font-size: 14px;
+                    text-align:left;
+                }
+            </style>
 
-        .header-box {
-            text-align: center;
-            border: 2px solid #000;
-            padding: 15px;
-            margin-bottom: 25px;
-        }
+            <div style="text-align:center;">
+                <h3 class="no_space" style="font-size:18px;">GOVERNMENT OF TAMIL NADU</h3>
+                <h4 class="no_space" style="font-size:16px;">THE ELECTRICAL LICENSING BOARD</h4>
+                <p class="no_space" style="font-size:14px;">Thiru.Vi.Ka. Industrial Estate, Guindy, Chennai – 600 032.</p>
+                <h4 class="no_space" style="font-weight:500;">
+                    FORM <span style="font-weight:bold;">"'. $form->form_name .'"</span>
+                </h4>
+                <p class="no_space" style="font-size:16px; font-weight:500;"> Application For "'. $license_name->licence_name .'"</p>
+            </div>
 
-        .header-box h3 {
-            margin: 5px 0;
-            font-size: 20px;
-            letter-spacing: 0.5px;
-        }
+            <hr style="margin:10px 0; border:0; border-top:1px solid #000;">
+            <p class="section-title" style="font-size:15px; font-weight:bold; margin-top:5px; text-align:center;">Payment Details</p>
+            <table class="table-border" style="border-collapse: collapse; width:100%; margin-top:10px;">
 
-        .receipt-title {
-            text-align: center;
-            margin: 0;
-            margin-bottom: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            text-decoration: underline;
-        }
+                <tr>
+                    <th>Application ID</th>
+                    <td>: '. $newApplicationId .'</td>
+                </tr>
 
-        .info-block {
-            margin: 10px 0 18px 0;
-            font-size: 15px;
-        }
+                <tr>
+                    <th>Applicant Name </th>
+                    <td>: '. $form->applicant_name .'</td>
+                </tr>
 
-        .info-block strong {
-            display: inline-block;
-            width: 250px;
-        }
+                  <tr>
+                    <th>Type of Form</th>
+                    <td>: '. $typeOfForm .'</td>
+                </tr>
 
-        .section-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 25px;
-            margin-bottom: 10px;
-            padding-bottom: 4px;
-            border-bottom: 2px solid #000;
-        }
+                <tr>
+                    <th>Bank Name</th>
+                    <td>: State Bank of India</td>
+                </tr>
+                <tr>
+                    <th>Mode of Payment</th>
+                    <td>: UPI</td>
+                </tr>
+                <tr>
+                    <th>Payment Date</th>
+                  <td> : ' . \Carbon\Carbon::parse($payment->created_at)->format('d-m-Y') . '</td>
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 5px;
-            font-size: 14px;
-        }
-
-        th {
-            background: #f5f5f5;
-            font-weight: bold;
-            border: 1px solid #000;
-            padding: 10px;
-        }
-
-        td {
-            border: 1px solid #000;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .footer-note {
-            margin-top: 28px;
-            font-size: 13px;
-            font-style: italic;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="header-box">
-        <h3>GOVERNMENT OF TAMIL NADU</h3>
-        <h3>THE ELECTRICAL LICENSING BOARD</h3>
-        <small>Thiru.Vi.Ka.Indl.Estate, Guindy, Chennai–600 032.</small>
-    </div>
-
-    <p class="receipt-title">PAYMENT RECEIPT</p>
-
-    <p class="info-block">
-        <strong>Application Reference Number:</strong> ' . $newApplicationId . '
-    </p>
-
-    <p class="section-title">Payment Details</p>
-
-    <table>
-        <tr>
-            <th>Bank Name</th>
-            <th>Mode of Payment</th>
-            <th>Payment Date</th>
-            <th>Transaction ID</th>
-            <th>Amount</th>
-        </tr>
-        <tr>
-            <td>State Bank of India</td>
-            <td>UPI</td>
-            <td>25-02-2025</td>
-            <td>' . ($payment->transaction_id ?? "N/A") . '</td>
-            <td>₹' . ($payment->amount ?? "N/A") . '</td>
-        </tr>
-    </table>
-
-    <p class="footer-note">
-        *This is a system generated receipt and does not require a physical signature.
-    </p>
-
-</body>
-</html>
-';
+                </tr>
+                <tr>
+                    <th>Transaction ID</th>
+                    <td> : ' . ($payment->transaction_id ?? "N/A") . '</td>
+                </tr>
+                <tr>
+                    <th>Total Amount</th>
+                    <td>: ₹ ' . ($payment->amount ?? "N/A") . '</td>
+                </tr>
+            </table>';
 
         $mpdf->WriteHTML($html);
         return response($mpdf->Output('', 'S'), 200)
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'inline; filename="payment_receipt.pdf"');
     }
+
+
+
+
+//     public function downloadPaymentReceipt($newApplicationId)
+//     {
+        
+//         $form = Mst_Form_s_w::where('application_id', $newApplicationId)->first();
+//         $education = Mst_education::where('application_id', $newApplicationId)->get();
+//         $experience = Mst_experience::where('application_id', $newApplicationId)->get();
+//         $documents = Mst_documents::where('application_id', $newApplicationId)->first();
+//         $payment = DB::table('payments')->where('application_id', $newApplicationId)->first();
+
+
+//         if (!$payment) {
+//             return redirect()->back()->with('error', 'Payment not found!');
+//         }
+
+//         $mpdf = new Mpdf(['default_font_size' => 10]);
+//         $mpdf->SetFont('helvetica', '', 10);
+
+//         $mpdf->SetTitle('TNELB Payment Receipt ' . $newApplicationId);
+
+
+
+//         $html = '
+// <!DOCTYPE html>
+// <html>
+// <head>
+//     <style>
+//         body { 
+//             font-family: Arial, sans-serif; 
+//             font-size: 14px; 
+//             margin: 25px;
+//             color: #000;
+//         }
+
+//         .header-box {
+//             text-align: center;
+//             border: 2px solid #000;
+//             padding: 15px;
+//             margin-bottom: 25px;
+//         }
+
+//         .header-box h3 {
+//             margin: 5px 0;
+//             font-size: 20px;
+//             letter-spacing: 0.5px;
+//         }
+
+//         .receipt-title {
+//             text-align: center;
+//             margin: 0;
+//             margin-bottom: 20px;
+//             font-size: 18px;
+//             font-weight: bold;
+//             text-decoration: underline;
+//         }
+
+//         .info-block {
+//             margin: 10px 0 18px 0;
+//             font-size: 15px;
+//         }
+
+//         .info-block strong {
+//             display: inline-block;
+//             width: 250px;
+//         }
+
+//         .section-title {
+//             font-size: 16px;
+//             font-weight: bold;
+//             margin-top: 25px;
+//             margin-bottom: 10px;
+//             padding-bottom: 4px;
+//             border-bottom: 2px solid #000;
+//         }
+
+//         table {
+//             width: 100%;
+//             border-collapse: collapse;
+//             margin-top: 5px;
+//             font-size: 14px;
+//         }
+
+//         th {
+//             background: #f5f5f5;
+//             font-weight: bold;
+//             border: 1px solid #000;
+//             padding: 10px;
+//         }
+
+//         td {
+//             border: 1px solid #000;
+//             padding: 10px;
+//             text-align: center;
+//         }
+
+//         .footer-note {
+//             margin-top: 28px;
+//             font-size: 13px;
+//             font-style: italic;
+//         }
+//     </style>
+// </head>
+// <body>
+
+//     <div class="header-box">
+//         <h3>GOVERNMENT OF TAMIL NADU</h3>
+//         <h3>THE ELECTRICAL LICENSING BOARD</h3>
+//         <small>Thiru.Vi.Ka.Indl.Estate, Guindy, Chennai–600 032.</small>
+//     </div>
+
+//     <p class="receipt-title">PAYMENT RECEIPT</p>
+
+//     <p class="info-block">
+//         <strong>Application Reference Number:</strong> ' . $newApplicationId . '
+//     </p>
+
+//     <p class="section-title">Payment Details</p>
+
+//     <table>
+//         <tr>
+//             <th>Bank Name</th>
+//             <th>Mode of Payment</th>
+//             <th>Payment Date</th>
+//             <th>Transaction ID</th>
+//             <th>Amount</th>
+//         </tr>
+//         <tr>
+//             <td>State Bank of India</td>
+//             <td>UPI</td>
+//             <td>25-02-2025</td>
+//             <td>' . ($payment->transaction_id ?? "N/A") . '</td>
+//             <td>₹' . ($payment->amount ?? "N/A") . '</td>
+//         </tr>
+//     </table>
+
+//     <p class="footer-note">
+//         *This is a system generated receipt and does not require a physical signature.
+//     </p>
+
+// </body>
+// </html>
+// ';
+
+//         $mpdf->WriteHTML($html);
+//         return response($mpdf->Output('', 'S'), 200)
+//             ->header('Content-Type', 'application/pdf')
+//             ->header('Content-Disposition', 'inline; filename="payment_receipt.pdf"');
+//     }
+
+
     public function generateLicensePDF($newApplicationId)
     {
         $form = Mst_Form_s_w::where('application_id', $newApplicationId)->first();

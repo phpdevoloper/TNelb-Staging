@@ -71,18 +71,28 @@
 
             <!-- Application Download -->
             <td>
+                {{-- @php
+                    var_dump($workflow);die;
+                @endphp --}}
                 @if ($workflow->payment_status == 'draft')
                     <p>-</p>
                 @else
-                    <a href="{{ route('generate.tamil.pdf', ['login_id' => $workflow->application_id]) }}" target="_blank">
-                        <i class="fa fa-file-pdf-o" style="font-size:20px;color:red"></i>
-                        <span style="font-size: x-small;">தமிழ்</span>
-                    </a>
+                    @if ($workflow->form_name == 'P')
+                        <a href="{{ route('generateformP.pdf', ['login_id' => $workflow->application_id]) }}" target="_blank">
+                            <i class="fa fa-file-pdf-o" style="font-size:20px;color:red"></i>
+                            <span style="font-size: x-small;">English</span>
+                        </a>
+                    @else
+                        <a href="{{ route('generate.tamil.pdf', ['login_id' => $workflow->application_id]) }}" target="_blank">
+                            <i class="fa fa-file-pdf-o" style="font-size:20px;color:red"></i>
+                            <span style="font-size: x-small;">தமிழ்</span>
+                        </a>
 
-                    <a href="{{ route('generate.pdf', ['login_id' => $workflow->application_id]) }}" target="_blank">
-                        <i class="fa fa-file-pdf-o" style="font-size:20px;color:red"></i>
-                        <span style="font-size: x-small;">English</span>
-                    </a>
+                        <a href="{{ route('generate.pdf', ['login_id' => $workflow->application_id]) }}" target="_blank">
+                            <i class="fa fa-file-pdf-o" style="font-size:20px;color:red"></i>
+                            <span style="font-size: x-small;">English</span>
+                        </a>
+                    @endif
                 @endif
             </td>
 

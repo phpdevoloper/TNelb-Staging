@@ -448,6 +448,9 @@ class LoginController extends BaseController
                                 ]
                             );
 
+                            // dd($paginatedData);
+                            // exit;
+
                             // Ajax
                             if (request()->ajax()) {
                                 return view('user_login.pagination-list', compact('paginatedData'))->render();

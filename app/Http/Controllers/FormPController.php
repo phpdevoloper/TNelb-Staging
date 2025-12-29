@@ -863,13 +863,6 @@ class FormPController extends BaseController
         }
 
 
-        // $form_details = MstLicence::where('status', 1)
-        //     ->select('*')
-        //     ->get()
-        //     ->toArray();
-
-        // $current_form = collect($form_details)->firstWhere('form_code', $application_details->form_name);
-
         $current_form = MstLicence::where('status', 1)
         ->where('form_code', $application_details->form_name)
         ->first();

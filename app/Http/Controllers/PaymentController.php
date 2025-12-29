@@ -114,14 +114,7 @@ class PaymentController extends Controller
         
         if ($request->application_id) {
             $form = TnelbFormP::where('application_id', $validated['application_id'])->first();
-        }
-        
-        // else {
-            
-        //     $form = EA_Application_model::where('application_id', $validated['application_id'])->first();
-        // }
-
-        
+        }      
 
         if (!$form) {
             return response()->json([
@@ -148,8 +141,6 @@ class PaymentController extends Controller
                 'transaction_date'  => $validated['transactionDate'] 
             ]
         );
-
-        // var_dump($request->form_name);die;
 
         if ($payment) {
                 TnelbFormP::where('application_id', $validated['application_id'])
