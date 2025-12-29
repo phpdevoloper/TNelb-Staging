@@ -626,7 +626,7 @@
     });
     </script>
 
-!-- JavaScript -->
+<!-- JavaScript -->
 <script>
     // document.getElementById('saveDraftBtn').addEventListener('click', function() {
     //     document.getElementById('draftModal').style.display = 'flex';
