@@ -78,6 +78,10 @@
                     <p>-</p>
                 @else
                     @if ($workflow->form_name == 'P')
+                        <a href="{{ route('generatePDFFormP-ta.pdf', ['login_id' => $workflow->application_id]) }}" target="_blank">
+                            <i class="fa fa-file-pdf-o" style="font-size:20px;color:red"></i>
+                            <span style="font-size: x-small;">தமிழ்</span>
+                        </a>
                         <a href="{{ route('generateformP.pdf', ['login_id' => $workflow->application_id]) }}" target="_blank">
                             <i class="fa fa-file-pdf-o" style="font-size:20px;color:red"></i>
                             <span style="font-size: x-small;">English</span>

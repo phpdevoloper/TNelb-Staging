@@ -159,6 +159,7 @@ Route::post('/verifylicenseformAea', [LicenseController::class, 'verifylicensefo
 Route::get('/generaterenewal-pdf/{login_id}', [PDFRenewalController::class, 'generaterenewalPDF'])->name('generaterenewal.pdf');
 Route::get('/generaterenewalTamilPDF/{login_id}', [PDFRenewalController::class, 'generaterenewalTamilPDF'])->name('generaterenewal.tamil.pdf');
 Route::get('/generatePDFFormP/{login_id}', [PDFController::class, 'generatePDFFormP'])->name('generatePDFFormP.pdf');
+Route::get('/generatePDFFormPTA/{login_id}', [PDFController::class, 'generateFormPPDFTA'])->name('generatePDFFormP-ta.pdf');
 
 // Route::get('/admin/generate-pdf/{application_id}', [LicensepdfController::class, 'generatePDF'])->name('generate.pdf');
 

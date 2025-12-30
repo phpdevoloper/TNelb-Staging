@@ -202,6 +202,191 @@ class PDFController extends Controller
         $html .='<h4>6. Have you made any previous application? If so, State reference No. and date</h4>'; 
 
         $html .= '<p class="mt-2">I hereby declare that the particulars stated above are correct and true to the best of
+            my knowledge</p>
+        <br>
+        <p>I request that I may be granted a Power Generating Station Operation and
+            maintenance Competency Certificate.</p>
+        <br><br>
+        <p><strong>Place:</strong> Chennai</p>
+        <p><strong>Date:</strong> ' . date('d-m-Y') . '</p>
+        <p style="text-align:right;"><strong>Signature of the Candidate</strong></p>';
+    
+        $mpdf->WriteHTML($html);
+        return response($mpdf->Output('Application_Details.pdf', 'I'))->header('Content-Type', 'application/pdf');
+    }
+
+    public function generateFormPPDFTA($newApplicationId)
+    {
+
+        $form = TnelbFormP::where('application_id', $newApplicationId)->first();
+
+        // var_dump(format_date($form->previously_number));die;
+        $education = Mst_education::where('application_id', $newApplicationId)->get();
+        $experience = Mst_experience::where('application_id', $newApplicationId)->get();
+        $institutes = TnelbAppsInstitute::where('application_id', $newApplicationId)->get();
+        $applicant_photo = TnelbApplicantPhoto::where('application_id', $newApplicationId)->first();
+
+
+        $decryptedaadhar = Crypt::decryptString($form->aadhaar);
+        $decryptedpan = Crypt::decryptString($form->pancard);
+        $masked = strlen($decryptedaadhar) === 12 ? str_repeat('X', 8) . substr($decryptedaadhar, -4) : 'Invalid Aadhaar';
+        $maskedPan = strlen($decryptedpan) === 10 ? str_repeat('X', 6) . substr($decryptedpan, -4) : 'Invalid PAN';
+
+        if (!$form) {
+            return redirect()->back()->with('error', 'No records found!');
+        }
+
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'default_font' => 'marutham',
+            'fontDir' => array_merge(
+                (new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'],
+                [public_path('fonts')]
+            ),
+            'fontdata' => array_merge(
+                (new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'],
+                [
+                    'marutham' => [
+                        'R' => 'Marutham.ttf',
+                        'useOTL' => 0xFF, // ✅ REQUIRED FOR TAMIL
+                        'useKashida' => 75,
+                    ],
+                ]
+            ),
+            'default_font' => 'helvetica'
+        ]);
+
+        $mpdf->autoScriptToLang = true;
+        $mpdf->autoLangToFont = true;
+    
+        $mpdf->WriteHTML('
+        <style>
+            body { 
+                font-family: helvetica;
+                font-size: 10pt;
+                line-height: 1.6;
+            }
+            .ta {
+                font-family: marutham;
+            }
+            h3, h4, p { margin: 4px 0; }
+            table { border-collapse: collapse; width: 100%; margin-top: 6px; }
+            td, th { padding: 4px; vertical-align: top; }
+            .label { width: 35%; text-align: left; font-weight: bold; }
+            .value { width: 40%; text-align: left; }
+            .tbl-bordered td, .tbl-bordered th { border: 1px solid #000; text-align: center; }
+            .tbl-no-border td { border: none; padding-bottom: 12px; } /* ⬅ spacing between rows */
+            .photo-cell { text-align:center; }
+            .employer { display:flex }
+            .value {
+                line-height: 1.6;
+            }
+            
+        </style>', \Mpdf\HTMLParserMode::HEADER_CSS);
+    
+        $certificateText = match ($form->form_name) {
+            'S' => 'Application for Competency Certificate for Supervisor',
+            'W' => 'Application for Competency Certificate for Wireman',
+            'WH' => 'Application for Competency Certificate for Wireman Helper',
+            default => 'மின் உற்பத்தி நிலைய செயல்பாடு மற்றும் பராமரிப்பு திறன் சான்றிதழுக்கான விண்ணப்பம்',
+        };
+    
+        $html = '
+        <h3 class="ta" style="text-align:center;">தமிழ்நாடு அரசு</h3>
+        <h4 class="ta" style="text-align:center;">மின்சார உரிம வாரியம்</h4>
+        <p class="ta" style="text-align:center;">திரு.வி.கா. தொழிற்சாலை, கிண்டி, சென்னை – 600032.</p>
+        <h4 class="ta" style="text-align:center;">படிவம் - "' . $form->form_name . ($form->appl_type == 'R' ? '" - Renewal' : '"') . '</h4>
+        <p style="text-align:center;">' . $certificateText . '</p>
+        <h4 class="ta" style="text-align:center;">விண்ணப்ப எண்: <strong>' . $form->application_id . '</strong></h4>';
+    
+        $html .= '<table class="tbl-no-border">
+        <tr>
+            <td class="ta label">1. விண்ணப்பதாரரின் பெயர்</td>
+            <td class="value">: ' . $form->applicant_name . '</td>
+            <td rowspan="5" class="photo-cell">';
+    
+        if ($applicant_photo && file_exists(public_path($applicant_photo->upload_path))) {
+            $html .= '<img src="' . public_path($applicant_photo->upload_path) . '" style="width:120px; height:150px; border:1px solid;">';
+        } else {
+            $html .= '<p>No Photo</p>';
+        }
+     
+        $html .= '</td></tr>
+        <tr>
+            <td class="ta label">2. தகப்பனார் பெயர்</td>
+            <td class="value">: ' . $form->fathers_name . '</td>
+        </tr>
+        <tr>
+            <td class="ta label">3. விண்ணப்பதாரர் முகவரி (தெளிவாக இருக்க வேண்டும்)</td>
+            <td class="value" colspan="2">:
+                <br>' .
+                $this->formatAddressToThreeLines($form->applicants_address)
+                . '</td>
+        </tr>
+        <tr>
+            <td class="ta label">4. பிறந்த நாள், மாதம், வருடம் மற்றும் வயது</td>
+            <td class="value">: ' . $form->d_o_b . ' (' . $form->age . ' years)</td>
+        </tr>
+        </table>';
+    
+        // Education
+        $html .= '<h4 class="ta">5 . (i). விண்ணப்பதாரியின் தொழில்நுட்ப தகுதி மற்றும் தேர்ச்சி பற்றிய விவரங்கள்
+        (அசல் சான்றிதழ்களை புகைப்பட நகல்களுடன் இணைத்திடுக. அசல் பார்க்கப்பட்ட பின்பு திருப்பி அளிக்கப்படும்)</h4>
+        <table class="tbl-bordered">
+        <tr>
+        <th class="ta">வரிைச எண</th><th class="ta">கல்வி நிலை</th><th class="ta">கல்வி நிறுவனம்</th><th class="ta">தேர்ச்சி பெற்ற ஆண்டு</th>
+        <th class="ta">சதவீதம்</th>
+        </tr>';
+        foreach ($education as $i => $edu) {
+            $html .= '<tr>
+                <td>' . ($i + 1) . '</td>
+                <td>' . $edu->educational_level . '</td>
+                <td>' . $edu->institute_name . '</td>
+                <td>' . $edu->year_of_passing . '</td>
+                <td>' . $edu->percentage . '%</td>
+            </tr>';
+        }
+        $html .= '</table>';
+    
+        // Experience
+        $html .= '<h4 class="ta">(ii). விண்ணப்பதாரர் பயிற்சி பெற்ற நிறுவனம் மற்றும் காலம்</h4>
+        <table class="tbl-bordered">
+        <tr>
+        <th class="ta">வரிைச எண</th><th class="ta">நிறுவனத்தின் பெயர் & முகவரி</th><th class="ta">பயிற்சி பெற்ற காலம்</th><th>Form Date</th><th>To Date</th>
+        </tr>';
+        foreach ($institutes as $i => $inst) {
+            $html .= '<tr>
+                <td>' . ($i + 1) . '</td>
+                <td>' . $inst->institute_name_address . '</td>
+                <td>' . $inst->duration . ' Years </td>
+                <td>' . format_date($inst->from_date) . '</td>
+                <td>' . format_date($inst->to_date) . '</td>
+            </tr>';
+        }
+        $html .= '</table>';
+
+
+        $html .= '<h4>(iii). Power Station to which he is aattached at present</h4>
+        <table class="tbl-bordered">
+        <tr>
+        <th>S.No</th><th>Power Station Name</th><th>Experience(Years)</th><th>Designation</th>
+        </tr>';
+        foreach ($experience as $i => $exp) {
+            $html .= '<tr>
+                <td>' . ($i + 1) . '</td>
+                <td>' . $exp->company_name . '</td>
+                <td>' . $exp->experience . ' Years </td>
+                <td>' . $exp->designation . '</td>
+            </tr>';
+        }
+        $html .= '</table>';
+
+        $html .= '<div class="employer"><span class="label">(iv). Name of the employer :</span> ' . $form->employer_detail . '</div>';
+
+
+        $html .='<h4>6. Have you made any previous application? If so, State reference No. and date</h4>'; 
+
+        $html .= '<p class="mt-2">I hereby declare that the particulars stated above are correct and true to the best of
 my knowledge</p>
         <br>
         <p>I request that I may be granted a Power Generating Station Operation and
@@ -214,6 +399,9 @@ maintenance Competency Certificate.</p>
         $mpdf->WriteHTML($html);
         return response($mpdf->Output('Application_Details.pdf', 'I'))->header('Content-Type', 'application/pdf');
     }
+
+
+
     public function generatePDF($newApplicationId)
     {
 
