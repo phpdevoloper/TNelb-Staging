@@ -7,6 +7,7 @@ use App\Models\mst_workflow;
 use App\Models\Payment;
 use App\Models\ProprietorformA;
 use App\Models\TnelbApplicantStaffDetail;
+use Carbon\Carbon;
 // use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
@@ -520,7 +521,7 @@ class FormAController extends BaseController
 
 
          
-            $form = \DB::table('tnelb_forms')
+            $form = DB::table('tnelb_forms')
                 ->where('form_name', $request->form_name)
                 ->where('status', '1')
                 ->first();
@@ -1138,7 +1139,7 @@ class FormAController extends BaseController
         if (!$isDraft) {
 
 
-            $form = \DB::table('tnelb_forms')
+            $form = DB::table('tnelb_forms')
                 ->where('form_name', $request->form_name)
                 ->where('status', '1')
                 ->first();
@@ -1192,7 +1193,7 @@ public function getFormInstructions(Request $request)
     $formName  = $request->get('form_name');
     $appl_type = $request->get('appl_type');
 
-    $form = \DB::table('tnelb_forms')
+    $form = DB::table('tnelb_forms')
         ->where('form_name', $formName)
         ->where('status','1')
         ->first();

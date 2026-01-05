@@ -50,7 +50,8 @@ class PDFController extends Controller
         return nl2br(e($lines[0] ?? '') . "\n" . e($lines[1] ?? '') . "\n" . e($lines[2] ?? ''));
     }
 
-    
+
+
     public function generateFormPPDF($newApplicationId)
     {
 
@@ -89,14 +90,20 @@ class PDFController extends Controller
             h3, h4, p { margin: 4px 0; }
             table { border-collapse: collapse; width: 100%; margin-top: 6px; }
             td, th { padding: 4px; vertical-align: top; }
-            .label { width: 35%; text-align: left; font-weight: bold; }
+            .label { 
+                width: 35%; font-weight: bold;  vertical-align: top;
+            }
             .value { width: 40%; text-align: left; }
             .tbl-bordered td, .tbl-bordered th { border: 1px solid #000; text-align: center; }
             .tbl-no-border td { border: none; padding-bottom: 12px; } /* ⬅ spacing between rows */
-            .photo-cell { text-align:center; }
+            .photo-cell { 
+                width: 20%;
+                text-align: center; 
+            }
             .employer { display:flex }
             .value {
-                line-height: 1.6;
+                 width: 45%;
+                vertical-align: top;
             }
             
         </style>', \Mpdf\HTMLParserMode::HEADER_CSS);
@@ -135,7 +142,7 @@ class PDFController extends Controller
         </tr>
         <tr>
             <td class="label">3. Address of the Applicant (in block letters)</td>
-            <td class="value" colspan="2">:
+            <td class="value">:
                 <br>' .
                 $this->formatAddressToThreeLines($form->applicants_address)
                 . '</td>
@@ -299,11 +306,11 @@ class PDFController extends Controller
         <p style="text-align:center;">' . $certificateText . '</p>
         <h4 class="ta" style="text-align:center;">விண்ணப்ப எண்: <strong>' . $form->application_id . '</strong></h4>';
     
-        $html .= '<table class="tbl-no-border">
+        $html .= '<table class="tbl-no-border" style="table-layout:fixed; width:100%;">
         <tr>
             <td class="ta label">1. விண்ணப்பதாரரின் பெயர்</td>
             <td class="value">: ' . $form->applicant_name . '</td>
-            <td rowspan="5" class="photo-cell">';
+            <td rowspan="4" class="photo-cell">';
     
         if ($applicant_photo && file_exists(public_path($applicant_photo->upload_path))) {
             $html .= '<img src="' . public_path($applicant_photo->upload_path) . '" style="width:120px; height:150px; border:1px solid;">';
@@ -318,8 +325,8 @@ class PDFController extends Controller
         </tr>
         <tr>
             <td class="ta label">3. விண்ணப்பதாரர் முகவரி (தெளிவாக இருக்க வேண்டும்)</td>
-            <td class="value" colspan="2">:
-                <br>' .
+            <td class="value text-wrap" >:
+                ' .
                 $this->formatAddressToThreeLines($form->applicants_address)
                 . '</td>
         </tr>
@@ -366,10 +373,10 @@ class PDFController extends Controller
         $html .= '</table>';
 
 
-        $html .= '<h4>(iii). Power Station to which he is aattached at present</h4>
+        $html .= '<h4 class="ta">(iii). தற்போது பணியாற்றி வரும் மின் நிலையம்</h4>
         <table class="tbl-bordered">
         <tr>
-        <th>S.No</th><th>Power Station Name</th><th>Experience(Years)</th><th>Designation</th>
+        <th class="ta">வரிைச எண</th><th class="ta">மின் நிலையத்தின் பெயர்</th><th class="ta">அனுபவம் (ஆண்டுகள்)</th><th class="ta">பதவி</th>
         </tr>';
         foreach ($experience as $i => $exp) {
             $html .= '<tr>
@@ -381,20 +388,18 @@ class PDFController extends Controller
         }
         $html .= '</table>';
 
-        $html .= '<div class="employer"><span class="label">(iv). Name of the employer :</span> ' . $form->employer_detail . '</div>';
+        $html .= '<div class="ta employer"><span class="label">(iv). நிறுவனத்தின் பெயர் :</span> ' . $form->employer_detail . '</div>';
 
 
-        $html .='<h4>6. Have you made any previous application? If so, State reference No. and date</h4>'; 
+        $html .='<h4 class="ta">6. முன்பு நீங்கள் ஏதேனும் விண்ணப்பம் சமர்ப்பித்துள்ளீர்களா? இருப்பின், அதன் குறிப்பு எண் மற்றும் தேதியை குறிப்பிடவும்.</h4>'; 
 
-        $html .= '<p class="mt-2">I hereby declare that the particulars stated above are correct and true to the best of
-my knowledge</p>
+        $html .= '<p class="ta">மேலே குறிப்பிடப்பட்டுள்ள விவரங்கள் அனைத்தும் என் அறிவிற்குத் தெரிந்த வரையில் சரியானதும் உண்மையானதும் ஆகும் என்று இதன்மூலம் உறுதிபட அறிவிக்கிறேன்.</p>
         <br>
-        <p>I request that I may be granted a Power Generating Station Operation and
-maintenance Competency Certificate.</p>
+        <p class="ta">மின்சக்தி உற்பத்தி நிலையத்தின் செயல்பாடு மற்றும் பராமரிப்பு திறன்சான்றிதழ் எனக்கு வழங்கப்பட வேண்டுமென இதன்மூலம் பணிவுடன் கேட்டுக்கொள்கிறேன்.</p>
         <br><br>
-        <p><strong>Place:</strong> Chennai</p>
-        <p><strong>Date:</strong> ' . date('d-m-Y') . '</p>
-        <p style="text-align:right;"><strong>Signature of the Candidate</strong></p>';
+        <p><strong class="ta">இடம்:</strong> Chennai</p>
+        <p><strong class="ta">தேதி:</strong> ' . date('d-m-Y') . '</p>
+        <p style="text-align:right;"><strong class="ta">விண்ணப்பதாரரின் கையொப்பம்</strong></p>';
     
         $mpdf->WriteHTML($html);
         return response($mpdf->Output('Application_Details.pdf', 'I'))->header('Content-Type', 'application/pdf');
@@ -480,11 +485,11 @@ maintenance Competency Certificate.</p>
         </tr>
         <tr>
             <td class="label">3. Address of the Applicant (in block letters)</td>
-                <td class="value" colspan="2">
+                <td class="value">
                 <table style="border: none; width: 100%;">
                     <tr>
                         <td style="width: 10px;">:</td>
-                        <td style="text-align: left;">
+                        <td class="text-wrap">
                             ' . $this->formatAddressToThreeLines($form->applicants_address) . '
                         </td>
                     </tr>
@@ -835,7 +840,7 @@ maintenance Competency Certificate.</p>
         if (!$form) {
             return redirect()->back()->with('error', 'பதிவுகள் கிடைக்கவில்லை!');
         }
- $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+    $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
     $fontDirs = $defaultConfig['fontDir'];
 
     $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
@@ -1145,20 +1150,11 @@ $certificateText = match ($form->form_name) {
                TnelbFormP::where('application_id', $newApplicationId)->first();
 
 
-        // dd($form->form_name);
-        //     exit;
-
         $license_name= DB::table('mst_licences')->where('form_code', $form->form_name)->first();
-    
-        $education = Mst_education::where('application_id', $newApplicationId)->get();
-        $experience = Mst_experience::where('application_id', $newApplicationId)->get();
-        $documents = Mst_documents::where('application_id', $newApplicationId)->first();
         $payment = DB::table('payments')->where('application_id', $newApplicationId)->first();
 
 
         if (!$payment) {
-            // dd('111');
-            // exit;
             return redirect()->back()->with('error', 'Payment not found!');
         }
 
@@ -1398,10 +1394,6 @@ $certificateText = match ($form->form_name) {
     public function generateLicensePDF($newApplicationId)
     {
         $form = Mst_Form_s_w::where('application_id', $newApplicationId)->first();
-        // var_dump($form->appl_type);die;
-
-
-        // var_dump($form);die;
         $education = Mst_education::where('application_id', $newApplicationId)->get();
         $experience = Mst_experience::where('application_id', $newApplicationId)->get();
         $applicant_photo = TnelbApplicantPhoto::where('application_id', $newApplicationId)->first();
@@ -1411,8 +1403,6 @@ $certificateText = match ($form->form_name) {
         }else{
             $license_details = DB::table('tnelb_license')->where('application_id', $newApplicationId)->first();
         }
-
-
 
         $mpdf = new \Mpdf\Mpdf([
             'mode' => 'utf-8',
@@ -1441,8 +1431,6 @@ $certificateText = match ($form->form_name) {
             'WH' => 'Application for Competency Certificate for Wireman Helper',
             default => 'Application for Competency Certificate',
         };
-        
-
                   
         $html  = '<div class="photo-cell">
         <img src="' . public_path($applicant_photo->upload_path) . '" width="120" height="150" style="border:1px solid #000;">
@@ -1474,7 +1462,6 @@ $certificateText = match ($form->form_name) {
         
 
         $mpdf->WriteHTML($html);
-
         $mpdf->SetHTMLFooter('
             <table width="100%" style="font-size: 12px;">
                 <tr>
@@ -1483,9 +1470,7 @@ $certificateText = match ($form->form_name) {
                 </tr>
             </table>
         ');
-        return response($mpdf->Output('', 'S'), 200)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'inline; filename="license.pdf"');
+        return response($mpdf->Output('', 'S'), 200)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'inline; filename="license.pdf"');
 
     }
 

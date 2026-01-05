@@ -275,6 +275,8 @@ Route::get('/form/get-form-cost', [FormController::class, 'getFormCost'])->name(
 Route::post('/form_p/store', [FormPController::class, 'store'])->name('form_p.store');
 Route::post('/form_p/saveDraft', [FormPController::class, 'saveDraft'])->name('form_p.saveDraft');
 Route::get('/generate-pdf-p/{login_id}', [PDFController::class, 'generateFormPPDF'])->name('generateformP.pdf');
+Route::get('/generatePDFFormP/{login_id}', [PDFController::class, 'generatePDFFormP'])->name('generatePDFFormP.pdf');
+Route::get('/generatePDFFormPTA/{login_id}', [PDFController::class, 'generateFormPPDFTA'])->name('generatePDFFormP-ta.pdf');
 
 
 

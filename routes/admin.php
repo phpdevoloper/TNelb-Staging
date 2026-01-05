@@ -47,8 +47,13 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 
         Route::get('/generateForma-pdf/{application_id}', [LicensepdfController::class, 'generateFormaPDF'])->name('generateForma.pdf');
         Route::get('/generate-pdf/{application_id}', [LicensepdfController::class, 'generatePDF'])->name('generate.pdf');
+        Route::get('/generate-licence-tamil/{application_id}', [LicensepdfController::class, 'generateLicenceTamil'])->name('competency-certificate-tamil.pdf');
         Route::get('/generateLicensePDF/{application_id}', [PDFController::class, 'generateLicensePDF'])->name('generateLicensePDF');
-    // Public Admin Routes
+
+        // Licence PDF Routes
+        Route::get('/getLicenceDoc/{application_id}', [LicensepdfController::class, 'getLicenceDoc'])->name('getLicenceDoc.pdf');
+
+        // Public Admin Routes
         Route::get('/', [LoginController::class, 'index'])->name('index');
 
         Route::get('/custom-captcha', [CaptchaController::class, 'generateCaptcha'])->name('custom.captcha');
@@ -56,7 +61,7 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
         Route::post('/login', [LoginController::class, 'login'])->name('login');
         Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-    // Authenticated Admin Routes
+        // Authenticated Admin Routes
         Route::middleware(['auth:admin'])->group(function () {
 
 
@@ -109,23 +114,21 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 
             Route::get('/applicants_detail_forma/{applicant_id}', [LoginController::class, 'applicants_detail_forma'])->name('applicants_detail_forma');
 
-     //form A Completed
+            //form A Completed
             Route::get('/applicants_detail_forma_completed/{applicant_id}', [LoginController::class, 'applicants_detail_forma_completed'])->name('applicants_detail_forma_completed');
 
-//         Route::post('/forwardApplicationforma/{role}', function ($role) {
-//     dd('11');   // test right here
-// })->name('forwardApplicationforma');
+
 
             Route::post('/forwardApplicationforma/{role}', [SupervisorController::class, 'forwardApplicationforma'])->name('forwardApplicationforma');
             Route::post('/approveApplicationForma', [SupervisorController::class, 'approveApplicationForma'])
             ->name('approveApplicationForma');
 
-        // return forma-------------------
+            // return forma-------------------
 
             Route::post('/returntoSupervisorforma', [ApplicationController::class, 'returntoSupervisorforma'])->name('returntoSupervisorforma');
-        // Route::get('/generateForma-pdf/{application_id}', [LicensepdfController::class, 'generateFormaPDF'])->name('generateForma.pdf');
+             // Route::get('/generateForma-pdf/{application_id}', [LicensepdfController::class, 'generateFormaPDF'])->name('generateForma.pdf');
 
-        // Misc
+            // Misc
             Route::post('/returntoSupervisor', [ApplicationController::class, 'returntoSupervisor'])->name('returntoSupervisor');
 
 
@@ -137,11 +140,11 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
             Route::post('/get_mic_report', [ReportController::class, 'get_mic_report'])->name('get_mic_report');
             Route::post('/get_filter_data', [ReportController::class, 'get_filter_data'])->name('get_filter_data');
 
-        // Renewal Apps
+                // Renewal Apps
             Route::get('/renewal_apps', [ApplicationController::class, 'renewal_apps'])->name('renewal_apps');
 
 
-        // -------------completed applications --------------------
+            // -------------completed applications --------------------
 
 
             Route::get('/completed_application/{applicant_id}', [CompletedApplsController::class, 'index'])->name('completed_application');
@@ -149,23 +152,23 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 
 
 
-        // // CMS
+            // // CMS
             Route::get('/homeslider', [LoginController::class, 'homeslider'])->name('homeslider');
             Route::post('/homeslider/insertdata', [LoginController::class, 'insertdata'])->name('homeslider.insertdata');
             Route::put('/homesliderupdate/{id}', [LoginController::class, 'update'])->name('homesliderupdate.update');
 
             Route::delete('/homesliderdelete/{id}', [LoginController::class, 'delete'])->name('homeslider.delete');
             Route::post('/submenu', [LoginController::class, 'insertsubmenu'])->name('submenu.insertsubmenu');
-        // -----------aboutpage------------------
+            // -----------aboutpage------------------
             Route::get('/aboutpage', [LoginController::class, 'aboutpage'])->name('aboutpage');
 
-        // ------------Portaladmin Menu--------------
+            // ------------Portaladmin Menu--------------
             Route::get('/menus', [MenuController::class, 'menus'])->name('menus');
 
-        // Insert menu
+            // Insert menu
             Route::post('/menus/insertmenu', [MenuController::class, 'insertmenu'])->name('menus.insertmenu');
 
-        // Update items – use a different path
+            // Update items – use a different path
             Route::post('/menus/updateitems', [MenuController::class, 'updateitems'])->name('menus.updateitems');
 
 
@@ -181,7 +184,7 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 
             Route::post('/menus/{id}/toggle-status', [MenuController::class, 'toggleStatus']);
 
-        // -------------portaladmin submenus---------------
+            // -------------portaladmin submenus---------------
 
             Route::get('/submenus', [MenuController::class, 'submenus'])->name('submenus');
 
@@ -201,14 +204,14 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 
             Route::post('/menus/updatesubmenucontent', [MenuController::class, 'updatesubMenuContent'])->name('menus.updatesubcontent');
 
-        // -----------------------newsboard ----------------------------
+            // -----------------------newsboard ----------------------------
             Route::get('/newsboard', [NewsController::class, 'index'])->name('newsboard');
 
             Route::post('/newsboard/insert', [NewsController::class, 'insert'])->name('newsboard.insert');
 
             Route::post('/newsboard/updateboard', [NewsController::class, 'updateboard'])->name('newsboard.updateboard');
 
-        // Route::post('newsboard/update', [NewsController::class, 'update']);
+            // Route::post('newsboard/update', [NewsController::class, 'update']);
 
 
             Route::post('/newsboard/updatetamil', [NewsController::class, 'updatetamil'])->name('newsboard.updatetamil');

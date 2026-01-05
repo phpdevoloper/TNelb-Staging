@@ -2293,8 +2293,8 @@
 
     });
 
-    function paymentreceipt(application_id) {
-        window.open('/payment-receipt/${application_id}', '_blank');
+    function paymentreceipt() {
+        window.open(`/payment-receipt/${window.paymentAppId}`, '_blank');
     }
 
 
@@ -2538,9 +2538,6 @@
             fees_date = data.fees_start_date
             certificate_name = data.certificate_name
 
-            console.log(certificate_name);
-            
-
             
             // 🔹 Now you can safely use form_cost everywhere below
             const modalEl = document.getElementById('competencyInstructionsModal');
@@ -2569,13 +2566,10 @@
             });
 
             const html = converter.convert();
-            // console.log(html);
             
             
             modalBody.innerHTML = html;
             const el = document.querySelector("#instructionContent");
-            console.log("innerHTML:", el.innerHTML);
-            console.log("textContent:", el.textContent);
 
             const modal = new bootstrap.Modal(modalEl, {
                 backdrop: 'static',
@@ -2641,7 +2635,6 @@
                         const amount = total_fees;
                         const licence_name = saveResponse.licence_name || 'N/A';
 
-                        console.log(application_id);
                         // const serviceCharge = 10;
                         // let lateFee = typeof lateFee !== "undefined" ? lateFee : 0;
                         // let total_charge = Number(amount) + Number(serviceCharge);
@@ -2924,12 +2917,15 @@
                                                                         
                                                                     
     // Open Payment Receipt in New Tab
-    function paymentreceipt(loginId) {
-        window.open(`/payment-receipt/${loginId}`, '_blank');
-    }
+    // function paymentreceipt(loginId) {
+    //     console.log(loginId);
+        
+    //     window.open(`/payment-receipt/${loginId}`, '_blank');
+    // }
 
     // Open Application PDF in New Tab
-    function downloadPDF(language, loginId) {
+    function downloadPDF(language) {
+        const loginId = window.paymentAppId;
         let url = (language === 'tamil') ? `/generateTamilPDF/${loginId}` : `/generate-pdf/${loginId}`;
         window.open(url, '_blank');
     }

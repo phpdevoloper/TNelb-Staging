@@ -125,6 +125,7 @@ class ComposerStaticInit74c401a8910c5183d68328cd1a25660c
         ),
         'M' => 
         array (
+            'Mpdf\\QrCode\\' => 12,
             'Mpdf\\PsrLogAwareTrait\\' => 22,
             'Mpdf\\PsrHttpMessageShim\\' => 24,
             'Mpdf\\' => 5,
@@ -422,6 +423,10 @@ class ComposerStaticInit74c401a8910c5183d68328cd1a25660c
         array (
             0 => __DIR__ . '/..' . '/nette/utils/src',
         ),
+        'Mpdf\\QrCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mpdf/qrcode/src',
+        ),
         'Mpdf\\PsrLogAwareTrait\\' => 
         array (
             0 => __DIR__ . '/..' . '/mpdf/psr-log-aware-trait/src',
@@ -649,6 +654,7 @@ class ComposerStaticInit74c401a8910c5183d68328cd1a25660c
         'App\\Http\\Controllers\\EA_RenewalController' => __DIR__ . '/../..' . '/app/Http/Controllers/EA_RenewalController.php',
         'App\\Http\\Controllers\\FormAController' => __DIR__ . '/../..' . '/app/Http/Controllers/FormAController.php',
         'App\\Http\\Controllers\\FormController' => __DIR__ . '/../..' . '/app/Http/Controllers/FormController.php',
+        'App\\Http\\Controllers\\FormPController' => __DIR__ . '/../..' . '/app/Http/Controllers/FormPController.php',
         'App\\Http\\Controllers\\IndexController' => __DIR__ . '/../..' . '/app/Http/Controllers/IndexController.php',
         'App\\Http\\Controllers\\LicenseController' => __DIR__ . '/../..' . '/app/Http/Controllers/LicenseController.php',
         'App\\Http\\Controllers\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/LoginController.php',
@@ -701,6 +707,8 @@ class ComposerStaticInit74c401a8910c5183d68328cd1a25660c
         'App\\Models\\Register' => __DIR__ . '/../..' . '/app/Models/Register.php',
         'App\\Models\\TnelbApplicantPhoto' => __DIR__ . '/../..' . '/app/Models/TnelbApplicantPhoto.php',
         'App\\Models\\TnelbApplicantStaffDetail' => __DIR__ . '/../..' . '/app/Models/TnelbApplicantStaffDetail.php',
+        'App\\Models\\TnelbAppsInstitute' => __DIR__ . '/../..' . '/app/Models/TnelbAppsInstitute.php',
+        'App\\Models\\TnelbFormP' => __DIR__ . '/../..' . '/app/Models/TnelbFormP.php',
         'App\\Models\\TnelbLicense' => __DIR__ . '/../..' . '/app/Models/TnelbLicense.php',
         'App\\Models\\Tnelb_Renewals' => __DIR__ . '/../..' . '/app/Models/Tnelb_Renewals.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
@@ -4367,6 +4375,12 @@ class ComposerStaticInit74c401a8910c5183d68328cd1a25660c
         'Mpdf\\PsrHttpMessageShim\\Uri' => __DIR__ . '/..' . '/mpdf/psr-http-message-shim/src/Uri.php',
         'Mpdf\\PsrLogAwareTrait\\MpdfPsrLogAwareTrait' => __DIR__ . '/..' . '/mpdf/psr-log-aware-trait/src/MpdfPsrLogAwareTrait.php',
         'Mpdf\\PsrLogAwareTrait\\PsrLogAwareTrait' => __DIR__ . '/..' . '/mpdf/psr-log-aware-trait/src/PsrLogAwareTrait.php',
+        'Mpdf\\QrCode\\Output\\Html' => __DIR__ . '/..' . '/mpdf/qrcode/src/Output/Html.php',
+        'Mpdf\\QrCode\\Output\\Mpdf' => __DIR__ . '/..' . '/mpdf/qrcode/src/Output/Mpdf.php',
+        'Mpdf\\QrCode\\Output\\Png' => __DIR__ . '/..' . '/mpdf/qrcode/src/Output/Png.php',
+        'Mpdf\\QrCode\\Output\\Svg' => __DIR__ . '/..' . '/mpdf/qrcode/src/Output/Svg.php',
+        'Mpdf\\QrCode\\QrCode' => __DIR__ . '/..' . '/mpdf/qrcode/src/QrCode.php',
+        'Mpdf\\QrCode\\QrCodeException' => __DIR__ . '/..' . '/mpdf/qrcode/src/QrCodeException.php',
         'Mpdf\\ServiceFactory' => __DIR__ . '/..' . '/mpdf/mpdf/src/ServiceFactory.php',
         'Mpdf\\Shaper\\Indic' => __DIR__ . '/..' . '/mpdf/mpdf/src/Shaper/Indic.php',
         'Mpdf\\Shaper\\Myanmar' => __DIR__ . '/..' . '/mpdf/mpdf/src/Shaper/Myanmar.php',

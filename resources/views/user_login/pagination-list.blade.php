@@ -103,9 +103,11 @@
             <!-- License Number -->
             <td>
                 @if (!empty($workflow->license_number) && ($workflow->status == 'A' || $workflow->app_status == 'A'))
-                    <a href="{{ route('admin.generate.pdf', ['application_id' => $workflow->application_id]) }}" target="_blank">
-                        <span class="badge badge-info" style="font-size: 15px;">{{ $workflow->license_number }}</span>
+                    <a href="{{ route('admin.getLicenceDoc.pdf', ['application_id' => $workflow->application_id]) }}" target="_blank">
+                        <span class="badge badge-info">{{ $workflow->license_number }}</span>
                     </a>
+                    <a href="{{ route('admin.generate.pdf', ['application_id' => $workflow->application_id]) }}" target="_blank" class="badge badge-info"  data-bs-toggle="tooltip" data-bs-placement="top" title="Download Licence PDF English"><i class="fa fa-download"></i></a>
+                    <a href="{{ route('admin.competency-certificate-tamil.pdf', ['application_id' => $workflow->application_id]) }}" target="_blank" class="badge badge-info"  data-bs-toggle="tooltip" data-bs-placement="top" title="Download Licence PDF Tamil"><i class="fa fa-download"></i></a>
                     <br>
 
                     @if (!empty($workflow->renewals))
