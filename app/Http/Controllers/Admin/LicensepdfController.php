@@ -193,13 +193,13 @@ class LicensepdfController extends Controller
 
         if($applicant->license_name == 'B'){
             $certificate_name = 'Electrician';
-            $content_text = 'இச்சான்று பெற்றவர் நடுத்தர மற்றும் குறைந்த மின்னழுத்த மின்னமைப்பு பணிகளை உரிமம் பெற்றுரியின் ஒப்பந்தக்காரரின் கீழ் மேற்கொள்ளலாம் அல்லது நடுத்தர மற்றும் குறைந்த அழுத்த நிறுவனத்தின் இயக்குதல் மற்றும் பராமரிப்பு பணிகளை அந்நிறுவனத்தில் அங்கீகாரத்துடன் மேற்கொள்ளலாம்.'; 
+            $content_text = 'The holder of this certificate is authorized to carry out Medium and Low Voltage electrical installation works under a licensed contractor, or to perform operation and maintenance works of Medium and Low Voltage installations in the concerned establishment with due authorization.'; 
         }else if($applicant->license_name == 'H'){
              $certificate_name = 'WIREMAN HELPER';
-            $content_text = 'இச்சான்று பெற்றவர் நடுத்தர மற்றும் குறைந்த மின்னழுத்த அமைப்பு பணிகளை மேற்கோள்வதில் உரிமம் பெற்ற மின் ஒப்பந்தக்காரரிடம் மின் கம்பியாளருக்கு உதவியாளராக பணிபுரியலாம். அல்லது நடுத்தர மற்றும் குறைந்த அழுத்த நிறுவனத்தின் இயக்குதல் மற்றும் பராமரிப்பு பணியில் மின்கம்பியாளருக்கு உதவியாளராக நிறுவனத்தின் அங்கீகாரத்துடன் மேற்கொள்ளலாம்.'; 
+            $content_text = 'The holder of this certificate may work as an assistant to an electrician under a licensed electrical contractor for carrying out Medium and Low Voltage electrical installation works, or may, with the authorization of the establishment, work as an assistant to an electrician in the operation and maintenance of Medium and Low Voltage installations of the establishment.'; 
         }else{
             $certificate_name = '';
-            $content_text = 'இச்சான்றிதழ் பெற்றவர், உரிமம் பெற்ற மின் ஒப்பந்தக்காரரின் கீழ் உயர் மின்னழுத்த (H.V) மற்றும் நடுத்தர மின்னழுத்த (M.V) மின் நிறுவல் பணிகளை மேற்பார்வை செய்ய அனுமதிக்கப்படுகிறார்; அல்லது இந்திய மின்சார விதிகள், 1956 இன் விதி 3 இன் கீழ் அங்கீகரிக்கப்பட்ட நபராக பணியாற்ற அனுமதிக்கப்படுகிறார்.';
+            $content_text = 'This Certificate holder is permitted to supervise <strong>H.V and M.V. Electrical installation works</strong> under licensed contractor or to work as authorised person under rule 3 of Indian Electricity Rule 1956.';
         }
 
 
@@ -208,7 +208,7 @@ class LicensepdfController extends Controller
         if (!empty($certificate_name)) {
             $certificateRow = '
                 <tr>
-                    <td class="lbl">தே.சான்று எண்</td>
+                    <td class="lbl">Certificate</td>
                     <td class="colon">:</td>
                     <td class="val">'.$certificate_name.'</td>
                 </tr>
@@ -287,7 +287,7 @@ class LicensepdfController extends Controller
                 text-align: center;
             }
             .footer {
-                margin-top: 10mm;   
+                margin-top: 5mm;   
                 text-align: center;
                 font-size: 6pt;
             }
@@ -349,7 +349,8 @@ class LicensepdfController extends Controller
                                     <td class="lbl">Address</td>
                                     <td class="colon">:</td>
                                     <td class="val">'.$applicant->applicants_address.'</td>
-                                </tr>
+                                </tr>'
+                                .$certificateRow.'
                             </table>
 
                         </td>
@@ -410,11 +411,8 @@ class LicensepdfController extends Controller
                         Visit us at : www.tnelb.gov.in
                     </div>
 
-                    <div style="margin-top:4mm;">
-                        This Certificate holder is permitted to supervise
-                        <strong>H.V and M.V. Electrical installation works</strong>
-                        under licensed contractor or to work as authorised person
-                        under rule 3 of Indian Electricity Rule 1956.
+                    <div style="margin-top:4mm;text-align: justify;">
+                        ' . $content_text . '   
                     </div>
 
                     <br><br><br><br>

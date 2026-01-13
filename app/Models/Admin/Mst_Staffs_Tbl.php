@@ -15,7 +15,7 @@ class Mst_Staffs_Tbl extends Authenticatable
 
     protected $fillable = ['user_id','name', 'email', 'password', 'role_id', 'staff_name', 'name', 'email', 'handle_forms', 'status', 'updated_by'];
 
-    protected $hidden = ['password'];
+    // protected $hidden = [''];
 
     public function role() {
         return $this->belongsTo(MstRoles::class, 'role_id');

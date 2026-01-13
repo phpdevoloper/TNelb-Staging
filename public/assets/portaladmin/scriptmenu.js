@@ -1,3 +1,58 @@
+function clearErrors() {
+    $(".error-text").text("");
+    $(".is-invalid").removeClass("is-invalid");
+}
+
+function showError(field, message) {
+    $(`[data-error="${field}"]`).text(message);
+    $(`[name="${field}"], #${field}`).addClass("is-invalid");
+}
+
+function validateEmail(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+}
+
+function validateStaffName(name) {
+    const regex = /^[A-Za-z\s]+$/;
+    return regex.test(name) && name.length <= 50;
+}
+
+
+function copyText(text) {
+
+    // Modern clipboard API (HTTPS / localhost)
+    if (navigator.clipboard && window.isSecureContext) {
+
+        navigator.clipboard.writeText(text).then(() => {
+            showCopyToast();
+        });
+
+    } else {
+        // Fallback for HTTP / older browsers
+        let tempInput = document.createElement("input");
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        showCopyToast();
+    }
+}
+
+function showCopyToast() {
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Staff ID copied',
+        showConfirmButton: false,
+        timer: 1500
+    });
+}
+
+
+
 $(document).ready(function () {
     // Handle English Modal
     $('.edit-newsboard-btn[data-bs-target="#inputFormModalEnglish"]').on('click', function () {
@@ -2512,10 +2567,185 @@ $(document).ready(function () {
         });
     });
 
+    // $("#newstaffmaster").on("submit", function (e) {
+    //     e.preventDefault();
+
+    //     let formData = new FormData(this);
+
+    //     $.ajax({
+    //         url: BASE_URL + "/admin/staff/insertstaff",
+    //         type: "POST",
+    //         data: formData,
+    //         processData: false,
+    //         contentType: false,
+    //         headers: {
+    //             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+    //         },
+    //         success: function (response) {
+    //             Swal.fire("Success", response.message, "success").then(() => {
+    //                 let staff = response.staff;
+    //                 let formNames = response.form_names.join(', ');
+    //                 let statusText = '';
+    //                 let statusClass = '';
+
+    //                 if (staff.status == '1') {
+    //                     statusText = 'Published';
+    //                     statusClass = 'badge-success';
+    //                 } else if (staff.status == '0') {
+    //                     statusText = 'Draft';
+    //                     statusClass = 'badge-dark';
+    //                 } else if (staff.status == '2') {
+    //                     statusText = 'Disabled';
+    //                     statusClass = 'badge-danger';
+    //                 }
+
+    //                 let newRow = `
+    //                     <tr data-id="${staff.id}">
+    //                         <td class="text-center">New</td>
+    //                         <td>${staff.name}</td>
+    //                         <td>${staff.email}</td>
+    //                         <td>${staff.staff_name}</td>
+    //                         <td>${formNames}</td>
+    //                         <td><span class="badge ${statusClass}">${statusText}</span></td>
+    //                         <td>
+    //                             <ul class="table-controls">
+    //                                 <li>
+    //                                     <a href="javascript:void(0);" class="editformdata"
+    //                                         data-id="${staff.id}"
+    //                                         data-form_name=""
+    //                                         data-license_name=""
+    //                                         data-fresh_amount=""
+    //                                         data-renewal_amount=""
+    //                                         data-instructions=""
+    //                                         data-status="${staff.status}"
+    //                                         data-bs-toggle="modal" data-bs-target="#inputFormModaleditstaffs">
+    //                                         <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
+    //                                     </a>
+    //                                 </li>
+    //                             </ul>
+    //                         </td>
+    //                     </tr>
+    //                 `;
+
+    //                 $('#formtable').append(newRow);
+    //                 $('#newstaffmaster')[0].reset(); // Optional: reset form
+    //                 $('#newstaffModal').modal('hide'); // Hide modal if used
+    //             });
+    //         },
+
+    //         error: function (xhr) {
+    //             if (xhr.status === 422) {
+    //                 let errors = xhr.responseJSON.errors;
+    //                 let messages = '';
+
+    //                 // Map field names to readable labels
+    //                 const fieldNames = {
+    //                     name: 'Designation Name',
+    //                     email: 'Email',
+    //                     staff_name: 'Staff Name',
+    //                     handle_forms: 'Handling Forms',
+    //                     status: 'Status'
+    //                 };
+
+    //                 Object.keys(errors).forEach(function (key) {
+    //                     let label = fieldNames[key] || key;
+    //                     messages += `<strong>${label}:</strong> ${errors[key][0]}<br>`;
+    //                 });
+
+    //                 Swal.fire({
+    //                     icon: 'error',
+    //                     title: 'Validation Error',
+    //                     html: messages
+    //                 });
+    //             } else {
+    //                 Swal.fire("Error", "Something went wrong!", "error");
+    //             }
+    //         }
+
+
+    //     });
+    // });
+
+
+    // New logic implementation
+
+    $("#staff_name").on("input", function () {
+        this.value = this.value
+            .replace(/[^A-Za-z\s]/g, "")   // remove non-text
+            .substring(0, 50);             // limit to 50 chars
+    });
+
+    $("#newstaffmaster").on("input change", "input, select, textarea", function () {
+        let field = $(this).attr("name") || $(this).attr("id");
+        if (!field) return;
+
+        $(this).removeClass("is-invalid");
+        $(`[data-error="${field}"]`).text("");
+    });
+
+    /* Checkbox group auto clear */
+    $("#newstaffmaster").on("change", "input[name='handle_forms[]']", function () {
+        if ($("#newstaffmaster input[name='handle_forms[]']:checked").length > 0) {
+            $("[data-error='handle_forms']").text("");
+        }
+    });
+
     $("#newstaffmaster").on("submit", function (e) {
         e.preventDefault();
 
+        clearErrors();
+
         let formData = new FormData(this);
+        let hasError = false;
+
+        let staffName = $("#staff_name").val().trim();
+        let roleId = $("#role_id").val();
+        let email = $("#staff_email").val().trim();
+        let password = $("#user_random_pass").val().trim();
+        let status = $("select[name='status']").val();
+        let checkedForms = $("#newstaffmaster input[name='handle_forms[]']:checked").length;
+
+        // Validation checks
+        if (staffName === "") {
+            showError("staff_name", "Staff Name is required");
+            hasError = true;
+        }else if (!validateStaffName(staffName)) {
+            showError("staff_name", "Only letters and spaces are allowed (max 50 characters).");
+            hasError = true;
+        }
+
+        if (roleId === "") {
+            showError("role_id", "Staff Role is required");
+            hasError = true;
+        }
+
+        if (email === "") {
+            showError("email", "Email is required");
+            hasError = true;
+        } else if (!validateEmail(email)) {
+            showError("email", "Enter a valid Email address");
+            hasError = true;
+        }
+
+        if (password === "") {
+            showError("user_random_pass", "Password is required");
+            hasError = true;
+        } else if (password.length < 8) {
+            showError("user_random_pass", "Password must be at least 8 characters");
+            hasError = true;
+        }
+
+        if (status === "") {
+            showError("status", "Status is required");
+            hasError = true;
+        }
+
+        if (checkedForms === 0) {
+            showError("handle_forms", "At least one form must be assigned");
+            hasError = true;
+        }
+
+        if (hasError) return false;
 
         $.ajax({
             url: BASE_URL + "/admin/staff/insertstaff",
@@ -2527,86 +2757,76 @@ $(document).ready(function () {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
             },
             success: function (response) {
-                Swal.fire("Success", response.message, "success").then(() => {
-                    let staff = response.staff;
-                    let formNames = response.form_names.join(', ');
-                    let statusText = '';
-                    let statusClass = '';
 
-                    if (staff.status == '1') {
-                        statusText = 'Published';
-                        statusClass = 'badge-success';
-                    } else if (staff.status == '0') {
-                        statusText = 'Draft';
-                        statusClass = 'badge-dark';
-                    } else if (staff.status == '2') {
-                        statusText = 'Disabled';
-                        statusClass = 'badge-danger';
+                if (response.status === 'success') {
+
+
+                    let staff = response.staff;
+
+                    let modalEl = document.getElementById('inputFormModaladdstaffs');
+                    let modalInstance = bootstrap.Modal.getInstance(modalEl);
+
+                    if (modalInstance) {
+                        modalInstance.hide();
                     }
 
-                    let newRow = `
-                        <tr data-id="${staff.id}">
-                            <td class="text-center">New</td>
-                            <td>${staff.name}</td>
-                            <td>${staff.email}</td>
-                            <td>${staff.staff_name}</td>
-                            <td>${formNames}</td>
-                            <td><span class="badge ${statusClass}">${statusText}</span></td>
-                            <td>
-                                <ul class="table-controls">
-                                    <li>
-                                        <a href="javascript:void(0);" class="editformdata"
-                                            data-id="${staff.id}"
-                                            data-form_name=""
-                                            data-license_name=""
-                                            data-fresh_amount=""
-                                            data-renewal_amount=""
-                                            data-instructions=""
-                                            data-status="${staff.status}"
-                                            data-bs-toggle="modal" data-bs-target="#inputFormModaleditstaffs">
-                                            <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </td>
-                        </tr>
-                    `;
+                    Swal.fire({
+                        title: "Staff Created Successfully",
+                        width: 550,
+                        confirmButtonText: "Done",
+                        customClass: {
+                            popup: 'swal-staff-success',
+                            confirmButton: 'btn btn-success px-4'
+                        },
+                        html: `
 
-                    $('#formtable').append(newRow);
-                    $('#newstaffmaster')[0].reset(); // Optional: reset form
-                    $('#newstaffModal').modal('hide'); // Hide modal if used
-                });
+                            <hr>
+                            <div class="staff-success-card">
+
+                                <div class="staff-id-box">
+                                    <span>STAFF ID</span>
+                                    <h3>${staff.staff_id}</h3>
+                                </div>
+                            </div> 
+                            <p class="login-note-muted">
+                        <small>
+                            Note: Staff ID or Email can be used as the username to log in to the Admin Portal.
+                        </small>
+                    </p>
+                        `
+                    });
+
+                    
+                    // Optional: reset form after success
+                    $("#newstaffmaster")[0].reset();
+                    clearErrors();
+
+                }
             },
-
             error: function (xhr) {
+                console.log(xhr.status);
+
                 if (xhr.status === 422) {
                     let errors = xhr.responseJSON.errors;
-                    let messages = '';
 
-                    // Map field names to readable labels
-                    const fieldNames = {
-                        name: 'Designation Name',
-                        email: 'Email',
-                        staff_name: 'Staff Name',
-                        handle_forms: 'Handling Forms',
-                        status: 'Status'
-                    };
-
-                    Object.keys(errors).forEach(function (key) {
-                        let label = fieldNames[key] || key;
-                        messages += `<strong>${label}:</strong> ${errors[key][0]}<br>`;
+                    $.each(errors, function (field, messages) {
+                        let cleanField = field.replace("[]", "");
+                        showError(cleanField, messages[0]);
                     });
-
+                }
+                else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    console.log(xhr.responseJSON);
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Validation Error',
-                        html: messages
+                        icon: "error",
+                        title: "Validation Error",
+                        text: xhr.responseJSON.message
                     });
-                } else {
+                }
+                else {
+                    console.log('xhr.status2');
                     Swal.fire("Error", "Something went wrong!", "error");
                 }
             }
-
 
         });
     });
