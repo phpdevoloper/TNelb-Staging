@@ -2837,15 +2837,40 @@ $(document).ready(function () {
         let staff_name = $(this).data('staff_name');
         let name = $(this).data('name');
         let email = $(this).data('email');
-        let handle_forms = $(this).data('handle_forms'); // This is JSON string or array
         let status = $(this).data('status');
+        let role_id = $(this).data('role_id');
 
         // Set values
-        $('#editstaffstbls input[name="id"]').val(staff_id);
+        $('#editstaffstbls input[name="staff_id"]').val(staff_id);
         $('#editstaffstbls input[name="staff_name"]').val(staff_name);
-        $('#editstaffstbls input[name="name"]').val(name);
         $('#editstaffstbls input[name="email"]').val(email);
         $('#editstaffstbls select[name="status"]').val(status);
+        
+        $('#edit_role_id').val(role_id);
+
+
+         // Reset checkboxes first
+         $('#editstaffstbls input[name="handle_forms[]"]').prop('checked', false);
+
+
+         $.ajax({
+            url: BASE_URL + '/admin/staff/get-assigned-forms',
+            type: 'GET',
+            data: { staff_id: staff_id },
+            success: function (response) {
+    
+                if (response.status === true) {
+    
+                    response.form_ids.forEach(function (formId) {
+                        $('#editstaffstbls input[name="handle_forms[]"][value="' + formId + '"]')
+                            .prop('checked', true);
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire('Error', 'Unable to load assigned forms', 'error');
+            }
+        });
 
         // Reset all checkboxes first
         // $('#editstaffstbls input[name="handle_forms[]"]').prop('checked', false);
@@ -2878,55 +2903,25 @@ $(document).ready(function () {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
             },
             success: function (response) {
-                Swal.fire("Success", response.message, "success").then(() => {
-                    let staff = response.staff;
-                    let formNames = response.form_names.join(', ');
-                    let statusText = '';
-                    let statusClass = '';
+                if (response.status === true) {
 
-                    if (staff.status == '1') {
-                        statusText = 'Published';
-                        statusClass = 'badge-success';
-                    } else if (staff.status == '0') {
-                        statusText = 'Draft';
-                        statusClass = 'badge-dark';
-                    } else if (staff.status == '2') {
-                        statusText = 'Disabled';
-                        statusClass = 'badge-danger';
-                    }
+                    // Close edit modal
+                    let modal = bootstrap.Modal.getInstance(
+                        document.getElementById('inputFormModaleditstaffs')
+                    );
+                    modal.hide();
+            
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Updated',
+                        text: response.message,
+                    }).then(() => {
+                        location.reload();
+                    });
+                }
 
-                    let updatedRow = `
-                        <td class="text-center">-</td>
-                        <td>${staff.name}</td>
-                        <td>${staff.email}</td>
-                        <td>${staff.staff_name}</td>
-                        <td>${formNames}</td>
-                        <td><span class="badge ${statusClass}">${statusText}</span></td>
-                        <td>
-                            <ul class="table-controls">
-                                <li>
-                                    <a href="javascript:void(0);" class="editstaffdata"
-                                        data-id="${staff.id}"
-                                        data-name="${staff.name}"
-                                        data-email="${staff.email}"
-                                        data-staff_name="${staff.staff_name}"
-                                        data-handle_forms='${JSON.stringify(staff.handle_forms)}'
-                                        data-status="${staff.status}"
-                                        data-bs-toggle="modal" data-bs-target="#inputFormModaleditstaffs">
-                                        <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </td>
-                    `;
-
-                    // Replace the row content based on staff ID
-                    $(`#formtable tr[data-id="${staff.id}"]`).html(updatedRow);
-
-                    // Optional: reset form and close modal
-                    $('#editstaffstbls')[0].reset();
-                    $('#inputFormModaleditstaffs').modal('hide');
-                });
+                $('#editstaffstbls')[0].reset();
+                $('#inputFormModaleditstaffs').modal('hide');
             },
 
             error: function (xhr) {

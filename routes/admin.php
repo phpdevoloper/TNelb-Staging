@@ -263,6 +263,7 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
             Route::post('/staff/insertstaff', [StaffController::class, 'insertStaff'])->name('insertstaff');
 
             Route::post('/staff/updatestaff', [StaffController::class, 'updateStaff'])->name('updatestaff');
+            Route::get('/staff/get-assigned-forms', [StaffController::class, 'getAssignedForms'])->name('get-assigned-forms');
 
         // ---------------Main pages Content--------------------------
 

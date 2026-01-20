@@ -31,7 +31,34 @@ class StaffController extends Controller
     }
     public function index(){
 
-        $staffs = Mst_Staffs_Tbl::orderBy('roles_id','asc')->get();
+        $staffs = DB::table('mst_staffs as st')
+        ->leftJoin('mst__roles as role', 'role.id', '=', 'st.role_id')
+        ->leftJoin('staff_assigned as sa', function ($join) {
+            $join->on('sa.staff_id', '=', 'st.staff_id')
+                ->where('sa.is_active', '=', 1);
+        })
+        ->leftJoin('mst_licences as f', 'f.id', '=', 'sa.form_id')
+        ->select(
+            'st.staff_id',
+            'st.staff_name',
+            'st.staff_email',
+            'st.status',
+            'role.name as role_name',
+            'role.id as role_id',
+            DB::raw("STRING_AGG(f.form_name, ', ') as handling_forms")
+        )
+        ->groupBy(
+            'st.staff_id',
+            'st.staff_name',
+            'st.staff_email',
+            'st.status',
+            'role.name',
+            'role.id'
+        )
+        ->get();
+
+        // var_dump($staffs);die;
+        
         // $staff = Mst_Staffs_Tbl::with('assignedForms')->with('assignedForms')->find($id);
         // var_dump($staff);die;
         $forms = MstLicence::all();
@@ -43,6 +70,21 @@ class StaffController extends Controller
         $userRoles = MstRoles::all();
 
         return view('admincms.staffdetails.index', compact( 'staffs', 'forms', 'formlist','userRoles'));
+    }
+
+
+    public function getAssignedForms(Request $request)
+    {
+        $formIds = DB::table('staff_assigned')
+            ->where('staff_id', $request->staff_id)
+            ->where('is_active', 1)
+            ->pluck('form_id')
+            ->toArray();
+
+        return response()->json([
+            'status' => true,
+            'form_ids' => $formIds
+        ]);
     }
 
     public function insertStaff(Request $request)
@@ -184,55 +226,79 @@ class StaffController extends Controller
     // ------------------------update staff details-----------------------
 
     public function updateStaff(Request $request)
-{
-    // dd($request->all());
-    // exit;
-    $request->validate([
-        'id'            => 'required|exists:mst__staffs__tbls,id',
-        'staff_name'    => 'required|string',
-        'name'          => 'required|string',
-        'email'         => 'required|email|unique:mst__staffs__tbls,email,' . $request->id,
-        'handle_forms'  => 'required|array',
-        'status'        => 'required|in:0,1,2',
-        
-    ]);
+    {
+        // var_dump($request->all());die;
+        $request->validate([
+            'staff_id'     => 'required|exists:mst_staffs,staff_id',
+            'staff_name'   => 'required|string|max:50',
+            'email'        => 'required|email|unique:mst_staffs,staff_email,' . $request->staff_id . ',staff_id',
+            'role_id'      => 'required|integer',
+            'handle_forms' => 'required|array|min:1',
+            'status'       => 'required|in:0,1,2',
+        ]);
 
-    $staff = Mst_Staffs_Tbl::findOrFail($request->id);
+        DB::beginTransaction();
 
-    // Update staff
-    $staff->update([
-        'staff_name'    => $request->staff_name,
-        'name'          => $request->name,
-        'email'         => $request->email,
-        'handle_forms'  => json_encode($request->handle_forms),
-        'status'        => $request->status,
-        'updated_by'    => $this->updatedBy,
-    ]);
-    
-    // Reset old forms (optional logic to clear old assignments)
-    MstLicence::where('staff_id', $staff->id)->update([
-        'staff_id' => null,
-    ]);
-    
-    // Assign selected forms
-    $formNames = MstLicence::whereIn('id', $request->handle_forms)->update([
-        'staff_id' => $staff->id,
-        // 'Assigned' => 'A'
-    ]);
-    
-    // ✅ Get form names to return
-    // $formNames = MstLicence::whereIn('id', $request->handle_forms)->pluck('form_name')->toArray();
-    
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Staff updated successfully.',
-        'staff' => $staff,
-        'form_names' => $formNames,
-        'handle_forms' => $request->handle_forms
-    ]);
-    
-    
-}
+        try {
+
+            // ✅ Update staff master
+            $staff = Mst_Staffs::where('staff_id', $request->staff_id)->firstOrFail();
+
+            $staff->update([
+                'staff_name' => $request->staff_name,
+                'email'=> $request->staff_email,
+                'role_id'    => $request->role_id,
+                'status'     => $request->status,
+                'updated_by' => Auth::id(),
+            ]);
+
+            // ✅ Deactivate old assignments
+            StaffAssigned::where('staff_id', $staff->staff_id)
+                ->update(['is_active' => 0]);
+
+            // ✅ Assign new forms
+            foreach ($request->handle_forms as $formId) {
+                StaffAssigned::updateOrCreate(
+                    [
+                        'staff_id' => $staff->staff_id,
+                        'form_id'  => $formId,
+                    ],
+                    [
+                        'is_active'   => 1,
+                        'assigned_by'=> Auth::id(),
+                        'assigned_at'=> now(),
+                    ]
+                );
+            }
+
+            // ✅ Fetch updated form names
+            $formNames = DB::table('staff_assigned as sa')
+                ->join('mst_licences as f', 'f.id', '=', 'sa.form_id')
+                ->where('sa.staff_id', $staff->staff_id)
+                ->where('sa.is_active', 1)
+                ->pluck('f.form_name')
+                ->toArray();
+
+            DB::commit();
+
+            return response()->json([
+                'status'     => true,
+                'message'    => 'Staff updated successfully.',
+                'staff'      => $staff,
+                'form_names' => $formNames,
+            ]);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message'=> 'Update failed',
+                'error'  => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
     
 

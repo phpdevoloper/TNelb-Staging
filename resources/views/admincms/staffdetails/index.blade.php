@@ -129,7 +129,6 @@
                             <div class="page-header">
                                 <div class="page-title">
                                 </div>
-
                                 <nav class="breadcrumb-style-one" aria-label="breadcrumb">
                                     <ol class="breadcrumb">
                                         <li class="breadcrumb-item">
@@ -185,6 +184,7 @@
                                     <thead>
                                         <tr>
                                             <th class="text-center">S.No</th>
+                                            <th class="text-center">Staff ID</th>
                                             <th class="text-center">Staff Name</th>
                                             <!-- <th class="text-center">Date of Posted</th> -->
                                             <th class="text-center">Designation Name</th>
@@ -198,21 +198,18 @@
                                     <!-- id="sortable-menu" -->
                                     <tbody id="formtable">
                                         @foreach ($staffs as $staff)
-                                        <tr data-id="{{ $staff->id }}">
+                                        <tr>
                                             <td class="text-center">{{ $loop->iteration }}</td>
     
-                                            <td>{{$staff->staff_name}}</td>
-                                            <td>{{ $staff->name }}</td>
-                                            <td>{{$staff->email}}</td>
-                                            <td>
-                                                @php
-                                                    $handledFormIds = json_decode($staff->handle_forms, true) ?? [];
-                                                    $matchedFormNames = $forms->whereIn('id', $handledFormIds)->pluck('form_name')->toArray();
-                                                @endphp
-                                                {{ implode(', ', $matchedFormNames) }}
+                                            <td class="text-center">{{$staff->staff_id }}</td>
+                                            <td class="text-center">{{$staff->staff_name}}</td>
+                                            <td class="text-center">{{ $staff->role_name }}</td>
+                                            <td class="text-center">{{ $staff->staff_email }}</td>
+                                            <td class="text-center">
+                                                {{ $staff->handling_forms ?? '-' }}
                                             </td>
                                         
-                                            <td>
+                                            <td class="text-center">
                                                 <span class="badge 
                                                 {{ $staff->status == '1' ? 'badge-success' : 
                                                 ($staff->status == '0' ? 'badge-dark' : 
@@ -226,14 +223,14 @@
                                                     @endif
                                                 </span>
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 <a href="javascript:void(0);" class="editstaffdata"
-                                                    data-id="{{ $staff->id }}"
-                                                    data-name="{{ $staff->name }}"
-                                                    data-email="{{ $staff->email }}"
+                                                    data-id="{{ $staff->staff_id }}"
+                                                    data-name="{{ $staff->staff_name }}"
+                                                    data-email="{{ $staff->staff_email }}"
                                                     data-staff_name="{{ $staff->staff_name }}"
-                                                    data-handle_forms='@json(json_decode($staff->handle_forms))'
                                                     data-status="{{ $staff->status }}"
+                                                    data-role_id="{{ $staff->role_id }}"
                                                     data-bs-toggle="modal" data-bs-target="#inputFormModaleditstaffs">
                                                     <i class="fa fa-pencil text-primary me-2 cursor-pointer" title="Edit"></i>
                                                 </a>
@@ -391,8 +388,13 @@
                                             <input type="text" class="form-control" name="staff_name">
                                         </div>
                                         <div class="form-group pb-2 col-md-6">
-                                            <label>Designation Name</label>
-                                            <input type="text" class="form-control" name="name">
+                                            <label>Staff Role</label>
+                                            <select class="form-select" name="role_id" id="edit_role_id">
+                                                <option value="">Please select the user role</option>
+                                                @foreach ($userRoles as $item)
+                                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
 
@@ -432,6 +434,7 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <input type="hidden" name="staff_id">
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-light-danger mt-2 mb-2" data-bs-dismiss="modal">Cancel</button>
                                         <button type="submit" class="btn btn-primary mt-2 mb-2">Update</button>
