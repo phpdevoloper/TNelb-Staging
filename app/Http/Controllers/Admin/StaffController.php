@@ -29,8 +29,9 @@ class StaffController extends Controller
             return $next($request);
         });
     }
-    public function index(){
 
+    public function index(){
+        
         $staffs = DB::table('mst_staffs as st')
         ->leftJoin('mst__roles as role', 'role.id', '=', 'st.role_id')
         ->leftJoin('staff_assigned as sa', function ($join) {
@@ -57,10 +58,11 @@ class StaffController extends Controller
         )
         ->get();
 
-        // var_dump($staffs);die;
+        $supervisorRoleId = DB::table('mst__roles')
+        ->where('role_code', 'SUPERVISOR')
+        ->value('id');
+
         
-        // $staff = Mst_Staffs_Tbl::with('assignedForms')->with('assignedForms')->find($id);
-        // var_dump($staff);die;
         $forms = MstLicence::all();
         
         $formlist = MstLicence::where('status', 1)
