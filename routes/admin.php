@@ -113,6 +113,7 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
             Route::get('/president_completed_forma', [PresidentController::class, 'president_completed_forma'])->name('president_completed_forma');
 
             Route::get('/applicants_detail_forma/{applicant_id}', [LoginController::class, 'applicants_detail_forma'])->name('applicants_detail_forma');
+            // Route::post('/verifyStaffLicence', [LoginController::class, 'verifyStaffLicence'])->name('verifyStaffLicence');
 
             //form A Completed
             Route::get('/applicants_detail_forma_completed/{applicant_id}', [LoginController::class, 'applicants_detail_forma_completed'])->name('applicants_detail_forma_completed');

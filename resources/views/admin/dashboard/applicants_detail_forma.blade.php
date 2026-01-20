@@ -26,6 +26,7 @@
         font-size:15px;
     }
 </style>
+
 <div id="content" class="main-content">
     <div class="layout-px-spacing">
         <div class="middle-content container-xxl p-0">
@@ -312,11 +313,6 @@
                                                              </div>
                                                                 @endif
                                                                 </p>
-                                                            
-                                            
-                                                             
-                                                              
-                                                                
                                                         </div>
                                                     </div>
                                                 </div>
@@ -331,27 +327,25 @@
                                                 </div>
                                                @php
                                                     use Illuminate\Support\Str;
-                                                    use Illuminate\Support\Facades\Crypt;
 
                                                  
+                                                     // Aadhaar
+                                                    $decryptedaadhar = safeDecrypt($applicant->aadhaar);
 
-                                                    // Aadhaar
-                                                    $decryptedaadhar = Crypt::decryptString($applicant->aadhaar);
+                                                    // Aadhaar document
+                                                    $decryptedaadhar_doc = safeDecrypt($documents->aadhaar_doc);
 
-                                                  // Aadhaar doc
-                                                    $decryptedaadhar_doc = Crypt::decryptString($documents->aadhaar_doc);
+                                                    // PAN document
+                                                    $decryptedpancard_doc = safeDecrypt($documents->pancard_doc);
 
-                                                    // PAN doc
-                                                    $decryptedpancard_doc = Crypt::decryptString($documents->pancard_doc);
+                                                    // GST document
+                                                    $decryptedgst_doc = safeDecrypt($documents->gst_doc);
 
-                                                    // GST doc
-                                                    $decryptedgst_doc = Crypt::decryptString($documents->gst_doc);
+                                                    // PAN number
+                                                    $decryptedpan = safeDecrypt($applicant->pancard);
 
-                                                    // PAN
-                                                    $decryptedpan =  Crypt::decryptString($applicant->pancard);
-
-                                                    // GST
-                                                    $decryptedgst =  Crypt::decryptString($applicant->gst_number);
+                                                    // GST number
+                                                    $decryptedgst = safeDecrypt($applicant->gst_number);
 
                                                     // Masking
                                                     $masked = strlen($decryptedaadhar) === 12
@@ -484,22 +478,18 @@
                                                 <tbody>
                                                     @forelse ($staffdetails as $staff)
                                                     <tr>
-                                                         <td>{{ $staff->staff_name }}</td>
+                                                        <td>{{ $staff->staff_name }}</td>
                                                         <td>{{ $staff->staff_qualification }}</td>
                                                         <td>{{ $staff->staff_category }}</td>
                                                         <td>{{ $staff->cc_number }},{{ \Carbon\Carbon::parse($staff->cc_validity)->format('d-m-Y') }} <br>
                                                               <span class="verify-result_staff"></span>
                                                             <button class="btn btn-primary verify-btn_staff"
                                                                 data-license="{{ $staff->cc_number }}"
-                                                                data-date="{{ \Carbon\Carbon::parse($staff->cc_validity)->format('d-m-Y') }}">
+                                                                data-date="{{ \Carbon\Carbon::parse($staff->cc_validity)->format('d-m-Y') }}"
+                                                                data-category="{{ $staff->staff_category }}">
                                                                 Verify 
                                                             </button>
                                                         </td>
-
-                                                    
-                                                        
-
-
                                                     </tr>
                                                     @empty
                                                     <tr>
@@ -527,6 +517,9 @@
                                             </div>
                                             <div class="col-lg-6">
                                                 <p>{{ format_date($applicant->bank_validity) }}</p>
+                                                <input type="hidden" name="bank_validity" id="bank_validity" value="{{ $applicant->bank_validity }}">
+                                                <input type="hidden" name="appl_type" id="appl_type" value="{{ $applicant->appl_type }}">
+                                                <input type="hidden" name="form_code" id="form_code" value="{{ $applicant->form_name }}">
                                             </div>
                                             <div class="col-lg-6">
                                                 <p><strong>Amount:</strong></p>
@@ -1034,6 +1027,39 @@
         document.getElementById('queryOptions').style.display = this.checked ? 'block' : 'none';
     });
 
+    function proceedToDeclaration(data = {}) {
+
+    return new Promise((resolve, reject) => {
+
+        Swal.fire({
+            title: "Declaration",
+            html: `
+                <div class="form-check text-start">
+                    <label class="form-check-label">
+                        I confirm that this application has been reviewed and approved.
+                    </label>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: "Agree & Approve",
+            cancelButtonText: "Cancel",
+            focusConfirm: false
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                resolve({
+                    agreed: true,
+                    data: data
+                });
+            } else {
+                resolve({
+                    agreed: false
+                });
+            }
+        });
+    });
+}
+
 
     // $('#remarks').maxlength({
     //     placement: "top"
@@ -1109,71 +1135,120 @@
             var processedBy = @json(Auth::user()->name);
             var remarks = $("#remarks").val().trim();
 
+            let btn = $(".verify-btn_staff");
 
-            Swal.fire({
-                title: "Declaration",
-                html: `
-                    <div class="form-check text-start">
-                        <label class="form-check-label" for="confirmVerification">
-                            I confirm that this application has been reviewed and approved.
-                        </label>
-                    </div>
-                `,
-                showCancelButton: true,
-                confirmButtonText: "Approved",
-                cancelButtonText: "Cancel",
-                focusConfirm: false,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '{{ route('admin.approveApplicationForma') }}',
-                        type: 'POST',
-                        headers: {
-                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
-                        },
-                        data: {
-                            application_id: applicationId,
-                            processed_by: processedBy,
-                            remarks: remarks || "No remarks provided",
-                        },
-                        success: function (response) {
-                            // if (response.status == "success") {
-                            //     // Cleanup Bootstrap modal instance on hide
-                            //     $('#approvalModal').modal('hide');
-                            //     $('#message').text(response.message);
-                            //     $('#licenseNumber').text(response.license_number);
+            let category = btn.data("category");   // QC / BC / OC
+            let licenceNo = btn.data("license");
+            let validity  = btn.data("date");
 
-                            //     $('#finalsuccessModal').modal('show');
-                
-                            //     $('#finalsuccessModal').on('hidden.bs.modal', function () {
-                            //         window.location.href = '/admin/dashboard';
-                            //     });
-                            // }
+            let bank_validity   = $('#bank_validity').val();
+            let appl_type       = $('#appl_type').val();
+            let form_code       = $('#form_code').val();
 
-                            if (response.status == "success") {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Success",
-                                    html: `
-                                        <p>${response.message}</p>
-                                        <p><b>License Number:</b> ${response.license_number}</p>
-                                    `,
-                                    confirmButtonText: "OK",
-                                    allowOutsideClick: false
-                                }).then(() => {
-                                    window.location.href = "{{ url('admin/dashboard') }}";
-                                });
+
+            if (category !== 'QC') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Verification not required',
+                    text: 'License verification is applicable only for QC staff.'
+                });
+                return;
+
+            }else{
+
+                $.ajax({
+                    url: '{{ route('admin.verifyStaffLicence') }}',
+                    type: 'POST',
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+                    },
+                    data: {
+                        form_code: form_code,
+                        licenceNo: licenceNo,
+                        qc_validity: validity,
+                        bank_validity: bank_validity,
+                        appl_type: appl_type,
+                    },
+                    success: function (response) {
+
+                        // if (response.status == "success") {
+                        //     Swal.fire({
+                        //         icon: "success",
+                        //         title: "Success",
+                        //         html: `
+                        //             <p>${response.message}</p>
+                        //             <p><b>License Number:</b> ${response.license_number}</p>
+                        //         `,
+                        //         confirmButtonText: "OK",
+                        //         allowOutsideClick: false
+                        //     }).then(() => {
+                        //         window.location.href = "{{ url('admin/dashboard') }}";
+                        //     });
+                        // }
+                    },
+                    error: function (xhr) {
+                        let errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "An unexpected error occurred.";
+                        $('#errorMessage').text(errorMessage);
+                        $('#errorModal').modal('show');
+                    }
+                });
+
+
+                return false;
+
+                 Swal.fire({
+                    title: "Declaration",
+                    html: `
+                        <div class="form-check text-start">
+                            <label class="form-check-label" for="confirmVerification">
+                                I confirm that this application has been reviewed and approved.
+                            </label>
+                        </div>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: "Approved",
+                    cancelButtonText: "Cancel",
+                    focusConfirm: false,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '{{ route('admin.approveApplicationForma') }}',
+                            type: 'POST',
+                            headers: {
+                                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+                            },
+                            data: {
+                                application_id: applicationId,
+                                processed_by: processedBy,
+                                remarks: remarks || "No remarks provided",
+                            },
+                            success: function (response) {
+
+                                if (response.status == "success") {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Success",
+                                        html: `
+                                            <p>${response.message}</p>
+                                            <p><b>License Number:</b> ${response.license_number}</p>
+                                        `,
+                                        confirmButtonText: "OK",
+                                        allowOutsideClick: false
+                                    }).then(() => {
+                                        window.location.href = "{{ url('admin/dashboard') }}";
+                                    });
+                                }
+                                // $('#licenseExpiry').text(response.license_expiry);
+                            },
+                            error: function (xhr) {
+                                let errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "An unexpected error occurred.";
+                                $('#errorMessage').text(errorMessage);
+                                $('#errorModal').modal('show');
                             }
-                            // $('#licenseExpiry').text(response.license_expiry);
-                        },
-                        error: function (xhr) {
-                            let errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "An unexpected error occurred.";
-                            $('#errorMessage').text(errorMessage);
-                            $('#errorModal').modal('show');
-                        }
-                    });
-                }
-            });
+                        });
+                    }
+                });
+            }
 
         });
 

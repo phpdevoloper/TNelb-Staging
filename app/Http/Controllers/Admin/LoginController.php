@@ -924,7 +924,36 @@ class LoginController extends Controller
    // -----------------form A -------------------
 
     
-      // -----------------form A -------------------
+   // ----------------- QC verification -------------------
+
+    // public function verifyStaffLicence(Request $request)
+    // {
+
+
+    //     $form_code = $request->form_code;
+    //     $licenseNumber = $request->licenceNo;
+    //     $bank_validity = $request->bank_validity;
+    //     $appl_type = trim($request->appl_type);
+        
+    //     $validUpto = \Carbon\Carbon::createFromFormat('d-m-Y', $request->qc_validity)->toDateString();
+        
+        
+    //     $status = DB::selectOne(
+    //         "SELECT * FROM check_ealicence_validity(?, ?, ?, ?, ?)",
+    //         [
+    //             $form_code,
+    //             $licenseNumber,
+    //             $validUpto,
+    //             $bank_validity,
+    //             $appl_type
+    //         ]
+    //     );
+
+    //     return response()->json([
+    //         'status' => $status->status === 'Valid License' ? 'valid' : 'invalid'
+    //     ]);
+    // }
+    
 
     public function applicants_detail_forma($applicant_id)
     {
@@ -956,6 +985,9 @@ class LoginController extends Controller
         if (!$applicant) {
             return abort(404, 'Applicant not found');
         }
+
+
+        // var_dump($applicant);die;   
 
       
         if ($staff->name === "Supervisor") {
@@ -1035,7 +1067,7 @@ class LoginController extends Controller
             ->get();
 
      
-        $staffdetails = DB::table('tnelb_applicant_formA_staffdetails')
+        $staffdetails = DB::table('tnelb_applicant_cl_staffdetails')
             ->where('application_id', $applicant_id)
             ->orderby('id')
             ->get();
