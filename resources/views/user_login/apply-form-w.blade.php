@@ -44,17 +44,17 @@
             <div class="row">
                 <div class="col-lg-12 col-12">
                     <div class="apply-card apply-card-info" data-select2-id="14">
-                        <div class="apply-card-header" style="background-color: #70c6ef !important;">
-                            <div class="row">
-                                <div class="col-6 col-lg-8">
-                                    <h5 class="card-title_apply text-black text-left"> New Registration Form <span style="font-weight: 600;">[ Form W - License 'B' ] </span></h5>
-                                </div>
-
-                                <div class="col-6 col-lg-4 text-md-right">
-                                    <span class="text-dark" target="_blank"><i class="fa fa-file-pdf-o" style="color: red;"></i>  Important Notes (37.6 KB)</span>
-                                    English | <a href="{{url('assets/pdf/form_w_notes.pdf')}}" class="text-dark" target="_blank">தமிழ்</a>
-                                </div>
-
+                        <div class="apply-card-header" style="background-color: rgb(3 90 179); padding: 15px;">
+                            <div class="text-center">
+                                {{-- <h5 class="card-title_apply text-black mb-1">GOVERNMENT OF TAMILNADU</h5>
+                                <h5 class="card-title_apply text-black mb-1">THE ELECTRICAL LICENSING BOARD</h5> --}}
+                                <h5 class="card-title_apply text-black" style="text-transform: uppercase;font-weight: 900;color: #ffffff;">
+                                    Application for Wireman Competency Certificate
+                                </h5>
+                                <h5 class="card-title_apply text-black mt-2" style="font-size: 15px;color: #ffffff;">
+                                    மின்கம்பியாளர் தகுதி சான்றிதழ் பெறுவதற்கான விண்ணப்பம்
+                                </h5>
+                                <h6 class="card-title_apply text-black mt-2 form-title" style="color: #ffffff;">FORM - W</h4>
                             </div>
                         </div>
                         <div class="apply-card-body">

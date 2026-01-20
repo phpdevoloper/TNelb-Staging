@@ -84,15 +84,18 @@ class SupervisorController extends Controller
         $assignedFormID = Auth::user()->form_id;
 
 
-        $workflows = DB::table('tnelb_application_tbl')
-            ->where('form_id', $assignedFormID) // Filter by Form S
-            ->whereIn('status', ['F', 'A', 'RF']) // Only show new applications
-            ->whereIn('processed_by', ['S', 'A', 'SE', 'PR']) // Only show new applications
-            ->select('*')
-            ->orderBy('id', 'desc') 
-            ->get();
+        $workflows = DB::table('tnelb_application_tbl as t')
+        ->leftJoin('tnelb_license as l', 'l.application_id', '=', 't.application_id')
+        ->where('t.form_id', $assignedFormID) // Filter by Form S
+        ->whereIn('t.status', ['F', 'A', 'RF']) // Only show new applications
+        ->whereIn('t.processed_by', ['S', 'A', 'SE', 'PR']) // Only show new applications
+        ->select('t.*','l.*')
+        ->orderBy('t.id', 'desc') 
+        ->get();
+
 
         return view('admin.supervisor.completed', compact('workflows'));
+
     } 
     public function get_completed_wh()
     {

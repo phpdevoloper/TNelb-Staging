@@ -74,7 +74,10 @@ table th {
                                             <th>Applicant's Name</th>
                                             <th>Applied On</th>
                                             <th>Status</th>
-                                            <th>License</th>
+                                            <th>Licence No</th>
+                                            <th>Issued At</th>
+                                            <th>Expires At</th>
+                                            <th>View License</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -97,6 +100,9 @@ table th {
                                                 <span class="badge badge-success">Completed</span>
                                                 @endif
                                             </td>
+                                            <td>{{ $application->license_number }}</td>
+                                            <td>{{ format_date($application->issued_at) }}</td>
+                                            <td>{{ format_date($application->expires_at) }}</td>
                                             <td>
 
                                                 @if ($application->status == 'A')
