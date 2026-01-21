@@ -142,19 +142,20 @@
 
         var username = $('#username').val();
         var password = $('#password').val();
-        var randomnumber = Math.floor((Math.random() * 1000000) + 1);
-        var randompassword = randomnumber + sha512(password);
-        var md5password = sha512(randompassword);
+        // var randomnumber = Math.floor((Math.random() * 1000000) + 1);
+        // var randompassword = randomnumber + sha512(password);
+        // var md5password = sha512(randompassword);
         var captcha = $("#captcha").val();
 
-        $('#password').val(md5password);
+        // $('#password').val(md5password);
 
         $('#login-btn').prop('disabled', true).text('Logging in...');
 
         var data = {
             username: username,
-            randompassword: md5password,
-            randomnumber: randomnumber,
+            password: password,
+            // randompassword: md5password,
+            // randomnumber: randomnumber,
             captcha:captcha
         }
 
@@ -207,11 +208,11 @@
         refreshNeeded = true;
     }
 
-     if (refreshNeeded) {
-        setTimeout(function () {
-            location.reload();
-        }, 2000);
-    }
+    //  if (refreshNeeded) {
+    //     setTimeout(function () {
+    //         location.reload();
+    //     }, 2000);
+    // }
 
 
 }

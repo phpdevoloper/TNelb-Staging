@@ -19,6 +19,12 @@ class Mst_Staffs extends Authenticatable
 
     // protected $hidden = [''];
 
+    public static function findByEmail($value)
+    {
+        return self::where('staff_email', $value)
+            ->first();
+    }
+
     public function role() {
         return $this->belongsTo(MstRoles::class, 'role_id');
     }

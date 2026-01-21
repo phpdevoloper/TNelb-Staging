@@ -2794,6 +2794,9 @@ $(document).ready(function () {
                         </small>
                     </p>
                         `
+                    }).then(() => {
+                        // 🔄 Reload page after user clicks Done
+                        location.reload();
                     });
 
                     

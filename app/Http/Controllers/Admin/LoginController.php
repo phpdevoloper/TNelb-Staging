@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Admin\ApplicationModel;
 use App\Models\Admin\FormaModel;
+use App\Models\Admin\Mst_Staffs;
 use App\Models\Admin\UserModel;
 use App\Models\TnelbApplicantPhoto;
 
@@ -20,18 +21,18 @@ use App\Models\Admin\Tnelb_homeslider_tbl;
 use App\Models\Admin\Tnelb_Mst_Media;
 use App\Models\Admin\Tnelb_submenus;
 use App\Models\TnelbFormP;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class LoginController extends Controller
 {
     public function index(){
-
         return view ('admin.index');
     }
 
     public function login(Request $request)
     {
-
+        // var_dump('here');die;   
         
         $validator = Validator::make($request->all(), [
             // 'username' => 'required|string',
@@ -49,35 +50,49 @@ class LoginController extends Controller
         }
 
 
-        $check_user = UserModel::findByEmailOrUsername($request->username);
+        // $check_user = UserModel::findByEmailOrUsername($request->username);
+        $check_user = Mst_Staffs::findByEmail($request->username);
 
-        if($check_user){
+        // var_dump($check_user->login_passwd);die;
 
-            $login_passowrd = $request->randompassword;
+        if(!$check_user){
 
-            $random_number = $request->randomnumber;
+            return response()->json(['message' => 'Invalid credsdsddentials'], 401);
+
+            //RANDOM PASSWORD LOGIC
+
+            // $login_passowrd = $request->randompassword;
+
+            // $random_number = $request->randomnumber;
             
-            $user_password = $random_number.$check_user->password;
+            // $user_password = $random_number.$check_user->password;
 
-            $hash_password = hash('SHA512', $user_password);
+            // $hash_password = hash('SHA512', $user_password);
 
-            if($login_passowrd == $hash_password){
+            // if($login_passowrd == $hash_password){
 
-                Auth::guard('admin')->login($check_user);
+            //     Auth::guard('admin')->login($check_user);
 
-                if (Auth::guard('admin')->check()) {
-                    return response()->json(['message' => 'Login successful'], 200);
-                } else {
-                    return response()->json(['message' => 'Login failed during session handling.'], 401);
-                }
-                exit;
+            //     if (Auth::guard('admin')->check()) {
+            //         return response()->json(['message' => 'Login successful'], 200);
+            //     } else {
+            //         return response()->json(['message' => 'Login failed during session handling.'], 401);
+            //     }
+            //     exit;
 
-            }else{
-                return response()->json(['message' => 'Invalid login credentials. Please try again.'], 401);
-            }
-
+            // }else{
+            //     return response()->json(['message' => 'Invalid login credentials. Please try again.'], 401);
+            // }
 
         }
+
+        if (!Hash::check($request->password, $check_user->login_passwd)) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
+
+        Auth::guard('admin')->login($check_user);
+
+        return response()->json(['message' => 'Login successful'], 200);
 
 
     }
@@ -207,8 +222,9 @@ class LoginController extends Controller
     {
         $staff = Auth::user();
 
+        // var_dump(!$staff,!$staff->staff_name);die;
 
-        if (!$staff || !$staff->name) {
+        if (!$staff || !$staff->staff_name) {
             return abort(403, 'Unauthorized');
         }
 
