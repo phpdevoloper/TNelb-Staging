@@ -58,9 +58,11 @@ class StaffController extends Controller
         )
         ->get();
 
-        $supervisorRoleId = DB::table('mst__roles')
-        ->where('role_code', 'SUPERVISOR')
-        ->value('id');
+        $supervisorRoleId = DB::table('mst_roles')
+        ->where('role_code', 'SUPRVISR')
+        ->value('r_id');
+
+        // var_dump($supervisorRoleId);die;
 
         
         $forms = MstLicence::all();
