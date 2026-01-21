@@ -10,14 +10,20 @@ use App\Models\Mst_Form_s_w;
 use App\Models\Payment; // ✅ Add this line
 use App\Models\TnelbFormP;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 use Carbon\Carbon;
 
 
 class PaymentController extends Controller
 {
+    // protected $today,$dbNow;
+    // public function __construct()
+    // {
+    //     $this->dbNow  = DB::selectOne("SELECT date_trunc('second', NOW()::timestamp) AS db_now")->db_now;
+
+
+    // }
 
     public function updatePayment(Request $request)
     {
@@ -38,10 +44,6 @@ class PaymentController extends Controller
             $form = Mst_Form_s_w::where('application_id', $validated['application_id'])->first();
         }
         
-        // else {
-            
-        //     $form = EA_Application_model::where('application_id', $validated['application_id'])->first();
-        // }
 
         
 
@@ -51,9 +53,6 @@ class PaymentController extends Controller
                 'message' => 'Form details not found!',
             ]);
         }
-
-        $transaction_date = \Carbon\Carbon::createFromFormat('d-m-Y', $request->transactionDate)
-                       ->format('Y-m-d');
 
         $payment = Payment::updateOrCreate(
             [
@@ -72,8 +71,6 @@ class PaymentController extends Controller
                 'transaction_date'  => $validated['transactionDate'] 
             ]
         );
-
-        // var_dump($request->form_name);die;
 
         if ($payment) {
             if (in_array($request->form_name, ['S', 'W', 'WH'])) {

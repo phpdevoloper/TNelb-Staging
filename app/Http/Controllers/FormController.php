@@ -26,7 +26,7 @@ class FormController extends BaseController
         parent::__construct();   
         $this->middleware('web');
         $this->today = Carbon::today()->toDateString();
-        $this->dbNow  = DB::selectOne("SELECT TO_CHAR(NOW(), 'DD-MM-YYYY') AS db_now")->db_now;
+        $this->dbNow  = DB::selectOne("SELECT date_trunc('second', NOW()::timestamp) AS db_now")->db_now;
 
 
     }
@@ -364,28 +364,26 @@ class FormController extends BaseController
                 'certificate_date'    => $request->certificate_date,
                 'cert_verify'         => $request->cert_verify ?? '0',
                 'license_verify'      => $request->l_verify ?? '0',
+                'submitted_date'      => $this->dbNow,
             ]);
             
             $applicationId = $form->application_id;
             $loginId = $form->login_id;
 
 
-            $form_details = MstLicence::where('status', 1)
-            ->select('*')
-            ->get()
-            ->toArray();
-            $form_category = LicenceCategory::where('status', 1)
-            ->select('*')
-            ->get()
-            ->toArray();
-       
-            $current_form = collect($form_details)->firstWhere('cert_licence_code', $form->license_name);
-            $category_type = collect($form_category)->firstWhere('id', $current_form['category_id']);
+            $current_form = MstLicence::where('status', 1)
+                ->where('cert_licence_code', $form->license_name)
+                ->first();
 
-            $licence_details['licence_name'] = $current_form['licence_name'];
-            // var_dump($licence_details);die;
-            $licence_details['category_name'] = $category_type['category_name'];
-            $licence_details['form_type'] = $form->appl_type;
+            $category_type = LicenceCategory::where('status', 1)
+                ->where('id', $current_form->category_id)
+                ->first();
+
+            $licence_details = [
+                'licence_name'  => $current_form->licence_name,
+                'category_name' => $category_type->category_name,
+                'form_type'     => $form->appl_type,
+            ];
             
             // process education
             if ($request->has('educational_level')) {
@@ -1050,6 +1048,7 @@ class FormController extends BaseController
                 }
             
                 file_put_contents($destinationPath . '/' . $panFilename, $encrypted);
+
             } elseif ($request->input('pan_doc_removed') == "1") {
                 // ✅ Removed but not replaced
                 $panFilename = null;
@@ -1078,23 +1077,25 @@ class FormController extends BaseController
                 'pancard'           => $encrypted_pancard ?? null,
                 'appl_type'         => $request->appl_type,
                 'license_number'    => $request->license_number,
-                'payment_status'    => $action === 'draft' ? 'draft' : 'payment',
+                'payment_status'    => $action,
                 'aadhaar_doc'         => $aadhaarFilename,
                 'pan_doc'             => $panFilename,
                 'certificate_no'      => $request->certificate_no ?? null,
                 'certificate_date'   => $request->certificate_date ?? null,
                 'application_id'    => $applicationId,
-                'cert_verify'    => $request->cert_verify ?? '0',
+                'cert_verify'       => $request->cert_verify ?? '0',
                 'license_verify'    => $request->l_verify ?? '0',
-                'old_application'=> $form->old_application ?? null
+                'old_application'   => $form->old_application ?? null,
+                
             ];
-
 
 
             // 🔹 Insert or Update
             if ($form) {
+                $data['updated_at'] = $this->dbNow;
                 $form->update($data); // ✅ Update existing
             } else {
+                $data['created_at'] = $this->dbNow;
                 $form = Mst_Form_s_w::create($data); // ✅ Insert new
             }
 

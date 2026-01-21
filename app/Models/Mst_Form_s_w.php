@@ -9,7 +9,11 @@ class Mst_Form_s_w extends Model
 {
     use HasFactory;
 
+
     protected $table = 'tnelb_application_tbl';
+
+    public $timestamps = false;
+    
     protected $fillable = [
         'applicant_name', 
         'fathers_name', 
@@ -36,7 +40,10 @@ class Mst_Form_s_w extends Model
         'certificate_no',
         'certificate_date',
         'cert_verify',
-        'license_verify'
+        'license_verify',
+        'submitted_date',
+        'created_at',
+        'updated_at'
 
     ];
 
