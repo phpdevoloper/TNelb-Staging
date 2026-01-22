@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Admin\MstRoles;
+use App\Models\MstLicence;
 
 class Mst_Staffs extends Authenticatable
 {
@@ -27,5 +28,17 @@ class Mst_Staffs extends Authenticatable
 
     public function role() {
         return $this->belongsTo(MstRoles::class, 'role_id');
+    }
+
+    public function assignedForms()
+    {
+        return $this->belongsToMany(
+            MstLicence::class,
+            'staff_assigned',
+            'staff_id',
+            'form_id',
+            'staff_id',
+            'id'
+        )->wherePivot('is_active', 1);
     }
 }

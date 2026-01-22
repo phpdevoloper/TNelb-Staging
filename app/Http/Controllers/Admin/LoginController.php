@@ -26,6 +26,23 @@ use Illuminate\Support\Facades\Storage;
 
 class LoginController extends Controller
 {
+    protected $staff;
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+
+            $staff = Auth::guard('admin')->user();
+
+            if (!$staff) {
+                abort(403, 'Unauthorized');
+            }
+
+            $this->staff = $staff; // store for later use
+
+            return $next($request);
+        });
+    }
+
     public function index(){
         return view ('admin.index');
     }
@@ -220,158 +237,15 @@ class LoginController extends Controller
 
      public function dashboard()
     {
-        $staff = Auth::user();
+       
+        $getForms = $this->staff->assignedForms()->get();
 
-        // var_dump(!$staff,!$staff->staff_name);die;
+        $getCount = $this->staff->assignedForms()->count();
 
-        if (!$staff || !$staff->staff_name) {
-            return abort(403, 'Unauthorized');
-        }
+        var_dump($getCount);die;    
 
-             if ($staff->email === 'admin@tnelb.com') {
-            // return '111';
+        return view('admin.dashboard.dashboard', compact('getForms') );
 
-            $menus = TnelbMenu::whereNotIn('id', [1, 2, 3])->orderBy('order_id')->get();
-
-            $submenus = Tnelb_submenus::all();
-
-        
-            
-
-            return view('admincms.dashboard.index', compact('staff', 'menus', 'submenus'));
-            exit;
-        }
-
-        if ($staff->email === 'superadmin@tnelb.com') {
-            // return '111';
-
-            $menus = TnelbMenu::whereNotIn('id', [1, 2, 3])->orderBy('order_id')->get();
-
-            $submenus = Tnelb_submenus::all();
-        
-
-            return view('admincms.dashboard.index', compact('staff', 'menus', 'submenus'));
-            exit;
-        }
-        // var_dump($staff);die;
-
-        $assignedFormID = $staff->form_id;
-        $processed_by   = $this->getProcessedByRole($staff->name);
-
-
-        // Fetch data using model methods
-        $pendings                   = ApplicationModel::getPendingCount($assignedFormID);
-        $completed                  = ApplicationModel::getCompletedCount($assignedFormID, $processed_by);
-        $auditor_pendings           = ApplicationModel::getAuditorPendingCounts();
-        $auditorForma_pendings      = FormaModel::getAuditorFormAPendingCounts();
-        $secForma_counts            = FormaModel::getSecFormACounts();
-        $secretary                  = ApplicationModel::getSecretaryPendingCounts();
-        // var_dump($auditor_pendings);die;
-
-        $form_wh_pending = ApplicationModel::getform_wh_PendingCounts();
-        $form_wh_completed = ApplicationModel::getform_wh_completed();
-
-
-
-
-        $secretaryCompleted         = ApplicationModel::getSecretaryComplCounts();
-        $form_a_pending             = FormaModel::getPendingCountForma();
-        $form_a_completed           = FormaModel::getcompleteCountForma();
-        $form_wh_rejected           = ApplicationModel::getform_wh_rejected();
-
-        $rejected_appls             = ApplicationModel::getRejectCount($assignedFormID);
-
-        $president = DB::table('mst_licences as f')
-
-            ->leftJoin('tnelb_application_tbl as ta', 'ta.form_name', '=', 'f.form_code')
-            ->where('f.category_id', 2)
-            ->where('f.status', 1)
-            ->select(
-                'f.id',
-                'f.form_name',
-                'f.licence_name',
-                'f.cert_licence_code as color_code',
-                DB::raw("COUNT(CASE WHEN ta.status = 'F' AND ta.processed_by = 'SE' THEN 1 END) as pending_count"),
-                DB::raw("COUNT(CASE WHEN ta.status = 'A' AND ta.processed_by = 'PR' THEN 1 END) as completed_count"),
-                DB::raw("COUNT(CASE WHEN ta.status = 'RJ' THEN 1 END) as rejected_count")
-            )
-
-            ->groupBy('f.id', 'f.form_name', 'f.licence_name')
-            ->orderBy('f.id','asc')
-            ->get();
-        // var_dump($president);die;
-
-
-        $presidentFormA = DB::table('tnelb_ea_applications as ta')
-            ->select(
-                DB::raw("COUNT(CASE WHEN ta.application_status IN ('F','RF') AND ta.processed_by IN ('SE','S') THEN 1 END) as pending_count"),
-                DB::raw("COUNT(CASE WHEN ta.application_status = 'A' AND ta.processed_by = 'PR' THEN 1 END) as completed_count")
-            )
-            ->first();
-
-
-        $form_p_pending = TnelbFormP::where('form_name', 'P')
-        ->whereIn('app_status', ['P','RE'])
-        ->where('payment_status', 'payment')
-        ->count();
-
-        $formColors = [
-            'C'  => 'bg-yellow',
-            'B'  => 'bg-red',
-            'H' => 'bg-H',
-            'P' => 'bg-green',
-        ];
-
-        // Determine the view based on role
-        $view = match ($staff->name) {
-            'President'   => 'admin.dashboard.president',
-            'Secretary'   => 'admin.dashboard.index',
-            'Supervisor'  => 'admin.dashboard.loginpage.supervisor_index',
-            'Accountant'     => 'admin.dashboard.loginpage.auditor_index',
-            'Supervisor2' => 'admin.dashboard.loginpage.supervisor_w_index',
-            default       => abort(403, 'Unauthorized'),
-        };
-
-        $applications = DB::table('mst_workflows as mw')
-            ->join('tnelb_application_tbl as ta', 'mw.application_id', '=', 'ta.application_id') // Join condition
-            ->select('mw.*', 'ta.applicant_name') // Select fields
-            ->where('ta.status', ['P', 'F']) // Select fields
-            ->get();
-        
-        $recieved_apps = DB::table('tnelb_application_tbl')
-        ->select('*') // Select fields
-        ->where('status', ['P']) // Select fields
-        ->get();
-
-        $inprogress = DB::table('tnelb_application_tbl')
-        ->select('*') // Select fields
-        ->where('status', ['F']) // Select fields
-        ->get();
-
-
-
-        return view($view, compact(
-            'applications',
-            'completed',
-            'pendings',
-            'auditor_pendings',
-            'formColors',
-            'secretary',
-            'president',
-            'secretaryCompleted',
-            'form_a_pending',
-            'form_a_completed',
-            'auditorForma_pendings',
-            'secForma_counts',
-            'presidentFormA',
-            'recieved_apps',
-            'inprogress',
-            'form_wh_pending',
-            'form_wh_completed',
-            'rejected_appls',
-            'form_wh_rejected',
-            'form_p_pending'
-        ));
     }
 
 
