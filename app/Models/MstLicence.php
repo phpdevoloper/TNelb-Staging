@@ -72,4 +72,9 @@ class MstLicence extends Model
     protected $attributes = [
         'status' => 2,
     ];
+
+    public function applications()
+    {
+        return $this->hasMany(Mst_Form_s_w::class, 'licence_name', 'cert_licence_code');
+    }
 }
