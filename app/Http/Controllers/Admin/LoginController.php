@@ -26,21 +26,9 @@ use Illuminate\Support\Facades\Storage;
 
 class LoginController extends Controller
 {
-    protected $staff;
     public function __construct()
     {
-        $this->middleware(function ($request, $next) {
-
-            $staff = Auth::guard('admin')->user();
-
-            if (!$staff) {
-                abort(403, 'Unauthorized');
-            }
-
-            $this->staff = $staff; // store for later use
-
-            return $next($request);
-        });
+        $this->middleware('auth:admin');
     }
 
     public function index(){
@@ -238,13 +226,13 @@ class LoginController extends Controller
      public function dashboard()
     {
        
-        $getForms = $this->staff->assignedForms()->get();
+        // $getForms = $this->staff->assignedForms()->get();
 
-        $getCount = $this->staff->assignedForms()->count();
+        // $getCount = $this->staff->assignedForms()->count();
 
-        var_dump($getCount);die;    
+        // var_dump($getCount);die;    
 
-        return view('admin.dashboard.dashboard', compact('getForms') );
+        return view('admin.dashboard.dashboard');
 
     }
 
@@ -1235,7 +1223,7 @@ class LoginController extends Controller
             'slider_caption' => $request->slider_caption,
             'slider_caption_ta' => $request->slider_caption_ta,
             'slider_status' => $request->slider_status,
-            'updated_by' => $this->updatedBy
+            // 'updated_by' => $this->updatedBy
         ]);
 
         $slider->load('media'); // ✅ load related media info
